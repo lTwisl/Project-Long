@@ -1,63 +1,23 @@
 ﻿using UnityEngine;
 using UnityEngine.InputSystem;
+using Zenject;
 
 
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(PlayerInput))]
-public class MovementHandler : MonoBehaviour
+public class PlayerMovement : MonoBehaviour
 {
-    [Header("Player")]
-    [Tooltip("Move speed of the character in m/s")]
-    [SerializeField] private float MoveSpeed = 4.0f;
-    [Tooltip("Sprint speed of the character in m/s")]
-    [SerializeField] private float SprintSpeed = 6.0f;
-    [Tooltip("Rotation speed of the character")]
-    [SerializeField] private float RotationSpeed = 1.0f;
-    [Tooltip("Acceleration and deceleration")]
-    [SerializeField] private float SpeedChangeRate = 10.0f;
-    [SerializeField] private AnimationCurve speedChangeRateCurve;
+    [Inject] private PlayerMovementConfig _moveConfig;
 
-    [Header("Player Crouch")]
-    [SerializeField] private float SpeedCrouch = 1.0f;
-    [SerializeField] private float CrouchTransitionSpeed = 2.0f;
-    [SerializeField] private float CrouchHeight = 1.0f;
+    [Header("Cinemachine Camera")]
+    [SerializeField] private GameObject _cinemachineCameraTarget;
+    [SerializeField] private float _topClamp = 89.0f;
+    [SerializeField] private float _bottomClamp = -89.0f;
 
-    [Header("Player Sliding")]
-    [SerializeField] private float SlidingSpeed = 2.0f;
-    [SerializeField] private AnimationCurve slidingSpeedCurve;
-    [SerializeField] private float SlidingAngle = 20.0f;
-    [SerializeField] private AnimationCurve slidingAngleCurve;
-    [SerializeField] private float SlidingChangeRate = 5.0f;
-
-    [Space(10)]
-    [Tooltip("The character uses its own gravity value. The engine default is -9.81f")]
-    [SerializeField] private float Gravity = -15.0f;
-
-    [Header("Player Grounded")]
-    [Tooltip("If the character is grounded or not. Not part of the CharacterController built in grounded check")]
-    [SerializeField] private bool Grounded = true;
-    [Tooltip("Useful for rough ground")]
-    [SerializeField] private float GroundedOffset = -0.14f;
-    [Tooltip("The radius of the grounded check. Should match the radius of the CharacterController")]
-    [SerializeField] private float GroundedRadius = 0.5f;
-    [Tooltip("What layers the character uses as ground")]
-    [SerializeField] private LayerMask GroundLayers;
-
-    [Header("Player Ceiling")]
-    [SerializeField] private bool Ceilinged = false;
-    [Tooltip("Радиус проверки препятствий над головой")]
-    [SerializeField] private float CeilingedRadius = 0.5f;
-    [SerializeField] private float CeilingedOffset = 0.2f;
-    [Tooltip("Слои для проверки препятствий")]
-    [SerializeField] private LayerMask CeilingedLayers;
-
-    [Header("Cinemachine")]
-    [Tooltip("The follow target set in the Cinemachine Virtual Camera that the camera will follow")]
-    [SerializeField] private GameObject CinemachineCameraTarget;
-    [Tooltip("How far in degrees can you move the camera up")]
-    [SerializeField] private float TopClamp = 89.0f;
-    [Tooltip("How far in degrees can you move the camera down")]
-    [SerializeField] private float BottomClamp = -89.0f;
+    private bool _grounded = true;
+    private RaycastHit _groundInfo;
+    
+    private bool _ceilinged = false;
 
     // cinemachine
     private float _cinemachineTargetPitch;
@@ -68,8 +28,7 @@ public class MovementHandler : MonoBehaviour
 
     private Vector3 _slidingGradient;
 
-    RaycastHit _groundInfo;
-
+    // crouching
     private bool _isCrouching;
     private bool _isTransitioning;
     private float _originalCrouchHeight;
@@ -104,7 +63,7 @@ public class MovementHandler : MonoBehaviour
 
         _originalCrouchHeight = _controller.height;
         _originalCenter = _controller.center.y;
-        _orignalCameraHeight = CinemachineCameraTarget.transform.localPosition.y;
+        _orignalCameraHeight = _cinemachineCameraTarget.transform.localPosition.y;
     }
 
     private void Update()
@@ -120,19 +79,22 @@ public class MovementHandler : MonoBehaviour
     private void LateUpdate()
     {
         if (_isTransitioning)
-            CinemachineCameraTarget.transform.localPosition = new Vector3(CinemachineCameraTarget.transform.localPosition.x, _orignalCameraHeight - (_originalCrouchHeight - _controller.height), CinemachineCameraTarget.transform.localPosition.z);
+            _cinemachineCameraTarget.transform.localPosition = new Vector3(
+                _cinemachineCameraTarget.transform.localPosition.x, 
+                _orignalCameraHeight - (_originalCrouchHeight - _controller.height), 
+                _cinemachineCameraTarget.transform.localPosition.z);
 
         CameraRotation();
     }
 
     private void CrouchHandler()
     {
-        if (_input.crouch && !_isCrouching && Grounded)
+        if (_input.crouch && !_isCrouching && _grounded)
         {
             _isCrouching = true;
             _isTransitioning = true;
         }
-        else if (!_input.crouch && _isCrouching && !Ceilinged)
+        else if (!_input.crouch && _isCrouching && !_ceilinged)
         {
             _isCrouching = false;
             _isTransitioning = true;
@@ -146,9 +108,9 @@ public class MovementHandler : MonoBehaviour
         if (_isTransitioning == false)
             return;
 
-        float targetHeight = _isCrouching ? CrouchHeight : _originalCrouchHeight;
+        float targetHeight = _isCrouching ? _moveConfig.CrouchHeight : _originalCrouchHeight;
 
-        _controller.height = Mathf.MoveTowards(_controller.height, targetHeight, Time.deltaTime * CrouchTransitionSpeed);
+        _controller.height = Mathf.MoveTowards(_controller.height, targetHeight, Time.deltaTime * _moveConfig.CrouchTransitionSpeed);
         _controller.center = new Vector3(0.0f, _originalCenter - (_originalCrouchHeight - _controller.height) / 2.0f, 0.0f);
 
         if (Mathf.Abs(targetHeight - _controller.height) < Mathf.Epsilon)
@@ -157,14 +119,15 @@ public class MovementHandler : MonoBehaviour
 
     public void CeilingedCheck()
     {
-        Vector3 spherePosition = new Vector3(transform.position.x, transform.position.y + _originalCrouchHeight - CeilingedOffset, transform.position.z);
-        Ceilinged = Physics.CheckSphere(spherePosition, CeilingedRadius, CeilingedLayers, QueryTriggerInteraction.Ignore);
+        Vector3 spherePosition = new Vector3(transform.position.x, transform.position.y + _originalCrouchHeight - _moveConfig.CeilingedOffset, transform.position.z);
+        _ceilinged = Physics.CheckSphere(spherePosition, _moveConfig.CeilingedRadius, _moveConfig.CeilingedLayers, QueryTriggerInteraction.Ignore);
     }
 
 
     private void GroundedCheck()
     {
-        Grounded = Physics.SphereCast(transform.position + Vector3.up * _controller.radius, GroundedRadius, Vector3.down, out _groundInfo, GroundedOffset, GroundLayers);
+        Vector3 spherePosition = transform.position + Vector3.up * _controller.radius;
+        _grounded = Physics.SphereCast(spherePosition, _moveConfig.GroundedRadius, Vector3.down, out _groundInfo, _moveConfig.GroundedOffset, _moveConfig.GroundLayers);
     }
 
     private void CameraRotation()
@@ -173,12 +136,12 @@ public class MovementHandler : MonoBehaviour
         {
             float deltaTimeMultiplier = IsCurrentDeviceMouse ? 1.0f : Time.deltaTime;
 
-            _cinemachineTargetPitch += _input.look.y * RotationSpeed * deltaTimeMultiplier;
-            _rotationVelocity = _input.look.x * RotationSpeed * deltaTimeMultiplier;
+            _cinemachineTargetPitch += _input.look.y * _moveConfig.RotationSpeed * deltaTimeMultiplier;
+            _rotationVelocity = _input.look.x * _moveConfig.RotationSpeed * deltaTimeMultiplier;
 
-            _cinemachineTargetPitch = ClampAngle(_cinemachineTargetPitch, BottomClamp, TopClamp);
+            _cinemachineTargetPitch = ClampAngle(_cinemachineTargetPitch, _bottomClamp, _topClamp);
 
-            CinemachineCameraTarget.transform.localRotation = Quaternion.Euler(_cinemachineTargetPitch, 0.0f, 0.0f);
+            _cinemachineCameraTarget.transform.localRotation = Quaternion.Euler(_cinemachineTargetPitch, 0.0f, 0.0f);
 
             transform.Rotate(Vector3.up * _rotationVelocity);
         }
@@ -191,11 +154,11 @@ public class MovementHandler : MonoBehaviour
         if (_input.move == Vector2.zero)
             targetSpeed = 0.0f;
         else if (_isCrouching)
-            targetSpeed = SpeedCrouch;
+            targetSpeed = _moveConfig.SpeedCrouch;
         else if (_input.sprint)
-            targetSpeed = SprintSpeed;
+            targetSpeed = _moveConfig.SprintSpeed;
         else
-            targetSpeed = MoveSpeed;
+            targetSpeed = _moveConfig.MoveSpeed;
 
 
         Vector3 inputDirection = new Vector3(_input.move.x, 0.0f, _input.move.y).normalized;
@@ -205,24 +168,24 @@ public class MovementHandler : MonoBehaviour
             inputDirection = transform.right * _input.move.x + transform.forward * _input.move.y;
         }
 
-        float materialFriction = Grounded ? _groundInfo.collider.material.dynamicFriction : 1;
+        float materialFriction = _grounded ? _groundInfo.collider.material.dynamicFriction : 1;
 
         // Обработка наклонных поверхностей
-        if (Grounded)
+        if (_grounded)
         {
             inputDirection = Vector3.ProjectOnPlane(inputDirection, _groundInfo.normal).normalized;
 
             // Угол поверхности
             float angle = Vector3.Angle(Vector3.up, _groundInfo.normal);
 
-            float slidingAngleByFriction = slidingAngleCurve.Evaluate(materialFriction) * SlidingAngle;
+            float slidingAngleByFriction = _moveConfig.SlidingAngleCurve.Evaluate(materialFriction) * _moveConfig.SlidingAngle;
             //float slidingAngleByFriction = materialFriction * SlidingAngle; // Угол скальжения в зависимости от физического материала
 
             // Направление скольжения
             if (angle > slidingAngleByFriction)
             {
                 Vector3 targetSlidingGradient = Vector3.ProjectOnPlane(-Vector3.up, _groundInfo.normal);
-                _slidingGradient = Vector3.MoveTowards(_slidingGradient, targetSlidingGradient, Time.deltaTime * SlidingChangeRate);
+                _slidingGradient = Vector3.MoveTowards(_slidingGradient, targetSlidingGradient, Time.deltaTime * _moveConfig.SlidingChangeRate);
             }
             else
             {
@@ -238,11 +201,11 @@ public class MovementHandler : MonoBehaviour
         }
 
         // Целевая скорость
-        float slidingSpeedByFriction = slidingSpeedCurve.Evaluate(materialFriction) * SlidingSpeed;
-        Vector3 targetVelocity = inputDirection * targetSpeed + _slidingGradient * slidingSpeedByFriction + new Vector3(0.0f, Grounded ? 0.0f : _verticalVelocity, 0.0f);
+        float slidingSpeedByFriction = _moveConfig.SlidingSpeedCurve.Evaluate(materialFriction) * _moveConfig.SlidingSpeed;
+        Vector3 targetVelocity = inputDirection * targetSpeed + _slidingGradient * slidingSpeedByFriction + new Vector3(0.0f, _grounded ? 0.0f : _verticalVelocity, 0.0f);
 
         // Интерполяция скорости от текущей к целевой
-        float speedChangeRateByFriction = speedChangeRateCurve.Evaluate(materialFriction) * SpeedChangeRate;
+        float speedChangeRateByFriction = _moveConfig.SpeedChangeRateCurve.Evaluate(materialFriction) * _moveConfig.SpeedChangeRate;
         //float speedChangeRateByFriction = materialFriction * SpeedChangeRate; // Скосрось интерполяции скорости в зависимости от физического материала повепхности
         Vector3 currentVelocity = Vector3.ProjectOnPlane(_controller.velocity, _groundInfo.normal); // Исправляет баг с подскоком на наклонных поверхностях
         currentVelocity = Vector3.Lerp(currentVelocity, targetVelocity, Time.deltaTime * speedChangeRateByFriction);
@@ -253,10 +216,10 @@ public class MovementHandler : MonoBehaviour
 
     private void UpdateGravity()
     {
-        if (Grounded)
+        if (_grounded)
             _verticalVelocity = 0.0f;
         else
-            _verticalVelocity += Gravity * Time.deltaTime;
+            _verticalVelocity += _moveConfig.Gravity * Time.deltaTime;
     }
 
     private static float ClampAngle(float lfAngle, float lfMin, float lfMax)
@@ -268,23 +231,25 @@ public class MovementHandler : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
+        if (_moveConfig == null) return;
+
         Color transparentGreen = new Color(0.0f, 1.0f, 0.0f, 0.35f);
         Color transparentRed = new Color(1.0f, 0.0f, 0.0f, 0.35f);
 
-        if (Grounded)
+        if (_grounded)
             Gizmos.color = transparentGreen;
         else
             Gizmos.color = transparentRed;
 
         if (_controller != null)
-            Gizmos.DrawSphere(transform.position + Vector3.up * _controller.radius + Vector3.down * GroundedOffset, GroundedRadius);
+            Gizmos.DrawSphere(transform.position + Vector3.up * _controller.radius + Vector3.down * _moveConfig.GroundedOffset, _moveConfig.GroundedRadius);
 
-        if (Ceilinged)
+        if (_ceilinged)
             Gizmos.color = transparentGreen;
         else
             Gizmos.color = transparentRed;
 
-        Gizmos.DrawSphere(new Vector3(transform.position.x, transform.position.y + _originalCrouchHeight - CeilingedOffset, transform.position.z), CeilingedRadius);
+        Gizmos.DrawSphere(new Vector3(transform.position.x, transform.position.y + _originalCrouchHeight - _moveConfig.CeilingedOffset, transform.position.z), _moveConfig.CeilingedRadius);
     }
 
     private void OnGUI()
