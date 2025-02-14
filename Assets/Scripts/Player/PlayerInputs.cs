@@ -41,16 +41,16 @@ public class PlayerInputs : MonoBehaviour
         CrouchInput(value.isPressed);
     }
 
-    public void OnJump(InputValue value)
+/*    public void OnJump(InputValue value)
     {
         Debug.Log("123");
         JumpInput(value.isPressed);
-    }
+    }*/
 
-    private void JumpInput(bool newJumpState)
+/*    private void JumpInput(bool newJumpState)
     {
         jump = newJumpState;
-    }
+    }*/
 
     public void MoveInput(Vector2 newMoveDirection)
     {

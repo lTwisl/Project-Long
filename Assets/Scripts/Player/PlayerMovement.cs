@@ -1,6 +1,9 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.InputSystem;
 using Zenject;
+
+
 
 
 [RequireComponent(typeof(CharacterController))]
@@ -8,11 +11,36 @@ using Zenject;
 public class PlayerMovement : MonoBehaviour
 {
     [Inject] private PlayerMovementConfig _moveConfig;
+    [Inject] private PlayerParameters _parameters;
 
     [Header("Cinemachine Camera")]
     [SerializeField] private GameObject _cinemachineCameraTarget;
     [SerializeField] private float _topClamp = 89.0f;
     [SerializeField] private float _bottomClamp = -89.0f;
+
+    public enum PlayerMoveMode
+    {
+        Idel,
+        BaseMove,
+        Sprint,
+        Crouching,
+        Falling,
+    }
+
+    public event Action<PlayerMoveMode> OnChangedMoveMode;
+    private PlayerMoveMode _moveMode;
+    public PlayerMoveMode MoveMode
+    {
+        get => _moveMode;
+        private set
+        {
+            if (_moveMode == value)
+                return;
+
+            _moveMode = value;
+            OnChangedMoveMode?.Invoke(_moveMode);
+        }
+    }
 
     private bool _grounded = true;
     private RaycastHit _groundInfo;
@@ -71,6 +99,10 @@ public class PlayerMovement : MonoBehaviour
         GroundedCheck();
         CeilingedCheck();
 
+        UpdateMoveMode();
+
+       // Debug.Log(MoveMode);
+
         UpdateGravity();
         CrouchHandler();
         Move();
@@ -85,6 +117,20 @@ public class PlayerMovement : MonoBehaviour
                 _cinemachineCameraTarget.transform.localPosition.z);
 
         CameraRotation();
+    }
+
+    private void UpdateMoveMode()
+    {
+        if (!_grounded)
+            MoveMode = PlayerMoveMode.Falling;
+        else if (_input.move == Vector2.zero)
+            MoveMode = PlayerMoveMode.Idel;
+        else if (_isCrouching)
+            MoveMode = PlayerMoveMode.Crouching;
+        else if (_input.sprint && !_parameters.IsOverLoad)
+            MoveMode = PlayerMoveMode.Sprint;
+        else
+            MoveMode = PlayerMoveMode.BaseMove;
     }
 
     private void CrouchHandler()
@@ -149,16 +195,12 @@ public class PlayerMovement : MonoBehaviour
 
     private void Move()
     {
-        // Определение целевой скорости
-        float targetSpeed;
-        if (_input.move == Vector2.zero)
-            targetSpeed = 0.0f;
-        else if (_isCrouching)
-            targetSpeed = _moveConfig.SpeedCrouch;
-        else if (_input.sprint)
-            targetSpeed = _moveConfig.SprintSpeed;
-        else
-            targetSpeed = _moveConfig.MoveSpeed;
+        float targetSpeed = MoveMode switch
+        {
+            PlayerMoveMode.Sprint => _moveConfig.SprintSpeed,
+            PlayerMoveMode.Crouching => _moveConfig.SpeedCrouch,
+            _ => _moveConfig.MoveSpeed,
+        };
 
 
         Vector3 inputDirection = new Vector3(_input.move.x, 0.0f, _input.move.y).normalized;

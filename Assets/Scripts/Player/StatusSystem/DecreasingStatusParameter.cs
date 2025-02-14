@@ -6,29 +6,51 @@ using UnityEngine;
 public class DecreasingStatusParameter : IStatusParameter
 {
     public float Current { get; protected set; }
-    public float Max { get; protected set; }
-    public float DecreaseRate { get; protected set; }
-    public event Action<float> OnValueChanged;
+    [field: SerializeField] public float Max { get; set; }
+    [field: SerializeField] public float ChangeRate { get; set; }
+    public bool IsZero { get; protected set; }
 
-    public DecreasingStatusParameter(float max, float decreaseRate)
+    public event Action<float> OnValueChanged;
+    public event Action OnReachZero;
+    public event Action OnRecoverFromZero;
+
+
+    public DecreasingStatusParameter() { }
+    public DecreasingStatusParameter(float max, float changeRate)
     {
         Max = max;
         Current = max;
-        DecreaseRate = decreaseRate;
+        ChangeRate = changeRate;
     }
 
     public virtual void UpdateParameter(float deltaTime)
     {
-        float newValue = Mathf.Clamp(Current - DecreaseRate * deltaTime, 0f, Max);
+        float prevValue = Current;
+
+        float newValue = Mathf.Clamp(Current + ChangeRate * deltaTime, 0f, Max);
         if (Mathf.Approximately(newValue, Current)) return;
 
         Current = newValue;
         OnValueChanged?.Invoke(Current);
+
+        if (prevValue > 0 && Current <= 0)
+        {
+            IsZero = true;
+            OnReachZero?.Invoke();
+        }
+        else if (prevValue <= 0 && Current > 0)
+        {
+            IsZero = false;
+            OnRecoverFromZero?.Invoke();
+        }
     }
 
-    public void Restore()
+    public void Reset()
     {
         Current = Max;
+        IsZero = false;
+
         OnValueChanged?.Invoke(Current);
+        OnRecoverFromZero?.Invoke();
     }
 }
