@@ -6,8 +6,8 @@ using UnityEngine;
 public class DecreasingStatusParameter : IStatusParameter
 {
     public float Current { get; protected set; }
-    [field: SerializeField] public float Max { get; set; }
-    [field: SerializeField] public float ChangeRate { get; set; }
+    [field: SerializeField] public float Max { get; protected set; }
+    [field: SerializeField] public float ChangeRate { get; protected set; }
     public bool IsZero { get; protected set; }
 
     public event Action<float> OnValueChanged;
@@ -54,3 +54,9 @@ public class DecreasingStatusParameter : IStatusParameter
         OnRecoverFromZero?.Invoke();
     }
 }
+
+
+
+
+
+

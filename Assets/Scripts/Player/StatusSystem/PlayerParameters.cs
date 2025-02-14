@@ -4,10 +4,10 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "_playerParameters", menuName = "Scriptable Objects/_playerParameters")]
 public class PlayerParameters : ScriptableObject
 {
-    [field: SerializeField] public DecreasingStatusParameter Health { get; private set; } = new DecreasingStatusParameter(100, 0.0f);
+    [field: SerializeField] public HealthStatusParameter Health { get; private set; } = new HealthStatusParameter(100, 0.0f);
 
     [field: Space(10)]
-    [field: SerializeField] public DecreasingStatusParameter Stamina { get; private set; } = new DecreasingStatusParameter(100, 0.0f);
+    [field: SerializeField] public StaminaStatusParameter Stamina { get; private set; } = new StaminaStatusParameter(100, 1.0f, 0.5f, -3.0f);
 
 
     [field: Header("LoadCapacity")]
@@ -20,7 +20,7 @@ public class PlayerParameters : ScriptableObject
     [field: Header("StatusParameters")]
     [field: SerializeField] public DecreasingStatusParameter Hunger { get; private set; } = new DecreasingStatusParameter(100, -0.1f);
     [field: SerializeField] public DecreasingStatusParameter Thirst { get; private set; } = new DecreasingStatusParameter(100, -0.1f);
-    [field: SerializeField] public DecreasingStatusParameter Fatigue { get; private set; } = new DecreasingStatusParameter(100, -0.1f);
+    [field: SerializeField] public FatigueStatusParameter Fatigue { get; private set; } = new FatigueStatusParameter(100, -0.1f, -0.2f, -0.5f);
     [field: SerializeField] public DecreasingStatusParameter Cold { get; private set; } = new DecreasingStatusParameter(100, -0.1f);
     [field: SerializeField] public DecreasingStatusParameter Infection { get; private set; } = new DecreasingStatusParameter(100, -0.1f);
 
@@ -40,7 +40,6 @@ public class PlayerParameters : ScriptableObject
             Infection
         });
 
-        //Health = MaxHealth;
         LoadCapacity = MaxLoadCapacity;
 
         Health.Reset();

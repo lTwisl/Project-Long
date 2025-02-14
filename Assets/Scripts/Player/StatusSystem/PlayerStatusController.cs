@@ -3,6 +3,7 @@ using UnityEngine;
 using Zenject;
 
 
+[RequireComponent(typeof(PlayerMovement))]
 public class PlayerStatusController : MonoBehaviour
 {
     [SerializeField] private float _damageHunger = 0.1f;
@@ -10,12 +11,21 @@ public class PlayerStatusController : MonoBehaviour
     [SerializeField] private float _damageCold = 0.4f;
 
     [Inject] private PlayerParameters _playerParameters;
-    [Inject] private PlayerMovement _playerMovement;
+    private PlayerMovement _playerMovement;
 
     private void Awake()
     {
+        _playerMovement = GetComponent<PlayerMovement>();
+
         _playerParameters.Hunger.OnReachZero += HungerReachZero;
         _playerParameters.Hunger.OnRecoverFromZero += HungerRecoverFromZero;
+
+        _playerParameters.Thirst.OnReachZero += ThirstReachZero;
+        _playerParameters.Thirst.OnRecoverFromZero += ThirstRecoverFromZero;
+
+        _playerParameters.Cold.OnReachZero += ColdReachZero;
+        _playerParameters.Cold.OnRecoverFromZero += ColdRecoverFromZero;
+
 
         _playerParameters.Fatigue.OnReachZero += FatigueReachZero;
         _playerParameters.Fatigue.OnRecoverFromZero += FatigueRecoverFromZero;
@@ -36,32 +46,35 @@ public class PlayerStatusController : MonoBehaviour
         _playerParameters.Hunger.OnReachZero -= HungerReachZero;
         _playerParameters.Hunger.OnRecoverFromZero -= HungerRecoverFromZero;
 
+        _playerParameters.Thirst.OnReachZero -= ThirstReachZero;
+        _playerParameters.Thirst.OnRecoverFromZero -= ThirstRecoverFromZero;
+
+        _playerParameters.Cold.OnReachZero -= ColdReachZero;
+        _playerParameters.Cold.OnRecoverFromZero -= ColdRecoverFromZero;
+
+
         _playerParameters.Fatigue.OnReachZero -= FatigueReachZero;
         _playerParameters.Fatigue.OnRecoverFromZero -= FatigueRecoverFromZero;
 
         _playerMovement.OnChangedMoveMode -= UpdateStaminaChangeRate;
     }
 
-    private void HungerRecoverFromZero() => _playerParameters.Health.ChangeRate = 0.0f;
-    private void HungerReachZero() => _playerParameters.Health.ChangeRate = -_damageHunger;
+    private void HungerRecoverFromZero() => _playerParameters.Health.SetChangeRate(0.0f);
+    private void HungerReachZero() => _playerParameters.Health.SetChangeRate(-_damageHunger);
+
+    private void ThirstRecoverFromZero() => _playerParameters.Health.SetChangeRate(0.0f);
+    private void ThirstReachZero() => _playerParameters.Health.SetChangeRate(-_damageThirst);
+
+    private void ColdRecoverFromZero() => _playerParameters.Health.SetChangeRate(0.0f);
+    private void ColdReachZero() => _playerParameters.Health.SetChangeRate(-_damageCold);
 
     private void FatigueRecoverFromZero() => _playerParameters.LoadCapacity = _playerParameters.MaxLoadCapacity;
     private void FatigueReachZero() => _playerParameters.LoadCapacity = _playerParameters.MaxLoadCapacity / 2f;
 
     private void UpdateStaminaChangeRate(PlayerMovement.PlayerMoveMode mode)
     {
-        switch (mode)
-        {
-            case PlayerMovement.PlayerMoveMode.Sprint:
-                _playerParameters.Stamina.ChangeRate = -3.0f;
-                _playerParameters.Fatigue.ChangeRate = -0.5f;
-                break;
-
-            default:
-                _playerParameters.Stamina.ChangeRate = 0.0f;
-                _playerParameters.Fatigue.ChangeRate = -0.1f;
-                break;
-        }
+        _playerParameters.Stamina.SetChangeRateByMoveMode(mode);
+        _playerParameters.Fatigue.SetChangeRateByMoveMode(mode);
     }
 
     [ContextMenu("RestoreFatigue")]
