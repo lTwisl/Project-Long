@@ -4,8 +4,6 @@ using UnityEngine.InputSystem;
 using Zenject;
 
 
-
-
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(PlayerInput))]
 public class PlayerMovement : MonoBehaviour
@@ -44,7 +42,7 @@ public class PlayerMovement : MonoBehaviour
 
     private bool _grounded = true;
     private RaycastHit _groundInfo;
-    
+
     private bool _ceilinged = false;
 
     // cinemachine
@@ -101,8 +99,6 @@ public class PlayerMovement : MonoBehaviour
 
         UpdateMoveMode();
 
-       // Debug.Log(MoveMode);
-
         UpdateGravity();
         CrouchHandler();
         Move();
@@ -112,8 +108,8 @@ public class PlayerMovement : MonoBehaviour
     {
         if (_isTransitioning)
             _cinemachineCameraTarget.transform.localPosition = new Vector3(
-                _cinemachineCameraTarget.transform.localPosition.x, 
-                _orignalCameraHeight - (_originalCrouchHeight - _controller.height), 
+                _cinemachineCameraTarget.transform.localPosition.x,
+                _orignalCameraHeight - (_originalCrouchHeight - _controller.height),
                 _cinemachineCameraTarget.transform.localPosition.z);
 
         CameraRotation();
@@ -127,7 +123,7 @@ public class PlayerMovement : MonoBehaviour
             MoveMode = PlayerMoveMode.Idel;
         else if (_isCrouching)
             MoveMode = PlayerMoveMode.Crouching;
-        else if (_input.sprint && !_parameters.IsOverLoad)
+        else if (_input.sprint && !_parameters.IsOverLoad && !_parameters.Stamina.IsZero)
             MoveMode = PlayerMoveMode.Sprint;
         else
             MoveMode = PlayerMoveMode.BaseMove;

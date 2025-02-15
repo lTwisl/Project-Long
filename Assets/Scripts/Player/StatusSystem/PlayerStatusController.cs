@@ -30,7 +30,7 @@ public class PlayerStatusController : MonoBehaviour
         _playerParameters.Fatigue.OnReachZero += FatigueReachZero;
         _playerParameters.Fatigue.OnRecoverFromZero += FatigueRecoverFromZero;
 
-        _playerMovement.OnChangedMoveMode += UpdateStaminaChangeRate;
+        _playerMovement.OnChangedMoveMode += ChangedMoveMode;
     }
 
     private void Update()
@@ -56,7 +56,7 @@ public class PlayerStatusController : MonoBehaviour
         _playerParameters.Fatigue.OnReachZero -= FatigueReachZero;
         _playerParameters.Fatigue.OnRecoverFromZero -= FatigueRecoverFromZero;
 
-        _playerMovement.OnChangedMoveMode -= UpdateStaminaChangeRate;
+        _playerMovement.OnChangedMoveMode -= ChangedMoveMode;
     }
 
     private void HungerRecoverFromZero() => _playerParameters.Health.SetChangeRate(0.0f);
@@ -68,12 +68,14 @@ public class PlayerStatusController : MonoBehaviour
     private void ColdRecoverFromZero() => _playerParameters.Health.SetChangeRate(0.0f);
     private void ColdReachZero() => _playerParameters.Health.SetChangeRate(-_damageCold);
 
-    private void FatigueRecoverFromZero() => _playerParameters.LoadCapacity = _playerParameters.MaxLoadCapacity;
-    private void FatigueReachZero() => _playerParameters.LoadCapacity = _playerParameters.MaxLoadCapacity / 2f;
+    private void FatigueRecoverFromZero() => _playerParameters.MaxLoadCapacity *= 2f;
+    private void FatigueReachZero() => _playerParameters.MaxLoadCapacity /= 2f;
 
-    private void UpdateStaminaChangeRate(PlayerMovement.PlayerMoveMode mode)
+    private void ChangedMoveMode(PlayerMovement.PlayerMoveMode mode)
     {
         _playerParameters.Stamina.SetChangeRateByMoveMode(mode);
+        _playerParameters.Hunger.SetChangeRateByMoveMode(mode);
+        _playerParameters.Thirst.SetChangeRateByMoveMode(mode);
         _playerParameters.Fatigue.SetChangeRateByMoveMode(mode);
     }
 

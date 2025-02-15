@@ -1,10 +1,6 @@
-﻿public sealed class HealthStatusParameter : DecreasingStatusParameter
+﻿[System.Serializable]
+public sealed class HealthStatusParameter : StatusParameter
 {
-    public HealthStatusParameter(float max, float changeRate) : base(max, changeRate)
-    {
-
-    }
-
     public void SetChangeRate(float newChangeRate)
     {
         ChangeRate = newChangeRate;

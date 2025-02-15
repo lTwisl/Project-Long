@@ -1,21 +1,23 @@
-﻿public sealed class StaminaStatusParameter : DecreasingStatusParameter
+﻿using UnityEngine;
+
+[System.Serializable]
+public class StaminaStatusParameter : MovementStatusParameter
 {
-    public float BaseMoveChangeRate { get; private set; }
-    public float SprintChangeRate { get; private set; }
+    [field: SerializeField] public float Reload {  get; private set; }
+    private float _timer = 0f;
 
-    public StaminaStatusParameter(float max, float baseChangeRate, float baseMoveChangeRate, float sprintChangeRate) : base(max, baseChangeRate)
+    public override void UpdateParameter(float deltaTime)
     {
-        BaseMoveChangeRate = baseMoveChangeRate;
-        SprintChangeRate = sprintChangeRate;
-    }
-
-    public void SetChangeRateByMoveMode(PlayerMovement.PlayerMoveMode mode)
-    {
-        ChangeRate = mode switch
+        if (_timer >= 0)
         {
-            PlayerMovement.PlayerMoveMode.BaseMove => BaseMoveChangeRate,
-            PlayerMovement.PlayerMoveMode.Sprint => SprintChangeRate,
-            _ => ChangeRate,
-        };
+            _timer -= deltaTime;
+            return;
+        }
+
+        base.UpdateParameter(deltaTime);
+
+        if (Current <= 0)
+            _timer = Reload;
     }
 }
+

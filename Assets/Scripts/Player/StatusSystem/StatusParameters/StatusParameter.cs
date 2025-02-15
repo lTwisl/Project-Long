@@ -2,8 +2,8 @@
 using UnityEngine;
 
 
-[Serializable]
-public class DecreasingStatusParameter : IStatusParameter
+[System.Serializable]
+public class StatusParameter
 {
     public float Current { get; protected set; }
     [field: SerializeField] public float Max { get; protected set; }
@@ -13,15 +13,6 @@ public class DecreasingStatusParameter : IStatusParameter
     public event Action<float> OnValueChanged;
     public event Action OnReachZero;
     public event Action OnRecoverFromZero;
-
-
-    public DecreasingStatusParameter() { }
-    public DecreasingStatusParameter(float max, float changeRate)
-    {
-        Max = max;
-        Current = max;
-        ChangeRate = changeRate;
-    }
 
     public virtual void UpdateParameter(float deltaTime)
     {
