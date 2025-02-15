@@ -2,52 +2,96 @@
 using UnityEngine;
 
 
-[System.Serializable]
-public class StatusParameter
+[Serializable]
+public class StatusParameter : BaseStatusParameter
 {
-    public float Current { get; protected set; }
-    [field: SerializeField] public float Max { get; protected set; }
-    [field: SerializeField] public float ChangeRate { get; protected set; }
-    public bool IsZero { get; protected set; }
+    public bool IsZero { get; private set; }
+    public TimeSpan TimeIsZero { get; private set; }
+    public TimeSpan TimeGeaterZero { get; private set; }
 
-    public event Action<float> OnValueChanged;
     public event Action OnReachZero;
     public event Action OnRecoverFromZero;
 
-    public virtual void UpdateParameter(float deltaTime)
+    public override void UpdateParameter(float deltaSeconds)
     {
         float prevValue = Current;
 
-        float newValue = Mathf.Clamp(Current + ChangeRate * deltaTime, 0f, Max);
-        if (Mathf.Approximately(newValue, Current)) return;
+        base.UpdateParameter(deltaSeconds);
 
-        Current = newValue;
-        OnValueChanged?.Invoke(Current);
-
-        if (prevValue > 0 && Current <= 0)
+        if (Current <= 0)
         {
-            IsZero = true;
-            OnReachZero?.Invoke();
+            TimeIsZero += TimeSpan.FromSeconds(deltaSeconds);
+
+            if (prevValue > 0)
+            {
+                TimeGeaterZero = TimeSpan.Zero;
+                IsZero = true;
+                OnReachZero?.Invoke();
+            }
         }
-        else if (prevValue <= 0 && Current > 0)
+        else
         {
-            IsZero = false;
-            OnRecoverFromZero?.Invoke();
+            TimeGeaterZero += TimeSpan.FromSeconds(deltaSeconds);
+
+            if (prevValue <= 0)
+            {
+                TimeIsZero = TimeSpan.Zero;
+                IsZero = false;
+                OnRecoverFromZero?.Invoke();
+            }
         }
     }
 
-    public void Reset()
+    public override void Reset()
     {
-        Current = Max;
-        IsZero = false;
-
-        OnValueChanged?.Invoke(Current);
-        OnRecoverFromZero?.Invoke();
+        base.Reset();
+        TimeIsZero = TimeSpan.Zero;
+        TimeGeaterZero = TimeSpan.Zero;
     }
 }
 
+[Serializable]
+public class BaseStatusParameter : IStatusParameter
+{
+    [SerializeField] private float _current;
+    public float Current 
+    {
+        get => _current;
+        set
+        {
+            if (Mathf.Approximately(_current, value)) 
+                return;
+            _current = value;
+            OnValueChanged?.Invoke(_current);
+        }
+    }
+    [field: SerializeField] public float Max { get; set; }
+    [field: SerializeField] public float OffsetMax { get; set; }
+    [field: SerializeField] public float ChangeRate { get; set; }
 
+    public event Action<float> OnValueChanged;
 
+    public virtual void Reset()
+    {
+        Current = Max + OffsetMax;
+    }
 
+    public virtual void UpdateParameter(float deltaSeconds)
+    {
+        Current = Mathf.Clamp(Current + ChangeRate * deltaSeconds, 0f, Max + OffsetMax);
+    }
+}
 
+public interface IStatusParameter
+{
+    public float Current { get; set; }
+    public float Max { get; set; }
+    public float OffsetMax { get; set; }
+    public float ChangeRate { get; set; }
 
+    public event Action<float> OnValueChanged;
+
+    public void UpdateParameter(float deltaSeconds);
+
+    public void Reset();
+}

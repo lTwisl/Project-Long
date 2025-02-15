@@ -19,34 +19,35 @@ public class PlayerParameters : ScriptableObject
     [field: Header("StatusParameters")]
     [field: SerializeField] public MovementStatusParameter Hunger { get; private set; }
     [field: SerializeField] public MovementStatusParameter Thirst { get; private set; }
-    [field: SerializeField] public MovementStatusParameter Fatigue { get; private set; }
-    [field: SerializeField] public StatusParameter Cold { get; private set; }
-    [field: SerializeField] public StatusParameter Infection { get; private set; }
+    [field: SerializeField] public MovementStatusParameter Energy { get; private set; }
+    [field: SerializeField] public StatusParameter Heat { get; private set; }
+    [field: SerializeField] public StatusParameter Toxisity { get; private set; }
 
 
-    private List<StatusParameter> _allParameters = new();
-    public IReadOnlyList<StatusParameter> AllParameters => _allParameters;
+    private List<IStatusParameter> _allParameters = new();
+    public IReadOnlyList<IStatusParameter> AllParameters => _allParameters;
 
     public void Init()
     {
         _allParameters.Clear();
 
-        _allParameters.AddRange(new StatusParameter[] {
+        _allParameters.AddRange(new IStatusParameter[] {
             Health,
             Stamina,
             Hunger,
             Thirst,
-            Fatigue,
-            Cold,
-            Infection
+            Energy,
+            Heat,
+            Toxisity
         });
+    }
 
-        Health.Reset();
-        Stamina.Reset();
-        Hunger.Reset();
-        Thirst.Reset();
-        Fatigue.Reset();
-        Cold.Reset();
-        Infection.Reset();
+    [ContextMenu("AllReset")]
+    public void AllReset()
+    {
+        foreach (var parameter in AllParameters)
+        {
+            parameter.Reset();
+        }
     }
 }

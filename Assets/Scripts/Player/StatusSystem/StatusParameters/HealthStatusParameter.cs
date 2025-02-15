@@ -1,8 +1,8 @@
 ﻿[System.Serializable]
-public sealed class HealthStatusParameter : StatusParameter
+public sealed class HealthStatusParameter : BaseStatusParameter
 {
-    public void SetChangeRate(float newChangeRate)
+    public void AddChangeRate(float newChangeRate)
     {
-        ChangeRate = newChangeRate;
+        ChangeRate += newChangeRate;
     }
 }

@@ -16,5 +16,11 @@ public class MovementStatusParameter : StatusParameter
             _ => IdelChangeRate,
         };
     }
+
+    public override void Reset()
+    {
+        base.Reset();
+        ChangeRate = IdelChangeRate;
+    }
 }
 
