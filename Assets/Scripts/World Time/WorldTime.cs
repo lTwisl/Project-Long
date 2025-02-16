@@ -40,6 +40,9 @@ public class WorldTime : MonoBehaviour
     public event Action<TimeSpan> OnHourChanged;
     public event Action<TimeSpan> OnDayChanged;
 
+    public event Action<TimeSpan> OnStartSpeedUpTime;
+    public event Action<TimeSpan> OnEndSpeedUpTime;
+
     private Coroutine _waitCoroutine;
 
     private void Awake()
@@ -74,15 +77,16 @@ public class WorldTime : MonoBehaviour
         _waitCoroutine = StartCoroutine(WaitTheTimeCor(waitTime));
     }
 
-    private IEnumerator WaitTheTimeCor(TimeSpan time, Action<TimeSpan> OnWaitingEnd = null)
+    private IEnumerator WaitTheTimeCor(TimeSpan time)
     {
         TimeSpan timeAfterWait = _currentTime + time;
+        OnStartSpeedUpTime?.Invoke(CurrentTime);
         _useSpeedUp = true;
 
         yield return new WaitWhile(() => _currentTime < timeAfterWait);
 
         _useSpeedUp = false;
-        OnWaitingEnd?.Invoke(CurrentTime);
+        OnEndSpeedUpTime?.Invoke(CurrentTime);
     }
 
     /// <summary>
@@ -95,23 +99,28 @@ public class WorldTime : MonoBehaviour
         _waitCoroutine = StartCoroutine(WaitTargetTimeCor(waitTime));
     }
 
-    private IEnumerator WaitTargetTimeCor(TimeSpan time, Action<TimeSpan> OnWaitingEnd = null)
+    private IEnumerator WaitTargetTimeCor(TimeSpan time)
     {
         if (time <= CurrentTime)
             yield break;
 
+        OnStartSpeedUpTime?.Invoke(CurrentTime);
         _useSpeedUp = true;
 
         yield return new WaitWhile(() => _currentTime < time);
 
         _useSpeedUp = false;
-        OnWaitingEnd?.Invoke(CurrentTime);
+        OnEndSpeedUpTime?.Invoke(CurrentTime);
     }
 
     public void StopWaitTime()
     {
         if (_waitCoroutine is not null)
+        {
             StopCoroutine(_waitCoroutine);
+            OnEndSpeedUpTime?.Invoke(CurrentTime);
+            _useSpeedUp = false;
+        }    
     }
 
     /// <summary>
@@ -158,5 +167,8 @@ public class WorldTime : MonoBehaviour
         OnHourChanged = null;
         OnDayChanged = null;
         OnTimeChanged = null;
+
+        OnStartSpeedUpTime = null;
+        OnEndSpeedUpTime = null;
     }
 }
