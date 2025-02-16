@@ -119,11 +119,11 @@ public class PlayerMovement : MonoBehaviour
     {
         if (!_grounded)
             MoveMode = PlayerMoveMode.Falling;
-        else if (_input.move == Vector2.zero)
+        else if (_input.move == Vector2.zero || _parameters.GetCurrentWeightRange() == WeightRange.UltimateImmovable)
             MoveMode = PlayerMoveMode.Idel;
         else if (_isCrouching)
             MoveMode = PlayerMoveMode.Crouching;
-        else if (_input.sprint && !_parameters.IsOverLoad && !_parameters.Stamina.IsZero)
+        else if (_input.sprint && !_parameters.Stamina.IsZero && _parameters.GetCurrentWeightRange() < WeightRange.Ultimate)
             MoveMode = PlayerMoveMode.Sprint;
         else
             MoveMode = PlayerMoveMode.BaseMove;
@@ -181,7 +181,7 @@ public class PlayerMovement : MonoBehaviour
             _cinemachineTargetPitch += _input.look.y * _moveConfig.RotationSpeed * deltaTimeMultiplier;
             _rotationVelocity = _input.look.x * _moveConfig.RotationSpeed * deltaTimeMultiplier;
 
-            _cinemachineTargetPitch = ClampAngle(_cinemachineTargetPitch, _bottomClamp, _topClamp);
+            _cinemachineTargetPitch = Utility.ClampAngle(_cinemachineTargetPitch, _bottomClamp, _topClamp);
 
             _cinemachineCameraTarget.transform.localRotation = Quaternion.Euler(_cinemachineTargetPitch, 0.0f, 0.0f);
 
@@ -191,13 +191,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Move()
     {
-        float targetSpeed = MoveMode switch
-        {
-            PlayerMoveMode.Sprint => _moveConfig.SprintSpeed,
-            PlayerMoveMode.Crouching => _moveConfig.SpeedCrouch,
-            _ => _moveConfig.MoveSpeed,
-        };
-
+        float targetSpeed = CalculationTargetSpeed();
 
         Vector3 inputDirection = new Vector3(_input.move.x, 0.0f, _input.move.y).normalized;
 
@@ -252,6 +246,35 @@ public class PlayerMovement : MonoBehaviour
         _controller.Move(currentVelocity * Time.deltaTime);
     }
 
+    private float CalculationTargetSpeed()
+    {
+        float targetSpeed = MoveMode switch
+        {
+            PlayerMoveMode.Idel => 0.0f,
+            PlayerMoveMode.Sprint => _moveConfig.SprintSpeed,
+            PlayerMoveMode.Crouching => _moveConfig.SpeedCrouch,
+            _ => _moveConfig.MoveSpeed,
+        };
+
+        // Ограничение максимальной скорости спринта в зависимости от текущей загрузки инвенторя
+        if (MoveMode == PlayerMoveMode.Sprint && _parameters.GetCurrentWeightRange() == WeightRange.Critical)
+        {
+            targetSpeed = Utility.MapRange(_parameters.CurrentLoad, _parameters.RangeLoadCapacity[0], _parameters.RangeLoadCapacity[1],
+                _moveConfig.SprintSpeed, _moveConfig.MoveSpeed);
+            return targetSpeed;
+        }
+
+        // Ограничение максимальной скорости шага в зависимости от текущей загрузки инвенторя
+        if (MoveMode == PlayerMoveMode.BaseMove && _parameters.GetCurrentWeightRange() == WeightRange.Ultimate)
+        {
+            targetSpeed = Utility.MapRange(_parameters.CurrentLoad, _parameters.RangeLoadCapacity[1], _parameters.RangeLoadCapacity[2],
+                _moveConfig.MoveSpeed, 0.0f);
+            return targetSpeed;
+        }
+
+        return targetSpeed;
+    }
+
     private void UpdateGravity()
     {
         if (_grounded)
@@ -260,12 +283,6 @@ public class PlayerMovement : MonoBehaviour
             _verticalVelocity += _moveConfig.Gravity * Time.deltaTime;
     }
 
-    private static float ClampAngle(float lfAngle, float lfMin, float lfMax)
-    {
-        if (lfAngle < -360f) lfAngle += 360f;
-        if (lfAngle > 360f) lfAngle -= 360f;
-        return Mathf.Clamp(lfAngle, lfMin, lfMax);
-    }
 
     private void OnDrawGizmosSelected()
     {
@@ -293,6 +310,6 @@ public class PlayerMovement : MonoBehaviour
     private void OnGUI()
     {
         if (_controller != null)
-            GUILayout.Label($"Speed: {Mathf.Round(_controller.velocity.magnitude * 100) / 100.0}");
+            GUILayout.Label($"Speed: {_controller.velocity.magnitude:f2}");
     }
 }

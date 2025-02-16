@@ -45,6 +45,7 @@ public class StatusParameter : BaseStatusParameter
     public override void Reset()
     {
         base.Reset();
+        IsZero = false;
         TimeIsZero = TimeSpan.Zero;
         TimeGeaterZero = TimeSpan.Zero;
     }
@@ -53,8 +54,9 @@ public class StatusParameter : BaseStatusParameter
 [Serializable]
 public class BaseStatusParameter : IStatusParameter
 {
+    [Tooltip("Текущее значение")]
     [SerializeField] private float _current;
-    public float Current 
+    public float Current
     {
         get => _current;
         set
@@ -65,8 +67,13 @@ public class BaseStatusParameter : IStatusParameter
             OnValueChanged?.Invoke(_current);
         }
     }
+    [field: Tooltip("Максимальное значение")]
     [field: SerializeField] public float Max { get; set; }
+
+    [field: Tooltip("Смещение максимального значение")]
     [field: SerializeField] public float OffsetMax { get; set; }
+
+    [field: Tooltip("Скорость изменения [ед/м]")]
     [field: SerializeField] public float ChangeRate { get; set; }
 
     public event Action<float> OnValueChanged;
@@ -74,6 +81,7 @@ public class BaseStatusParameter : IStatusParameter
     public virtual void Reset()
     {
         Current = Max + OffsetMax;
+        ChangeRate = 0.0f;
     }
 
     public virtual void UpdateParameter(float deltaSeconds)

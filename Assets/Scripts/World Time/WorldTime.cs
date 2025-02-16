@@ -33,6 +33,7 @@ public class WorldTime : MonoBehaviour
     [SerializeField, Tooltip("Использовать ускорение времени?")] private bool _useSpeedUp;
     [field: SerializeField, Tooltip("Классическая скорость течения времени к реальной"), Range(1, 24)] public float TimeScaleClassic { get; private set; } = 12f;
     [field: SerializeField, Tooltip("Ускоренная скорость течения времени к реальной"), Range(12, 12000)] public float TimeScaleSpeedUp { get; private set; } = 6000f;
+    public float TimeScale => _useSpeedUp ? TimeScaleSpeedUp : TimeScaleClassic;
 
     // События для уведомления о смене времени
     public event Action<TimeSpan> OnTimeChanged;
@@ -62,8 +63,7 @@ public class WorldTime : MonoBehaviour
     {
         if (!TimePaused)
         {
-            float timeScale = _useSpeedUp ? TimeScaleSpeedUp : TimeScaleClassic;
-            CurrentTime += TimeSpan.FromSeconds(Time.deltaTime * timeScale);
+            CurrentTime += TimeSpan.FromSeconds(Time.deltaTime * TimeScale);
         }
     }
 

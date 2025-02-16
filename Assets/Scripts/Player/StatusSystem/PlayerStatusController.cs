@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using UnityEngine;
 using Zenject;
 
@@ -23,16 +24,17 @@ public class PlayerStatusController : MonoBehaviour
         Subscribe(_playerParameters.Hunger, HungerReachZero, HungerRecoverFromZero);
         Subscribe(_playerParameters.Thirst, ThirstReachZero, ThirstRecoverFromZero);
         Subscribe(_playerParameters.Heat, ColdReachZero, ColdRecoverFromZero);
-        Subscribe(_playerParameters.Energy, FatigueReachZero, FatigueRecoverFromZero);
+        Subscribe(_playerParameters.Energy, EnergyReachZero, EnergyRecoverFromZero);
+        _playerParameters.Energy.OnValueChanged += EnergyChanged;
 
         _playerMovement.OnChangedMoveMode += ChangedMoveMode;
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         foreach (var parameter in _playerParameters.AllParameters)
         {
-            parameter.UpdateParameter(Time.deltaTime);
+            parameter.UpdateParameter(Time.fixedDeltaTime *  WorldTime.Instance.TimeScale / 60f);
         }
     }
 
@@ -41,7 +43,8 @@ public class PlayerStatusController : MonoBehaviour
         Unsubscribe(_playerParameters.Hunger, HungerReachZero, HungerRecoverFromZero);
         Unsubscribe(_playerParameters.Thirst, ThirstReachZero, ThirstRecoverFromZero);
         Unsubscribe(_playerParameters.Heat, ColdReachZero, ColdRecoverFromZero);
-        Unsubscribe(_playerParameters.Energy, FatigueReachZero, FatigueRecoverFromZero);
+        Unsubscribe(_playerParameters.Energy, EnergyReachZero, EnergyRecoverFromZero);
+        _playerParameters.Energy.OnValueChanged -= EnergyChanged;
 
         _playerMovement.OnChangedMoveMode -= ChangedMoveMode;
     }
@@ -55,15 +58,16 @@ public class PlayerStatusController : MonoBehaviour
     private void ColdRecoverFromZero() => _playerParameters.Health.AddChangeRate(_damageCold);
     private void ColdReachZero() => _playerParameters.Health.AddChangeRate(-_damageCold);
 
-    private void FatigueRecoverFromZero()
+    private void EnergyRecoverFromZero() => _playerParameters.Health.AddChangeRate(_damageEnergy);
+    private void EnergyReachZero() => _playerParameters.Health.AddChangeRate(-_damageEnergy);
+    private void EnergyChanged(float value)
     {
-        _playerParameters.MaxLoadCapacity *= 2f;
-        _playerParameters.Health.AddChangeRate(_damageEnergy);
-    }
-    private void FatigueReachZero()
-    {
-        _playerParameters.MaxLoadCapacity /= 2f;
-        _playerParameters.Health.AddChangeRate(-_damageEnergy);
+        if (value > 0.5f * _playerParameters.Energy.Max)
+            return;
+
+        float value01 = Utility.MapRange(value, 0, 0.5f * _playerParameters.Energy.Max, 1, 0, true);
+
+        _playerParameters.OffsetMaxLoadCapacity = Mathf.Lerp(0, 15, value01);
     }
 
     private void ChangedMoveMode(PlayerMovement.PlayerMoveMode mode)
@@ -86,5 +90,17 @@ public class PlayerStatusController : MonoBehaviour
         parameter.OnRecoverFromZero -= RecoverFromZero;
     }
 
+    private void OnGUI()
+    {
+        if (_playerParameters is null)
+            return;
 
+        GUILayout.Label($"\n\nЗдоровье: {_playerParameters.Health.Current:f1}");
+        GUILayout.Label($"Выносливость: {_playerParameters.Stamina.Current:f1}");
+        GUILayout.Label($"Сытость: {_playerParameters.Hunger.Current:f1}");
+        GUILayout.Label($"Жажда: {_playerParameters.Thirst.Current:f1}");
+        GUILayout.Label($"Бодрость: {_playerParameters.Energy.Current:f1}");
+        GUILayout.Label($"Тепло: {_playerParameters.Heat.Current:f1}");
+        GUILayout.Label($"Заражённость: {_playerParameters.Toxisity.Current:f1}");
+    }
 }

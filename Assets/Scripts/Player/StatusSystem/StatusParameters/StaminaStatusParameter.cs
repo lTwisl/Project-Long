@@ -3,6 +3,7 @@
 [System.Serializable]
 public class StaminaStatusParameter : MovementStatusParameter
 {
+    [field: Tooltip("Штраф за достижения нуля [м]")]
     [field: SerializeField] public float Reload {  get; private set; }
     private float _timer = 0f;
 
