@@ -3,8 +3,6 @@ using UnityEngine;
 
 public class LightChanger : MonoBehaviour
 {
-    [Header("Настройки солнца")]
-    [SerializeField, Tooltip("Скорость вращения солнца (градусов в минуту)")]
     private float rotationSpeed = 0.25f; // 15 градусов в час = 0.25 градусов в минуту
 
     private Transform sunTransform; // Трансформ объекта солнца
@@ -17,7 +15,17 @@ public class LightChanger : MonoBehaviour
 
     private void Start()
     {
-        WorldTime.Instance.WaitTime(TimeSpan.FromDays(5));
+        // Подписываемся на событие завершения ожидания
+        WorldTime.Instance.OnWaitingEnd += TakeWaitTime;
+
+        // Пример использования: ждем 1 час и 21 минуту
+        //WorldTime.Instance.WaitTargetTime(new TimeSpan(0, 1, 21, 0));
+        //WorldTime.Instance.WaitTheTime(new TimeSpan(0, 1, 0, 0));
+    }
+
+    private void TakeWaitTime(TimeSpan takingTime)
+    {
+        Debug.Log($"Время ожидания завершено: {takingTime.ToString(@"dd\.hh\:mm")}");
     }
 
     private void Update()
@@ -40,14 +48,25 @@ public class LightChanger : MonoBehaviour
     private float CalculateSunRotation(TimeSpan currentTime)
     {
         // Вычисляем общее количество минут с начала суток
-        float totalMinutes = (float)currentTime.TotalMinutes;
+        float totalMinutes = (float)currentTime.TotalMinutes % 1440; // Ограничиваем 24 часами
 
         // Вычисляем угол поворота: 0.25 градусов в минуту * общее количество минут
         float rotationAngle = totalMinutes * rotationSpeed;
 
-        // Ограничиваем угол в диапазоне от 0 до 360 градусов
-        rotationAngle %= 360f;
+        // Корректируем угол, чтобы солнце восходило на востоке и заходило на западе
+        // В полночь (00:00) угол = -90 градусов (солнце за горизонтом)
+        // В полдень (12:00) угол = 90 градусов (солнце в зените)
+        rotationAngle -= 90f;
 
         return rotationAngle;
+    }
+
+    private void OnDestroy()
+    {
+        // Отписываемся от события при уничтожении объекта
+        if (WorldTime.Instance != null)
+        {
+            WorldTime.Instance.OnWaitingEnd -= TakeWaitTime;
+        }
     }
 }
