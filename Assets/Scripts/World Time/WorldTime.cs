@@ -31,15 +31,16 @@ public class WorldTime : MonoBehaviour
     [field: SerializeField, Tooltip("Остановить время")] public bool TimePaused { get; private set; } = false;
 
     [SerializeField, Tooltip("Использовать ускорение времени?")] private bool _useSpeedUp;
-    [field: SerializeField, Tooltip("Классическая скорость течения времени к реальной"), Range(1, 24)] public float timeScaleClassic { get; private set; } = 12f;
-    [field: SerializeField, Tooltip("Ускоренная скорость течения времени к реальной"), Range(12, 12000)] public float timeScaleSpeedUp { get; private set; } = 6000f;
+    [field: SerializeField, Tooltip("Классическая скорость течения времени к реальной"), Range(1, 24)] public float TimeScaleClassic { get; private set; } = 12f;
+    [field: SerializeField, Tooltip("Ускоренная скорость течения времени к реальной"), Range(12, 12000)] public float TimeScaleSpeedUp { get; private set; } = 6000f;
 
     // События для уведомления о смене времени
     public event Action<TimeSpan> OnTimeChanged;
-    public event Action<TimeSpan> OnWaitingEnd;
     public event Action<TimeSpan> OnMinuteChanged;
     public event Action<TimeSpan> OnHourChanged;
     public event Action<TimeSpan> OnDayChanged;
+
+    private Coroutine _waitCoroutine;
 
     private void Awake()
     {
@@ -58,12 +59,8 @@ public class WorldTime : MonoBehaviour
     {
         if (!TimePaused)
         {
-            if (_useSpeedUp)
-                CurrentTime = CurrentTime.Add(TimeSpan.FromSeconds(Time.deltaTime * timeScaleSpeedUp));
-            else
-                CurrentTime = CurrentTime.Add(TimeSpan.FromSeconds(Time.deltaTime * timeScaleClassic));
-
-            //Debug.Log(_currentTime.ToString(@"dd\.hh\:mm\:ss"));
+            float timeScale = _useSpeedUp ? TimeScaleSpeedUp : TimeScaleClassic;
+            CurrentTime += TimeSpan.FromSeconds(Time.deltaTime * timeScale);
         }
     }
 
@@ -73,18 +70,16 @@ public class WorldTime : MonoBehaviour
     /// <param name="waitTime">Время которое надо подождать</param>
     public void WaitTheTime(TimeSpan waitTime)
     {
-        StartCoroutine(WaitTheTimeCor(waitTime));
+        StopWaitTime();
+        _waitCoroutine = StartCoroutine(WaitTheTimeCor(waitTime));
     }
 
-    private IEnumerator WaitTheTimeCor(TimeSpan time)
+    private IEnumerator WaitTheTimeCor(TimeSpan time, Action<TimeSpan> OnWaitingEnd = null)
     {
         TimeSpan timeAfterWait = _currentTime + time;
         _useSpeedUp = true;
 
-        while (_currentTime < timeAfterWait)
-        {
-            yield return null;
-        }
+        yield return new WaitWhile(() => _currentTime < timeAfterWait);
 
         _useSpeedUp = false;
         OnWaitingEnd?.Invoke(CurrentTime);
@@ -96,22 +91,27 @@ public class WorldTime : MonoBehaviour
     /// <param name="waitTime">Время до которого надо подождать</param>
     public void WaitTargetTime(TimeSpan waitTime)
     {
-        StartCoroutine(WaitTargetTimeCor(waitTime));
+        StopWaitTime();
+        _waitCoroutine = StartCoroutine(WaitTargetTimeCor(waitTime));
     }
 
-    private IEnumerator WaitTargetTimeCor(TimeSpan time)
+    private IEnumerator WaitTargetTimeCor(TimeSpan time, Action<TimeSpan> OnWaitingEnd = null)
     {
         if (time <= CurrentTime)
-            yield return null;
+            yield break;
+
         _useSpeedUp = true;
 
-        while (_currentTime < time)
-        {
-            yield return null; // Ждем следующего кадра
-        }
+        yield return new WaitWhile(() => _currentTime < time);
 
         _useSpeedUp = false;
         OnWaitingEnd?.Invoke(CurrentTime);
+    }
+
+    public void StopWaitTime()
+    {
+        if (_waitCoroutine is not null)
+            StopCoroutine(_waitCoroutine);
     }
 
     /// <summary>
@@ -158,6 +158,5 @@ public class WorldTime : MonoBehaviour
         OnHourChanged = null;
         OnDayChanged = null;
         OnTimeChanged = null;
-        OnWaitingEnd = null;
     }
 }

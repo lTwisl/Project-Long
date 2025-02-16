@@ -16,7 +16,7 @@ public class LightChanger : MonoBehaviour
     private void Start()
     {
         // Подписываемся на событие завершения ожидания
-        WorldTime.Instance.OnWaitingEnd += TakeWaitTime;
+        //WorldTime.Instance.OnWaitingEnd += TakeWaitTime;
 
         // Пример использования: ждем 1 час и 21 минуту
         //WorldTime.Instance.WaitTargetTime(new TimeSpan(0, 1, 21, 0));
@@ -64,9 +64,9 @@ public class LightChanger : MonoBehaviour
     private void OnDestroy()
     {
         // Отписываемся от события при уничтожении объекта
-        if (WorldTime.Instance != null)
+        /*if (WorldTime.Instance != null)
         {
             WorldTime.Instance.OnWaitingEnd -= TakeWaitTime;
-        }
+        }*/
     }
 }

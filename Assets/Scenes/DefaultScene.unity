@@ -3744,6 +3744,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _playerMovementConfig: {fileID: 11400000, guid: c0762a4821a94a048a714a0841db59a6, type: 2}
+  _playerParameters: {fileID: 11400000, guid: a9730dc9ae96ea540a8751e77afb7254, type: 2}
 --- !u!114 &1672823859
 MonoBehaviour:
   m_ObjectHideFlags: 0
