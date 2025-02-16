@@ -157,5 +157,7 @@ public class WorldTime : MonoBehaviour
         OnMinuteChanged = null;
         OnHourChanged = null;
         OnDayChanged = null;
+        OnTimeChanged = null;
+        OnWaitingEnd = null;
     }
 }
