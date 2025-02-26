@@ -4,10 +4,10 @@
 public class MovementStatusParameter : StatusParameter
 {
     [field: Tooltip("Скорость изменения в покое [ед/м]")]
-    [field: SerializeField] public float IdelChangeRate {  get; protected set; }
+    [field: SerializeField] public float IdleChangeRate {  get; protected set; }
 
     [field: Tooltip("Скорость изменения при хотьбе [ед/м]")]
-    [field: SerializeField] public float BaseMoveChangeRate { get; protected set; }
+    [field: SerializeField] public float WalkChangeRate { get; protected set; }
 
     [field: Tooltip("Скорость изменения при беге [ед/м]")]
     [field: SerializeField] public float SprintChangeRate { get; protected set; }
@@ -16,16 +16,16 @@ public class MovementStatusParameter : StatusParameter
     {
         ChangeRate = mode switch
         {
-            PlayerMovement.PlayerMoveMode.BaseMove => BaseMoveChangeRate,
+            PlayerMovement.PlayerMoveMode.Walk => WalkChangeRate,
             PlayerMovement.PlayerMoveMode.Sprint => SprintChangeRate,
-            _ => IdelChangeRate,
+            _ => IdleChangeRate,
         };
     }
 
     public override void Reset()
     {
         base.Reset();
-        ChangeRate = IdelChangeRate;
+        ChangeRate = IdleChangeRate;
     }
 }
 

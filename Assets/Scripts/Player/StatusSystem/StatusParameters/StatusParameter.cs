@@ -8,6 +8,7 @@ public class StatusParameter : BaseStatusParameter
     public bool IsZero { get; private set; }
     public TimeSpan TimeIsZero { get; private set; }
     public TimeSpan TimeGeaterZero { get; private set; }
+    [field: SerializeField] public float DecreasedHealthRate { get; private set; }
 
     public event Action OnReachZero;
     public event Action OnRecoverFromZero;
@@ -49,6 +50,13 @@ public class StatusParameter : BaseStatusParameter
         TimeIsZero = TimeSpan.Zero;
         TimeGeaterZero = TimeSpan.Zero;
     }
+
+    public override void UnsubscribeAll()
+    {
+        base.UnsubscribeAll();
+        OnReachZero = null;
+        OnRecoverFromZero = null;
+    }
 }
 
 [Serializable]
@@ -88,14 +96,19 @@ public class BaseStatusParameter : IStatusParameter
     {
         Current = Mathf.Clamp(Current + ChangeRate * deltaSeconds, 0f, Max + OffsetMax);
     }
+
+    public virtual void UnsubscribeAll()
+    {
+        OnValueChanged = null;
+    }
 }
 
 public interface IStatusParameter
 {
-    public float Current { get; set; }
-    public float Max { get; set; }
-    public float OffsetMax { get; set; }
-    public float ChangeRate { get; set; }
+    public float Current { get; }
+    public float Max { get; }
+    public float OffsetMax { get; }
+    public float ChangeRate { get; }
 
     public event Action<float> OnValueChanged;
 

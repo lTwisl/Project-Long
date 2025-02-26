@@ -274,13 +274,56 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8616685848737228372, guid: c5efc39a8aaf6e64ea40e9ad573e9b47, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 230376736}
   m_SourcePrefab: {fileID: 100100000, guid: c5efc39a8aaf6e64ea40e9ad573e9b47, type: 3}
 --- !u!4 &230376734 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4135013735270702856, guid: c5efc39a8aaf6e64ea40e9ad573e9b47, type: 3}
   m_PrefabInstance: {fileID: 230376733}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &230376735 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8616685848737228372, guid: c5efc39a8aaf6e64ea40e9ad573e9b47, type: 3}
+  m_PrefabInstance: {fileID: 230376733}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &230376736
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 230376735}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 106e99c36c1477143b2e98c486a514aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Inventory:
+    Filter: 2
+    Categoty: 0
+    _slots:
+    - <Item>k__BackingField: {fileID: 11400000, guid: 768d452d1d9ea3a4489e2a61e93ff16a, type: 2}
+      <Capacity>k__BackingField: 2
+      <Condition>k__BackingField: 54.5
+    - <Item>k__BackingField: {fileID: 11400000, guid: 768d452d1d9ea3a4489e2a61e93ff16a, type: 2}
+      <Capacity>k__BackingField: 4
+      <Condition>k__BackingField: 20.9
+    - <Item>k__BackingField: {fileID: 11400000, guid: 768d452d1d9ea3a4489e2a61e93ff16a, type: 2}
+      <Capacity>k__BackingField: 4.44
+      <Condition>k__BackingField: 4.2
+    - <Item>k__BackingField: {fileID: 11400000, guid: 592bcb1ca69355e4e986f25ff9f2a419, type: 2}
+      <Capacity>k__BackingField: 1
+      <Condition>k__BackingField: 78.4
+    - <Item>k__BackingField: {fileID: 11400000, guid: 768d452d1d9ea3a4489e2a61e93ff16a, type: 2}
+      <Capacity>k__BackingField: 11.6
+      <Condition>k__BackingField: 20.9
+  Slot:
+    <Item>k__BackingField: {fileID: 11400000, guid: 768d452d1d9ea3a4489e2a61e93ff16a, type: 2}
+    <Capacity>k__BackingField: 9
+    <Condition>k__BackingField: 20.9
 --- !u!1 &291678534
 GameObject:
   m_ObjectHideFlags: 0
@@ -910,6 +953,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: FirstPersonAimCamera
       objectReference: {fileID: 0}
+    - target: {fileID: 6001035305695055566, guid: 2d3c5dbd1ac7eea4687836b0f166025b, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6001035305695055566, guid: 2d3c5dbd1ac7eea4687836b0f166025b, type: 3}
+      propertyPath: m_TagString
+      value: Untagged
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1410,8 +1461,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <TimePaused>k__BackingField: 0
   _useSpeedUp: 0
-  <timeScaleClassic>k__BackingField: 24
-  <timeScaleSpeedUp>k__BackingField: 6000
+  <TimeScaleClassic>k__BackingField: 12
+  <TimeScaleSpeedUp>k__BackingField: 6000
 --- !u!4 &870983019
 Transform:
   m_ObjectHideFlags: 0

@@ -9,6 +9,17 @@ public enum WeightRange
     UltimateImmovable = 3,
 }
 
+public enum ParameterType
+{
+    Health,
+    Stamina,
+    FoodBalance,
+    WaterBalance,
+    Energy,
+    Heat,
+    Toxicity,
+}
+
 [CreateAssetMenu(fileName = "PlayerParameters", menuName = "Scriptable Objects/PlayerParameters")]
 public class PlayerParameters : ScriptableObject
 {
@@ -24,11 +35,11 @@ public class PlayerParameters : ScriptableObject
 
 
     [field: Header("StatusParameters")]
-    [field: SerializeField] public MovementStatusParameter Hunger { get; private set; }
-    [field: SerializeField] public MovementStatusParameter Thirst { get; private set; }
+    [field: SerializeField] public MovementStatusParameter FoodBalance { get; private set; }
+    [field: SerializeField] public MovementStatusParameter WaterBalance { get; private set; }
     [field: SerializeField] public MovementStatusParameter Energy { get; private set; }
     [field: SerializeField] public StatusParameter Heat { get; private set; }
-    [field: SerializeField] public StatusParameter Toxisity { get; private set; }
+    [field: SerializeField] public StatusParameter Toxicity { get; private set; }
 
 
     private List<IStatusParameter> _allParameters = new();
@@ -41,11 +52,11 @@ public class PlayerParameters : ScriptableObject
         _allParameters.AddRange(new IStatusParameter[] {
             Health,
             Stamina,
-            Hunger,
-            Thirst,
+            FoodBalance,
+            WaterBalance,
             Energy,
             Heat,
-            Toxisity
+            Toxicity
         });
     }
 

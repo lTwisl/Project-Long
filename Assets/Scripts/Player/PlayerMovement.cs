@@ -19,7 +19,7 @@ public class PlayerMovement : MonoBehaviour
     public enum PlayerMoveMode
     {
         Idel,
-        BaseMove,
+        Walk,
         Sprint,
         Crouching,
         Falling,
@@ -126,7 +126,7 @@ public class PlayerMovement : MonoBehaviour
         else if (_input.sprint && !_parameters.Stamina.IsZero && _parameters.GetCurrentWeightRange() < WeightRange.Ultimate)
             MoveMode = PlayerMoveMode.Sprint;
         else
-            MoveMode = PlayerMoveMode.BaseMove;
+            MoveMode = PlayerMoveMode.Walk;
     }
 
     private void CrouchHandler()
@@ -265,7 +265,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
         // Ограничение максимальной скорости шага в зависимости от текущей загрузки инвенторя
-        if (MoveMode == PlayerMoveMode.BaseMove && _parameters.GetCurrentWeightRange() == WeightRange.Ultimate)
+        if (MoveMode == PlayerMoveMode.Walk && _parameters.GetCurrentWeightRange() == WeightRange.Ultimate)
         {
             targetSpeed = Utility.MapRange(_parameters.CurrentLoad, _parameters.RangeLoadCapacity[1], _parameters.RangeLoadCapacity[2],
                 _moveConfig.MoveSpeed, 0.0f);
