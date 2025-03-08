@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
 
 [System.Serializable]
@@ -20,7 +21,9 @@ public class Inventory
     {
         public int Compare(InventorySlot x, InventorySlot y)
         {
-            return x.Condition - y.Condition > 0 ? 1 : -1;
+            if (x == null || y == null)
+                return 0;
+            return x.Condition.CompareTo(y.Condition);
         }
     }
 
@@ -29,7 +32,9 @@ public class Inventory
     {
         public int Compare(InventorySlot x, InventorySlot y)
         {
-            return x.Capacity * x.Item.Weight - y.Capacity * y.Item.Weight > 0 ? 1 : -1;
+            if (x == null || y == null)
+                return 0;
+            return (x.Capacity * x.Item.Weight).CompareTo(y.Capacity * y.Item.Weight);
         }
     }
 
@@ -40,43 +45,55 @@ public class Inventory
         Weight,
     }
 
-    public SortingFilter Filter;
-    public InventoryItem.ItemType Categoty;
+    [HideInInspector] public SortingFilter Filter;
+    public InventoryItem.ItemType? Categoty;
 
-    [SerializeField] private List<InventorySlot> _slots;
+    public event Action<IReadOnlyInventorySlot> OnItemAdded;
+    public event Action<IReadOnlyInventorySlot> OnItemRemoved;
 
-    private float _weight;
+    [SerializeField] private List<InventorySlot> _initSlots;
+    public LinkedList<InventorySlot> Slots { get; private set; }
+
+    [field: SerializeField, DisableEdit] public float Weight { get; private set; }
+
+    public void Init()
+    {
+        Slots = new LinkedList<InventorySlot>(_initSlots);
+    }
 
     public void AddItem(InventoryItem item, float capacity, float condition)
     {
-        _weight += item.Weight * capacity;
+        if (item == null || capacity <= 0 || condition <= 0)
+            return;
 
-        int lastIndex = _slots.FindLastIndex((InventorySlot slot) =>
-        {
-            return slot.Item == item;
-        });
+        Weight += item.Weight * capacity;
 
-        if (lastIndex == -1)
-            lastIndex = _slots.Count - 1;
+        OnItemAdded?.Invoke(new InventorySlot(item, capacity, condition));
 
         if (!item.IsStackable)
         {
-            _slots.Add(new InventorySlot() { Item = item, Capacity = capacity, Condition = condition });
+            //_slots.Add(new InventorySlot() { Item = item, Capacity = capacity, Condition = condition });
+            Slots.AddLast(new InventorySlot(item, capacity, condition));
             return;
         }
 
-        int indexForStack = _slots.FindIndex((InventorySlot slot) =>
-        {
-            return slot.Item == item && slot.Condition == condition && !slot.IsFull;
-        });
+        //int indexForStack = _slots.FindIndex(slot => slot.Item == item && slot.Condition == condition && !slot.IsFull);
+        InventorySlot slotForStak = Slots.Where(slot => slot.Item == item && slot.Condition == condition && !slot.IsFull).FirstOrDefault();
 
-        if (indexForStack == -1)
+        if (slotForStak == null)
         {
-            _slots.Add(new InventorySlot() { Item = item, Capacity = capacity, Condition = condition });
+            Slots.AddLast(new InventorySlot(item, capacity, condition));
             return;
         }
 
-        InventorySlot slotForStak = _slots[indexForStack];
+        /*if (indexForStack == -1)
+        {
+            //_slots.Add(new InventorySlot() { Item = item, Capacity = capacity, Condition = condition });
+            _slots.AddLast(new InventorySlot() { Item = item, Capacity = capacity, Condition = condition });
+            return;
+        }
+
+        InventorySlot slotForStak = _slots[indexForStack];*/
 
         float newCapacity = slotForStak.Capacity + capacity;
 
@@ -89,15 +106,25 @@ public class Inventory
         float remains = capacity - (item.MaxCapacity - slotForStak.Capacity);
         slotForStak.Capacity = item.MaxCapacity;
 
-        _slots.Add(new InventorySlot() { Item = item, Capacity = remains, Condition = condition });
+        //_slots.Add(new InventorySlot() { Item = item, Capacity = remains, Condition = condition });
+        Slots.AddLast(new InventorySlot(item, remains, condition));
     }
 
-    public IReadOnlyInventorySlot this[int i]
+    public void RemoveItem(IReadOnlyInventorySlot slot)
     {
-        get { return _slots[i]; }
+        Slots.Remove(slot as InventorySlot);
     }
 
-    public void Sort()
+    /*public IReadOnlyInventorySlot this[int i]
+    {
+        get { return Slots[i]; }
+    }*/
+
+    public int CountSlots => Slots.Count;
+
+    public void Clear() => Slots.Clear();
+
+    /*public void Sort()
     {
         IComparer<InventorySlot> comparer = Filter switch
         {
@@ -107,31 +134,93 @@ public class Inventory
             _ => throw new NotImplementedException(),
         };
 
-        _slots.Sort(comparer);
+        Slots.Sort(comparer);
+    }*/
+
+    public bool Contains(InventoryItem item, float minCapacity = -1, float minCondition = -1)
+    {
+        var slots = Slots.Where(slot => slot.Item == item);
+
+        if (slots.Any())
+            return false;
+
+        bool conditionMet = (minCondition <= 0) || slots.Any(slot => slot.Condition >= minCondition);
+        bool capacityMet = slots.Sum(slot => slot.Capacity) >= minCapacity;
+
+        return conditionMet && capacityMet;
     }
 
 
     public void Update(float deltaTime)
     {
-        for (int i = 0; i < _slots.Count; ++i)
-        {
-            InventorySlot slot = _slots[i];
-            if (slot.Item.DegradeType == InventoryItem.DegradationType.Rate && slot.Item.Category != InventoryItem.ItemType.Clothes)
-            {
-                slot.Condition -= slot.Item.DegradationValue * deltaTime;
+        if (Slots.Count == 0)
+            return;
 
-                if (slot.Condition <= 0)
+        LinkedListNode<InventorySlot> currentNode = Slots.First;
+
+        while (currentNode != null)
+        {
+            LinkedListNode<InventorySlot> nextNode = currentNode.Next;
+            InventorySlot slot = currentNode.Value;
+            bool shouldRemove = false;
+
+            if (slot.IsEmpty)
+            {
+                shouldRemove = true;
+            }
+            else
+            {
+                InventoryItem item = slot.Item;
+                if ((item.DegradeType == InventoryItem.DegradationType.Rate && (item is not ClothesItem)) || ((item is ClothesItem) && slot.IsWearing))
                 {
-                    _slots.RemoveAt(i);
+                    //if (item.Category != InventoryItem.ItemType.Clothes)
+                    slot.Condition -= item.DegradationValue * deltaTime;
+                    shouldRemove = slot.Condition <= 0;
                 }
             }
+
+            if (shouldRemove)
+            {
+                Slots.Remove(currentNode);
+                OnItemRemoved?.Invoke(currentNode.Value);
+            }
+
+            currentNode = nextNode;
         }
     }
 
-    public List<IReadOnlyInventorySlot> GetSlotsWithCategoty(InventoryItem.ItemType categoty)
+    public List<IReadOnlyInventorySlot> GetSorteredSlots()
     {
-        return _slots.Where(p => p.Item.Category == categoty).Select(p => p as IReadOnlyInventorySlot).ToList();
+        return GetSorteredSlots(Filter, Categoty);
     }
 
-    
+    public List<IReadOnlyInventorySlot> GetSorteredSlots(SortingFilter filter, InventoryItem.ItemType? category)
+    {
+        IComparer<InventorySlot> comparer = filter switch
+        {
+            SortingFilter.Alphabet => new ItemNameComparer(),
+            SortingFilter.Condition => new ItemConditionComparer(),
+            SortingFilter.Weight => new ItemWeightComparer(),
+            _ => throw new NotImplementedException(),
+        };
+
+        var slots = new List<IReadOnlyInventorySlot>(Slots.OrderBy(s => s, comparer));
+
+        if (category == null)
+            return slots;
+
+        return new List<IReadOnlyInventorySlot>(slots.Where(p => p.Item.Category == category));
+    }
+
+
+    public void RecalculateWeight()
+    {
+        if (Slots.Count == 0)
+            return;
+
+        foreach (var slot in Slots)
+        {
+            Weight += slot.Capacity * slot.Item.Weight;
+        }
+    }
 }

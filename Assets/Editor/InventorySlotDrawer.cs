@@ -25,8 +25,8 @@ public class InventorySlotDrawer : PropertyDrawer
         if (foldoutStates[key])
         {
             SerializedProperty itemProp = property.FindPropertyRelative("<Item>k__BackingField");
-            SerializedProperty capacityProp = property.FindPropertyRelative("<Capacity>k__BackingField");
-            SerializedProperty conditionProp = property.FindPropertyRelative("<Condition>k__BackingField");
+            SerializedProperty capacityProp = property.FindPropertyRelative("_capacity");
+            SerializedProperty conditionProp = property.FindPropertyRelative("_condition");
 
             // Отступ для содержимого
             float y = position.y + EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
@@ -67,8 +67,8 @@ public class InventorySlotDrawer : PropertyDrawer
     private GUIContent GetHeaderLabel(SerializedProperty property)
     {
         var itemProp = property.FindPropertyRelative("<Item>k__BackingField");
-        string capacity = property.FindPropertyRelative("<Capacity>k__BackingField").floatValue.ToString("0.##");
-        string condition = property.FindPropertyRelative("<Condition>k__BackingField").floatValue.ToString("0.###");
+        string capacity = property.FindPropertyRelative("_capacity").floatValue.ToString("0.##");
+        string condition = property.FindPropertyRelative("_condition").floatValue.ToString("0.###");
         string itemName = itemProp.objectReferenceValue?.name ?? "Empty";
         return new GUIContent($"{itemName} ({capacity}) ({condition}%)");
     }

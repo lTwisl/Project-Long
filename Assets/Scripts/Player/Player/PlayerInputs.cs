@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using static UnityEngine.Rendering.DebugUI;
 
 
 public class PlayerInputs : MonoBehaviour
@@ -17,6 +18,8 @@ public class PlayerInputs : MonoBehaviour
     [Header("Mouse Cursor Settings")]
     public bool cursorLocked = true;
     public bool cursorInputForLook = true;
+
+    public bool isInteract = false;
 
     public void OnMove(InputValue value)
     {
@@ -41,16 +44,10 @@ public class PlayerInputs : MonoBehaviour
         CrouchInput(value.isPressed);
     }
 
-/*    public void OnJump(InputValue value)
+    public void OnInteract(InputValue value)
     {
-        Debug.Log("123");
-        JumpInput(value.isPressed);
-    }*/
-
-/*    private void JumpInput(bool newJumpState)
-    {
-        jump = newJumpState;
-    }*/
+       InteractInput(value.isPressed);
+    }
 
     public void MoveInput(Vector2 newMoveDirection)
     {
@@ -70,6 +67,11 @@ public class PlayerInputs : MonoBehaviour
     public void CrouchInput(bool newCrouchState)
     {
         crouch = newCrouchState;
+    }
+
+    public void InteractInput(bool b)
+    {
+        isInteract = b;
     }
 
     private void OnApplicationFocus(bool hasFocus)

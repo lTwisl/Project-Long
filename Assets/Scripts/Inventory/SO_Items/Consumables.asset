@@ -15,15 +15,16 @@ MonoBehaviour:
   <Category>k__BackingField: 3
   <UseType>k__BackingField: 1
   <Actions>k__BackingField: 0
-  <Name>k__BackingField: InventoryItem
+  <Name>k__BackingField: Water
   <Description>k__BackingField: 
-  <Icon>k__BackingField: {fileID: 0}
+  <Icon>k__BackingField: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
   <ItemPrefab>k__BackingField: {fileID: 0}
-  <Weight>k__BackingField: 1
-  <IsStackable>k__BackingField: 0
+  <Weight>k__BackingField: 0.6
+  <IsStackable>k__BackingField: 1
   <MeasuredAsInteger>k__BackingField: 0
-  <MaxCapacity>k__BackingField: 1
-  <DegradeType>k__BackingField: 0
-  <DegradationValue>k__BackingField: 1
+  <MaxCapacity>k__BackingField: 5.56
+  <UnitMeasurement>k__BackingField: "\u043B"
+  <DegradeType>k__BackingField: 2
+  <DegradationValue>k__BackingField: 0.12
   <StatusParameterImpacts>k__BackingField: []
   <GivesBonus>k__BackingField: []

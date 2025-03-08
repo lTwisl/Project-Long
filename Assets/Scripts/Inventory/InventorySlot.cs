@@ -3,6 +3,9 @@ using UnityEngine;
 
 public interface IReadOnlyInventorySlot
 {
+    public event Action<float> OnCapacityChanged;
+    public event Action<float> OnConditionChanged;
+
     public InventoryItem Item { get; }
     public float Capacity { get; }
     public float Condition { get; }
@@ -12,28 +15,53 @@ public interface IReadOnlyInventorySlot
 [Serializable]
 public class InventorySlot : IReadOnlyInventorySlot
 {
-    [field: SerializeField] public InventoryItem Item { get; set; }
+    [field: SerializeField] public InventoryItem Item { get; private set; }
 
-    [field: SerializeField, Min(0.001f)] public float Capacity { get; set; } = 1f;
-
-    [field: SerializeField, Range(0.001f, 100f)] public float Condition { get; set; } = 100f;
-
-
-    public bool IsEmpty => Item == null || Capacity == 0;
-    public bool IsFull => Item != null && Capacity >= Item.MaxCapacity;
-
-
-    public void SetItem(InventoryItem item, float count, float condition)
+    [SerializeField, Min(0.001f)] private float _capacity = 1f;
+    public float Capacity 
     {
-        Item = item;
-        Capacity = count;
-        Condition = condition;
+        get => _capacity;
+        set
+        {
+            _capacity = value;
+            OnCapacityChanged?.Invoke(_capacity);
+        }
+    } 
+
+    [SerializeField, Range(0.001f, 100f)] private float _condition = 100f;
+    public float Condition 
+    {
+        get => _condition; 
+        set
+        {
+            _condition = value;
+            OnConditionChanged?.Invoke(_condition);
+        }
     }
 
-    public void Clear()
+    public event Action<float> OnCapacityChanged;
+    public event Action<float> OnConditionChanged;
+
+    // Äכÿ ןנוהלועמג מהוזהû
+    public bool IsWearing { get; set; }
+    public float Wet { get; set; }
+
+
+    public bool IsEmpty => Item == null || Capacity <= 0;
+    public bool IsFull => Item != null && Capacity >= Item.MaxCapacity;
+
+    public InventorySlot(InventoryItem item, float capacity, float condition)
     {
-        Item = null;
-        Capacity = 0;
-        Condition = 0;
+        SetItem(item, capacity, condition);
+    }
+
+    private void SetItem(InventoryItem item, float capacity, float condition)
+    {
+        if (item == null)
+            return;
+
+        Item = item;
+        Capacity = capacity;
+        Condition = condition;
     }
 }

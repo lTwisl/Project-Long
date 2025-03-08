@@ -71,7 +71,7 @@ public abstract class InventoryItem : ScriptableObject
 
 
     [field: Tooltip("Префам предмета")]
-    [field: SerializeField] public GameObject ItemPrefab { get; private set; }
+    [field: SerializeField] public WorldItem ItemPrefab { get; private set; }
 
 
     [field: Tooltip("Вес предмета"), Min(0.001f)]
@@ -89,11 +89,14 @@ public abstract class InventoryItem : ScriptableObject
     [field: Tooltip("Вместимость предмета"), Min(0.001f)]
     [field: SerializeField] public float MaxCapacity { get; protected set; } = 1;
 
+    [field: Tooltip("Единица измерения")]
+    [field: SerializeField] public string UnitMeasurement { get; protected set; } = "";
+
 
     [field: Tooltip("Деградирования предмета")]
     [field: SerializeField] public DegradationType DegradeType { get; protected set; }
 
 
-    [field: Tooltip("Скорость порчи предмета"), Min(0.001f)]
+    [field: Tooltip("Скорость порчи предмета [единиц в игровую минуту]"), Min(0.001f)]
     [field: SerializeField] public float DegradationValue { get; private set; } = 1;
 }

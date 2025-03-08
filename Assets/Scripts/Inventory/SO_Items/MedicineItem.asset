@@ -19,10 +19,10 @@ MonoBehaviour:
   <Description>k__BackingField: 
   <Icon>k__BackingField: {fileID: 0}
   <ItemPrefab>k__BackingField: {fileID: 0}
-  <Weight>k__BackingField: 1
-  <IsStackable>k__BackingField: 0
-  <MeasuredAsInteger>k__BackingField: 0
-  <MaxCapacity>k__BackingField: 1
+  <Weight>k__BackingField: 0.01
+  <IsStackable>k__BackingField: 1
+  <MeasuredAsInteger>k__BackingField: 1
+  <MaxCapacity>k__BackingField: 6
   <DegradeType>k__BackingField: 0
   <DegradationValue>k__BackingField: 1
   <PairsParamterAndValue>k__BackingField: []

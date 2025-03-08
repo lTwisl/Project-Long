@@ -15,13 +15,13 @@ MonoBehaviour:
   <Category>k__BackingField: 5
   <UseType>k__BackingField: 0
   <Actions>k__BackingField: 16
-  <Name>k__BackingField: InventoryItem
+  <Name>k__BackingField: Stick
   <Description>k__BackingField: 
   <Icon>k__BackingField: {fileID: 0}
-  <ItemPrefab>k__BackingField: {fileID: 0}
+  <ItemPrefab>k__BackingField: {fileID: 8950418849261777513, guid: ce79d369c002c7143b676d71ca162091, type: 3}
   <Weight>k__BackingField: 1
-  <IsStackable>k__BackingField: 0
-  <MeasuredAsInteger>k__BackingField: 0
-  <MaxCapacity>k__BackingField: 1
+  <IsStackable>k__BackingField: 1
+  <MeasuredAsInteger>k__BackingField: 1
+  <MaxCapacity>k__BackingField: 10
   <DegradeType>k__BackingField: 0
   <DegradationValue>k__BackingField: 1

@@ -18,6 +18,7 @@ public class InventoryItemEditor : Editor
     protected SerializedProperty _measuredAsIntegerProp;
     protected SerializedProperty _maxStackSizeProp;
     protected SerializedProperty _weightProp;
+    protected SerializedProperty _unitMeasurementProp;
     protected SerializedProperty _degradeTypeProp;
     protected SerializedProperty _degradationValueProp;
 
@@ -34,6 +35,7 @@ public class InventoryItemEditor : Editor
         _measuredAsIntegerProp = serializedObject.FindProperty("<MeasuredAsInteger>k__BackingField");
         _maxStackSizeProp = serializedObject.FindProperty("<MaxCapacity>k__BackingField");
         _weightProp = serializedObject.FindProperty("<Weight>k__BackingField");
+        _unitMeasurementProp = serializedObject.FindProperty("<UnitMeasurement>k__BackingField");
         _degradeTypeProp = serializedObject.FindProperty("<DegradeType>k__BackingField");
         _degradationValueProp = serializedObject.FindProperty("<DegradationValue>k__BackingField");
     }
@@ -61,6 +63,9 @@ public class InventoryItemEditor : Editor
         DrawIsStackableProp(typeName);
         DrawMeasuredAsIntegerProp(typeName);
         DrawMaxCapacityProp(typeName);
+
+        DrawUnitMeasurement(typeName);
+        
 
         EditorGUILayout.Space(10);
 
@@ -217,6 +222,20 @@ public class InventoryItemEditor : Editor
         {
             EditorGUILayout.PropertyField(_maxStackSizeProp, new GUIContent("Max Capacity [float]"));
         }
+
+        GUI.enabled = true;
+    }
+
+    private void DrawUnitMeasurement(string typeName)
+    {
+        GUI.enabled = typeName switch
+        {
+            nameof(ToolItem) => false,
+            nameof(ClothesItem) => false,
+            _ => true,
+        };
+
+        EditorGUILayout.PropertyField(_unitMeasurementProp);
 
         GUI.enabled = true;
     }

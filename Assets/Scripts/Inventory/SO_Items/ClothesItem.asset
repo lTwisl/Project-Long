@@ -15,9 +15,9 @@ MonoBehaviour:
   <Category>k__BackingField: 2
   <UseType>k__BackingField: 3
   <Actions>k__BackingField: 17
-  <Name>k__BackingField: InventoryItem
+  <Name>k__BackingField: b
   <Description>k__BackingField: 
-  <Icon>k__BackingField: {fileID: 0}
+  <Icon>k__BackingField: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
   <ItemPrefab>k__BackingField: {fileID: 0}
   <Weight>k__BackingField: 1
   <IsStackable>k__BackingField: 0

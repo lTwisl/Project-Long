@@ -34,6 +34,8 @@ public class WorldTime : MonoBehaviour
     [field: SerializeField, Tooltip("Классическая скорость течения времени к реальной"), Range(1, 24)] public float TimeScaleClassic { get; private set; } = 12f;
     [field: SerializeField, Tooltip("Ускоренная скорость течения времени к реальной"), Range(12, 12000)] public float TimeScaleSpeedUp { get; private set; } = 6000f;
     public float TimeScale => _useSpeedUp ? TimeScaleSpeedUp : TimeScaleClassic;
+    public float DeltaTime => Time.deltaTime * TimeScale;
+    public float FixedDeltaTime => Time.fixedDeltaTime * TimeScale;
 
     // События для уведомления о смене времени
     public event Action<TimeSpan> OnTimeChanged;

@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using UnityEngine;
 using Zenject;
@@ -23,9 +22,9 @@ public class PlayerStatusController : MonoBehaviour
     {
         foreach (var parameter in _playerParameters.AllParameters)
         {
-            parameter.UpdateParameter(Time.fixedDeltaTime *  WorldTime.Instance.TimeScale / 60f);
+            parameter.UpdateParameter(WorldTime.Instance.FixedDeltaTime / 60f);
         }
-    }
+    }    
 
     private void OnDestroy()
     {
@@ -75,6 +74,7 @@ public class PlayerStatusController : MonoBehaviour
             param.UnsubscribeAll();
         }
 
+        _playerParameters.Energy.OnValueChanged -= EnergyChanged;
         _playerMovement.OnChangedMoveMode -= ChangedMoveMode;
     }
 

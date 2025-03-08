@@ -49,6 +49,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Interact",
+                    "type": "PassThrough",
+                    "id": "1245adb2-16ea-442a-9342-ceca64426841",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -236,6 +245,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Crouch",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "5719a0f7-21c9-4a57-b88c-9461681ca318",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";KeyboardMouse",
+                    "action": "Interact",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

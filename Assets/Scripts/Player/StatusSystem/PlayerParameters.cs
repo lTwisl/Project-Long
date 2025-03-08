@@ -28,10 +28,11 @@ public class PlayerParameters : ScriptableObject
     [field: Space(10)]
     [field: SerializeField] public StaminaStatusParameter Stamina { get; private set; }
 
-    [field: Header("LoadCapacity")]
-    public readonly float[] RangeLoadCapacity = { 30, 45, 60 };
-    [field: SerializeField] public float CurrentLoad { get; set; } = 3;
+
+    [Header("LoadCapacity")]
     public float OffsetMaxLoadCapacity = 0;
+    public readonly float[] RangeLoadCapacity = { 30, 45, 60 };
+    public float CurrentLoad => _playerInventory.Weight;
 
 
     [field: Header("StatusParameters")]
@@ -45,7 +46,9 @@ public class PlayerParameters : ScriptableObject
     private List<IStatusParameter> _allParameters = new();
     public IReadOnlyList<IStatusParameter> AllParameters => _allParameters;
 
-    public void Init()
+    private Inventory _playerInventory;
+
+    public void Init(Inventory playerInventory)
     {
         _allParameters.Clear();
 
@@ -58,6 +61,8 @@ public class PlayerParameters : ScriptableObject
             Heat,
             Toxicity
         });
+
+        _playerInventory = playerInventory;
     }
 
     [ContextMenu("AllReset")]

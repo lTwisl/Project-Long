@@ -127,10 +127,11 @@ GameObject:
   m_Component:
   - component: {fileID: 8997996947095583982}
   - component: {fileID: 8616685848737228382}
-  - component: {fileID: 8616685848737228371}
   - component: {fileID: 2987631490620351325}
   - component: {fileID: 8616685848737228376}
+  - component: {fileID: 8616685848737228371}
   - component: {fileID: 1096559909317477281}
+  - component: {fileID: 5866764517698199821}
   m_Layer: 8
   m_Name: PlayerCapsule
   m_TagString: Player
@@ -180,21 +181,6 @@ CharacterController:
   m_SkinWidth: 0.001
   m_MinMoveDistance: 0
   m_Center: {x: 0, y: 1, z: 0}
---- !u!114 &8616685848737228371
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8616685848737228372}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 55919ac34a26952479f3fc91f777b2fa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _cinemachineCameraTarget: {fileID: 4135013735270702863}
-  _topClamp: 89
-  _bottomClamp: -89
 --- !u!114 &2987631490620351325
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -215,6 +201,7 @@ MonoBehaviour:
   analogMovement: 0
   cursorLocked: 1
   cursorInputForLook: 1
+  isInteract: 0
 --- !u!114 &8616685848737228376
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -313,6 +300,21 @@ MonoBehaviour:
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!114 &8616685848737228371
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8616685848737228372}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55919ac34a26952479f3fc91f777b2fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _cinemachineCameraTarget: {fileID: 4135013735270702863}
+  _topClamp: 89
+  _bottomClamp: -89
 --- !u!114 &1096559909317477281
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -325,7 +327,62 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 867a049c39123b14996188856f443a41, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Health: 100
-  _damageHunger: 0.1
-  _damageThirst: 0.2
-  _damageCold: 0.4
+--- !u!114 &5866764517698199821
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8616685848737228372}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 106e99c36c1477143b2e98c486a514aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Inventory>k__BackingField:
+    Filter: 0
+    _initSlots:
+    - <Item>k__BackingField: {fileID: 11400000, guid: 592bcb1ca69355e4e986f25ff9f2a419, type: 2}
+      _capacity: 1
+      _condition: 51.1
+    - <Item>k__BackingField: {fileID: 11400000, guid: cbcf3144d25f83749a6c3e52e990abf8, type: 2}
+      _capacity: 1
+      _condition: 60.9
+    - <Item>k__BackingField: {fileID: 11400000, guid: cbcf3144d25f83749a6c3e52e990abf8, type: 2}
+      _capacity: 4.51
+      _condition: 23.6
+    - <Item>k__BackingField: {fileID: 11400000, guid: 4e565df39e644ba42acc3fa756b8b71b, type: 2}
+      _capacity: 7
+      _condition: 30
+    <Weight>k__BackingField: 0
+  <ClothingSystem>k__BackingField:
+    _bodySlots:
+    - Region: 0
+      MaxLayers: 2
+      Layers: []
+    - Region: 1
+      MaxLayers: 2
+      Layers: []
+    - Region: 2
+      MaxLayers: 2
+      Layers: []
+    - Region: 3
+      MaxLayers: 1
+      Layers: []
+    - Region: 4
+      MaxLayers: 2
+      Layers: []
+    - Region: 5
+      MaxLayers: 2
+      Layers: []
+    - Region: 6
+      MaxLayers: 2
+      Layers: []
+    - Region: 7
+      MaxLayers: 1
+      Layers: []
+    - Region: 8
+      MaxLayers: 2
+      Layers: []
+  _slider: {fileID: 0}
+  _uiWindowsController: {fileID: 0}

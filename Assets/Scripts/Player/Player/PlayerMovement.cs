@@ -64,7 +64,6 @@ public class PlayerMovement : MonoBehaviour
     private PlayerInput _playerInput;
     private CharacterController _controller;
     private PlayerInputs _input;
-    private GameObject _mainCamera;
 
     private const float _threshold = 0.01f;
 
@@ -78,11 +77,6 @@ public class PlayerMovement : MonoBehaviour
 
     private void Awake()
     {
-        if (_mainCamera == null)
-        {
-            _mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
-        }
-
         _controller = GetComponent<CharacterController>();
         _input = GetComponent<PlayerInputs>();
         _playerInput = GetComponent<PlayerInput>();
