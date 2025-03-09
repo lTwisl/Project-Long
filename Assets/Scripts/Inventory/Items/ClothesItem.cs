@@ -35,4 +35,13 @@ public class ClothesItem : InventoryItem
         MaxCapacity = 1;
         DegradeType = DegradationType.Rate;
     }
+
+    public override string GetInfo()
+    {
+        return base.GetInfo() + $"Temp = {TemperatureBonus}" +
+            $" | Water = {WaterProtection}" +
+            $" | Wind = {WindProtection}" +
+            $" | Friction = {FrictionBonus}" +
+            $" | Toxisity = {ToxisityProtection}";
+    }
 }

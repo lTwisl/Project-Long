@@ -14,15 +14,9 @@ public class UI_Inventory : MonoBehaviour
 
     public List<IReadOnlyInventorySlot> ShowSlots { get; set; }
 
-    private void Start()
-    {
-        ShowSlots = new(_player.Inventory.Slots);
-
-        UpdateView();
-    }
-
     private void OnEnable()
     {
+        ShowSlots = _player.Inventory.GetSorteredSlots();
         UpdateView();
     }
 
@@ -37,6 +31,7 @@ public class UI_Inventory : MonoBehaviour
     {
         if (ShowSlots == null)
             return;
+            
 
         // Удалить лишние слоты интерфейса.
         if (_uiSlots.Count > ShowSlots.Count)

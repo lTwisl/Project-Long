@@ -10,24 +10,25 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7cb1f26d29b57994eac9153c660750f0, type: 3}
-  m_Name: ClothesItem
+  m_Name: Clothes Gloves 1
   m_EditorClassIdentifier: 
   <Category>k__BackingField: 2
   <UseType>k__BackingField: 3
   <Actions>k__BackingField: 17
-  <Name>k__BackingField: b
+  <Name>k__BackingField: Gloves 1
   <Description>k__BackingField: 
-  <Icon>k__BackingField: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
+  <Icon>k__BackingField: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
   <ItemPrefab>k__BackingField: {fileID: 0}
   <Weight>k__BackingField: 1
   <IsStackable>k__BackingField: 0
   <MeasuredAsInteger>k__BackingField: 1
   <MaxCapacity>k__BackingField: 1
+  <UnitMeasurement>k__BackingField: 
   <DegradeType>k__BackingField: 2
   <DegradationValue>k__BackingField: 1
-  <TypeClothes>k__BackingField: 0
-  <WindProtection>k__BackingField: 0
-  <WaterProtection>k__BackingField: 0
-  <TemperatureBonus>k__BackingField: 0
-  <ToxisityProtection>k__BackingField: 0
-  <FrictionBonus>k__BackingField: 0
+  <TypeClothes>k__BackingField: 3
+  <WindProtection>k__BackingField: 3.83
+  <WaterProtection>k__BackingField: 5.89
+  <TemperatureBonus>k__BackingField: 2.53
+  <ToxisityProtection>k__BackingField: 5.29
+  <FrictionBonus>k__BackingField: 0.407

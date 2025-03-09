@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using System.Reflection;
 using UnityEditor;
@@ -7,7 +6,7 @@ using UnityEngine;
 [CustomEditor(typeof(InventoryItem), true)]
 public class InventoryItemEditor : Editor
 {
-    protected SerializedProperty _ñategoryProp;
+    protected SerializedProperty _categoryProp;
     protected SerializedProperty _useTypeProp;
     protected SerializedProperty _actionsProp;
     protected SerializedProperty _nameProp;
@@ -21,10 +20,11 @@ public class InventoryItemEditor : Editor
     protected SerializedProperty _unitMeasurementProp;
     protected SerializedProperty _degradeTypeProp;
     protected SerializedProperty _degradationValueProp;
+    protected SerializedProperty _receivedItemsAfterDeconstructProp;
 
     protected virtual void OnEnable()
     {
-        _ñategoryProp = serializedObject.FindProperty("<Category>k__BackingField");
+        _categoryProp = serializedObject.FindProperty("<Category>k__BackingField");
         _useTypeProp = serializedObject.FindProperty("<UseType>k__BackingField");
         _actionsProp = serializedObject.FindProperty("<Actions>k__BackingField");
         _nameProp = serializedObject.FindProperty("<Name>k__BackingField");
@@ -38,6 +38,7 @@ public class InventoryItemEditor : Editor
         _unitMeasurementProp = serializedObject.FindProperty("<UnitMeasurement>k__BackingField");
         _degradeTypeProp = serializedObject.FindProperty("<DegradeType>k__BackingField");
         _degradationValueProp = serializedObject.FindProperty("<DegradationValue>k__BackingField");
+        _receivedItemsAfterDeconstructProp = serializedObject.FindProperty("<ReceivedItemsAfterDeconstruct>k__BackingField");
     }
 
     public override void OnInspectorGUI()
@@ -65,7 +66,7 @@ public class InventoryItemEditor : Editor
         DrawMaxCapacityProp(typeName);
 
         DrawUnitMeasurement(typeName);
-        
+
 
         EditorGUILayout.Space(10);
 
@@ -77,6 +78,9 @@ public class InventoryItemEditor : Editor
         else if (_degradeTypeProp.enumValueIndex == 2)
             EditorGUILayout.PropertyField(_degradationValueProp, new GUIContent("Degradation Rate"));
         EditorGUI.indentLevel--;
+
+        if (((InventoryItem.ActionType)_actionsProp.enumValueFlag).HasFlag(InventoryItem.ActionType.Deconstruct))
+            EditorGUILayout.PropertyField(_receivedItemsAfterDeconstructProp);
 
         EditorGUILayout.Space(20);
 
@@ -137,7 +141,7 @@ public class InventoryItemEditor : Editor
             _ => true,
         };
 
-        EditorGUILayout.PropertyField(_ñategoryProp);
+        EditorGUILayout.PropertyField(_categoryProp);
 
         GUI.enabled = true;
     }

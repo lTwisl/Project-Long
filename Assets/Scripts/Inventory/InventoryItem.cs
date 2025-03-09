@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
@@ -99,4 +100,13 @@ public abstract class InventoryItem : ScriptableObject
 
     [field: Tooltip("Скорость порчи предмета [единиц в игровую минуту]"), Min(0.001f)]
     [field: SerializeField] public float DegradationValue { get; private set; } = 1;
+
+
+    [field: Tooltip("Получаемые предметы после разбора")]
+    [field: SerializeField] public List<InventoryItem> ReceivedItemsAfterDeconstruct { get; protected set; }
+
+    public virtual string GetInfo() 
+    {
+        return $"Type = {name} | Name = {Name}\nDescription = {Description}\n";
+    }
 }

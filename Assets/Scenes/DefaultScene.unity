@@ -373,6 +373,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlayerCapsule
       objectReference: {fileID: 0}
+    - target: {fileID: 8616685848737228372, guid: c5efc39a8aaf6e64ea40e9ad573e9b47, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8616685848737228382, guid: c5efc39a8aaf6e64ea40e9ad573e9b47, type: 3}
       propertyPath: m_SkinWidth
       value: 0.001
@@ -3274,9 +3278,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <TimePaused>k__BackingField: 0
-  timeRate: 1
-  IsSpeedingUpTime: 0
-  speedingUpTime: 15000
+  _useSpeedUp: 0
+  <TimeScaleClassic>k__BackingField: 12
+  <TimeScaleSpeedUp>k__BackingField: 6000
 --- !u!4 &1229944472
 Transform:
   m_ObjectHideFlags: 0
@@ -3880,6 +3884,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: FirstPersonAimCamera
       objectReference: {fileID: 0}
+    - target: {fileID: 6001035305695055566, guid: 2d3c5dbd1ac7eea4687836b0f166025b, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4339,7 +4347,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32009d5cbe87fc44c8175088612feef7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationSpeed: 0.25
 --- !u!1001 &2031435174
 PrefabInstance:
   m_ObjectHideFlags: 0

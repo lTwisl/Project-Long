@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+
 [SelectionBase]
 public class Player : MonoBehaviour
 {
@@ -19,7 +20,6 @@ public class Player : MonoBehaviour
     private void Awake()
     {
         Inventory.Init();
-        Inventory.RecalculateWeight();
         ClothingSystem.Init();
 
         PlayerInputs = GetComponent<PlayerInputs>();
@@ -60,20 +60,6 @@ public class Player : MonoBehaviour
         string json = JsonUtility.ToJson(Inventory);
         PlayerPrefs.SetString("PlayerInventory", json);
     }
-
-    /*[ContextMenu("Sort [Script]")]
-    public void SortInventory()
-    {
-        Inventory.Sort();
-    }*/
-
-    /*[ContextMenu("PrintWithSelectedCategory [Script]")]
-    public void PrintWithSelectedCategory()
-    {
-        string s = "";
-        Inventory.GetSlotsWithCategoty(Inventory.Categoty).ForEach(slot => s += slot.Item?.Name);
-        Debug.Log(s);
-    }*/
 
     [ContextMenu("DropFirstItem [Script]")]
     public void DropFirstItem()

@@ -75,59 +75,67 @@ public class InventorySlotDrawer : PropertyDrawer
 
     private void DrawCapacityField(SerializedProperty itemProp, SerializedProperty capacityProp, Rect rect)
     {
-        if (itemProp.objectReferenceValue != null)
+        if (itemProp.objectReferenceValue == null)
         {
-            SerializedObject item = new SerializedObject(itemProp.objectReferenceValue);
-            bool useInt = item.FindProperty("<MeasuredAsInteger>k__BackingField").boolValue;
-            float maxCapacity = item.FindProperty("<MaxCapacity>k__BackingField").floatValue;
+            EditorGUI.PropertyField(rect, capacityProp);
+            return;
+        }
 
-            if (useInt)
-            {
-                capacityProp.floatValue = EditorGUI.Slider(
-                    rect,
-                    "Capacity",
-                    (int)capacityProp.floatValue,
-                    1,
-                    (int)maxCapacity
-                );
-            }
-            else
-            {
-                capacityProp.floatValue = EditorGUI.Slider(
-                    rect,
-                    "Capacity",
-                    capacityProp.floatValue,
-                    0.001f,
-                    maxCapacity
-                );
-            }
+        SerializedObject item = new SerializedObject(itemProp.objectReferenceValue);
+
+        if (item.targetObject is ClothesItem || item.targetObject is ToolItem)
+        {
+            GUI.enabled = false;
+            capacityProp.floatValue = 1f;
+            EditorGUI.PropertyField(rect, capacityProp);
+            GUI.enabled = true;
+            return;
+        }
+
+        bool useInt = item.FindProperty("<MeasuredAsInteger>k__BackingField").boolValue;
+        float maxCapacity = item.FindProperty("<MaxCapacity>k__BackingField").floatValue;
+
+        if (useInt)
+        {
+            capacityProp.floatValue = EditorGUI.Slider(
+                rect,
+                "Capacity",
+                (int)capacityProp.floatValue,
+                1,
+                (int)maxCapacity
+            );
         }
         else
         {
-            EditorGUI.PropertyField(rect, capacityProp);
+            capacityProp.floatValue = EditorGUI.Slider(
+                rect,
+                "Capacity",
+                capacityProp.floatValue,
+                0.001f,
+                maxCapacity
+            );
         }
     }
 
     private void DrawWeightField(SerializedProperty itemProp, SerializedProperty countProp, Rect rect)
     {
-        if (itemProp.objectReferenceValue != null)
+        if (itemProp.objectReferenceValue == null)
         {
-            var item = new SerializedObject(itemProp.objectReferenceValue);
-            SerializedProperty weightProp = item.FindProperty("<Weight>k__BackingField");
+            EditorGUI.LabelField(rect, "Weight", "N/A");
+            return;
+        }
 
-            if (weightProp != null)
-            {
-                float totalWeight = weightProp.floatValue * countProp.floatValue;
-                EditorGUI.LabelField(rect, "Total Weight", $"{totalWeight:0.##} kg");
-            }
-            else
-            {
-                EditorGUI.LabelField(rect, "Weight", "N/A");
-            }
+        var item = new SerializedObject(itemProp.objectReferenceValue);
+        SerializedProperty weightProp = item.FindProperty("<Weight>k__BackingField");
+
+        if (weightProp != null)
+        {
+            float totalWeight = weightProp.floatValue * countProp.floatValue;
+            EditorGUI.LabelField(rect, "Total Weight", $"{totalWeight:0.##} kg");
         }
         else
         {
-            EditorGUI.LabelField(rect, "Weight", "0 kg");
+            EditorGUI.LabelField(rect, "Weight", "N/A");
         }
     }
 }

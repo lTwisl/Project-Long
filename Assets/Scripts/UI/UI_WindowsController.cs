@@ -1,12 +1,13 @@
 using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using Zenject;
 
 public class UI_WindowsController : MonoBehaviour
 {
     [Inject] private Player _player;
-
+    
     [SerializeField] private Button _btnInventory;
     [SerializeField] private Button _btnClothing;
 
@@ -14,6 +15,14 @@ public class UI_WindowsController : MonoBehaviour
     [SerializeField] private UI_Clothing _uiClothing;
 
     private GameObject _activeWindow;
+
+    private PlayerInput _playerInput;
+
+    private void Awake()
+    {
+        _playerInput = _player.GetComponent<PlayerInput>();
+    }
+
 
     private void OnEnable()
     {
@@ -27,6 +36,10 @@ public class UI_WindowsController : MonoBehaviour
             _uiInventory.gameObject.SetActive(true);
             _activeWindow = _uiInventory.gameObject;
         }
+
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+        _playerInput.enabled = false;
     }
 
     private void OnDisable()
@@ -36,6 +49,10 @@ public class UI_WindowsController : MonoBehaviour
 
         if (_activeWindow != null)
             _activeWindow.SetActive(false);
+
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+        _playerInput.enabled = true;
     }
 
     public void ToggleInventory()
@@ -58,22 +75,30 @@ public class UI_WindowsController : MonoBehaviour
 
     public void SortInventoryByCategory(string strCategory)
     {
-        if (Enum.TryParse(strCategory, true, out InventoryItem.ItemType category))
-            _player.Inventory.Categoty = category;
-        else
-            _player.Inventory.Categoty = null;
+        InventoryItem.ItemType? category = null;
+        if (!string.IsNullOrEmpty(strCategory))
+            category = Enum.Parse<InventoryItem.ItemType>(strCategory, true);
+
+        SortInventoryByCategory(category);
+    }
+
+    public void SortInventoryByFilter(string strFilter)
+    {
+        SortInventoryByFilter(Enum.Parse<Inventory.SortingFilter>(strFilter, true));
+    }
+
+    public void SortInventoryByCategory(InventoryItem.ItemType? category)
+    {
+        _player.Inventory.Categoty = category;
 
         _uiInventory.ShowSlots = _player.Inventory.GetSorteredSlots();
         _uiInventory.UpdateView();
     }
 
-    public void SortInventoryByFilter(string strFilter)
+    public void SortInventoryByFilter(Inventory.SortingFilter filter)
     {
-        if (Enum.TryParse(strFilter, true, out Inventory.SortingFilter filter))
-        {
-            _player.Inventory.Filter = filter;
-            _uiInventory.ShowSlots = _player.Inventory.GetSorteredSlots();
-        }
+        _player.Inventory.Filter = filter;
+        _uiInventory.ShowSlots = _player.Inventory.GetSorteredSlots();
 
         _uiInventory.UpdateView();
     }

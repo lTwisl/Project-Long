@@ -59,11 +59,36 @@ public class ClothingSystem
         return true;
     }
 
+    public void Unequip(InventorySlot invSlot)
+    {
+        if (invSlot == null)
+            return;
+
+        HandleItemRemoved(invSlot);
+        invSlot.IsWearing = false;
+    }
+
     public void HandleItemRemoved(IReadOnlyInventorySlot slot)
     {
         foreach (var clothingSlot in SlotCache.Values)
         {
             clothingSlot.Layers.RemoveAll(layer => layer == slot);
         }
+    }
+
+    public bool TryGetClothesSlot(ClothesItem.ClothesType Region, out ClothingSlot clothingSlot)
+    {
+        return SlotCache.TryGetValue(Region, out clothingSlot);
+    }
+
+    public bool Contains(IReadOnlyInventorySlot item)
+    {
+        foreach (var slot in SlotCache.Values)
+        {
+            if (slot.Layers.Contains(item))
+                return true;
+        }
+
+        return false;
     }
 }

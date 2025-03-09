@@ -1,15 +1,16 @@
-using UnityEngine;
 using TMPro;
+using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class UI_Slot : MonoBehaviour
+public class UI_Slot : MonoBehaviour, IPointerDownHandler
 {
     [SerializeField] private Image _icon;
     [SerializeField] private TMP_Text _capacity;
     [SerializeField] private TMP_Text _condition;
     [SerializeField] private TMP_Text _weight;
 
-    public IReadOnlyInventorySlot Slot {  get; private set; }
+    public IReadOnlyInventorySlot Slot { get; private set; }
 
     public void Init(IReadOnlyInventorySlot slot)
     {
@@ -44,5 +45,10 @@ public class UI_Slot : MonoBehaviour
         _capacity.text = Slot.Capacity.ToString("0.##") + $" {Slot.Item.UnitMeasurement}";
         _condition.text = ((int)Slot.Condition).ToString() + " %";
         _weight.text = (Slot.Capacity * Slot.Item.Weight).ToString("0.##") + $" Í„";
+    }
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        Debug.Log(Slot.Item.GetInfo());
     }
 }

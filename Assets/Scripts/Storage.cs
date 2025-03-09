@@ -38,10 +38,6 @@ public class Storage : MonoBehaviour, IInteractible
             player.Inventory.AddItem(slot.Item, slot.Capacity, slot.Condition);
         }
 
-        /*for (int i = 0; i < Inventory.CountSlots; ++i)
-        {
-            player.Inventory.AddItem(Inventory[i].Item, Inventory[i].Capacity, Inventory[i].Condition);
-        }*/
         Inventory.Clear();
     }
 }
