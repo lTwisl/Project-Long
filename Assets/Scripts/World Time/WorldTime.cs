@@ -6,7 +6,7 @@ public class WorldTime : MonoBehaviour
 {
     public static WorldTime Instance { get; private set; }
 
-    private TimeSpan _currentTime = new TimeSpan(1, 2, 0, 0);
+    private TimeSpan _currentTime = new TimeSpan(1, 7, 0, 0);
     public TimeSpan CurrentTime
     {
         get => _currentTime;
@@ -126,9 +126,9 @@ public class WorldTime : MonoBehaviour
     /// <summary>
     /// Проверяет, прошло ли указанное количество времени с момента oldTime.
     /// </summary>
-    public bool CheckTimeHasPassed(TimeSpan oldTime, TimeSpan timeSpan)
+    public bool CheckTimeHasPassed(TimeSpan oldTime, TimeSpan checkingTime)
     {
-        return _currentTime - oldTime >= timeSpan;
+        return _currentTime - oldTime >= checkingTime;
     }
 
     /// <summary>

@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: PlayerParameters
   m_EditorClassIdentifier: 
   <Health>k__BackingField:
-    _current: 100
+    _current: 96.534935
     <Max>k__BackingField: 100
     <OffsetMax>k__BackingField: 0
-    <ChangeRate>k__BackingField: 0
+    <ChangeRate>k__BackingField: -0.8
   <Stamina>k__BackingField:
     _current: 100
     <Max>k__BackingField: 100
@@ -28,7 +28,7 @@ MonoBehaviour:
     <Reload>k__BackingField: 3
   <MaxLoadCapacity>k__BackingField: 60
   <Hunger>k__BackingField:
-    _current: 97.971886
+    _current: 99.56687
     <Max>k__BackingField: 100
     <OffsetMax>k__BackingField: 0
     <ChangeRate>k__BackingField: -0.1
@@ -36,7 +36,7 @@ MonoBehaviour:
     <BaseMoveChangeRate>k__BackingField: -0.2
     <SprintChangeRate>k__BackingField: -0.5
   <Thirst>k__BackingField:
-    _current: 93.91546
+    _current: 98.7005
     <Max>k__BackingField: 100
     <OffsetMax>k__BackingField: 0
     <ChangeRate>k__BackingField: -0.3
@@ -44,8 +44,8 @@ MonoBehaviour:
     <BaseMoveChangeRate>k__BackingField: -0.6
     <SprintChangeRate>k__BackingField: -1.2
   <Energy>k__BackingField:
-    _current: 100
-    <Max>k__BackingField: 100
+    _current: 1439.9988
+    <Max>k__BackingField: 1440
     <OffsetMax>k__BackingField: 0
     <ChangeRate>k__BackingField: 1
     <IdelChangeRate>k__BackingField: 1
@@ -55,7 +55,7 @@ MonoBehaviour:
     _current: 100
     <Max>k__BackingField: 100
     <OffsetMax>k__BackingField: 0
-    <ChangeRate>k__BackingField: 0
+    <ChangeRate>k__BackingField: 6.84
   <Toxisity>k__BackingField:
     _current: 100
     <Max>k__BackingField: 100
