@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60db134660303e540ba0dcff3d41170e, type: 3}
+  m_Name: WeatherProfile_Bright
+  m_EditorClassIdentifier: 
+  weatherIdentifier: 1
+  weatherTransitions: 2
+  minLifetimeHours: 2
+  maxLifetimeHours: 2
+  tempRatio: 0
+  toxicityRatio: 0
+  maxIntensitySun: 2
+  temperatureSun: 8000
+  colorZenithSun: {r: 1, g: 1, b: 1, a: 1}
+  colorSunsetSun: {r: 1, g: 0.5019608, b: 0, a: 1}
+  maxIntensityMoon: 0.1
+  colorZenithMoon: {r: 0.83137256, g: 0.84705883, b: 0.85882354, a: 1}
+  colorSunsetMoon: {r: 0.7058824, g: 0.7607843, b: 0.8039216, a: 1}
+  minSpeedWind: 3
+  maxSpeedWind: 12
+  speedChangeWind: 1
+  directionNoiseScaleWind: 0.1
+  materialVolumFog: {fileID: 2100000, guid: 8c5737803f42fd948ab1b69f9a21f476, type: 2}
+  materialVolumFogFar: {fileID: 2100000, guid: 90f2241d0b095d94c9a57f4800537d7a, type: 2}
+  materialSkybox: {fileID: 2100000, guid: f857135a39824734a8f08d117eead192, type: 2}
+  postExposure: 0
+  constrast: 0
+  saturation: 0
+  VFX: []
