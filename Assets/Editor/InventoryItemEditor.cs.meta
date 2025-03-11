@@ -1,2 +1,14 @@
 fileFormatVersion: 2
 guid: 07fb24adbefbf0e4382b5c9672ffbc1b
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - _equipHandStrategy: {fileID: 11400000, guid: 80c95c19e30a80d479fc161997d4b4c3, type: 2}
+  - _useOnSelfStrategy: {fileID: 11400000, guid: 00377d1a194340949b38a77e4180c5ab, type: 2}
+  - _wearStrategy: {fileID: 11400000, guid: 3dab8a2000a191146bfb1e1296b2979d, type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

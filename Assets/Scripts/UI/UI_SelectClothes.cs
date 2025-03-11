@@ -37,7 +37,7 @@ public class UI_SelectClothes : MonoBehaviour
         _btnPutOff.onClick.AddListener(() =>
         {
 
-            if (!_player.ClothingSystem.SlotCache.TryGetValue(CurrentUiClothesSlot.Region, out ClothingSlot clothingSlot))
+            if (!_player.ClothingSystem.SlotCache.TryGetValue(CurrentUiClothesSlot.ClothesType, out ClothingSlot clothingSlot))
                 return;
 
             _player.ClothingSystem.Unequip(CurrentUiClothesSlot.Slot);

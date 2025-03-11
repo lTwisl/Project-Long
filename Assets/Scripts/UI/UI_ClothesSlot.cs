@@ -13,7 +13,7 @@ public class UI_ClothesSlot : MonoBehaviour, IPointerDownHandler
     [SerializeField] private TMP_Text _wet;
     [SerializeField] private TMP_Text _type;
 
-    public ClothesItem.ClothesType Region;
+    public ClothesType ClothesType;
     public int IndexLayer;
     public InventorySlot Slot { get; private set; }
 
@@ -21,7 +21,7 @@ public class UI_ClothesSlot : MonoBehaviour, IPointerDownHandler
 
     private void Awake()
     {
-        _type.text = Region.ToString();
+        _type.text = ClothesType.ToString() + $"_{IndexLayer}";
     }
 
     public void Init(InventorySlot slot, UI_SelectClothes uiSelectClothes)
@@ -70,10 +70,10 @@ public class UI_ClothesSlot : MonoBehaviour, IPointerDownHandler
         List<IReadOnlyInventorySlot> slots = new();
         foreach (var slot in _player.Inventory.Slots)
         {
-            if (slot.Item.Category == InventoryItem.ItemType.Clothes
-                && (slot.Item as ClothesItem).TypeClothes == Region)
+            if (slot.Item.Category == Category.Clothes
+                && (slot.Item as ClothesItem).ClothesType == ClothesType)
             {
-                if (_player.ClothingSystem.SlotCache.TryGetValue(Region, out ClothingSlot clothingSlot))
+                if (_player.ClothingSystem.SlotCache.TryGetValue(ClothesType, out ClothingSlot clothingSlot))
                 {
                     if (clothingSlot.Layers.Contains(slot) && Slot != slot)
                         continue;

@@ -5,7 +5,7 @@ public class ToolItem : InventoryItem
 {
     private void OnEnable()
     {
-        Category = ItemType.Tools;
+        Category = Category.Tools;
         Actions = ActionType.Repair;
 
         IsStackable = false;

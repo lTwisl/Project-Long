@@ -191,8 +191,8 @@ MonoBehaviour:
   _icon: {fileID: 166826279651996553}
   _wet: {fileID: 4306603076890452324}
   _type: {fileID: 2793522967565382167}
-  Region: 0
-  IndexLayer: 0
+  ClothesType: 0
+  IndexLayer: 1
 --- !u!1 &7204056681526656630
 GameObject:
   m_ObjectHideFlags: 0

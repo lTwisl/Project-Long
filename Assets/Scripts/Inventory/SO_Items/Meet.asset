@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <Category>k__BackingField: 3
   <UseType>k__BackingField: 1
+  <UseStrategy>k__BackingField: {fileID: 11400000, guid: 00377d1a194340949b38a77e4180c5ab, type: 2}
   <Actions>k__BackingField: 0
   <Name>k__BackingField: Meet
   <Description>k__BackingField: 
@@ -26,5 +27,6 @@ MonoBehaviour:
   <UnitMeasurement>k__BackingField: "\u043A\u0433"
   <DegradeType>k__BackingField: 2
   <DegradationValue>k__BackingField: 0.3
+  <ReceivedItemsAfterDeconstruct>k__BackingField: []
   <StatusParameterImpacts>k__BackingField: []
   <GivesBonus>k__BackingField: []

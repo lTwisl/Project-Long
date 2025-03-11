@@ -1,23 +1,23 @@
 using UnityEngine;
 
+public enum ClothesType
+{
+    Hat,
+    Outerwear,
+    Undergarments,
+    Gloves,
+    Trousers,
+    Underpants,
+    Socks,
+    Boots,
+    Accessories,
+}
+
 [CreateAssetMenu(fileName = "ClothesItem", menuName = "Items/Clothes")]
 public class ClothesItem : InventoryItem
 {
-    public enum ClothesType
-    {
-        Hat,
-        Outerwear,
-        Undergarments,
-        Gloves,
-        Trousers,
-        Underpants,
-        Socks,
-        Boots,
-        Accessories,
-    }
-
     [field: Header("Additional Properties")]
-    [field: SerializeField] public ClothesType TypeClothes { get; private set; }
+    [field: SerializeField] public ClothesType ClothesType { get; private set; }
     [field: SerializeField] public float WindProtection { get; private set; }
     [field: SerializeField] public float WaterProtection { get; private set; }
     [field: SerializeField] public float TemperatureBonus { get; private set; }
@@ -26,8 +26,8 @@ public class ClothesItem : InventoryItem
 
     private void OnEnable()
     {
-        Category = ItemType.Clothes;
-        UseType = MethodOfUse.TakeOffPutOn;
+        Category = Category.Clothes;
+        UseType = MethodOfUse.Wear;
         Actions = ActionType.Repair | ActionType.Deconstruct;
 
         IsStackable = false;
@@ -36,12 +36,12 @@ public class ClothesItem : InventoryItem
         DegradeType = DegradationType.Rate;
     }
 
-    public override string GetInfo()
+    public override string ToString()
     {
-        return base.GetInfo() + $"Temp = {TemperatureBonus}" +
-            $" | Water = {WaterProtection}" +
-            $" | Wind = {WindProtection}" +
-            $" | Friction = {FrictionBonus}" +
-            $" | Toxisity = {ToxisityProtection}";
+        return base.ToString() + $"Temp: {TemperatureBonus} | " +
+            $"Water: {WaterProtection}\n" +
+            $"Wind: {WindProtection} | " +
+            $"Friction: {FrictionBonus}\n" +
+            $"Toxisity: {ToxisityProtection}\n";
     }
 }

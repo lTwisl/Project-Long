@@ -5,7 +5,7 @@ public class MaterialItem : InventoryItem
 {
     private void OnEnable()
     {
-        Category = ItemType.Materials;
+        Category = Category.Materials;
         Actions = ActionType.Deconstruct;
     }
 }

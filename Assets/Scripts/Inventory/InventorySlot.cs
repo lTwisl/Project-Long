@@ -64,4 +64,11 @@ public class InventorySlot : IReadOnlyInventorySlot
         Capacity = capacity;
         Condition = condition;
     }
+
+    public void UseItem(Player player)
+    {
+        Item.Use(player);
+
+        Capacity -= Item.CostOfUse;
+    }
 }

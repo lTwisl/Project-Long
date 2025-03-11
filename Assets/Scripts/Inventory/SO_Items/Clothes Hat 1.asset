@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <Category>k__BackingField: 2
   <UseType>k__BackingField: 3
+  <UseStrategy>k__BackingField: {fileID: 11400000, guid: 3dab8a2000a191146bfb1e1296b2979d, type: 2}
   <Actions>k__BackingField: 17
   <Name>k__BackingField: Hat 1
   <Description>k__BackingField: 
@@ -26,6 +27,7 @@ MonoBehaviour:
   <UnitMeasurement>k__BackingField: 
   <DegradeType>k__BackingField: 2
   <DegradationValue>k__BackingField: 1
+  <ReceivedItemsAfterDeconstruct>k__BackingField: []
   <TypeClothes>k__BackingField: 0
   <WindProtection>k__BackingField: 1.14
   <WaterProtection>k__BackingField: 1

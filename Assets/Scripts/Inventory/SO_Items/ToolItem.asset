@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: ToolItem
   m_EditorClassIdentifier: 
   <Category>k__BackingField: 4
-  <UseType>k__BackingField: 0
+  <UseType>k__BackingField: 1
+  <UseStrategy>k__BackingField: {fileID: 11400000, guid: 00377d1a194340949b38a77e4180c5ab, type: 2}
   <Actions>k__BackingField: 1
   <Name>k__BackingField: InventoryItem
   <Description>k__BackingField: 
@@ -24,5 +25,7 @@ MonoBehaviour:
   <MeasuredAsInteger>k__BackingField: 1
   <MaxCapacity>k__BackingField: 1
   <UnitMeasurement>k__BackingField: 
+  <CostOfUse>k__BackingField: 1
   <DegradeType>k__BackingField: 1
   <DegradationValue>k__BackingField: 1
+  <ReceivedItemsAfterDeconstruct>k__BackingField: []

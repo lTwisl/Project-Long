@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public enum WeightRange
@@ -42,25 +43,23 @@ public class PlayerParameters : ScriptableObject
     [field: SerializeField] public StatusParameter Heat { get; private set; }
     [field: SerializeField] public StatusParameter Toxicity { get; private set; }
 
-
-    private List<IStatusParameter> _allParameters = new();
-    public IReadOnlyList<IStatusParameter> AllParameters => _allParameters;
+    Dictionary<ParameterType, BaseStatusParameter> _statusParameterCache;
+    public IEnumerable<IStatusParameter> AllParameters => _statusParameterCache.Values.AsEnumerable();
 
     private Inventory _playerInventory;
 
     public void Init(Inventory playerInventory)
     {
-        _allParameters.Clear();
-
-        _allParameters.AddRange(new IStatusParameter[] {
-            Health,
-            Stamina,
-            FoodBalance,
-            WaterBalance,
-            Energy,
-            Heat,
-            Toxicity
-        });
+        _statusParameterCache = new Dictionary<ParameterType, BaseStatusParameter>()
+        {
+            { ParameterType.Health, Health},
+            { ParameterType.Stamina, Stamina},
+            { ParameterType.FoodBalance, FoodBalance},
+            { ParameterType.WaterBalance, WaterBalance},
+            { ParameterType.Energy, Energy},
+            { ParameterType.Heat, Heat},
+            { ParameterType.Toxicity, Toxicity},
+        };
 
         _playerInventory = playerInventory;
     }
@@ -88,5 +87,10 @@ public class PlayerParameters : ScriptableObject
             return WeightRange.Ultimate;
 
         return WeightRange.UltimateImmovable;
+    }
+
+    public void Add(ParameterType parameter, float value)
+    {
+        _statusParameterCache[parameter].Current += value;
     }
 }

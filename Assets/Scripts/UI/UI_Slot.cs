@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -9,6 +10,8 @@ public class UI_Slot : MonoBehaviour, IPointerDownHandler
     [SerializeField] private TMP_Text _capacity;
     [SerializeField] private TMP_Text _condition;
     [SerializeField] private TMP_Text _weight;
+
+    public event Action<UI_Slot> OnClick;
 
     public IReadOnlyInventorySlot Slot { get; private set; }
 
@@ -49,6 +52,7 @@ public class UI_Slot : MonoBehaviour, IPointerDownHandler
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        Debug.Log(Slot.Item.GetInfo());
+        Debug.Log(Slot.Item.ToString());
+        OnClick?.Invoke(this);
     }
 }

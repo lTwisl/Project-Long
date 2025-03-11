@@ -75,6 +75,7 @@ public class BaseStatusParameter : IStatusParameter
             OnValueChanged?.Invoke(_current);
         }
     }
+
     [field: Tooltip("Максимальное значение")]
     [field: SerializeField] public float Max { get; set; }
 

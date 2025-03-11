@@ -44,7 +44,7 @@ public class Inventory
     }
 
     [HideInInspector] public SortingFilter Filter;
-    public InventoryItem.ItemType? Categoty;
+    public Category? Categoty;
 
     public event Action<IReadOnlyInventorySlot> OnItemAdded;
     public event Action<IReadOnlyInventorySlot> OnItemRemoved;
@@ -56,6 +56,7 @@ public class Inventory
 
     public void Init()
     {
+        //_initSlots.ForEach(s => AddItem(s.Item, s.Capacity, s.Condition));
         Slots = new LinkedList<InventorySlot>(_initSlots);
         RecalculateWeight();
     }
@@ -141,12 +142,14 @@ public class Inventory
             {
                 InventoryItem item = slot.Item;
 
-                if ((item.DegradeType == InventoryItem.DegradationType.Rate && (item is not ClothesItem)) || ((item is ClothesItem) && slot.IsWearing))
+                if ((item.DegradeType == DegradationType.Rate && (item is not ClothesItem)) || ((item is ClothesItem) && slot.IsWearing))
                 {
                     slot.Condition -= item.DegradationValue * deltaTime;
                     shouldRemove = slot.Condition <= 0;
                 }
             }
+
+            shouldRemove = slot.Capacity <= 0;
 
             if (shouldRemove)
             {
@@ -163,7 +166,7 @@ public class Inventory
         return GetSorteredSlots(Filter, Categoty);
     }
 
-    public List<IReadOnlyInventorySlot> GetSorteredSlots(SortingFilter filter, InventoryItem.ItemType? category)
+    public List<IReadOnlyInventorySlot> GetSorteredSlots(SortingFilter filter, Category? category)
     {
         IComparer<InventorySlot> comparer = filter switch
         {
@@ -176,7 +179,7 @@ public class Inventory
         return new List<IReadOnlyInventorySlot>(GetSorteredSlotsByCategoty(category).OrderBy(s => s, comparer));
     }
 
-    private IEnumerable<InventorySlot> GetSorteredSlotsByCategoty(InventoryItem.ItemType? category)
+    private IEnumerable<InventorySlot> GetSorteredSlotsByCategoty(Category? category)
     {
         if (category != null)
             return Slots.Where(p => p.Item.Category == category);

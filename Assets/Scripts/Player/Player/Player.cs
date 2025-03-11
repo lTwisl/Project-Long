@@ -27,6 +27,9 @@ public class Player : MonoBehaviour
 
         _interactionController = new InteractionController(this, _slider, 2f);
 
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+
         //LoadData();
     }
 
@@ -57,39 +60,35 @@ public class Player : MonoBehaviour
 
     private void OnDestroy()
     {
-        string json = JsonUtility.ToJson(Inventory);
-        PlayerPrefs.SetString("PlayerInventory", json);
+        /*string json = JsonUtility.ToJson(Inventory);
+        PlayerPrefs.SetString("PlayerInventory", json);*/
     }
 
-    [ContextMenu("DropFirstItem [Script]")]
-    public void DropFirstItem()
+    public void DropItem(InventorySlot slot)
     {
         if (Inventory.CountSlots == 0)
             return;
 
-        InventorySlot firstSlot = Inventory.Slots.First.Value;
-
-        if (firstSlot == null)
+        if (!Inventory.Slots.Contains(slot))
             return;
 
-        if (firstSlot.Item?.ItemPrefab == null)
-            return;
+        if (slot.Item.ItemPrefab != null)
+        {
+            WorldItem item = Instantiate(slot.Item.ItemPrefab, transform.position, transform.rotation);
+            item.InventorySlot = new InventorySlot(slot.Item, slot.Capacity, slot.Condition);
+        }
 
-        WorldItem item = Instantiate(firstSlot.Item.ItemPrefab, transform.position, transform.rotation);
-        item.InventorySlot = new InventorySlot(firstSlot.Item, firstSlot.Capacity, firstSlot.Condition);
-
-        Inventory.RemoveItem(firstSlot);
-    }
-
-    [ContextMenu("EquipFirst [Script]")]
-    public void EquipFirst()
-    {
-        ClothingSystem.TryEquip(Inventory.Slots.First.Value, 0);
+        Inventory.RemoveItem(slot);
     }
 
     [ContextMenu("InitInventory [Script]")]
     public void InitInventory()
     {
         Inventory.Init();
+    }
+
+    public void UseItem(InventorySlot slot)
+    {
+        slot.UseItem(this);
     }
 }

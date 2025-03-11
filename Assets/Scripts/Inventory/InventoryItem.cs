@@ -9,51 +9,50 @@ public struct PairParamterAndValue
     public float Value;
 }
 
+public enum Category
+{
+    Heating = 0,        // Обогрев
+    Medicine = 1,       // Лечение
+    Clothes = 2,        // Одежда
+    FoodAndDrink = 3,   // Еда и питье
+    Tools = 4,          // Инструменты
+    Materials = 5,      // Материалы
+}
+
+public enum DegradationType
+{
+    None = 0,           // Не портится
+    Used = 1,           // Портятся при использовании
+    Rate = 2,           // Портятся постоянно
+}
+
+public enum MethodOfUse
+{
+    None = 0,          // Не используется
+    OnSelf = 1,        // Используется на себе
+    EquipHand = 2,     // Можно взять в руку
+    Wear = 3,          // Можно надейт/снять
+}
+
+[Flags]
+public enum ActionType
+{
+    Repair = 1,         // Ремонтировать
+    Charge = 2,         // Зарядить
+    Discharge = 4,      // Заправить 
+    Refuel = 8,         // Разрядить 
+    Deconstruct = 16,   // Разобрать 
+}
+
 public abstract class InventoryItem : ScriptableObject
 {
-    public enum ItemType
-    {
-        Heating = 0,        // Обогрев
-        Medicine = 1,       // Лечение
-        Clothes = 2,        // Одежда
-        FoodAndDrink = 3,   // Еда и питье
-        Tools = 4,           // Инструменты
-        Materials = 5,       // Материалы
-    }
-
-
-    public enum DegradationType
-    {
-        None = 0,           // Не портится
-        Used = 1,           // Портятся при использовании
-        Rate = 2,           // Портятся постоянно
-    }
-
-    public enum MethodOfUse
-    {
-        None = 0,           // Не используется
-        OnSelf = 1,         // Используется на себе
-        TakeInHand = 2,     // Можно взять в руку
-        TakeOffPutOn = 3,   // Можно надейт/снять
-    }
-
-    [Flags]
-    public enum ActionType
-    {
-        Repair = 1,         // Ремонтировать
-        Charge = 2,         // Зарядить
-        Discharge = 4,      // Заправить 
-        Refuel = 8,         // Разрядить 
-        Deconstruct = 16,   // Разобрать 
-    }
-
-
     [field: Tooltip("Тип предмета")]
-    [field: SerializeField] public ItemType Category { get; protected set; }
+    [field: SerializeField] public Category Category { get; protected set; }
 
 
     [field: Tooltip("Способ приминения")]
     [field: SerializeField] public MethodOfUse UseType { get; protected set; }
+    [field: SerializeField] public UseStrategy UseStrategy { get; protected set; }
 
     [field: Tooltip("Способы взаимодействия с предеметом")]
     [field: SerializeField] public ActionType Actions { get; protected set; }
@@ -93,6 +92,7 @@ public abstract class InventoryItem : ScriptableObject
     [field: Tooltip("Единица измерения")]
     [field: SerializeField] public string UnitMeasurement { get; protected set; } = "";
 
+    [field: SerializeField] public float CostOfUse { get; protected set; } = 1f;
 
     [field: Tooltip("Деградирования предмета")]
     [field: SerializeField] public DegradationType DegradeType { get; protected set; }
@@ -105,8 +105,18 @@ public abstract class InventoryItem : ScriptableObject
     [field: Tooltip("Получаемые предметы после разбора")]
     [field: SerializeField] public List<InventoryItem> ReceivedItemsAfterDeconstruct { get; protected set; }
 
-    public virtual string GetInfo() 
+    public override string ToString()
     {
-        return $"Type = {name} | Name = {Name}\nDescription = {Description}\n";
+        return $"Asset: {name} | " +
+            $"Item: {Name}\n" +
+            $"Description: {Description}\n";
+    }
+
+    public void Use(Player player)
+    {
+        if (UseStrategy == null)
+            return;
+
+        UseStrategy.Execute(this, player);
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Reflection;
 using UnityEditor;
@@ -6,8 +7,13 @@ using UnityEngine;
 [CustomEditor(typeof(InventoryItem), true)]
 public class InventoryItemEditor : Editor
 {
+    [SerializeField] protected EquipHandStrategy _equipHandStrategy;
+    [SerializeField] protected UseOnSelfStrategy _useOnSelfStrategy;
+    [SerializeField] protected WearStrategy _wearStrategy;
+
     protected SerializedProperty _categoryProp;
     protected SerializedProperty _useTypeProp;
+    protected SerializedProperty _useStrategyProp;
     protected SerializedProperty _actionsProp;
     protected SerializedProperty _nameProp;
     protected SerializedProperty _descriptionProp;
@@ -18,6 +24,7 @@ public class InventoryItemEditor : Editor
     protected SerializedProperty _maxStackSizeProp;
     protected SerializedProperty _weightProp;
     protected SerializedProperty _unitMeasurementProp;
+    protected SerializedProperty _costOfUseProp;
     protected SerializedProperty _degradeTypeProp;
     protected SerializedProperty _degradationValueProp;
     protected SerializedProperty _receivedItemsAfterDeconstructProp;
@@ -26,6 +33,7 @@ public class InventoryItemEditor : Editor
     {
         _categoryProp = serializedObject.FindProperty("<Category>k__BackingField");
         _useTypeProp = serializedObject.FindProperty("<UseType>k__BackingField");
+        _useStrategyProp = serializedObject.FindProperty("<UseStrategy>k__BackingField");
         _actionsProp = serializedObject.FindProperty("<Actions>k__BackingField");
         _nameProp = serializedObject.FindProperty("<Name>k__BackingField");
         _descriptionProp = serializedObject.FindProperty("<Description>k__BackingField");
@@ -36,6 +44,7 @@ public class InventoryItemEditor : Editor
         _maxStackSizeProp = serializedObject.FindProperty("<MaxCapacity>k__BackingField");
         _weightProp = serializedObject.FindProperty("<Weight>k__BackingField");
         _unitMeasurementProp = serializedObject.FindProperty("<UnitMeasurement>k__BackingField");
+        _costOfUseProp = serializedObject.FindProperty("<CostOfUse>k__BackingField");
         _degradeTypeProp = serializedObject.FindProperty("<DegradeType>k__BackingField");
         _degradationValueProp = serializedObject.FindProperty("<DegradationValue>k__BackingField");
         _receivedItemsAfterDeconstructProp = serializedObject.FindProperty("<ReceivedItemsAfterDeconstruct>k__BackingField");
@@ -49,6 +58,8 @@ public class InventoryItemEditor : Editor
 
         DrawCategoryProp(typeName);
         DrawUseTypeProp(typeName);
+
+        DrawUseStrategyProp();
 
         EditorGUILayout.PropertyField(_actionsProp);
         EditorGUILayout.PropertyField(_nameProp);
@@ -67,6 +78,7 @@ public class InventoryItemEditor : Editor
 
         DrawUnitMeasurement(typeName);
 
+        DrawCostOfUseProp();
 
         EditorGUILayout.Space(10);
 
@@ -79,7 +91,7 @@ public class InventoryItemEditor : Editor
             EditorGUILayout.PropertyField(_degradationValueProp, new GUIContent("Degradation Rate"));
         EditorGUI.indentLevel--;
 
-        if (((InventoryItem.ActionType)_actionsProp.enumValueFlag).HasFlag(InventoryItem.ActionType.Deconstruct))
+        if (((ActionType)_actionsProp.enumValueFlag).HasFlag(ActionType.Deconstruct))
             EditorGUILayout.PropertyField(_receivedItemsAfterDeconstructProp);
 
         EditorGUILayout.Space(20);
@@ -101,6 +113,19 @@ public class InventoryItemEditor : Editor
         }
 
         serializedObject.ApplyModifiedProperties();
+    }
+
+    private void DrawCostOfUseProp()
+    {
+        if (_measuredAsIntegerProp.boolValue)
+        {
+            GUI.enabled = false;
+            _costOfUseProp.floatValue = 1;
+        }
+
+        EditorGUILayout.PropertyField(_costOfUseProp);
+
+        GUI.enabled = true;
     }
 
     private void DrawIconPreview()
@@ -150,7 +175,7 @@ public class InventoryItemEditor : Editor
     {
         GUI.enabled = typeName switch
         {
-            nameof(Consumables) => false,
+            nameof(ConsumablesItem) => false,
             nameof(ClothesItem) => false,
             nameof(MaterialItem) => false,
             nameof(MedicineItem) => false,
@@ -242,5 +267,49 @@ public class InventoryItemEditor : Editor
         EditorGUILayout.PropertyField(_unitMeasurementProp);
 
         GUI.enabled = true;
+    }
+
+    private void DrawUseStrategyProp()
+    {
+        MethodOfUse methodOfUse = (MethodOfUse)_useTypeProp.enumValueIndex;
+        GUI.enabled = methodOfUse switch
+        {
+            MethodOfUse.None => false,
+            _ => true,
+        };
+
+        EditorGUILayout.PropertyField(_useStrategyProp);
+
+        GUI.enabled = true;
+
+        switch (methodOfUse)
+        {
+            case MethodOfUse.OnSelf:
+                SetUseStrategyIfNotSubclass(typeof(UseOnSelfStrategy), _useOnSelfStrategy);
+                break;
+            case MethodOfUse.EquipHand:
+                SetUseStrategyIfNotSubclass(typeof(EquipHandStrategy), _equipHandStrategy);
+                break;
+            case MethodOfUse.Wear:
+                SetUseStrategyIfNotSubclass(typeof(WearStrategy), _wearStrategy);
+                break;
+            default:
+                _useStrategyProp.objectReferenceValue = null;
+                break;
+        }
+    }
+
+    private void SetUseStrategyIfNotSubclass(Type typeStrategy, UseStrategy useStrategy)
+    {
+        if (_useStrategyProp.objectReferenceValue == null)
+        {
+            _useStrategyProp.objectReferenceValue = useStrategy;
+            return;
+        }
+
+        if (!_useStrategyProp.objectReferenceValue.GetType().IsSubclassOf(typeStrategy))
+        {
+            _useStrategyProp.objectReferenceValue = useStrategy;
+        }
     }
 }

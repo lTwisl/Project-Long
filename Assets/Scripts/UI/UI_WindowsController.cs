@@ -75,9 +75,9 @@ public class UI_WindowsController : MonoBehaviour
 
     public void SortInventoryByCategory(string strCategory)
     {
-        InventoryItem.ItemType? category = null;
+        Category? category = null;
         if (!string.IsNullOrEmpty(strCategory))
-            category = Enum.Parse<InventoryItem.ItemType>(strCategory, true);
+            category = Enum.Parse<Category>(strCategory, true);
 
         SortInventoryByCategory(category);
     }
@@ -87,7 +87,7 @@ public class UI_WindowsController : MonoBehaviour
         SortInventoryByFilter(Enum.Parse<Inventory.SortingFilter>(strFilter, true));
     }
 
-    public void SortInventoryByCategory(InventoryItem.ItemType? category)
+    public void SortInventoryByCategory(Category? category)
     {
         _player.Inventory.Categoty = category;
 

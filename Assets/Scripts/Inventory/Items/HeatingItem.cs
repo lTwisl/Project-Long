@@ -18,7 +18,13 @@ public class HeatingItem : InventoryItem
 
     private void OnEnable()
     {
-        Category = ItemType.Heating;
+        Category = Category.Heating;
+    }
+
+    public override string ToString()
+    {
+         return base.ToString() + $"Type: {TypeHeating} | Value: {Value}\n" +
+            $"ChanceHeating: {ChanceHeating}";
     }
 }
 

@@ -91,4 +91,9 @@ public class PlayerStatusController : MonoBehaviour
         GUILayout.Label($"Тепло: {_playerParameters.Heat.Current:f1}");
         GUILayout.Label($"Заражённость: {_playerParameters.Toxicity.Current:f1}");
     }
+
+    public void Add(ParameterType parameter, float value)
+    {
+        _playerParameters.Add(parameter, value);
+    }
 }

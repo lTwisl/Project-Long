@@ -25,8 +25,8 @@ public class Storage : MonoBehaviour, IInteractible
 
     private void OnDestroy()
     {
-        string json = JsonUtility.ToJson(Inventory);
-        PlayerPrefs.SetString(_storageId, json);
+        /*string json = JsonUtility.ToJson(Inventory);
+        PlayerPrefs.SetString(_storageId, json);*/
     }
 
     public virtual void Interact(Player player)

@@ -12,14 +12,14 @@ public class UI_Clothing : MonoBehaviour
     [SerializeField] private UI_SelectClothes _uiSelectClothes;
     [SerializeField] private TMP_Text _text;
 
-    private Dictionary<ClothesItem.ClothesType, List<UI_ClothesSlot>> _uiSlotCache = new Dictionary<ClothesItem.ClothesType, List<UI_ClothesSlot>>();
+    private Dictionary<ClothesType, List<UI_ClothesSlot>> _uiSlotCache = new Dictionary<ClothesType, List<UI_ClothesSlot>>();
 
     private void Awake()
     {
         _bodySlots.ForEach(slot => slot.Init(null, _uiSelectClothes));
 
         var groupedSlots = _bodySlots
-            .GroupBy(slot => slot.Region)
+            .GroupBy(slot => slot.ClothesType)
             .Select(group => new 
             {
                 Type = group.Key,
@@ -42,12 +42,15 @@ public class UI_Clothing : MonoBehaviour
         float p1 = 0, p2 = 0, p3 = 0, p4 = 0, p5 = 0;
         foreach (var slot in _player.ClothingSystem.SlotCache.Values)
         {
-            if (!_uiSlotCache.TryGetValue(slot.Region, out List<UI_ClothesSlot> layers))
+            if (!_uiSlotCache.TryGetValue(slot.ClothesType, out List<UI_ClothesSlot> layers))
                 continue;
 
             for (int i = 0; i < Mathf.Min(slot.Layers.Count, layers.Count); ++i)
             {
-                layers[i].Init(slot.Layers[i], _uiSelectClothes);
+                if (slot.Layers[i] == null) 
+                    continue;
+
+                layers[i].Set(slot.Layers[i]);
 
                 var clothes = slot.Layers[i].Item as ClothesItem;
                 p1 += clothes.TemperatureBonus;
