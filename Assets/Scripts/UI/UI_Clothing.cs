@@ -6,13 +6,19 @@ using Zenject;
 
 public class UI_Clothing : MonoBehaviour
 {
-    [Inject] private Player _player;
-
     [SerializeField] private List<UI_ClothesSlot> _bodySlots;
     [SerializeField] private UI_SelectClothes _uiSelectClothes;
     [SerializeField] private TMP_Text _text;
 
     private Dictionary<ClothesType, List<UI_ClothesSlot>> _uiSlotCache = new Dictionary<ClothesType, List<UI_ClothesSlot>>();
+
+    private ClothingSystem _clothesSystem;
+
+    [Inject]
+    private void Construct(Player player)
+    {
+        _clothesSystem = player.ClothingSystem;
+    }
 
     private void Awake()
     {
@@ -40,7 +46,7 @@ public class UI_Clothing : MonoBehaviour
     public void UpdateView()
     {
         float p1 = 0, p2 = 0, p3 = 0, p4 = 0, p5 = 0;
-        foreach (var slot in _player.ClothingSystem.SlotCache.Values)
+        foreach (var slot in _clothesSystem.SlotCache.Values)
         {
             if (!_uiSlotCache.TryGetValue(slot.ClothesType, out List<UI_ClothesSlot> layers))
                 continue;

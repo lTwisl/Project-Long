@@ -8,14 +8,6 @@ using Zenject;
 [RequireComponent(typeof(PlayerInput))]
 public class PlayerMovement : MonoBehaviour
 {
-    [Inject] private PlayerMovementConfig _moveConfig;
-    [Inject] private PlayerParameters _parameters;
-
-    [Header("Cinemachine Camera")]
-    [SerializeField] private GameObject _cinemachineCameraTarget;
-    [SerializeField] private float _topClamp = 89.0f;
-    [SerializeField] private float _bottomClamp = -89.0f;
-
     public enum PlayerMoveMode
     {
         Idel,
@@ -24,6 +16,11 @@ public class PlayerMovement : MonoBehaviour
         Crouching,
         Falling,
     }
+
+    [Header("Cinemachine Camera")]
+    [SerializeField] private GameObject _cinemachineCameraTarget;
+    [SerializeField] private float _topClamp = 89.0f;
+    [SerializeField] private float _bottomClamp = -89.0f;
 
     public event Action<PlayerMoveMode> OnChangedMoveMode;
     private PlayerMoveMode _moveMode;
@@ -61,25 +58,26 @@ public class PlayerMovement : MonoBehaviour
     private float _originalCenter;
     private float _orignalCameraHeight;
 
-    private PlayerInput _playerInput;
     private CharacterController _controller;
     private PlayerInputs _input;
 
     private const float _threshold = 0.01f;
 
-    private bool IsCurrentDeviceMouse
+    private PlayerMovementConfig _moveConfig;
+    private PlayerParameters _parameters;
+
+    [Inject]
+    private void Construct(PlayerMovementConfig moveConfig, PlayerParameters parameters)
     {
-        get
-        {
-            return _playerInput.currentControlScheme == "KeyboardMouse";
-        }
+        _moveConfig = moveConfig;
+        _parameters = parameters;
     }
+
 
     private void Awake()
     {
         _controller = GetComponent<CharacterController>();
         _input = GetComponent<PlayerInputs>();
-        _playerInput = GetComponent<PlayerInput>();
 
         _originalCrouchHeight = _controller.height;
         _originalCenter = _controller.center.y;
@@ -88,6 +86,9 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
+        if (_input.isEnableUiPlayer)
+            return;
+
         GroundedCheck();
         CeilingedCheck();
 
@@ -100,6 +101,9 @@ public class PlayerMovement : MonoBehaviour
 
     private void LateUpdate()
     {
+        if (_input.isEnableUiPlayer)
+            return;
+
         if (_isTransitioning)
             _cinemachineCameraTarget.transform.localPosition = new Vector3(
                 _cinemachineCameraTarget.transform.localPosition.x,
@@ -170,10 +174,8 @@ public class PlayerMovement : MonoBehaviour
     {
         if (_input.look.sqrMagnitude >= _threshold)
         {
-            float deltaTimeMultiplier = IsCurrentDeviceMouse ? 1.0f : Time.deltaTime;
-
-            _cinemachineTargetPitch += _input.look.y * _moveConfig.RotationSpeed * deltaTimeMultiplier;
-            _rotationVelocity = _input.look.x * _moveConfig.RotationSpeed * deltaTimeMultiplier;
+            _cinemachineTargetPitch += _input.look.y * _moveConfig.RotationSpeed;
+            _rotationVelocity = _input.look.x * _moveConfig.RotationSpeed;
 
             _cinemachineTargetPitch = Utility.ClampAngle(_cinemachineTargetPitch, _bottomClamp, _topClamp);
 
@@ -277,7 +279,7 @@ public class PlayerMovement : MonoBehaviour
             _verticalVelocity += _moveConfig.Gravity * Time.deltaTime;
     }
 
-
+#if UNITY_EDITOR
     private void OnDrawGizmosSelected()
     {
         if (_moveConfig == null) return;
@@ -306,4 +308,5 @@ public class PlayerMovement : MonoBehaviour
         if (_controller != null)
             GUILayout.Label($"Speed: {_controller.velocity.magnitude:f2}");
     }
+#endif
 }

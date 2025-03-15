@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -30,7 +31,23 @@ public class Player : MonoBehaviour
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
 
+        
+
+        //m.Pause();
+
+
         //LoadData();
+    }
+
+
+    private void OnEnable()
+    {
+        PlayerInputs.OnChangeVisibilityUiPlayer += SetVisibilityUiPlayer;
+    }
+
+    private void OnDisable()
+    {
+        PlayerInputs.OnChangeVisibilityUiPlayer -= SetVisibilityUiPlayer;
     }
 
     private void Start()
@@ -38,18 +55,67 @@ public class Player : MonoBehaviour
         Inventory.OnItemRemoved += slot => ClothingSystem.HandleItemRemoved(slot);
 
         WorldTime.Instance.OnMinuteChanged += _ => Inventory.Update(1);
+
+        
+
+
+        var m2 = new Process(
+
+            TimeSpan.FromMinutes(1),
+            () =>
+            {
+                Debug.Log("Invoke 2");
+            },
+            timeTerm => Debug.Log($"Teminate 2: {timeTerm}")
+        );
+
+        //var m3 = new Process(
+
+        //    TimeSpan.FromMinutes(2),
+        //    () =>
+        //    {
+        //        Debug.Log("Invoke 3");
+        //    },
+        //    timeTerm => Debug.Log($"Teminate 3: {timeTerm}")
+        //);
+
+        var m = new Process(
+        
+            TimeSpan.FromMinutes(1),
+            () =>
+            {
+                Debug.Log("Invoke 1");
+                m2.Play();
+            },
+            timeTerm => Debug.Log($"Teminate 1: {timeTerm}")
+        );
+
+        var m4 = new Process(
+
+            TimeSpan.FromSeconds(20),
+            () =>
+            {
+                Debug.Log("Invoke 4");
+                m2.Kill();
+            },
+            timeTerm => Debug.Log($"Teminate 4: {timeTerm}")
+        );
+
+        m.Play();
+        m4.Play();
+        
     }
 
     private void Update()
     {
         _interactionController.Update(Time.deltaTime);
+    }
 
-        if (Input.GetKeyDown(KeyCode.Tab))
-        {
-            _uiWindowsController.gameObject.SetActive(!_uiWindowsController.gameObject.activeSelf);
-            Cursor.visible = _uiWindowsController.gameObject.activeSelf;
-            Cursor.lockState = !Cursor.visible ? CursorLockMode.Locked : CursorLockMode.None;
-        }
+    public void SetVisibilityUiPlayer(bool newVisibility)
+    {
+        _uiWindowsController.gameObject.SetActive(newVisibility);
+        Cursor.visible = _uiWindowsController.gameObject.activeSelf;
+        Cursor.lockState = !Cursor.visible ? CursorLockMode.Locked : CursorLockMode.None;
     }
 
     private void LoadData()

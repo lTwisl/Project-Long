@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 
+[DefaultExecutionOrder(-100)]
 public class WorldTime : MonoBehaviour
 {
     public static WorldTime Instance { get; private set; }
@@ -122,7 +123,7 @@ public class WorldTime : MonoBehaviour
             StopCoroutine(_waitCoroutine);
             OnEndSpeedUpTime?.Invoke(CurrentTime);
             _useSpeedUp = false;
-        }    
+        }
     }
 
     /// <summary>

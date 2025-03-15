@@ -1,6 +1,6 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using static UnityEngine.Rendering.DebugUI;
 
 
 public class PlayerInputs : MonoBehaviour
@@ -10,16 +10,12 @@ public class PlayerInputs : MonoBehaviour
     public Vector2 look;
     public bool sprint;
     public bool crouch;
-    public bool jump;
-
-    [Header("Movement Settings")]
-    public bool analogMovement;
-
-    [Header("Mouse Cursor Settings")]
-    public bool cursorLocked = true;
-    public bool cursorInputForLook = true;
 
     public bool isInteract = false;
+
+    public event Action<bool> OnChangeVisibilityUiPlayer; 
+
+    public bool isEnableUiPlayer = false;
 
     public void OnMove(InputValue value)
     {
@@ -28,10 +24,8 @@ public class PlayerInputs : MonoBehaviour
 
     public void OnLook(InputValue value)
     {
-        if (cursorInputForLook)
-        {
-            LookInput(value.Get<Vector2>());
-        }
+
+        LookInput(value.Get<Vector2>());
     }
 
     public void OnSprint(InputValue value)
@@ -46,7 +40,13 @@ public class PlayerInputs : MonoBehaviour
 
     public void OnInteract(InputValue value)
     {
-       InteractInput(value.isPressed);
+        InteractInput(value.isPressed);
+    }
+
+    public void OnToggleUiPlayer(InputValue value)
+    {
+        ToggleUiPlayer();
+        OnChangeVisibilityUiPlayer?.Invoke(isEnableUiPlayer);
     }
 
     public void MoveInput(Vector2 newMoveDirection)
@@ -74,14 +74,9 @@ public class PlayerInputs : MonoBehaviour
         isInteract = b;
     }
 
-    private void OnApplicationFocus(bool hasFocus)
+    public void ToggleUiPlayer()
     {
-        //SetCursorState(cursorLocked);
-    }
-
-    private void SetCursorState(bool newState)
-    {
-        Cursor.lockState = newState ? CursorLockMode.Locked : CursorLockMode.None;
+        isEnableUiPlayer = !isEnableUiPlayer;
     }
 }
 

@@ -7,8 +7,6 @@ using Zenject;
 
 public class UI_ClothesSlot : MonoBehaviour, IPointerDownHandler
 {
-    [Inject] private Player _player;
-
     [SerializeField] private Image _icon;
     [SerializeField] private TMP_Text _wet;
     [SerializeField] private TMP_Text _type;
@@ -18,6 +16,15 @@ public class UI_ClothesSlot : MonoBehaviour, IPointerDownHandler
     public InventorySlot Slot { get; private set; }
 
     private UI_SelectClothes _uiSelectClothes;
+
+    private Player _player;
+
+    [Inject]
+    private void Construct(Player player)
+    {
+        _player = player;
+    }
+
 
     private void Awake()
     {

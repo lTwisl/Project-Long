@@ -5,8 +5,6 @@ using Zenject;
 
 public class UI_Inventory : MonoBehaviour
 {
-    [Inject] private Player _player;
-
     [SerializeField] private UI_Slot _uiSlotPrefab;
     [SerializeField] private GridLayoutGroup _uiGrid;
 
@@ -19,6 +17,14 @@ public class UI_Inventory : MonoBehaviour
     public List<IReadOnlyInventorySlot> ShowSlots { get; set; }
 
     private UI_Slot _selectesSlot;
+
+    private Player _player;
+
+    [Inject]
+    private void Construct(Player player)
+    {
+        _player = player;
+    }
 
     private void OnEnable()
     {

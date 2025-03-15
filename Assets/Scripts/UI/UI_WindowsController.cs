@@ -6,8 +6,7 @@ using Zenject;
 
 public class UI_WindowsController : MonoBehaviour
 {
-    [Inject] private Player _player;
-    
+   
     [SerializeField] private Button _btnInventory;
     [SerializeField] private Button _btnClothing;
 
@@ -16,13 +15,13 @@ public class UI_WindowsController : MonoBehaviour
 
     private GameObject _activeWindow;
 
-    private PlayerInput _playerInput;
+    private Player _player;
 
-    private void Awake()
+    [Inject]
+    private void Construct(Player player)
     {
-        _playerInput = _player.GetComponent<PlayerInput>();
+        _player = player;
     }
-
 
     private void OnEnable()
     {
@@ -39,7 +38,6 @@ public class UI_WindowsController : MonoBehaviour
 
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
-        _playerInput.enabled = false;
     }
 
     private void OnDisable()
@@ -52,7 +50,6 @@ public class UI_WindowsController : MonoBehaviour
 
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
-        _playerInput.enabled = true;
     }
 
     public void ToggleInventory()

@@ -6,8 +6,15 @@ using Zenject;
 [RequireComponent(typeof(PlayerMovement))]
 public class PlayerStatusController : MonoBehaviour
 {
-    [Inject] private PlayerParameters _playerParameters;
     private PlayerMovement _playerMovement;
+
+    private PlayerParameters _playerParameters;
+    
+    [Inject]
+    private void Construct(PlayerParameters playerParameters)
+    {
+        _playerParameters = playerParameters;
+    }
 
     private void Awake()
     {

@@ -6,8 +6,6 @@ using Zenject;
 
 public class UI_SelectClothes : MonoBehaviour
 {
-    [Inject] private Player _player;
-
     [SerializeField] private Image _image;
     [SerializeField] private Button _btnPutOn;
     [SerializeField] private Button _btnPutOff;
@@ -22,6 +20,16 @@ public class UI_SelectClothes : MonoBehaviour
 
     private int _currentIndex;
 
+
+    private ClothingSystem _clothesSystem;
+
+    [Inject]
+    private void Construct(Player player)
+    {
+        _clothesSystem = player.ClothingSystem;
+    }
+
+
     private void Awake()
     {
         _btnPutOn.onClick.AddListener(() =>
@@ -29,18 +37,18 @@ public class UI_SelectClothes : MonoBehaviour
             if (CurrentUiClothesSlot == null || Slots.Count == 0)
                 return;
 
-            _player.ClothingSystem.Unequip(CurrentUiClothesSlot.Slot);
-            _player.ClothingSystem.TryEquip(Slots[_currentIndex] as InventorySlot, CurrentUiClothesSlot.IndexLayer);
+            _clothesSystem.Unequip(CurrentUiClothesSlot.Slot);
+            _clothesSystem.TryEquip(Slots[_currentIndex] as InventorySlot, CurrentUiClothesSlot.IndexLayer);
             CurrentUiClothesSlot.Set(Slots[_currentIndex] as InventorySlot);
         });
 
         _btnPutOff.onClick.AddListener(() =>
         {
 
-            if (!_player.ClothingSystem.SlotCache.TryGetValue(CurrentUiClothesSlot.ClothesType, out ClothingSlot clothingSlot))
+            if (!_clothesSystem.SlotCache.TryGetValue(CurrentUiClothesSlot.ClothesType, out ClothingSlot clothingSlot))
                 return;
 
-            _player.ClothingSystem.Unequip(CurrentUiClothesSlot.Slot);
+            _clothesSystem.Unequip(CurrentUiClothesSlot.Slot);
             CurrentUiClothesSlot.Clear();
         });
 
