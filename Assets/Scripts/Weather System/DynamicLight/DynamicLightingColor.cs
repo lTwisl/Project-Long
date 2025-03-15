@@ -1,32 +1,31 @@
 using System;
 using UnityEngine;
 
+/// <summary>
+/// Класс предназначенный для управления поведением глобального освещения сцены
+/// </summary>
 [ExecuteAlways]
 public class DynamicLightingColor : MonoBehaviour
 {
     [Header("Настройки света:")]
     public bool isSun = true;
     [SerializeField, Tooltip("Максимальная интенсивность источника освещения"), Min(0)] private float _maxIntensity = 1.5f;
-    [SerializeField, Tooltip("Температура источника освещения"), Min(0)] private float _temperature = 8000f;
+    [HideIf(nameof(isSun), false), SerializeField, Tooltip("Температура источника освещения"), Min(0)] private float _temperature = 8000f;
     [Tooltip("Цвет света в полдень")] public Color colorAtZenith = new Color(1f, 0.95f, 0.9f);
     [Tooltip("Цвет света на закате")] public Color colorAtSunset = new Color(1f, 0.65f, 0.3f);
 
     [SerializeField, Tooltip("Смещение позиции горизонта изменения интенсивности"), Range(-1, 1)] private float _horizontOffset = 0.1f;
     [SerializeField, Tooltip("Диапазон углов для верхнего перехода (от X'верх' до Y'низ')")] private Vector2 _colorTransitionRangeAngles = new(90, 0);
-    [SerializeField, Tooltip("Порог обновления параметров света"), Min(0)] private float _updateThreshold = 0.001f;
 
-    [Header("Настройки окружающего света:")]
-    [SerializeField, Tooltip("Максимальная интенсивность рассеянного освещения"), Range(0f, 2f)] private float _maxAmbientIntensity = 1f;
-    [SerializeField, Tooltip("Минимальная интенсивность рассеянного освещения"), Range(0f, 1f)] private float _minAmbientIntensity = 0.3f;
-
+    [HideIf(nameof(isSun), false), SerializeField, Tooltip("Максимальная интенсивность рассеянного освещения"), Range(0f, 2f)] private float _maxAmbientIntensity = 1f;
+    [HideIf(nameof(isSun), false), SerializeField, Tooltip("Минимальная интенсивность рассеянного освещения"), Range(0f, 1f)] private float _minAmbientIntensity = 0.3f;
 
     [Header("Кривые анимации:")]
-    [SerializeField] private AnimationCurve _intensityCurve = new AnimationCurve(new Keyframe(0, 0), new Keyframe(1, 1)); // Кривая интенсивности света
-    [SerializeField] private AnimationCurve _colorBlendCurve = new AnimationCurve(new Keyframe(0, 0), new Keyframe(1, 1)); // Кривая смешения цветов
-    [SerializeField] private AnimationCurve _ambientIntensityCurve = new AnimationCurve(new Keyframe(0, 0), new Keyframe(1, 1)); // Кривая интенсивности окружающего света
+    [SerializeField] private AnimationCurve _intensityCurve = new AnimationCurve(new Keyframe(0, 0), new Keyframe(1, 1));
+    [SerializeField] private AnimationCurve _colorBlendCurve = new AnimationCurve(new Keyframe(0, 0), new Keyframe(1, 1));
+    [HideIf(nameof(isSun), false), SerializeField] private AnimationCurve _ambientIntensityCurve = new AnimationCurve(new Keyframe(0, 0), new Keyframe(1, 1));
 
     private Light _light;
-    private float _lastDotProduct = float.MaxValue;
     private Vector2 _colorTransitionRange;
 
     public float MaxIntensity
@@ -77,29 +76,8 @@ public class DynamicLightingColor : MonoBehaviour
 
     private void Update()
     {
-        if (ShouldUpdateLighting())
-        {
+        if (transform.hasChanged)
             UpdateLightingParameters();
-            CacheCurrentState();
-            try
-            {
-                FindFirstObjectByType<WeatherSystem>().UserVolumFogMaterial.SetVector("_Sun_Direction", RenderSettings.sun.transform.forward);
-                RenderSettings.skybox.SetVector("_Sun_Direction", RenderSettings.sun.transform.forward);
-            }
-            catch (Exception ex)
-            {
-                Debug.LogWarning(ex);
-            }
-        }
-    }
-
-    /// <summary>
-    /// Проверка необходимости обновления параметров света
-    /// </summary>
-    /// <returns>True, если требуется обновление</returns>
-    private bool ShouldUpdateLighting()
-    {
-        return transform.hasChanged || Mathf.Abs(CalculateDotProduct() - _lastDotProduct) > _updateThreshold;
     }
 
     /// <summary>
@@ -113,7 +91,13 @@ public class DynamicLightingColor : MonoBehaviour
         ChangeLightIntensity(normalizedAngle);
         ChangeLightColor(dotProduct);
         if (isSun)
+        {
             ChangeAmbientIntensity(normalizedAngle);
+            if (RenderSettings.skybox != null && RenderSettings.skybox.HasProperty("_Sun_Direction"))
+                RenderSettings.skybox.SetVector("_Sun_Direction", _light.transform.forward);
+            else
+                Debug.LogWarning("<color=orange>Текущий скайбокс не принимает направление солнца, замени его на подходящий</color>");
+        }  
     }
 
     /// <summary>
@@ -160,14 +144,5 @@ public class DynamicLightingColor : MonoBehaviour
         _light.colorTemperature = _temperature;
         float ambientCurveValue = _ambientIntensityCurve.Evaluate(normalizedAngle);
         RenderSettings.ambientIntensity = Mathf.Lerp(_minAmbientIntensity, _maxAmbientIntensity, ambientCurveValue);
-    }
-
-    /// <summary>
-    /// Кеширование текущего состояния для оптимизации
-    /// </summary>
-    private void CacheCurrentState()
-    {
-        _lastDotProduct = CalculateDotProduct();
-        transform.hasChanged = false;
     }
 }

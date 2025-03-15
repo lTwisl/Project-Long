@@ -296,6 +296,9 @@
         },
         {
             "m_Id": "cf93218ee236481aa5a55821976c6c4a"
+        },
+        {
+            "m_Id": "bf9efa6908c645a689a8d46137603a52"
         }
     ],
     "m_GroupDatas": [
@@ -886,7 +889,7 @@
             },
             "m_InputSlot": {
                 "m_Node": {
-                    "m_Id": "968976f9fd6e40bbb90b66dcd9f03b55"
+                    "m_Id": "bf9efa6908c645a689a8d46137603a52"
                 },
                 "m_SlotId": 0
             }
@@ -1356,6 +1359,20 @@
         {
             "m_OutputSlot": {
                 "m_Node": {
+                    "m_Id": "bf9efa6908c645a689a8d46137603a52"
+                },
+                "m_SlotId": 1
+            },
+            "m_InputSlot": {
+                "m_Node": {
+                    "m_Id": "968976f9fd6e40bbb90b66dcd9f03b55"
+                },
+                "m_SlotId": 0
+            }
+        },
+        {
+            "m_OutputSlot": {
+                "m_Node": {
                     "m_Id": "bfc5194caed04fddb2f2b9a2468b019d"
                 },
                 "m_SlotId": 1
@@ -1742,6 +1759,30 @@
 {
     "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.DynamicVectorMaterialSlot",
+    "m_ObjectId": "0563eaa74eea4495b3d7e1570d725303",
+    "m_Id": 1,
+    "m_DisplayName": "",
+    "m_SlotType": 1,
+    "m_Hidden": false,
+    "m_ShaderOutputName": "",
+    "m_StageCapability": 3,
+    "m_Value": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 0.0
+    },
+    "m_DefaultValue": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 0.0
+    }
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.DynamicVectorMaterialSlot",
     "m_ObjectId": "06f5184f0f44403b8cfc5105909bcbe3",
     "m_Id": 2,
     "m_DisplayName": "Max",
@@ -1842,10 +1883,10 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -2235.199951171875,
+            "x": -2235.19970703125,
             "y": -192.0,
-            "width": 233.60009765625,
-            "height": 166.3999481201172
+            "width": 233.5999755859375,
+            "height": 166.4000244140625
         }
     },
     "m_Slots": [
@@ -4693,7 +4734,7 @@
     "m_ObjectId": "546e169ab76249589aec9ae7c3e6f83c",
     "m_Title": "Sky Mask",
     "m_Position": {
-        "x": -2464.000244140625,
+        "x": -2464.0,
         "y": -551.9999389648438
     }
 }
@@ -5155,7 +5196,7 @@
     "m_RefNameGeneratedByDisplayName": "Sun Direction",
     "m_DefaultReferenceName": "_Sun_Direction",
     "m_OverrideReferenceName": "",
-    "m_GeneratePropertyBlock": false,
+    "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,
     "m_CustomSlotLabel": "",
     "m_DismissedVersion": 0,
@@ -6864,6 +6905,30 @@
 
 {
     "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.DynamicVectorMaterialSlot",
+    "m_ObjectId": "89c4e58530c44a0fbe5f1257a575a587",
+    "m_Id": 0,
+    "m_DisplayName": "",
+    "m_SlotType": 0,
+    "m_Hidden": false,
+    "m_ShaderOutputName": "",
+    "m_StageCapability": 3,
+    "m_Value": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 0.0
+    },
+    "m_DefaultValue": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 0.0
+    }
+}
+
+{
+    "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.PropertyNode",
     "m_ObjectId": "8aea61c856a14c85b7faeb26e437edb5",
     "m_Group": {
@@ -7187,10 +7252,10 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -908.0,
-            "y": 668.800048828125,
+            "x": -928.7999877929688,
+            "y": 797.60009765625,
             "width": 56.0,
-            "height": 24.00006103515625
+            "height": 24.0
         }
     },
     "m_Slots": [
@@ -7261,7 +7326,7 @@
     "m_Title": "Distance Fog",
     "m_Position": {
         "x": -3428.0,
-        "y": 655.2003173828125
+        "y": 655.2001342773438
     }
 }
 
@@ -7344,7 +7409,7 @@
     "m_Title": "Blend Color With Light Color",
     "m_Position": {
         "x": -4165.60009765625,
-        "y": 792.8001708984375
+        "y": 792.8001098632813
     }
 }
 
@@ -7749,8 +7814,8 @@
     "m_ObjectId": "a47c0d0fa37c4020847ccf9bf82785d4",
     "m_Title": "Henyey-Greenstein Scattering",
     "m_Position": {
-        "x": -2460.80029296875,
-        "y": -251.99996948242188
+        "x": -2460.800048828125,
+        "y": -251.99993896484376
     }
 }
 
@@ -8098,7 +8163,7 @@
     "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
     "m_ObjectId": "adc21e9432464a84b2e1f925df5f4e5b",
     "m_Id": 0,
-    "m_DisplayName": "Impact LightColor",
+    "m_DisplayName": "Impact Light",
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_ShaderOutputName": "Out",
@@ -8776,6 +8841,42 @@
 {
     "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.RedirectNodeData",
+    "m_ObjectId": "bf9efa6908c645a689a8d46137603a52",
+    "m_Group": {
+        "m_Id": ""
+    },
+    "m_Name": "Redirect Node",
+    "m_DrawState": {
+        "m_Expanded": true,
+        "m_Position": {
+            "serializedVersion": "2",
+            "x": -1601.5999755859375,
+            "y": 797.5999755859375,
+            "width": 56.0,
+            "height": 24.0
+        }
+    },
+    "m_Slots": [
+        {
+            "m_Id": "89c4e58530c44a0fbe5f1257a575a587"
+        },
+        {
+            "m_Id": "0563eaa74eea4495b3d7e1570d725303"
+        }
+    ],
+    "synonyms": [],
+    "m_Precision": 0,
+    "m_PreviewExpanded": true,
+    "m_DismissedVersion": 0,
+    "m_PreviewMode": 0,
+    "m_CustomColors": {
+        "m_SerializableColors": []
+    }
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.RedirectNodeData",
     "m_ObjectId": "bfc5194caed04fddb2f2b9a2468b019d",
     "m_Group": {
         "m_Id": ""
@@ -8891,10 +8992,10 @@
     "m_Guid": {
         "m_GuidSerialized": "b0ca6c27-f42d-45ee-8e47-1f80116df6aa"
     },
-    "m_Name": "Impact LightColor",
+    "m_Name": "Impact Light",
     "m_DefaultRefNameVersion": 1,
-    "m_RefNameGeneratedByDisplayName": "Impact LightColor",
-    "m_DefaultReferenceName": "_Impact_LightColor",
+    "m_RefNameGeneratedByDisplayName": "Impact Light",
+    "m_DefaultReferenceName": "_Impact_Light",
     "m_OverrideReferenceName": "",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,
@@ -8969,7 +9070,7 @@
     "m_ObjectId": "c34843c1f6f2462f862526f467619fdf",
     "m_Title": "Alpha For Color",
     "m_Position": {
-        "x": -3883.199951171875,
+        "x": -3883.2001953125,
         "y": 1138.4000244140625
     }
 }
@@ -9481,8 +9582,8 @@
     "m_ObjectId": "d84bb91cf3eb48bda0b703a990ef0282",
     "m_Title": "Scattering Color",
     "m_Position": {
-        "x": -1627.2003173828125,
-        "y": 251.19996643066407
+        "x": -1627.2000732421875,
+        "y": 251.20004272460938
     }
 }
 
@@ -9855,7 +9956,7 @@
     "m_Title": "Base Height Fog",
     "m_Position": {
         "x": -3189.60009765625,
-        "y": 144.0
+        "y": 144.00003051757813
     }
 }
 
@@ -9865,8 +9966,8 @@
     "m_ObjectId": "e6798293d2654fda9fa6c6ad15ce09d3",
     "m_Title": "For Test",
     "m_Position": {
-        "x": -584.7998046875,
-        "y": 145.5999755859375
+        "x": -584.8001708984375,
+        "y": 145.60008239746095
     }
 }
 
@@ -10004,8 +10105,8 @@
     "m_ObjectId": "eb82bca3f3414217ad6b963edbac10e3",
     "m_Title": "Distance Fog Base",
     "m_Position": {
-        "x": -1071.2001953125,
-        "y": 1184.0001220703125
+        "x": -1071.199951171875,
+        "y": 1184.0
     }
 }
 
@@ -10080,10 +10181,10 @@
     "m_Guid": {
         "m_GuidSerialized": "b53382bc-dd32-43b0-92b9-5badf240a26a"
     },
-    "m_Name": "MinIntensity Fog",
+    "m_Name": "Min Intensity Fog",
     "m_DefaultRefNameVersion": 1,
-    "m_RefNameGeneratedByDisplayName": "MinIntensity Fog",
-    "m_DefaultReferenceName": "_MinIntensity_Fog",
+    "m_RefNameGeneratedByDisplayName": "Min Intensity Fog",
+    "m_DefaultReferenceName": "_Min_Intensity_Fog",
     "m_OverrideReferenceName": "",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,
@@ -10484,7 +10585,7 @@
     "m_Title": "Get Light Intensity",
     "m_Position": {
         "x": -4888.0,
-        "y": 787.2000122070313
+        "y": 787.2001953125
     }
 }
 
@@ -10558,7 +10659,7 @@
     "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
     "m_ObjectId": "fe7f050420b14df4bcb0e8a4cafbcc86",
     "m_Id": 0,
-    "m_DisplayName": "MinIntensity Fog",
+    "m_DisplayName": "Min Intensity Fog",
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_ShaderOutputName": "Out",

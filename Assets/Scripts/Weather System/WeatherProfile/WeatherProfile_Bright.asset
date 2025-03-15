@@ -16,8 +16,9 @@ MonoBehaviour:
   weatherTransitions: 2
   minLifetimeHours: 2
   maxLifetimeHours: 2
-  tempRatio: 0
-  toxicityRatio: 0
+  temperature: 0
+  wetness: 0
+  toxicity: 0
   maxIntensitySun: 2
   temperatureSun: 8000
   colorZenithSun: {r: 1, g: 1, b: 1, a: 1}
@@ -29,8 +30,8 @@ MonoBehaviour:
   maxSpeedWind: 12
   speedChangeWind: 1
   directionNoiseScaleWind: 0.1
-  materialVolumFog: {fileID: 2100000, guid: 8c5737803f42fd948ab1b69f9a21f476, type: 2}
-  materialVolumFogFar: {fileID: 2100000, guid: 90f2241d0b095d94c9a57f4800537d7a, type: 2}
+  materialNearVolumFog: {fileID: 2100000, guid: 8c5737803f42fd948ab1b69f9a21f476, type: 2}
+  materialFarVolumFog: {fileID: 2100000, guid: 90f2241d0b095d94c9a57f4800537d7a, type: 2}
   materialSkybox: {fileID: 2100000, guid: f857135a39824734a8f08d117eead192, type: 2}
   postExposure: 0
   constrast: 0

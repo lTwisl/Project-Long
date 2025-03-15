@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class WorldTime : MonoBehaviour
@@ -15,45 +16,42 @@ public class WorldTime : MonoBehaviour
             if (_currentTime == value)
                 return;
 
-            // Проверяем, изменились ли минуты, часы или дни
+            // Информируем всех об измененении времени
             OnTimeChanged?.Invoke(value);
-            if (value.Minutes != _currentTime.Minutes)
-                OnMinuteChanged?.Invoke(value);
-            if (value.Hours != _currentTime.Hours)
-                OnHourChanged?.Invoke(value);
-            if (value.Days != _currentTime.Days)
-                OnDayChanged?.Invoke(value);
+            if (value.Minutes != _currentTime.Minutes) OnMinuteChanged?.Invoke(value);
+            if (value.Hours != _currentTime.Hours) OnHourChanged?.Invoke(value);
+            if (value.Days != _currentTime.Days) OnDayChanged?.Invoke(value);
+
             _currentTime = value;
         }
     }
 
-    // Параметры течения времени 
-    [field: SerializeField, Tooltip("Остановить время")] public bool TimePaused { get; private set; } = false;
 
-    [SerializeField, Tooltip("Использовать ускорение времени?")] private bool _useSpeedUp;
-    [field: SerializeField, Tooltip("Классическая скорость течения времени к реальной"), Range(1, 24)] public float TimeScaleClassic { get; private set; } = 12f;
-    [field: SerializeField, Tooltip("Ускоренная скорость течения времени к реальной"), Range(12, 12000)] public float TimeScaleSpeedUp { get; private set; } = 6000f;
-    public float TimeScale => _useSpeedUp ? TimeScaleSpeedUp : TimeScaleClassic;
+    [SerializeField, Tooltip("Использовать ускорение времени?")] private bool _IsTimeSpeedUp;
+    [field: SerializeField, Tooltip("Время остановлено?")] public bool IsTimeStopped { get; private set; } = false;
+    [field: SerializeField, Tooltip("Игровая скорость течения времени к реальной"), Range(1, 48)] public float TimeScaleGame { get; private set; } = 12f;
+    [field: SerializeField, Tooltip("Игровая ускоренная скорость течения времени к реальной"), Range(24, 12000)] public float TimeScaleSpeedUp { get; private set; } = 6000f;
+
+    public float TimeScale => _IsTimeSpeedUp ? TimeScaleSpeedUp : TimeScaleGame;
     public float DeltaTime => Time.deltaTime * TimeScale;
     public float FixedDeltaTime => Time.fixedDeltaTime * TimeScale;
 
-    // События для уведомления о смене времени
+
     public event Action<TimeSpan> OnTimeChanged;
     public event Action<TimeSpan> OnMinuteChanged;
     public event Action<TimeSpan> OnHourChanged;
     public event Action<TimeSpan> OnDayChanged;
-
     public event Action<TimeSpan> OnStartSpeedUpTime;
     public event Action<TimeSpan> OnEndSpeedUpTime;
 
     private Coroutine _waitCoroutine;
+
 
     private void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
         }
         else
         {
@@ -63,16 +61,15 @@ public class WorldTime : MonoBehaviour
 
     private void Update()
     {
-        if (!TimePaused)
-        {
-            CurrentTime += TimeSpan.FromSeconds(Time.deltaTime * TimeScale);
-        }
+        if (IsTimeStopped) return;
+
+        CurrentTime += TimeSpan.FromSeconds(Time.deltaTime * TimeScale);
     }
 
     /// <summary>
-    /// Ускорить течение времени на время равное waitTime.
+    /// Ускорить течение игрового времени на время равное waitTime.
     /// </summary>
-    /// <param name="waitTime">Время которое надо подождать</param>
+    /// <param name="waitTime">Время, которое необходимо чтобы игровое время шло ускоренно</param>
     public void WaitTheTime(TimeSpan waitTime)
     {
         StopWaitTime();
@@ -83,46 +80,49 @@ public class WorldTime : MonoBehaviour
     {
         TimeSpan timeAfterWait = _currentTime + time;
         OnStartSpeedUpTime?.Invoke(CurrentTime);
-        _useSpeedUp = true;
+        _IsTimeSpeedUp = true;
 
         yield return new WaitWhile(() => _currentTime < timeAfterWait);
 
-        _useSpeedUp = false;
+        _IsTimeSpeedUp = false;
         OnEndSpeedUpTime?.Invoke(CurrentTime);
     }
 
     /// <summary>
-    /// Ускорить время до наступления waitTime
+    /// Ускорить течение игрового времени до наступления waitTime
     /// </summary>
     /// <param name="waitTime">Время до которого надо подождать</param>
-    public void WaitTargetTime(TimeSpan waitTime)
+    public void WaitUntilTime(TimeSpan waitTime)
     {
         StopWaitTime();
-        _waitCoroutine = StartCoroutine(WaitTargetTimeCor(waitTime));
+        _waitCoroutine = StartCoroutine(WaitUntilTimeCor(waitTime));
     }
 
-    private IEnumerator WaitTargetTimeCor(TimeSpan time)
+    private IEnumerator WaitUntilTimeCor(TimeSpan time)
     {
         if (time <= CurrentTime)
             yield break;
 
         OnStartSpeedUpTime?.Invoke(CurrentTime);
-        _useSpeedUp = true;
+        _IsTimeSpeedUp = true;
 
         yield return new WaitWhile(() => _currentTime < time);
 
-        _useSpeedUp = false;
+        _IsTimeSpeedUp = false;
         OnEndSpeedUpTime?.Invoke(CurrentTime);
     }
 
+    /// <summary>
+    /// Прервать ускорение времени
+    /// </summary>
     public void StopWaitTime()
     {
         if (_waitCoroutine is not null)
         {
             StopCoroutine(_waitCoroutine);
             OnEndSpeedUpTime?.Invoke(CurrentTime);
-            _useSpeedUp = false;
-        }    
+            _IsTimeSpeedUp = false;
+        }
     }
 
     /// <summary>
@@ -142,19 +142,44 @@ public class WorldTime : MonoBehaviour
     }
 
     /// <summary>
-    /// Останавливает течение игрового времени.
+    /// Возвращает время до наступления указанного времени.
     /// </summary>
-    public void PauseTime()
+    /// <param name="targetTime"></param>
+    /// <returns></returns>
+    public TimeSpan GetTimeUntil(TimeSpan targetTime)
     {
-        TimePaused = true; // Останавливаем время
+        if (targetTime > CurrentTime)
+        {
+            return targetTime - CurrentTime;
+        }
+        else
+        {
+            return new TimeSpan(1, 0, 0, 0) - (CurrentTime - targetTime);
+        }
     }
 
     /// <summary>
-    /// Возобновляет течение игрового времени.
+    /// Возвращает текущее время в формате "День X, HH:MM".
+    /// </summary>
+    public string GetFormattedTime(TimeSpan time)
+    {
+        return $"День {time.Days}, {time.Hours:00}:{time.Minutes:00}:{time.Seconds:00}";
+    }
+
+    /// <summary>
+    /// Остановить течение игрового времени.
+    /// </summary>
+    public void StopTime()
+    {
+        IsTimeStopped = true;
+    }
+
+    /// <summary>
+    /// Возобновить течение игрового времени.
     /// </summary>
     public void ResumeTime()
     {
-        TimePaused = false; // Возобновляем время
+        IsTimeStopped = false;
     }
 
     private void OnDestroy()
@@ -163,14 +188,5 @@ public class WorldTime : MonoBehaviour
         {
             Instance = null;
         }
-
-        // Очистка событий при уничтожении объекта
-        OnMinuteChanged = null;
-        OnHourChanged = null;
-        OnDayChanged = null;
-        OnTimeChanged = null;
-
-        OnStartSpeedUpTime = null;
-        OnEndSpeedUpTime = null;
     }
 }
