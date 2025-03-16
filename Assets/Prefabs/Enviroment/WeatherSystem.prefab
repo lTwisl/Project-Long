@@ -1,0 +1,159 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3690970475114704028
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3982350974279347672}
+  - component: {fileID: 7828725762744367070}
+  m_Layer: 0
+  m_Name: WeatherSystem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3982350974279347672
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3690970475114704028}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 9057571819775314141}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7828725762744367070
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3690970475114704028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92df9d1163366944f8537e5cbf2789e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  autoChangeWeather: 1
+  <currentWeatherProfile>k__BackingField: {fileID: 11400000, guid: 62b6db9f95725c349b09f93c1854c909, type: 2}
+  <newWeatherProfile>k__BackingField: {fileID: 11400000, guid: 05059311190a3f847b37c6959c77c5bb, type: 2}
+  _isProfilesValide: 0
+  <temperature>k__BackingField: 0
+  <wetness>k__BackingField: 0
+  <toxicity>k__BackingField: 0
+  <sunLight>k__BackingField: {fileID: 0}
+  <moonLight>k__BackingField: {fileID: 0}
+  _isLightsValide: 1
+  <windSystem>k__BackingField: {fileID: 6733437681237491628}
+  _isWindSystemValide: 1
+  <UserVolumFogMaterial>k__BackingField: {fileID: 2100000, guid: 47d7ec949da0c28458603888c2c87755, type: 2}
+  <UserVolumFogMaterialFar>k__BackingField: {fileID: 2100000, guid: e7dbaa0ea93db594b9a594c85ed9df52, type: 2}
+  _isFogValide: 1
+  <skyboxMaterial>k__BackingField: {fileID: 2100000, guid: cf74f6d2e3814e84d8ae19faa473c992, type: 2}
+  _isSkyboxValide: 1
+  <postProcessingVolume>k__BackingField: {fileID: 0}
+  _isPostProcessValide: 1
+  <particleSystems>k__BackingField: []
+  weatherProfiles:
+  - {fileID: 11400000, guid: 62b6db9f95725c349b09f93c1854c909, type: 2}
+  - {fileID: 11400000, guid: 05059311190a3f847b37c6959c77c5bb, type: 2}
+--- !u!1 &9014236117871535397
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 9057571819775314141}
+  - component: {fileID: 6733437681237491628}
+  m_Layer: 0
+  m_Name: WindSystem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &9057571819775314141
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9014236117871535397}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3982350974279347672}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6733437681237491628
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9014236117871535397}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4d7d2355fca01d46b907091fc1cb021, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _windGloabalDirection: {x: 0, y: 0}
+  _currentSpeed: 3
+  _minWindSpeed: 2
+  _maxWindSpeed: 15
+  _intensityChangeSpeed: 1
+  _directionChangeSharpness: 0.3
+  _intensityChangeDirection: 1
+  _tilingNoiseWindSpeed: 0.005
+  _influenceNoiseWindSpeed: 1
+  _useNoiseWindSpeedMotion: 1
+  _noiseWindSpeedSpeedMul: 1
+  _drawWindField: 0
+  _vectorsGrid: 32
+  _vectorsSizeMul: 1
+  _intensityColorGradient:
+    serializedVersion: 2
+    key0: {r: 0, g: 0.041666627, b: 0.25, a: 1}
+    key1: {r: 0, g: 1, b: 1, a: 1}
+    key2: {r: 0, g: 0, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 0
+    ctime1: 65535
+    ctime2: 0
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_ColorSpace: -1
+    m_NumColorKeys: 2
+    m_NumAlphaKeys: 2
+  _windZones: []

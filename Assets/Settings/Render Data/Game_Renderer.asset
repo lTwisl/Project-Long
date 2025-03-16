@@ -45,10 +45,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b00045f12942b46c698459096c89274e, type: 3}
-  m_Name: FullScreenPassRendererFeatureFar
+  m_Name: FullScreenVolumetricFogFar
   m_EditorClassIdentifier: 
   m_Active: 1
-  injectionPoint: 550
+  injectionPoint: 450
   fetchColorBuffer: 1
   requirements: 0
   passMaterial: {fileID: 2100000, guid: e7dbaa0ea93db594b9a594c85ed9df52, type: 2}
@@ -65,10 +65,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b00045f12942b46c698459096c89274e, type: 3}
-  m_Name: FullScreenPassRendererFeature
+  m_Name: FullScreenVolumetricFog
   m_EditorClassIdentifier: 
   m_Active: 1
-  injectionPoint: 550
+  injectionPoint: 450
   fetchColorBuffer: 1
   requirements: 0
   passMaterial: {fileID: 2100000, guid: 47d7ec949da0c28458603888c2c87755, type: 2}

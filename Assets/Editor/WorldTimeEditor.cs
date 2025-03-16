@@ -25,11 +25,11 @@ public class WorldTimeEditor : Editor
         WorldTime worldTime = (WorldTime)target;
 
         // 1. За сколько секунд реального времени проходит одна игровая минута
-        float realSecondsPerGameMinuteClassic = 1 / worldTime.TimeScaleClassic * 60;
+        float realSecondsPerGameMinuteClassic = 1 / worldTime.TimeScaleGame * 60;
         float realSecondsPerGameMinuteSpeedUp = 1 / worldTime.TimeScaleSpeedUp * 60;
 
         // 2. Сколько игровых минут проходит за одну минуту реального времени
-        float gameMinutesPerRealMinuteClassic = worldTime.TimeScaleClassic;
+        float gameMinutesPerRealMinuteClassic = worldTime.TimeScaleGame;
         float gameMinutesPerRealMinuteSpeedUp = worldTime.TimeScaleSpeedUp;
 
         // 3. За сколько реальных минут проходит игровой день (24 игровых часа)

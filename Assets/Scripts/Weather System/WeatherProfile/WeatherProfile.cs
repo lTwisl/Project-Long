@@ -1,21 +1,33 @@
 using System;
 using UnityEngine;
 
-// --> Параметр интерполируется
-// --X Параметр не интерполируется
+// Коррелированные Enums идентификатора погоды и переходов
+public enum WeatherIdentifires
+{
+    Bright = 1,
+    SnowStorm = 2
+}
 
-[CreateAssetMenu(fileName = "WeatherProfile_X", menuName = "Scriptable Objects/WeatherProfile")]
+[Flags]
+public enum WeatherTransitions
+{
+    Bright = 1,
+    SnowStorm = 2
+}
+
+[CreateAssetMenu(fileName = "WeatherProfile_", menuName = "Scriptable Objects/Weather Profile")]
 public class WeatherProfile : ScriptableObject
 {
-    [Header("Параметры пресета:")]
-    [Tooltip("Идентификатор текущего профиля")] public Weathers weatherIdentifier;
-    [Tooltip("Доступные данной погоде переходы")] public Weathers weatherTransitions;
+    [Header("Идентификатор пресета и основные параметры:")]
+    [Tooltip("Идентификатор текущего профиля")] public WeatherIdentifires weatherIdentifier;
+    [Tooltip("Доступные данной погоде переходы")] public WeatherTransitions weatherTransitions;
     [Range(1f, 23f)] public int minLifetimeHours;
     [Range(1f, 23f)] public int maxLifetimeHours;
 
-    [Header("Параметры влияния:")]
-    public float tempRatio;
-    public float toxicityRatio;
+    [Header("Параметры влияния на персонажа:")]
+    [Range(-25f, 25f)] public float temperature;
+    [Range(0f, 25f)] public float wetness;
+    [Range(0f, 25f)] public float toxicity;
 
     [Header("Параметры освещения:")]
     [Range(0f, 5f)] public float maxIntensitySun;
@@ -34,8 +46,8 @@ public class WeatherProfile : ScriptableObject
     [Range(0.001f, 2f)] public float directionNoiseScaleWind;
 
     [Header("Параметры VolumetricFog:")]
-    public Material materialVolumFog;
-    public Material materialVolumFogFar;
+    public Material materialNearVolumFog;
+    public Material materialFarVolumFog;
 
     [Header("Параметры Skybox:")]
     public Material materialSkybox;
