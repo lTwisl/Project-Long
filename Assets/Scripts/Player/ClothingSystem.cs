@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 [Serializable]
 public class ClothingSlot
@@ -33,6 +34,9 @@ public class ClothingSystem
 
     public IEnumerable<InventorySlot> UpperClothes { get; private set; }
 
+    public event Action<InventorySlot> OnEquip;
+    public event Action<InventorySlot> OnUnequip;
+
 
     public void Init()
     {
@@ -62,6 +66,8 @@ public class ClothingSystem
     {
         Degradation(deltaTime);
         GettingWet(deltaTime);
+
+        Debug.Log(CalculateTotalTemperatureBonus());
     }
 
     // Деградация одежды
@@ -84,6 +90,8 @@ public class ClothingSystem
     // Намокание одежды
     private void GettingWet(float deltaTime)
     {
+        float normTemp = Utility.MapRange(WeatherSystem.Instance.Temperature, 10, 50, 0, 1, true);
+
         foreach (var clothingSlot in SlotCache.Values)
         {
             bool updateLower = false;
@@ -92,13 +100,18 @@ public class ClothingSystem
                 if (slot == null)
                     continue;
 
-                if (UpperClothes.Contains(slot) || updateLower)
-                {
-                    slot.Wet = Mathf.Min(slot.Wet + 0.1f, 100f) * deltaTime;
+                if (!UpperClothes.Contains(slot) && !updateLower)
+                    continue;
 
-                    if (slot.Wet >= 100)
-                        updateLower = true;
-                }
+                ClothesItem clothesItem = slot.Item as ClothesItem;
+
+                float wetChange = WeatherSystem.Instance.Wetness * (100f - clothesItem.WaterProtection * slot.Condition) / 100f;
+                wetChange -= clothesItem.DryingRatio * normTemp;
+
+                slot.Wet = Mathf.Min(slot.Wet + wetChange, 100f) * deltaTime;
+
+                if (slot.Wet >= 100)
+                    updateLower = true;
             }
         }
     }
@@ -118,6 +131,7 @@ public class ClothingSystem
         invSlot.IsWearing = true;
 
         UpdateUpperClothes();
+        OnEquip?.Invoke(invSlot);
 
         return true;
     }
@@ -143,6 +157,7 @@ public class ClothingSystem
             slot.IsWearing = false;
 
             UpdateUpperClothes();
+            OnUnequip?.Invoke(slot);
 
             break;
         }
@@ -164,59 +179,34 @@ public class ClothingSystem
         return false;
     }
 
-    //public float CalculateTotalTemperatureBonus(float tempWind, float normForceWind)
-    //{
-    //    float total = 0;
+    public float CalculateTotalTemperatureBonus()
+    {
+        float total = 0;
 
-    //    foreach (var clothingSlot in SlotCache.Values)
-    //    {
-    //        foreach (var slot in clothingSlot.Layers)
-    //        {
-    //            ClothesItem item = slot.Item as ClothesItem;
+        float normForceWind = Utility.MapRange(WeatherWindSystem.Instance.CurrentSpeed, 0, 33, 0, 1, true);
 
-    //            float value = item.TemperatureBonus * slot.Condition / 100;
-    //            value *= (100 - slot.Wet * 1.5f) / 100;
-    //            value += (100 - item.WindProtection * slot.Condition / 100) * tempWind * normForceWind;
+        foreach (var clothingSlot in SlotCache.Values)
+        {
+            foreach (var slot in clothingSlot.Layers)
+            {
+                //ClothesItem item = slot.Item as ClothesItem;
 
-    //            total += value;
-    //        }
-    //    }
+                if (slot.Item is ClothesItem item)
+                {
+                    float value = item.TemperatureBonus * slot.Condition / 100;
+                    value *= (100 - slot.Wet * 1.5f) / 100;
+                    value += (100 - item.WindProtection * slot.Condition) / 100 * WeatherWindSystem.Instance.MaxWindTemperature * normForceWind;
 
-    //    return total;
-    //}
+                    total += value;
+                }
+                else
+                {
+                    total += WeatherWindSystem.Instance.MaxWindTemperature * normForceWind;
+                }
+                
+            }
+        }
 
-    //public float CalculateTotalWindProtection()
-    //{
-    //    return CalculateTotal(item => item.WindProtection);
-    //}
-
-    //public float CalculateTotalToxisityProtection()
-    //{
-    //    return CalculateTotal(item => item.ToxisityProtection);
-    //}
-
-    //public float CalculateTotalFrictionBonus()
-    //{
-    //    float total = 0;
-
-    //    foreach (var slot in UpperClothes)
-    //    {
-    //        total += (slot.Item as ClothesItem).FrictionBonus;
-    //    }
-
-    //    return total;
-    //}
-
-    //private float CalculateTotal(Func<ClothesItem, float> param)
-    //{
-    //    float total = 0;
-
-    //    foreach (var slot in SlotCache.Values)
-    //    {
-    //        foreach (var layer in slot.Layers)
-    //            total += param(layer.Item as ClothesItem) * layer.Condition;
-    //    }
-
-    //    return total;
-    //}
+        return total;
+    }
 }

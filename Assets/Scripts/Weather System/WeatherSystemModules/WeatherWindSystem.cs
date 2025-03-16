@@ -8,11 +8,12 @@ public class WeatherWindSystem : MonoBehaviour
 {
     public static WeatherWindSystem Instance { get; private set; }
 
+    [field: SerializeField] public float MaxWindTemperature { get; private set; }
+
     [DisableEdit, SerializeField] private Vector2 _windGloabalDirection;
-    [DisableEdit, SerializeField] private float _currentSpeed;
+    [field: DisableEdit, SerializeField] public float CurrentSpeed { get; private set; }
 
     [Header("Параметры глобального ветра:")]
-    [SerializeField] public float MaxWindTemperature { get; private set; }
     [DisableEdit, SerializeField, Tooltip("Минимальная скорость ветра"), Min(1)] private float _minWindSpeed = 2f;
     [DisableEdit, SerializeField, Tooltip("Максимальная скорость ветра"), Min(1)] private float _maxWindSpeed = 15f;
     [DisableEdit, SerializeField, Tooltip("Интенсивность изменений скорости ветра"), Range(0.01f, 5f)] private float _intensityChangeSpeed = 1f;
@@ -60,7 +61,7 @@ public class WeatherWindSystem : MonoBehaviour
         _intensityNoiseOffset = Random.insideUnitCircle * 100f;
 
         // Инициализация стартовой скорости
-        _currentSpeed = (_minWindSpeed + _maxWindSpeed) * 0.5f;
+        CurrentSpeed = (_minWindSpeed + _maxWindSpeed) * 0.5f;
     }
     #endregion
 
@@ -92,7 +93,7 @@ public class WeatherWindSystem : MonoBehaviour
     {
         float noise = Mathf.PerlinNoise(Time.time * _tilingNoiseWindSpeed, _intensityNoiseOffset.x);
         float targetSpeed = Mathf.Lerp(_minWindSpeed, _maxWindSpeed, noise);
-        _currentSpeed = Mathf.Lerp(_currentSpeed, targetSpeed, Time.deltaTime * _intensityChangeSpeed);
+        CurrentSpeed = Mathf.Lerp(CurrentSpeed, targetSpeed, Time.deltaTime * _intensityChangeSpeed);
     }
     #endregion
 
@@ -102,10 +103,10 @@ public class WeatherWindSystem : MonoBehaviour
         if (_useNoiseWindSpeedMotion)
         {
             // Смещение шума направления
-            _directionNoiseOffset += _windGloabalDirection * (_currentSpeed * _noiseWindSpeedSpeedMul * Time.deltaTime);
+            _directionNoiseOffset += _windGloabalDirection * (CurrentSpeed * _noiseWindSpeedSpeedMul * Time.deltaTime);
 
             // Смещение шума интенсивности
-            _intensityNoiseOffset -= _windGloabalDirection * (_currentSpeed * _noiseWindSpeedSpeedMul * Time.deltaTime);
+            _intensityNoiseOffset -= _windGloabalDirection * (CurrentSpeed * _noiseWindSpeedSpeedMul * Time.deltaTime);
         }
     }
     #endregion
@@ -125,7 +126,7 @@ public class WeatherWindSystem : MonoBehaviour
     /// </summary>
     public Vector2 GetWindGlobalVector()
     {
-        return new Vector3(_windGloabalDirection.x, _windGloabalDirection.y) * _currentSpeed;
+        return new Vector3(_windGloabalDirection.x, _windGloabalDirection.y) * CurrentSpeed;
     }
 
     /// <summary>

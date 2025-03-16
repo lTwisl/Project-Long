@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using Zenject;
 
 [SelectionBase]
 public class Player : MonoBehaviour
@@ -10,6 +11,8 @@ public class Player : MonoBehaviour
     [Header("UI")]
     [SerializeField] private Slider _slider;
     [SerializeField] private UI_WindowsController _uiWindowsController;
+
+    [Inject] private PlayerParameters _playerParameters;
 
     public PlayerInputs PlayerInputs { get; private set; }
     public Camera MainCamera { get; private set; }
@@ -28,6 +31,9 @@ public class Player : MonoBehaviour
 
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
+
+        ClothingSystem.OnEquip += slot => _playerParameters.Stamina.OffsetMax += (slot.Item as ClothesItem).OffsetStamina;
+        ClothingSystem.OnUnequip += slot => _playerParameters.Stamina.OffsetMax -= (slot.Item as ClothesItem).OffsetStamina;
     }
 
 

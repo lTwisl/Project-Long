@@ -158,6 +158,8 @@ public class Inventory
 
             currentNode = nextNode;
         }
+
+        RecalculateWeight();
     }
 
     public List<IReadOnlyInventorySlot> GetSorteredSlots()
@@ -190,10 +192,10 @@ public class Inventory
     {
         if (Slots.Count == 0)
             return;
-
+        Weight = 0;
         foreach (var slot in Slots)
         {
-            Weight += slot.Capacity * slot.Item.Weight;
+            Weight += slot.GetWeight();
         }
     }
 }

@@ -79,4 +79,9 @@ public class InventorySlot : IReadOnlyInventorySlot
         Capacity = 0.0f;
         Condition = 0.0f;
     }
+
+    public float GetWeight()
+    {
+        return Capacity * Item.Weight * (1 + 0.0f + Wet / 100);
+    }
 }

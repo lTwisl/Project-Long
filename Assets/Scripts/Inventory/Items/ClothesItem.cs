@@ -23,6 +23,8 @@ public class ClothesItem : InventoryItem
     [field: SerializeField] public float TemperatureBonus { get; private set; }
     [field: SerializeField] public float ToxisityProtection { get; private set; }
     [field: SerializeField, Range(0f, 1f)] public float FrictionBonus { get; private set; }
+    [field: SerializeField] public float DryingRatio { get; private set; }
+    [field: SerializeField] public float OffsetStamina { get; private set; }
 
     private void OnEnable()
     {
