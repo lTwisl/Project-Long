@@ -210,7 +210,7 @@ public class WeatherSystem : MonoBehaviour
     private void CalculateWeatherProfiles()
     {
         currentWeatherProfile = newWeatherProfile;
-        Debug.Log($"<color=green>Закончилась смена погоды! Сейчас на улице: {currentWeatherProfile.weatherIdentifier}. Текущее время: {WorldTime.Instance.GetFormattedTime(WorldTime.Instance.CurrentTime)}</color>");
+        //Debug.Log($"<color=green>Закончилась смена погоды! Сейчас на улице: {currentWeatherProfile.weatherIdentifier}. Текущее время: {WorldTime.Instance.GetFormattedTime(WorldTime.Instance.CurrentTime)}</color>");
 
         List<WeatherProfile> availableTransitions = GetAvailableTransitions();
         if (availableTransitions.Count > 0)
@@ -485,6 +485,10 @@ public class WeatherSystem : MonoBehaviour
     [ContextMenu("[Script] Сконфигурировать в сцене currentWeather")]
     private void ConfigureWeather()
     {
+#if UNITY_EDITOR
+        Undo.RecordObject(this, "Инициализировали сцены");
+        EditorUtility.SetDirty(this);
+#endif
         SetNewWeatherImmediatelyEditor(currentWeatherProfile);
     }
 

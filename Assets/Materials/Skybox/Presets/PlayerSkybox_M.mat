@@ -48,7 +48,7 @@ Material:
     - _Sun_Phase: 0.93
     m_Colors:
     - _Color_On_Ground: {r: 0.038461532, g: 0.1153846, b: 0.19999996, a: 1}
-    - _Color_On_Horizon: {r: 1, g: 1, b: 1, a: 1}
+    - _Color_On_Horizon: {r: 0.563786, g: 0.781893, b: 1, a: 1}
     - _Color_On_Zenith: {r: 0.003921569, g: 0.3607843, b: 0.68627447, a: 1}
     - _Sun_Direction: {r: 0, g: -0.25881898, b: 0.9659259, a: 0}
   m_BuildTextureStacks: []

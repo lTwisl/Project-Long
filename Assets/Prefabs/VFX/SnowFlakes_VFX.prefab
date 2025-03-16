@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 3632321593166232631}
   - component: {fileID: 5935463114764634730}
   m_Layer: 0
-  m_Name: Snow_VFX
+  m_Name: SnowFlakes_VFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -79,10 +79,10 @@ VisualEffect:
       - m_Value: 0.05
         m_Name: Size Particle
         m_Overridden: 1
-      - m_Value: 0
+      - m_Value: 0.5
         m_Name: Bounce
         m_Overridden: 1
-      - m_Value: 3
+      - m_Value: 6
         m_Name: Friction
         m_Overridden: 1
       - m_Value: 0
@@ -94,7 +94,7 @@ VisualEffect:
       - m_Value: 0.7
         m_Name: Scattering
         m_Overridden: 1
-      - m_Value: 0.4
+      - m_Value: 0
         m_Name: Sun Color Influence
         m_Overridden: 1
       - m_Value: 3
@@ -103,7 +103,7 @@ VisualEffect:
       - m_Value: 0.7
         m_Name: Particle Scattering
         m_Overridden: 1
-      - m_Value: 1
+      - m_Value: 0
         m_Name: Intensity
         m_Overridden: 1
       - m_Value: 2.68
@@ -127,16 +127,22 @@ VisualEffect:
       - m_Value: 6.28
         m_Name: Spawn Sphere_arc
         m_Overridden: 1
-      - m_Value: 0.335
+      - m_Value: 0.1
         m_Name: Surface Rough
+        m_Overridden: 1
+      - m_Value: 100
+        m_Name: Rotate Speed
         m_Overridden: 1
     m_Vector2f:
       m_Array:
       - m_Value: {x: 0, y: 0}
         m_Name: WindVector
         m_Overridden: 0
-      - m_Value: {x: 0.02, y: 0.04}
+      - m_Value: {x: 0.03, y: 0.04}
         m_Name: Particle Size
+        m_Overridden: 1
+      - m_Value: {x: 33, y: 0}
+        m_Name: Wind Vector
         m_Overridden: 1
     m_Vector3f:
       m_Array:
@@ -152,10 +158,10 @@ VisualEffect:
       - m_Value: {x: 45, y: 1, z: 45}
         m_Name: Spawn Area_size
         m_Overridden: 1
-      - m_Value: {x: 0, y: 0, z: 0}
+      - m_Value: {x: 5.3244095, y: 0.00000011920929, z: 11.465233}
         m_Name: sdfPosition
         m_Overridden: 1
-      - m_Value: {x: 50, y: 50, z: 50}
+      - m_Value: {x: 80, y: 80, z: 80}
         m_Name: sdfScale
         m_Overridden: 1
       - m_Value: {x: 0, y: 10, z: 0}
@@ -169,7 +175,7 @@ VisualEffect:
       - m_Value: {x: 1.319508, y: 1.319508, z: 1.319508, w: 1}
         m_Name: Color
         m_Overridden: 1
-      - m_Value: {x: 1.6948379, y: 1.9066927, z: 2.1185474, w: 1}
+      - m_Value: {x: 1.9066927, y: 2.01262, z: 2.1185474, w: 1}
         m_Name: Particle Color
         m_Overridden: 1
     m_Uint:
@@ -187,7 +193,7 @@ VisualEffect:
       - m_Value: {fileID: 0}
         m_Name: sdf
         m_Overridden: 1
-      - m_Value: {fileID: 2800000, guid: e0272c371b0553a46b679330eece6bea, type: 3}
+      - m_Value: {fileID: 2800000, guid: ca453903415d74745a70d56d48d90a54, type: 3}
         m_Name: Sprite
         m_Overridden: 1
     m_Bool:
@@ -252,8 +258,8 @@ MonoBehaviour:
     m_Bits: 4294967295
   bakeOnAwake: 1
   center: {x: 0, y: 0, z: 0}
-  size: {x: 100, y: 100, z: 100}
-  maxResolution: 128
+  size: {x: 80, y: 80, z: 80}
+  maxResolution: 256
   signPassesCount: 1
   threshold: 0.5
   offset: 0

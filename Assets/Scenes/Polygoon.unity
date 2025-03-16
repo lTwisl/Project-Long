@@ -23,7 +23,7 @@ RenderSettings:
   m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
   m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
-  m_AmbientIntensity: 0.80685776
+  m_AmbientIntensity: 0.975753
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
   m_SkyboxMaterial: {fileID: 2100000, guid: cf74f6d2e3814e84d8ae19faa473c992, type: 2}
@@ -600,7 +600,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3578444673790263516, guid: 32b8a9a1180a4fb4b8d884dc98b3d043, type: 3}
       propertyPath: m_Color.g
-      value: 0.65363574
+      value: 0.6549941
       objectReference: {fileID: 0}
     - target: {fileID: 3578444673790263516, guid: 32b8a9a1180a4fb4b8d884dc98b3d043, type: 3}
       propertyPath: m_Intensity
@@ -620,11 +620,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5318115322574560920, guid: 32b8a9a1180a4fb4b8d884dc98b3d043, type: 3}
       propertyPath: m_Color.b
-      value: 0.80392164
+      value: 0.8039216
       objectReference: {fileID: 0}
     - target: {fileID: 5318115322574560920, guid: 32b8a9a1180a4fb4b8d884dc98b3d043, type: 3}
       propertyPath: m_Color.g
-      value: 0.7607844
+      value: 0.7607843
       objectReference: {fileID: 0}
     - target: {fileID: 5318115322574560920, guid: 32b8a9a1180a4fb4b8d884dc98b3d043, type: 3}
       propertyPath: m_Color.r
@@ -4873,6 +4873,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: WorldTime
       objectReference: {fileID: 0}
+    - target: {fileID: 2617561183448690812, guid: 0817ad807ecd81f4db152f1045a40f66, type: 3}
+      propertyPath: _IsTimeSpeedUp
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2617561183448690812, guid: 0817ad807ecd81f4db152f1045a40f66, type: 3}
+      propertyPath: <TimeScaleSpeedUp>k__BackingField
+      value: 96
+      objectReference: {fileID: 0}
     - target: {fileID: 7901084338802630068, guid: 0817ad807ecd81f4db152f1045a40f66, type: 3}
       propertyPath: m_LocalRotation.w
       value: 1
@@ -4964,7 +4972,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7828725762744367070, guid: 7c5f26e0638bb1344bbb1c2128e7dba2, type: 3}
       propertyPath: <Wetness>k__BackingField
-      value: 15
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7828725762744367070, guid: 7c5f26e0638bb1344bbb1c2128e7dba2, type: 3}
       propertyPath: <wetness>k__BackingField
@@ -4972,7 +4980,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7828725762744367070, guid: 7c5f26e0638bb1344bbb1c2128e7dba2, type: 3}
       propertyPath: <Toxicity>k__BackingField
-      value: 0.1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7828725762744367070, guid: 7c5f26e0638bb1344bbb1c2128e7dba2, type: 3}
       propertyPath: <sunLight>k__BackingField
@@ -4988,7 +4996,7 @@ PrefabInstance:
       objectReference: {fileID: 357007934}
     - target: {fileID: 7828725762744367070, guid: 7c5f26e0638bb1344bbb1c2128e7dba2, type: 3}
       propertyPath: <Temperature>k__BackingField
-      value: 5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7828725762744367070, guid: 7c5f26e0638bb1344bbb1c2128e7dba2, type: 3}
       propertyPath: <temperature>k__BackingField
@@ -4997,7 +5005,7 @@ PrefabInstance:
     - target: {fileID: 7828725762744367070, guid: 7c5f26e0638bb1344bbb1c2128e7dba2, type: 3}
       propertyPath: <newWeatherProfile>k__BackingField
       value: 
-      objectReference: {fileID: 11400000, guid: 05059311190a3f847b37c6959c77c5bb, type: 2}
+      objectReference: {fileID: 11400000, guid: 62b6db9f95725c349b09f93c1854c909, type: 2}
     - target: {fileID: 7828725762744367070, guid: 7c5f26e0638bb1344bbb1c2128e7dba2, type: 3}
       propertyPath: <postProcessingVolume>k__BackingField
       value: 
@@ -5005,7 +5013,7 @@ PrefabInstance:
     - target: {fileID: 7828725762744367070, guid: 7c5f26e0638bb1344bbb1c2128e7dba2, type: 3}
       propertyPath: <currentWeatherProfile>k__BackingField
       value: 
-      objectReference: {fileID: 11400000, guid: 05059311190a3f847b37c6959c77c5bb, type: 2}
+      objectReference: {fileID: 11400000, guid: 62b6db9f95725c349b09f93c1854c909, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
