@@ -51,10 +51,13 @@ public class UI_Clothing : MonoBehaviour
             if (!_uiSlotCache.TryGetValue(slot.ClothesType, out List<UI_ClothesSlot> layers))
                 continue;
 
-            for (int i = 0; i < Mathf.Min(slot.Layers.Count, layers.Count); ++i)
+            for (int i = 0; i < layers.Count; ++i)
             {
-                if (slot.Layers[i] == null) 
+                if (/*slot.Layers.Count <= i*/ slot.Layers[i].Item == null)
+                {
+                    layers[i].Clear();
                     continue;
+                }
 
                 layers[i].Set(slot.Layers[i]);
 

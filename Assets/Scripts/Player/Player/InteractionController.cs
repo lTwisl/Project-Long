@@ -8,7 +8,7 @@ public class InteractionController
 
     private Player _player;
     private PlayerInputs _inputs;
-    private GameObject _mainCamera;
+    private Camera _mainCamera;
     private Slider _slider;
 
     private IInteractible _currentInteractible;

@@ -1,6 +1,7 @@
 ﻿using System;
 
 
+
 public class Process : IComparable<Process>, IDisposable
 {
     public TimeSpan Duration { get; private set; }
@@ -31,7 +32,11 @@ public class Process : IComparable<Process>, IDisposable
 
     public bool Pause()
     {
-        if (!ProcessScheduler.Instance.RemoveProcess(this)) return false;
+        if (_disposed)
+            return false;
+
+        if (!ProcessScheduler.Instance.RemoveProcess(this)) 
+            return false;
 
         TimeSpan remaining = EndTime - WorldTime.Instance.CurrentTime;
         Duration = remaining > TimeSpan.Zero ? remaining : TimeSpan.Zero;
@@ -82,9 +87,13 @@ public class Process : IComparable<Process>, IDisposable
 
     public void Dispose()
     {
-        if (_disposed) return;
+        if (_disposed) 
+            return;
+
         _compliteAction = null;
         _terminateAction = null;
         _disposed = true;
     }
 }
+
+

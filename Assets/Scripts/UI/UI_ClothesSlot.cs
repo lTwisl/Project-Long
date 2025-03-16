@@ -61,7 +61,7 @@ public class UI_ClothesSlot : MonoBehaviour, IPointerDownHandler
 
     public void UpdateView()
     {
-        if (Slot == null)
+        if (Slot == null || Slot.Item == null)
         {
             _icon.sprite = null;
             _wet.text = "Wet";

@@ -56,7 +56,6 @@ public class Inventory
 
     public void Init()
     {
-        //_initSlots.ForEach(s => AddItem(s.Item, s.Capacity, s.Condition));
         Slots = new LinkedList<InventorySlot>(_initSlots);
         RecalculateWeight();
     }
@@ -142,14 +141,14 @@ public class Inventory
             {
                 InventoryItem item = slot.Item;
 
-                if ((item.DegradeType == DegradationType.Rate && (item is not ClothesItem)) || ((item is ClothesItem) && slot.IsWearing))
+                // Деградация предмета
+                if ((item.DegradeType == DegradationType.Rate && (item is not ClothesItem))/* || ((item is ClothesItem) && slot.IsWearing)*/)
                 {
                     slot.Condition -= item.DegradationValue * deltaTime;
                     shouldRemove = slot.Condition <= 0;
                 }
-            }
 
-            shouldRemove = slot.Capacity <= 0;
+            }
 
             if (shouldRemove)
             {
@@ -183,7 +182,7 @@ public class Inventory
     {
         if (category != null)
             return Slots.Where(p => p.Item.Category == category);
-        
+
         return Slots;
     }
 

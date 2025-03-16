@@ -1,7 +1,5 @@
-using System;
 using UnityEngine;
 using UnityEngine.UI;
-
 
 [SelectionBase]
 public class Player : MonoBehaviour
@@ -14,7 +12,7 @@ public class Player : MonoBehaviour
     [SerializeField] private UI_WindowsController _uiWindowsController;
 
     public PlayerInputs PlayerInputs { get; private set; }
-    public GameObject MainCamera { get; private set; }
+    public Camera MainCamera { get; private set; }
 
     private InteractionController _interactionController;
 
@@ -24,19 +22,12 @@ public class Player : MonoBehaviour
         ClothingSystem.Init();
 
         PlayerInputs = GetComponent<PlayerInputs>();
-        MainCamera = GameObject.FindGameObjectWithTag("MainCamera");
+        MainCamera = Camera.main;
 
         _interactionController = new InteractionController(this, _slider, 2f);
 
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
-
-        
-
-        //m.Pause();
-
-
-        //LoadData();
     }
 
 
@@ -52,58 +43,10 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
-        Inventory.OnItemRemoved += slot => ClothingSystem.HandleItemRemoved(slot);
+        Inventory.OnItemRemoved += slot => ClothingSystem.HandleItemRemoved(slot as InventorySlot);
 
         WorldTime.Instance.OnMinuteChanged += _ => Inventory.Update(1);
-
-        
-
-
-        var m2 = new Process(
-
-            TimeSpan.FromMinutes(1),
-            () =>
-            {
-                Debug.Log("Invoke 2");
-            },
-            timeTerm => Debug.Log($"Teminate 2: {timeTerm}")
-        );
-
-        //var m3 = new Process(
-
-        //    TimeSpan.FromMinutes(2),
-        //    () =>
-        //    {
-        //        Debug.Log("Invoke 3");
-        //    },
-        //    timeTerm => Debug.Log($"Teminate 3: {timeTerm}")
-        //);
-
-        var m = new Process(
-        
-            TimeSpan.FromMinutes(1),
-            () =>
-            {
-                Debug.Log("Invoke 1");
-                m2.Play();
-            },
-            timeTerm => Debug.Log($"Teminate 1: {timeTerm}")
-        );
-
-        var m4 = new Process(
-
-            TimeSpan.FromSeconds(20),
-            () =>
-            {
-                Debug.Log("Invoke 4");
-                m2.Kill();
-            },
-            timeTerm => Debug.Log($"Teminate 4: {timeTerm}")
-        );
-
-        m.Play();
-        m4.Play();
-        
+        WorldTime.Instance.OnMinuteChanged += _ => ClothingSystem.Update(1);
     }
 
     private void Update()
@@ -145,12 +88,6 @@ public class Player : MonoBehaviour
         }
 
         Inventory.RemoveItem(slot);
-    }
-
-    [ContextMenu("InitInventory [Script]")]
-    public void InitInventory()
-    {
-        Inventory.Init();
     }
 
     public void UseItem(InventorySlot slot)

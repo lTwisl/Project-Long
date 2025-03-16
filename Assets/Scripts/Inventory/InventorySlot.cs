@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using static UnityEditor.Experimental.GraphView.Port;
 
 public interface IReadOnlyInventorySlot
 {
@@ -47,7 +48,7 @@ public class InventorySlot : IReadOnlyInventorySlot
     public float Wet { get; set; }
 
 
-    public bool IsEmpty => Item == null || Capacity <= 0;
+    public bool IsEmpty => Item == null || Capacity <= 0 || Condition <= 0;
     public bool IsFull => Item != null && Capacity >= Item.MaxCapacity;
 
     public InventorySlot(InventoryItem item, float capacity, float condition)
@@ -55,7 +56,7 @@ public class InventorySlot : IReadOnlyInventorySlot
         SetItem(item, capacity, condition);
     }
 
-    private void SetItem(InventoryItem item, float capacity, float condition)
+    public void SetItem(InventoryItem item, float capacity, float condition)
     {
         if (item == null)
             return;
@@ -70,5 +71,12 @@ public class InventorySlot : IReadOnlyInventorySlot
         Item.Use(player);
 
         Capacity -= Item.CostOfUse;
+    }
+
+    public void Clear()
+    {
+        Item = null;
+        Capacity = 0.0f;
+        Condition = 0.0f;
     }
 }
