@@ -6,7 +6,7 @@ using UnityEngine;
 public class WorldTime : MonoBehaviour
 {
     public static WorldTime Instance { get; private set; }
-
+    
     private TimeSpan _currentTime = new TimeSpan(1, 8, 0, 0);
     public TimeSpan CurrentTime
     {

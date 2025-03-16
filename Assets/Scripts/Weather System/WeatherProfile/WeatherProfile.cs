@@ -19,8 +19,8 @@ public enum WeatherTransitions
 public class WeatherProfile : ScriptableObject
 {
     [Header("Идентификатор пресета и основные параметры:")]
-    [Tooltip("Идентификатор текущего профиля")] public WeatherIdentifires weatherIdentifier;
-    [Tooltip("Доступные данной погоде переходы")] public WeatherTransitions weatherTransitions;
+    public WeatherIdentifires weatherIdentifier;
+    public WeatherTransitions weatherTransitions;
     [Range(1f, 23f)] public int minLifetimeHours;
     [Range(1f, 23f)] public int maxLifetimeHours;
 
@@ -40,16 +40,18 @@ public class WeatherProfile : ScriptableObject
     public Color colorSunsetMoon;
 
     [Header("Параметры ветра:")]
-    [Range(1f, 33f)] public float minSpeedWind;
-    [Range(1f, 33f)] public float maxSpeedWind;
-    [Range(0.01f, 5f)] public float speedChangeWind;
-    [Range(0.001f, 2f)] public float directionNoiseScaleWind;
+    [Range(1f, 33f)] public float minWindSpeed;
+    [Range(1f, 33f)] public float maxWindSpeed;
+    [Range(0.01f, 5f)] public float intensityChangeSpeed; 
+    [Space(8)]
+    [Range(0.001f, 2f)] public float directionChangeSharpness;
+    [Range(0.01f, 5f)] public float intensityChangeDirection;
 
-    [Header("Параметры VolumetricFog:")]
-    public Material materialNearVolumFog;
-    public Material materialFarVolumFog;
+    [Header("Параметры обьемного тумана:")]
+    public Material nearVolumFogMat;
+    public Material farVolumFogMat;
 
-    [Header("Параметры Skybox:")]
+    [Header("Параметры скайбокса:")]
     public Material materialSkybox;
 
     [Header("Параметры PostProcessing:")]

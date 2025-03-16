@@ -90,7 +90,7 @@ public class SDFSceneBaker : MonoBehaviour
     private void CollectMeshes(List<Mesh> meshes, List<Matrix4x4> matrices)
     {
         // Find all mesh renderers on scene
-        MeshRenderer[] meshRenderers = FindObjectsOfType<MeshRenderer>();
+        MeshRenderer[] meshRenderers = FindObjectsByType<MeshRenderer>(FindObjectsSortMode.None);
 
         // Prepare lists
         meshes.Clear();

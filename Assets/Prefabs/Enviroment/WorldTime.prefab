@@ -48,7 +48,7 @@ MonoBehaviour:
   _IsTimeSpeedUp: 0
   <IsTimeStopped>k__BackingField: 0
   <TimeScaleGame>k__BackingField: 12
-  <TimeScaleSpeedUp>k__BackingField: 6000
+  <TimeScaleSpeedUp>k__BackingField: 2000
 --- !u!114 &9069172265152485664
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -58,6 +58,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 324625207786621930}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 92b817a78c1d5ab4aad56d114fcbf14c, type: 3}
+  m_Script: {fileID: 11500000, guid: 23691289833d2994e80a2bc133920a34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

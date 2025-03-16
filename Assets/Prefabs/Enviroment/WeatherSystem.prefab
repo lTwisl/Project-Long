@@ -31,6 +31,10 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 9057571819775314141}
+  - {fileID: 3448462563062676059}
+  - {fileID: 8966224786177681660}
+  - {fileID: 328870799192521362}
+  - {fileID: 7761099974869768678}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &7828725762744367070
@@ -45,29 +49,216 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92df9d1163366944f8537e5cbf2789e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  autoChangeWeather: 1
-  <currentWeatherProfile>k__BackingField: {fileID: 11400000, guid: 62b6db9f95725c349b09f93c1854c909, type: 2}
-  <newWeatherProfile>k__BackingField: {fileID: 11400000, guid: 05059311190a3f847b37c6959c77c5bb, type: 2}
-  _isProfilesValide: 0
-  <temperature>k__BackingField: 0
-  <wetness>k__BackingField: 0
-  <toxicity>k__BackingField: 0
-  <sunLight>k__BackingField: {fileID: 0}
-  <moonLight>k__BackingField: {fileID: 0}
-  _isLightsValide: 1
-  <windSystem>k__BackingField: {fileID: 6733437681237491628}
-  _isWindSystemValide: 1
-  <UserVolumFogMaterial>k__BackingField: {fileID: 2100000, guid: 47d7ec949da0c28458603888c2c87755, type: 2}
-  <UserVolumFogMaterialFar>k__BackingField: {fileID: 2100000, guid: e7dbaa0ea93db594b9a594c85ed9df52, type: 2}
-  _isFogValide: 1
-  <skyboxMaterial>k__BackingField: {fileID: 2100000, guid: cf74f6d2e3814e84d8ae19faa473c992, type: 2}
-  _isSkyboxValide: 1
-  <postProcessingVolume>k__BackingField: {fileID: 0}
-  _isPostProcessValide: 1
-  <particleSystems>k__BackingField: []
   weatherProfiles:
   - {fileID: 11400000, guid: 62b6db9f95725c349b09f93c1854c909, type: 2}
   - {fileID: 11400000, guid: 05059311190a3f847b37c6959c77c5bb, type: 2}
+  _isProfilesValide: 1
+  <CurrentWeatherProfile>k__BackingField: {fileID: 11400000, guid: 62b6db9f95725c349b09f93c1854c909, type: 2}
+  <NewWeatherProfile>k__BackingField: {fileID: 11400000, guid: 62b6db9f95725c349b09f93c1854c909, type: 2}
+  <Temperature>k__BackingField: 0
+  <Wetness>k__BackingField: 0
+  <Toxicity>k__BackingField: 0
+  _isLightingSystemsValide: 1
+  <SunLight>k__BackingField: {fileID: 0}
+  <MoonLight>k__BackingField: {fileID: 0}
+  _isWindSystemValide: 1
+  <WindSystem>k__BackingField: {fileID: 6733437681237491628}
+  _isFogSystemValide: 1
+  <WeatherFogSystem>k__BackingField: {fileID: 3411355947148336652}
+  _isSkyboxSystemValide: 1
+  <WeatherSkyboxSystem>k__BackingField: {fileID: 7197166586690042323}
+  _isPostProcessSystemValide: 1
+  <WeatherPostProcessSystem>k__BackingField: {fileID: 7528676310365337471}
+  <WeatherVFXSystem>k__BackingField: {fileID: 7611072829369350415}
+--- !u!1 &5253470689031542207
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8966224786177681660}
+  - component: {fileID: 7197166586690042323}
+  m_Layer: 0
+  m_Name: SkyboxSystem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8966224786177681660
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5253470689031542207}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3982350974279347672}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7197166586690042323
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5253470689031542207}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b6a8d0d2a12790a44bfec81d07e0f682, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _isSkyboxValide: 1
+  _skyboxMaterial: {fileID: 2100000, guid: cf74f6d2e3814e84d8ae19faa473c992, type: 2}
+  _sunTransform: {fileID: 0}
+--- !u!1 &5516812054343687718
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 328870799192521362}
+  - component: {fileID: 7528676310365337471}
+  m_Layer: 0
+  m_Name: PostProcessSystem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &328870799192521362
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5516812054343687718}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3982350974279347672}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7528676310365337471
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5516812054343687718}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1cbbf2097662dee49b0dead3a23bfe55, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _isPostProcessValide: 1
+  _volume: {fileID: 0}
+--- !u!1 &5945319906156504920
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7761099974869768678}
+  - component: {fileID: 7611072829369350415}
+  m_Layer: 0
+  m_Name: VFXSystem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7761099974869768678
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5945319906156504920}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3982350974279347672}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7611072829369350415
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5945319906156504920}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78793d5cb13511a45997302ea3dec59b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <CurrentVFXControllers>k__BackingField: []
+  <NewVFXControllers>k__BackingField: []
+--- !u!1 &7041458400281342136
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3448462563062676059}
+  - component: {fileID: 3411355947148336652}
+  m_Layer: 0
+  m_Name: FogSystem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3448462563062676059
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7041458400281342136}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3982350974279347672}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3411355947148336652
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7041458400281342136}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 683df5cef6c3b9543b89c37b61bf9ae0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _isFogValide: 1
+  _nearFogFeatureName: FullScreenVolumetricFogNear
+  _farFogFeatureName: FullScreenVolumetricFogFar
+  _nearFogMaterial: {fileID: 2100000, guid: 47d7ec949da0c28458603888c2c87755, type: 2}
+  _farFogMaterial: {fileID: 2100000, guid: e7dbaa0ea93db594b9a594c85ed9df52, type: 2}
+  _sunTransform: {fileID: 0}
 --- !u!1 &9014236117871535397
 GameObject:
   m_ObjectHideFlags: 0
@@ -109,11 +300,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 9014236117871535397}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d4d7d2355fca01d46b907091fc1cb021, type: 3}
+  m_Script: {fileID: 11500000, guid: de6396b1decb90746b62072ca6f3d543, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _windGloabalDirection: {x: 0, y: 0}
-  _currentSpeed: 3
+  _currentSpeed: 0
   _minWindSpeed: 2
   _maxWindSpeed: 15
   _intensityChangeSpeed: 1
@@ -124,7 +315,7 @@ MonoBehaviour:
   _useNoiseWindSpeedMotion: 1
   _noiseWindSpeedSpeedMul: 1
   _drawWindField: 0
-  _vectorsGrid: 32
+  _vectorsGrid: 4
   _vectorsSizeMul: 1
   _intensityColorGradient:
     serializedVersion: 2

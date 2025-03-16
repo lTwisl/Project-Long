@@ -600,7 +600,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3578444673790263516, guid: 32b8a9a1180a4fb4b8d884dc98b3d043, type: 3}
       propertyPath: m_Color.g
-      value: 0.6549941
+      value: 0.65363574
       objectReference: {fileID: 0}
     - target: {fileID: 3578444673790263516, guid: 32b8a9a1180a4fb4b8d884dc98b3d043, type: 3}
       propertyPath: m_Intensity
@@ -620,11 +620,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5318115322574560920, guid: 32b8a9a1180a4fb4b8d884dc98b3d043, type: 3}
       propertyPath: m_Color.b
-      value: 0.8039216
+      value: 0.80392164
       objectReference: {fileID: 0}
     - target: {fileID: 5318115322574560920, guid: 32b8a9a1180a4fb4b8d884dc98b3d043, type: 3}
       propertyPath: m_Color.g
-      value: 0.7607843
+      value: 0.7607844
       objectReference: {fileID: 0}
     - target: {fileID: 5318115322574560920, guid: 32b8a9a1180a4fb4b8d884dc98b3d043, type: 3}
       propertyPath: m_Color.r
@@ -4800,67 +4800,6 @@ Transform:
   - {fileID: 371564404}
   m_Father: {fileID: 1185320739}
   m_LocalEulerAnglesHint: {x: -30, y: 180, z: 0}
---- !u!1001 &1047187722125638492
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 2051592748423160268, guid: aa07e354d28542e4abcf0689712920a9, type: 3}
-      propertyPath: m_Name
-      value: EditorTools
-      objectReference: {fileID: 0}
-    - target: {fileID: 2051592748423160268, guid: aa07e354d28542e4abcf0689712920a9, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7898983277212429700, guid: aa07e354d28542e4abcf0689712920a9, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7898983277212429700, guid: aa07e354d28542e4abcf0689712920a9, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7898983277212429700, guid: aa07e354d28542e4abcf0689712920a9, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7898983277212429700, guid: aa07e354d28542e4abcf0689712920a9, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7898983277212429700, guid: aa07e354d28542e4abcf0689712920a9, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7898983277212429700, guid: aa07e354d28542e4abcf0689712920a9, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7898983277212429700, guid: aa07e354d28542e4abcf0689712920a9, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7898983277212429700, guid: aa07e354d28542e4abcf0689712920a9, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7898983277212429700, guid: aa07e354d28542e4abcf0689712920a9, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7898983277212429700, guid: aa07e354d28542e4abcf0689712920a9, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: aa07e354d28542e4abcf0689712920a9, type: 3}
 --- !u!1001 &8831700996810621144
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4872,14 +4811,6 @@ PrefabInstance:
     - target: {fileID: 324625207786621930, guid: 0817ad807ecd81f4db152f1045a40f66, type: 3}
       propertyPath: m_Name
       value: WorldTime
-      objectReference: {fileID: 0}
-    - target: {fileID: 2617561183448690812, guid: 0817ad807ecd81f4db152f1045a40f66, type: 3}
-      propertyPath: _IsTimeSpeedUp
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2617561183448690812, guid: 0817ad807ecd81f4db152f1045a40f66, type: 3}
-      propertyPath: <TimeScaleSpeedUp>k__BackingField
-      value: 96
       objectReference: {fileID: 0}
     - target: {fileID: 7901084338802630068, guid: 0817ad807ecd81f4db152f1045a40f66, type: 3}
       propertyPath: m_LocalRotation.w
@@ -4922,6 +4853,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3411355947148336652, guid: 7c5f26e0638bb1344bbb1c2128e7dba2, type: 3}
+      propertyPath: _sunTransform
+      value: 
+      objectReference: {fileID: 357007932}
     - target: {fileID: 3690970475114704028, guid: 7c5f26e0638bb1344bbb1c2128e7dba2, type: 3}
       propertyPath: m_Name
       value: WeatherSystem
@@ -4966,54 +4901,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7828725762744367070, guid: 7c5f26e0638bb1344bbb1c2128e7dba2, type: 3}
-      propertyPath: _isProfilesValide
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7828725762744367070, guid: 7c5f26e0638bb1344bbb1c2128e7dba2, type: 3}
-      propertyPath: <Wetness>k__BackingField
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7828725762744367070, guid: 7c5f26e0638bb1344bbb1c2128e7dba2, type: 3}
-      propertyPath: <wetness>k__BackingField
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7828725762744367070, guid: 7c5f26e0638bb1344bbb1c2128e7dba2, type: 3}
-      propertyPath: <Toxicity>k__BackingField
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7828725762744367070, guid: 7c5f26e0638bb1344bbb1c2128e7dba2, type: 3}
-      propertyPath: <sunLight>k__BackingField
+    - target: {fileID: 7197166586690042323, guid: 7c5f26e0638bb1344bbb1c2128e7dba2, type: 3}
+      propertyPath: _sunTransform
       value: 
-      objectReference: {fileID: 357007935}
-    - target: {fileID: 7828725762744367070, guid: 7c5f26e0638bb1344bbb1c2128e7dba2, type: 3}
-      propertyPath: <toxicity>k__BackingField
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7828725762744367070, guid: 7c5f26e0638bb1344bbb1c2128e7dba2, type: 3}
-      propertyPath: <moonLight>k__BackingField
-      value: 
-      objectReference: {fileID: 357007934}
-    - target: {fileID: 7828725762744367070, guid: 7c5f26e0638bb1344bbb1c2128e7dba2, type: 3}
-      propertyPath: <Temperature>k__BackingField
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7828725762744367070, guid: 7c5f26e0638bb1344bbb1c2128e7dba2, type: 3}
-      propertyPath: <temperature>k__BackingField
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7828725762744367070, guid: 7c5f26e0638bb1344bbb1c2128e7dba2, type: 3}
-      propertyPath: <newWeatherProfile>k__BackingField
-      value: 
-      objectReference: {fileID: 11400000, guid: 62b6db9f95725c349b09f93c1854c909, type: 2}
-    - target: {fileID: 7828725762744367070, guid: 7c5f26e0638bb1344bbb1c2128e7dba2, type: 3}
-      propertyPath: <postProcessingVolume>k__BackingField
+      objectReference: {fileID: 357007932}
+    - target: {fileID: 7528676310365337471, guid: 7c5f26e0638bb1344bbb1c2128e7dba2, type: 3}
+      propertyPath: _volume
       value: 
       objectReference: {fileID: 1712241379}
     - target: {fileID: 7828725762744367070, guid: 7c5f26e0638bb1344bbb1c2128e7dba2, type: 3}
-      propertyPath: <currentWeatherProfile>k__BackingField
+      propertyPath: <SunLight>k__BackingField
       value: 
-      objectReference: {fileID: 11400000, guid: 62b6db9f95725c349b09f93c1854c909, type: 2}
+      objectReference: {fileID: 357007935}
+    - target: {fileID: 7828725762744367070, guid: 7c5f26e0638bb1344bbb1c2128e7dba2, type: 3}
+      propertyPath: <MoonLight>k__BackingField
+      value: 
+      objectReference: {fileID: 357007934}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -5032,4 +4935,3 @@ SceneRoots:
   - {fileID: 1672823860}
   - {fileID: 8831700996810621144}
   - {fileID: 8855213794851581650}
-  - {fileID: 1047187722125638492}
