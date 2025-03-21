@@ -1,5 +1,25 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-9009198015177929433
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b00045f12942b46c698459096c89274e, type: 3}
+  m_Name: FullScreenPassRendererFeature
+  m_EditorClassIdentifier: 
+  m_Active: 1
+  injectionPoint: 450
+  fetchColorBuffer: 0
+  requirements: 2
+  passMaterial: {fileID: 2100000, guid: 84197f253d362d74a9bf111758bfbcea, type: 2}
+  passIndex: 0
+  bindDepthStencilAttachment: 0
+  m_Version: 1
 --- !u!114 &-4771592466879060175
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -103,7 +123,8 @@ MonoBehaviour:
   - {fileID: -4771592466879060175}
   - {fileID: -1753871306529863744}
   - {fileID: -2675411701934795552}
-  m_RendererFeatureMap: 3167beaeeee5c7bdc08789d056ffa8e7e0d440663b07dfda
+  - {fileID: -9009198015177929433}
+  m_RendererFeatureMap: 3167beaeeee5c7bdc08789d056ffa8e7e0d440663b07dfda274d2a5223e6f882
   m_UseNativeRenderPass: 1
   xrSystemData: {fileID: 0}
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}

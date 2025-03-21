@@ -9,6 +9,8 @@ public class WorldTimeEditor : Editor
     private int hour = 0;
     private int minute = 0;
 
+    private Color _baseColor;
+
     private void OnEnable()
     {
         EditorApplication.update += Repaint;
@@ -23,6 +25,8 @@ public class WorldTimeEditor : Editor
     {
         DrawDefaultInspector();
         WorldTime worldTime = (WorldTime)target;
+
+        _baseColor = GUI.backgroundColor;
 
         // 1. За сколько секунд реального времени проходит одна игровая минута
         float realSecondsPerGameMinuteClassic = 1 / worldTime.TimeScaleGame * 60;
@@ -54,7 +58,7 @@ public class WorldTimeEditor : Editor
         // Стиль для таймера времени
         GUIStyle timerStyle = new GUIStyle(EditorStyles.label)
         {
-            fontSize = 26,
+            fontSize = 22,
             fontStyle = FontStyle.Bold,
             normal = { textColor = Color.yellow }
         };
@@ -78,9 +82,7 @@ public class WorldTimeEditor : Editor
         // Отображение текущего игрового времени
         EditorGUILayout.Space();
         EditorGUILayout.LabelField("Текущее игровое время:", headerStyle);
-        //EditorGUILayout.LabelField(worldTime.CurrentTime.ToString(@"dd  hh\:mm\:ss"), timerStyle);
-        string formattedTime = $"{worldTime.CurrentTime.Days:D3}  {worldTime.CurrentTime.Hours:D2}:{worldTime.CurrentTime.Minutes:D2}:{worldTime.CurrentTime.Seconds:D2}";
-        EditorGUILayout.LabelField(formattedTime, timerStyle);
+        EditorGUILayout.LabelField(worldTime.GetFormattedTime(worldTime.CurrentTime), timerStyle);
 
         // Слайдер прогресса дня
         EditorGUILayout.Space();
@@ -89,29 +91,22 @@ public class WorldTimeEditor : Editor
 
         // Добавляем раздел для установки игрового времени
         EditorGUILayout.Space();
-        EditorGUILayout.LabelField("Установить игровое время:", headerStyle);
-
-        // Горизонтальная группа для полей ввода
-        EditorGUILayout.BeginVertical();
-        {
-            day = EditorGUILayout.IntField("День", day, GUILayout.ExpandWidth(true));
-            hour = EditorGUILayout.IntField("Час", hour, GUILayout.ExpandWidth(true));
-            minute = EditorGUILayout.IntField("Минута", minute, GUILayout.ExpandWidth(true));
-        }
-        EditorGUILayout.EndVertical();
-        EditorGUILayout.Space();
-
-        // Кнопка для применения значений
-        if (GUILayout.Button("Применить время"))
-        {
-            TimeSpan newTime = new TimeSpan(day, hour, minute, 0);
-            worldTime.CurrentTime = newTime;
-        }
+        EditorGUILayout.LabelField("Управление временем:", headerStyle);
 
         // Кнопки быстрого перехода по времени
-        EditorGUILayout.Space();
         EditorGUILayout.BeginHorizontal();
         {
+            GUI.backgroundColor = new Color(1f, 0.8f, 0.4f);
+            if (GUILayout.Button("-1 минута"))
+            {
+                worldTime.CurrentTime = worldTime.CurrentTime.Add(TimeSpan.FromMinutes(-1));
+            }
+            if (GUILayout.Button("+1 минута"))
+            {
+                worldTime.CurrentTime = worldTime.CurrentTime.Add(TimeSpan.FromMinutes(1));
+            }
+            GUILayout.Space(10);
+            GUI.backgroundColor = new Color(1f, 0.6f, 0.3f);
             if (GUILayout.Button("-1 час"))
             {
                 worldTime.CurrentTime = worldTime.CurrentTime.Add(TimeSpan.FromHours(-1));
@@ -121,6 +116,7 @@ public class WorldTimeEditor : Editor
                 worldTime.CurrentTime = worldTime.CurrentTime.Add(TimeSpan.FromHours(1));
             }
             GUILayout.Space(10);
+            GUI.backgroundColor = new Color(1f, 0.4f, 0.2f);
             if (GUILayout.Button("-1 день"))
             {
                 worldTime.CurrentTime = worldTime.CurrentTime.Add(TimeSpan.FromDays(-1));
@@ -129,7 +125,27 @@ public class WorldTimeEditor : Editor
             {
                 worldTime.CurrentTime = worldTime.CurrentTime.Add(TimeSpan.FromDays(1));
             }
+            GUI.backgroundColor = _baseColor;
         }
         EditorGUILayout.EndHorizontal();
+
+        // Горизонтальная группа для полей ввода
+        EditorGUILayout.Space(10);
+        EditorGUILayout.LabelField("Установить игровое время:", headerStyle);
+        EditorGUILayout.BeginVertical();
+        {
+            day = EditorGUILayout.IntField("День", day, GUILayout.ExpandWidth(false));
+            hour = EditorGUILayout.IntField("Час", hour, GUILayout.ExpandWidth(false));
+            minute = EditorGUILayout.IntField("Минута", minute, GUILayout.ExpandWidth(false));
+        }
+        EditorGUILayout.EndVertical();
+        EditorGUILayout.Space();
+
+        // Кнопка для применения значений
+        if (GUILayout.Button("Установить время"))
+        {
+            TimeSpan newTime = new TimeSpan(day, hour, minute, 0);
+            worldTime.CurrentTime = newTime;
+        }
     }
 }

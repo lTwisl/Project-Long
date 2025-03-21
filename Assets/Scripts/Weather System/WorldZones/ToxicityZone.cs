@@ -1,0 +1,115 @@
+using System;
+using UnityEditor;
+using UnityEngine;
+
+[RequireComponent(typeof(Collider))]
+[ExecuteAlways]
+public class ToxicityZone : MonoBehaviour
+{
+    public static Action<float> OnImpactRateToxicity;
+    public static Action<float> OnImpactSingleToxicity;
+
+    [SerializeField] private bool _hideGizmo = true;
+    public enum ZoneType
+    {
+        Rate,
+        Single
+    }
+
+    [field: Header("ѕараметры обьекта:")]
+    [SerializeField] private string _zoneID = "Toxicity Zone 1";
+    [field: SerializeField, Min(0)] public float Toxicity { get; private set; }
+    [SerializeField] private ZoneType _currentType;
+    [DisableEdit, SerializeField] private Collider _collider;
+
+    public string ZoneID => _zoneID;
+    public ZoneType CurrentType => _currentType;
+
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            if (_currentType == ZoneType.Rate)
+                OnImpactRateToxicity?.Invoke(Toxicity);
+
+            if (_currentType == ZoneType.Single)
+                OnImpactSingleToxicity?.Invoke(Toxicity);
+        }
+    }
+
+    //private void OnTriggerStay(Collider other)
+    //{
+    //    if (other.CompareTag("Player"))
+    //    {
+
+    //    }
+    //}
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            if (_currentType == ZoneType.Rate)
+                OnImpactRateToxicity?.Invoke(0);
+        }
+    }
+
+    #region ¬»«”јЋ»«ј÷»я
+    private void OnDrawGizmos()
+    {
+        if (_hideGizmo) return;
+
+        var color = _currentType == ZoneType.Rate ? new Color(0.5f, 0, 1, 1) : new Color(1, 0, 0.5f, 1);
+        Gizmos.color = color;
+
+        // ќтрисовка значка зоны
+        if (_collider != null)
+        {
+            Handles.color = color;
+            Handles.DrawSolidDisc(transform.position, Vector3.up, Mathf.Max(_collider.bounds.extents.x, _collider.bounds.extents.y, _collider.bounds.extents.z));
+        }
+
+        // ќтрисовка текстовой метки
+        GUIStyle _guiStyle = new GUIStyle
+        {
+            normal = { textColor = Color.black },
+            alignment = TextAnchor.MiddleCenter,
+            fontStyle = FontStyle.Bold
+        };
+
+        Handles.Label
+        (
+            transform.position + Vector3.up * 0.75f,
+            $"ID: {_zoneID}\n{_currentType}",
+            _guiStyle
+        );
+    }
+    #endregion
+
+    #region EDITOR
+    private void OnValidate()
+    {
+        ChangeNaming();
+        CacheCollider();
+#if UNITY_EDITOR
+        Undo.RecordObject(this, "»нициализировали ссылки на модули WeatherSystem");
+        EditorUtility.SetDirty(this);
+#endif
+    }
+
+    private void ChangeNaming()
+    {
+        gameObject.name = $"[{_currentType}] {_zoneID}";
+    }
+
+    private void CacheCollider()
+    {
+        if (_collider == null)
+        {
+            _collider = GetComponent<Collider>();
+            _collider.isTrigger = true;
+        }
+    }
+    #endregion
+}

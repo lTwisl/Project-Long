@@ -259,7 +259,7 @@ MonoBehaviour:
   bakeOnAwake: 1
   center: {x: 0, y: 0, z: 0}
   size: {x: 80, y: 80, z: 80}
-  maxResolution: 256
+  maxResolution: 15
   signPassesCount: 1
   threshold: 0.5
   offset: 0

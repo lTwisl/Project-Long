@@ -14,18 +14,27 @@ public class WeatherWindSystem : MonoBehaviour
     [field: DisableEdit, SerializeField] public float CurrentSpeed { get; private set; }
 
     [Header("Параметры глобального ветра:")]
-    [DisableEdit, SerializeField, Tooltip("Минимальная скорость ветра"), Min(1)] private float _minWindSpeed = 2f;
-    [DisableEdit, SerializeField, Tooltip("Максимальная скорость ветра"), Min(1)] private float _maxWindSpeed = 15f;
-    [DisableEdit, SerializeField, Tooltip("Интенсивность изменений скорости ветра"), Range(0.01f, 5f)] private float _intensityChangeSpeed = 1f;
+    [DisableEdit, SerializeField, Tooltip("Минимальная скорость ветра"), Min(1)] 
+    private float _minWindSpeed = 2f;
+    [DisableEdit, SerializeField, Tooltip("Максимальная скорость ветра"), Min(1)] 
+    private float _maxWindSpeed = 15f;
+    [DisableEdit, SerializeField, Tooltip("Интенсивность изменений скорости ветра"), Range(0.01f, 5f)] 
+    private float _intensityChangeSpeed = 1f;
     [Space(8)]
-    [DisableEdit, SerializeField, Tooltip("Резкость изменения направления ветра по шуму Перлина (0.01 - штиль; 0.3 - порывистый ветер)"), Range(0.001f, 2f)] private float _directionChangeSharpness = 0.3f;
-    [DisableEdit, SerializeField, Tooltip("Интенсивность изменения направления ветра"), Range(0.01f, 5f)] private float _intensityChangeDirection = 1f;
+    [DisableEdit, SerializeField, Tooltip("Резкость изменения направления ветра по шуму Перлина (0.01 - штиль; 0.3 - порывистый ветер)"), Range(0.001f, 2f)] 
+    private float _directionChangeSharpness = 0.3f;
+    [DisableEdit, SerializeField, Tooltip("Интенсивность изменения направления ветра"), Range(0.01f, 5f)] 
+    private float _intensityChangeDirection = 1f;
 
     [Header("Параметры локального ветра:")]
-    [SerializeField, Tooltip("Размер шума перлина для изменения интенсивности"), Range(0.001f, 0.5f)] private float _tilingNoiseWindSpeed = 0.005f;
-    [SerializeField, Tooltip("На сколько сильно интенсивность зависит от шума"), Range(0f, 1f)] private float _influenceNoiseWindSpeed = 1f;
-    [SerializeField, Tooltip("Включить движения шума интенсивности")] private bool _useNoiseWindSpeedMotion = true;
-    [HideIf(nameof(_useNoiseWindSpeedMotion), false), SerializeField, Tooltip("Множитель смещения шума от скорости глобального ветра"), Range(0.1f, 10f)] private float _noiseWindSpeedSpeedMul = 1f;
+    [SerializeField, Tooltip("Размер шума перлина для изменения интенсивности"), Range(0.001f, 0.5f)] 
+    private float _tilingNoiseWindSpeed = 0.005f;
+    [SerializeField, Tooltip("На сколько сильно интенсивность зависит от шума"), Range(0f, 1f)] 
+    private float _influenceNoiseWindSpeed = 1f;
+    [SerializeField, Tooltip("Включить движения шума интенсивности")] 
+    private bool _useNoiseWindSpeedMotion = true;
+    [HideIf(nameof(_useNoiseWindSpeedMotion), false), SerializeField, Tooltip("Множитель смещения шума от скорости глобального ветра"), Range(0.1f, 10f)] 
+    private float _noiseWindSpeedSpeedMul = 1f;
 
     [Header("Параметры визуализации:")]
     [SerializeField] private bool _drawWindField = true;
@@ -134,9 +143,17 @@ public class WeatherWindSystem : MonoBehaviour
     /// </summary>
     public Vector2 GetWindLocalVector(Vector3 worldPosition)
     {
+        return GetWindGlobalVectorNormalized() * GetWindLocalIntensity(worldPosition);
+    }
+
+    /// <summary>
+    /// Получить локальную интенсивность ветра с учетом ветровых зон
+    /// </summary>
+    public float GetWindLocalIntensity(Vector3 worldPosition)
+    {
         float baseIntensity = CalculateLocalIntensity(worldPosition);
         float zoneMultiplier = CalculateZoneMultiplier(worldPosition);
-        return GetWindGlobalVectorNormalized() * (baseIntensity * zoneMultiplier);
+        return baseIntensity * zoneMultiplier;
     }
 
     private float CalculateLocalIntensity(Vector3 position)
@@ -161,6 +178,7 @@ public class WeatherWindSystem : MonoBehaviour
             _maxWindSpeed
         );
     }
+
 
     private float CalculateZoneMultiplier(Vector3 position)
     {
