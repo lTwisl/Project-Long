@@ -1,6 +1,9 @@
 using UnityEngine;
+using Zenject;
 
 public abstract class UseStrategy : ScriptableObject
 {
-    public abstract void Execute(InventoryItem item, Player player);
+    [Inject] protected Player _player;
+
+    public abstract void Execute(InventoryItem item);
 }

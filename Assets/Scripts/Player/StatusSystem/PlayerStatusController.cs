@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Zenject;
@@ -6,10 +7,13 @@ using Zenject;
 [RequireComponent(typeof(PlayerMovement))]
 public class PlayerStatusController : MonoBehaviour
 {
-    private PlayerMovement _playerMovement;
-
-    private PlayerParameters _playerParameters;
+    public float MaxExternalHeat { get; private set; }
     
+    private List<IExternalHeat> _externalHeats = new List<IExternalHeat>();
+
+    private PlayerMovement _playerMovement;
+    private PlayerParameters _playerParameters;
+
     [Inject]
     private void Construct(PlayerParameters playerParameters)
     {
@@ -31,7 +35,9 @@ public class PlayerStatusController : MonoBehaviour
         {
             parameter.UpdateParameter(WorldTime.Instance.FixedDeltaTime / 60f);
         }
-    }    
+
+        //Debug.Log(GetMaxExternalHeatsByPosiotion());
+    }
 
     private void OnDestroy()
     {
@@ -85,6 +91,48 @@ public class PlayerStatusController : MonoBehaviour
         _playerMovement.OnChangedMoveMode -= ChangedMoveMode;
     }
 
+
+    public void Add(ParameterType parameter, float value)
+    {
+        _playerParameters.Add(parameter, value);
+    }
+
+    public void AddExternalHeat(IExternalHeat externalHeat)
+    {
+        _externalHeats.Add(externalHeat);
+
+        if (externalHeat.Temp > MaxExternalHeat)
+            MaxExternalHeat = externalHeat.Temp;
+    }
+
+    public void RemoveExternalHeat(IExternalHeat externalHeat)
+    {
+        _externalHeats.Remove(externalHeat);
+
+        if (externalHeat.Temp == MaxExternalHeat)
+        {
+            if (_externalHeats.Count == 0)
+                MaxExternalHeat = 0;
+            else
+                MaxExternalHeat = _externalHeats.Max(p => p.Temp);
+        }
+    }
+
+    public float GetMaxExternalHeatsByPosiotion()
+    {
+        if (_externalHeats.Count == 0)
+            return 0;
+
+        return _externalHeats.Max(p =>
+        {
+            return Utility.MapRange((p.Position - transform.position).sqrMagnitude,
+                Mathf.Pow(p.MinRadius, 2), Mathf.Pow(p.MaxRadius, 2),
+                p.Temp, 0, true);
+        });
+    }
+
+
+#if UNITY_EDITOR
     private void OnGUI()
     {
         if (_playerParameters == null)
@@ -98,9 +146,5 @@ public class PlayerStatusController : MonoBehaviour
         GUILayout.Label($"Тепло: {_playerParameters.Heat.Current:f1}");
         GUILayout.Label($"Заражённость: {_playerParameters.Toxicity.Current:f1}");
     }
-
-    public void Add(ParameterType parameter, float value)
-    {
-        _playerParameters.Add(parameter, value);
-    }
+#endif
 }

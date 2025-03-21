@@ -13,9 +13,9 @@ public class UI_Slot : MonoBehaviour, IPointerDownHandler
 
     public event Action<UI_Slot> OnClick;
 
-    public IReadOnlyInventorySlot Slot { get; private set; }
+    public InventorySlot Slot { get; private set; }
 
-    public void Init(IReadOnlyInventorySlot slot)
+    public void Init(InventorySlot slot)
     {
         Slot = slot;
 

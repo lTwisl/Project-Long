@@ -112,11 +112,11 @@ public abstract class InventoryItem : ScriptableObject
             $"Description: {Description}\n";
     }
 
-    public void Use(Player player)
+    public void Use()
     {
         if (UseStrategy == null)
             return;
 
-        UseStrategy.Execute(this, player);
+        UseStrategy.Execute(this);
     }
 }

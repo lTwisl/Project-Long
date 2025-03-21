@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
@@ -17,7 +18,9 @@ public class Player : MonoBehaviour
     public PlayerInputs PlayerInputs { get; private set; }
     public Camera MainCamera { get; private set; }
 
-    private InteractionController _interactionController;
+    
+
+    
 
     private void Awake()
     {
@@ -27,38 +30,42 @@ public class Player : MonoBehaviour
         PlayerInputs = GetComponent<PlayerInputs>();
         MainCamera = Camera.main;
 
-        _interactionController = new InteractionController(this, _slider, 2f);
-
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
-
-        ClothingSystem.OnEquip += slot => _playerParameters.Stamina.OffsetMax += (slot.Item as ClothesItem).OffsetStamina;
-        ClothingSystem.OnUnequip += slot => _playerParameters.Stamina.OffsetMax -= (slot.Item as ClothesItem).OffsetStamina;
     }
+
 
 
     private void OnEnable()
     {
         PlayerInputs.OnChangeVisibilityUiPlayer += SetVisibilityUiPlayer;
+
+        ClothingSystem.OnEquip += UpdateClothesOffsetMax;
+        ClothingSystem.OnUnequip += UpdateClothesOffsetMax;
+
+        WorldTime.Instance.OnMinuteChanged += InventoryUpdateMinuteChanged;
+        WorldTime.Instance.OnMinuteChanged += ClothingSystemUpdateMinuteChanged;
+
+        Inventory.OnItemRemoved += ClothingSystem.HandleItemRemoved;
     }
 
     private void OnDisable()
     {
         PlayerInputs.OnChangeVisibilityUiPlayer -= SetVisibilityUiPlayer;
+
+        ClothingSystem.OnEquip -= UpdateClothesOffsetMax;
+        ClothingSystem.OnUnequip -= UpdateClothesOffsetMax;
+
+        WorldTime.Instance.OnMinuteChanged -= InventoryUpdateMinuteChanged;
+        WorldTime.Instance.OnMinuteChanged -= ClothingSystemUpdateMinuteChanged;
+
+        Inventory.OnItemRemoved -= ClothingSystem.HandleItemRemoved;
     }
 
-    private void Start()
-    {
-        Inventory.OnItemRemoved += slot => ClothingSystem.HandleItemRemoved(slot as InventorySlot);
+    private void InventoryUpdateMinuteChanged(TimeSpan _) => Inventory.Update(1);
+    private void ClothingSystemUpdateMinuteChanged(TimeSpan _) => ClothingSystem.Update(1);
 
-        WorldTime.Instance.OnMinuteChanged += _ => Inventory.Update(1);
-        WorldTime.Instance.OnMinuteChanged += _ => ClothingSystem.Update(1);
-    }
-
-    private void Update()
-    {
-        _interactionController.Update(Time.deltaTime);
-    }
+    private void UpdateClothesOffsetMax(InventorySlot _) => _playerParameters.Stamina.OffsetMax = ClothingSystem.TotalOffsetStamina;
 
     public void SetVisibilityUiPlayer(bool newVisibility)
     {
@@ -81,7 +88,7 @@ public class Player : MonoBehaviour
 
     public void DropItem(InventorySlot slot)
     {
-        if (Inventory.CountSlots == 0)
+        if (Inventory.Slots.Count == 0)
             return;
 
         if (!Inventory.Slots.Contains(slot))
@@ -93,11 +100,14 @@ public class Player : MonoBehaviour
             item.InventorySlot = new InventorySlot(slot.Item, slot.Capacity, slot.Condition);
         }
 
+        if (slot.Item is ClothingItem clothes && slot.IsWearing)
+            ClothingSystem.Unequip(slot);
+        
         Inventory.RemoveItem(slot);
     }
 
     public void UseItem(InventorySlot slot)
     {
-        slot.UseItem(this);
+        slot.UseItem();
     }
 }

@@ -15,7 +15,7 @@ public class UI_ClothesSlot : MonoBehaviour, IPointerDownHandler
     public int IndexLayer;
     public InventorySlot Slot { get; private set; }
 
-    private UI_SelectClothes _uiSelectClothes;
+    private UI_SelectClothing _uiSelectClothes;
 
     private Player _player;
 
@@ -31,7 +31,7 @@ public class UI_ClothesSlot : MonoBehaviour, IPointerDownHandler
         _type.text = ClothesType.ToString() + $"_{IndexLayer}";
     }
 
-    public void Init(InventorySlot slot, UI_SelectClothes uiSelectClothes)
+    public void Init(InventorySlot slot, UI_SelectClothing uiSelectClothes)
     {
         Slot = slot;
         _uiSelectClothes = uiSelectClothes;
@@ -74,13 +74,13 @@ public class UI_ClothesSlot : MonoBehaviour, IPointerDownHandler
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        List<IReadOnlyInventorySlot> slots = new();
+        List<InventorySlot> slots = new();
         foreach (var slot in _player.Inventory.Slots)
         {
             if (slot.Item.Category == Category.Clothes
-                && (slot.Item as ClothesItem).ClothesType == ClothesType)
+                && (slot.Item as ClothingItem).ClothingType == ClothesType)
             {
-                if (_player.ClothingSystem.SlotCache.TryGetValue(ClothesType, out ClothingSlot clothingSlot))
+                if (_player.ClothingSystem.TryGetClothesSlot(ClothesType, out ClothingSlot clothingSlot))
                 {
                     if (clothingSlot.Layers.Contains(slot) && Slot != slot)
                         continue;

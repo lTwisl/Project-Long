@@ -1,38 +1,32 @@
 using UnityEngine;
 using UnityEngine.UI;
+using Zenject;
 
 
-public class InteractionController
+public class InteractionController : MonoBehaviour
 {
-    private float _holdInteractionTime = 2f;
+    [SerializeField] private float _holdInteractionTime = 2f;
+    [SerializeField] private LayerMask _interactionLayer;
+    [SerializeField] private Slider _slider;
 
-    private Player _player;
-    private PlayerInputs _inputs;
-    private Camera _mainCamera;
-    private Slider _slider;
+    [Inject] private Player _player;
+
+    private PlayerInputs _inputs => _player.PlayerInputs;
+    private Camera _mainCamera => _player.MainCamera;
 
     private IInteractible _currentInteractible;
     private bool _isInteracting;
     private float _holdTimer;
 
-    public InteractionController(Player player, Slider slider, float holdInteractionTime)
-    {
-        _player = player;
-        _inputs = player.PlayerInputs;
-        _mainCamera = player.MainCamera;
-        _slider = slider;
 
-        _holdInteractionTime = holdInteractionTime;
-    }
-
-    public void Update(float deltaTime)
+    public void Update()
     {
         if (_inputs.isInteract)
         {
             if (!_isInteracting)
                 StartInteraction();
 
-            UpdateHoldProgress(deltaTime);
+            UpdateHoldProgress(Time.deltaTime);
         }
         else
         {
@@ -50,14 +44,15 @@ public class InteractionController
 
     private void StartInteraction()
     {
-        if (!Physics.Raycast(_mainCamera.transform.position, _mainCamera.transform.forward, out RaycastHit hitInfo, 100f))
+        if (!Physics.Raycast(_mainCamera.transform.position, _mainCamera.transform.forward, out RaycastHit hitInfo, 100f, _interactionLayer))
             return;
 
-        if (!hitInfo.collider.TryGetComponent(out _currentInteractible))
+        _currentInteractible = hitInfo.collider.GetComponentInParent<IInteractible>();
+        if (_currentInteractible == null)
             return;
 
         _isInteracting = true;
-        
+
         if (!_currentInteractible.IsCanInteract)
             return;
 

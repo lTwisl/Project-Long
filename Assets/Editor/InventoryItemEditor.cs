@@ -160,7 +160,7 @@ public class InventoryItemEditor : Editor
     {
         GUI.enabled = typeName switch
         {
-            nameof(ClothesItem) => false,
+            nameof(ClothingItem) => false,
             nameof(MedicineItem) => false,
             nameof(HeatingItem) => false,
             _ => true,
@@ -176,7 +176,7 @@ public class InventoryItemEditor : Editor
         GUI.enabled = typeName switch
         {
             nameof(ConsumablesItem) => false,
-            nameof(ClothesItem) => false,
+            nameof(ClothingItem) => false,
             nameof(MaterialItem) => false,
             nameof(MedicineItem) => false,
             _ => true,
@@ -192,7 +192,7 @@ public class InventoryItemEditor : Editor
         GUI.enabled = typeName switch
         {
             nameof(ToolItem) => false,
-            nameof(ClothesItem) => false,
+            nameof(ClothingItem) => false,
             _ => true,
         };
 
@@ -206,7 +206,7 @@ public class InventoryItemEditor : Editor
         GUI.enabled = typeName switch
         {
             nameof(ToolItem) => false,
-            nameof(ClothesItem) => false,
+            nameof(ClothingItem) => false,
             _ => true,
         };
 
@@ -220,7 +220,7 @@ public class InventoryItemEditor : Editor
         GUI.enabled = typeName switch
         {
             nameof(ToolItem) => false,
-            nameof(ClothesItem) => false,
+            nameof(ClothingItem) => false,
             _ => true,
         };
 
@@ -234,7 +234,7 @@ public class InventoryItemEditor : Editor
         GUI.enabled = typeName switch
         {
             nameof(ToolItem) => false,
-            nameof(ClothesItem) => false,
+            nameof(ClothingItem) => false,
             _ => true,
         };
 
@@ -260,7 +260,7 @@ public class InventoryItemEditor : Editor
         GUI.enabled = typeName switch
         {
             nameof(ToolItem) => false,
-            nameof(ClothesItem) => false,
+            nameof(ClothingItem) => false,
             _ => true,
         };
 

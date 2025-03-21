@@ -14,7 +14,7 @@ public class UI_Inventory : MonoBehaviour
     [SerializeField] private Button _btnUse;
     [SerializeField] private Button _btnDrop;
 
-    public List<IReadOnlyInventorySlot> ShowSlots { get; set; }
+    public List<InventorySlot> ShowSlots { get; set; }
 
     private UI_Slot _selectesSlot;
 
@@ -32,18 +32,24 @@ public class UI_Inventory : MonoBehaviour
 
         _btnDrop.onClick.AddListener(() =>
         {
-            _player.DropItem(_selectesSlot.Slot as InventorySlot);
+            _player.DropItem(_selectesSlot.Slot);
             UpdateView();
         });
 
         _btnUse.onClick.AddListener(() =>
         {
-            _player.UseItem(_selectesSlot.Slot as InventorySlot); 
+            _player.UseItem(_selectesSlot.Slot); 
             UpdateView();
         });
     }
 
-    private void CreateUiSlot(IReadOnlyInventorySlot slot)
+    public void OnDisable()
+    {
+        _btnDrop.onClick.RemoveAllListeners();
+        _btnUse.onClick.RemoveAllListeners();
+    }
+
+    private void CreateUiSlot(InventorySlot slot)
     {
         var uiSlot = Instantiate(_uiSlotPrefab, _uiGrid.transform);
         uiSlot.Init(slot);

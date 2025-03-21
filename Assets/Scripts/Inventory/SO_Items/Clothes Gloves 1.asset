@@ -20,7 +20,7 @@ MonoBehaviour:
   <Description>k__BackingField: 
   <Icon>k__BackingField: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
   <ItemPrefab>k__BackingField: {fileID: 0}
-  <Weight>k__BackingField: 1
+  <Weight>k__BackingField: 20
   <IsStackable>k__BackingField: 0
   <MeasuredAsInteger>k__BackingField: 1
   <MaxCapacity>k__BackingField: 1
@@ -29,11 +29,12 @@ MonoBehaviour:
   <DegradeType>k__BackingField: 2
   <DegradationValue>k__BackingField: 1
   <ReceivedItemsAfterDeconstruct>k__BackingField: []
-  <ClothesType>k__BackingField: 0
+  <ClothingType>k__BackingField: 3
   <WindProtection>k__BackingField: 3.83
   <WaterProtection>k__BackingField: 5.89
   <TemperatureBonus>k__BackingField: 2.53
   <ToxisityProtection>k__BackingField: 5.29
   <FrictionBonus>k__BackingField: 0.407
-  <DryingRatio>k__BackingField: 0.5
   <OffsetStamina>k__BackingField: 0
+  <DryingRatio>k__BackingField: 0.5
+  <WaterAbsorptionRatio>k__BackingField: 0

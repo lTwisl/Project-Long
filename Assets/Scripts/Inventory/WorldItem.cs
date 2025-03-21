@@ -4,11 +4,11 @@ public class WorldItem : MonoBehaviour, IInteractible
 {
     public InventorySlot InventorySlot;
 
-    public InteractionType InteractionType => InteractionType.Instant;
+    public virtual InteractionType InteractionType => InteractionType.Instant;
 
-    public bool IsCanInteract => true;
+    public virtual bool IsCanInteract => true;
 
-    public void Interact(Player player)
+    public virtual void Interact(Player player)
     {
         player.Inventory.AddItem(InventorySlot.Item, InventorySlot.Capacity, InventorySlot.Condition);
         Destroy(gameObject);

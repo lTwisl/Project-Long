@@ -83,7 +83,7 @@ public class InventorySlotDrawer : PropertyDrawer
 
         SerializedObject item = new SerializedObject(itemProp.objectReferenceValue);
 
-        if (item.targetObject is ClothesItem || item.targetObject is ToolItem)
+        if (item.targetObject is ClothingItem || item.targetObject is ToolItem)
         {
             GUI.enabled = false;
             capacityProp.floatValue = 1f;

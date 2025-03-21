@@ -23,7 +23,7 @@ public class HeatingItem : InventoryItem
 
     public override string ToString()
     {
-         return base.ToString() + $"Type: {TypeHeating} | Value: {Value}\n" +
+         return base.ToString() + $"Type: {TypeHeating} | Temp: {Value}\n" +
             $"ChanceHeating: {ChanceHeating}";
     }
 }

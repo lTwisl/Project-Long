@@ -1,25 +1,13 @@
 using System;
 using UnityEngine;
-using static UnityEditor.Experimental.GraphView.Port;
-
-public interface IReadOnlyInventorySlot
-{
-    public event Action<float> OnCapacityChanged;
-    public event Action<float> OnConditionChanged;
-
-    public InventoryItem Item { get; }
-    public float Capacity { get; }
-    public float Condition { get; }
-}
-
 
 [Serializable]
-public class InventorySlot : IReadOnlyInventorySlot
+public class InventorySlot
 {
     [field: SerializeField] public InventoryItem Item { get; private set; }
 
     [SerializeField, Min(0.001f)] private float _capacity = 1f;
-    public float Capacity 
+    public float Capacity
     {
         get => _capacity;
         set
@@ -27,12 +15,12 @@ public class InventorySlot : IReadOnlyInventorySlot
             _capacity = value;
             OnCapacityChanged?.Invoke(_capacity);
         }
-    } 
+    }
 
     [SerializeField, Range(0.001f, 100f)] private float _condition = 100f;
-    public float Condition 
+    public float Condition
     {
-        get => _condition; 
+        get => _condition;
         set
         {
             _condition = value;
@@ -51,10 +39,12 @@ public class InventorySlot : IReadOnlyInventorySlot
     public bool IsEmpty => Item == null || Capacity <= 0 || Condition <= 0;
     public bool IsFull => Item != null && Capacity >= Item.MaxCapacity;
 
+
     public InventorySlot(InventoryItem item, float capacity, float condition)
     {
         SetItem(item, capacity, condition);
     }
+
 
     public void SetItem(InventoryItem item, float capacity, float condition)
     {
@@ -66,12 +56,14 @@ public class InventorySlot : IReadOnlyInventorySlot
         Condition = condition;
     }
 
-    public void UseItem(Player player)
+
+    public void UseItem()
     {
-        Item.Use(player);
+        Item.Use();
 
         Capacity -= Item.CostOfUse;
     }
+
 
     public void Clear()
     {
@@ -80,8 +72,11 @@ public class InventorySlot : IReadOnlyInventorySlot
         Condition = 0.0f;
     }
 
+
     public float GetWeight()
     {
-        return Capacity * Item.Weight * (1 + 0.0f + Wet / 100);
+        if (Item is ClothingItem clothes)
+            return Capacity * Item.Weight * (1 + clothes.WaterAbsorptionRatio * Wet / 100);
+        return Capacity * Item.Weight;
     }
 }

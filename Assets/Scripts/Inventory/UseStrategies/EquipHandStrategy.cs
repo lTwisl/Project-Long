@@ -3,7 +3,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "EquipHandStrategy", menuName = "Scriptable Objects/EquipHandStrategy")]
 public class EquipHandStrategy : UseStrategy
 {
-    public override void Execute(InventoryItem item, Player player)
+    public override void Execute(InventoryItem item)
     {
         if (item is not ToolItem tool)
             return;

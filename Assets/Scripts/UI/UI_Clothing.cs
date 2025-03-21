@@ -7,7 +7,7 @@ using Zenject;
 public class UI_Clothing : MonoBehaviour
 {
     [SerializeField] private List<UI_ClothesSlot> _bodySlots;
-    [SerializeField] private UI_SelectClothes _uiSelectClothes;
+    [SerializeField] private UI_SelectClothing _uiSelectClothes;
     [SerializeField] private TMP_Text _text;
 
     private Dictionary<ClothesType, List<UI_ClothesSlot>> _uiSlotCache = new Dictionary<ClothesType, List<UI_ClothesSlot>>();
@@ -61,7 +61,7 @@ public class UI_Clothing : MonoBehaviour
 
                 layers[i].Set(slot.Layers[i]);
 
-                var clothes = slot.Layers[i].Item as ClothesItem;
+                var clothes = slot.Layers[i].Item as ClothingItem;
                 p1 += clothes.TemperatureBonus;
                 p2 += clothes.WaterProtection;
                 p3 += clothes.WindProtection;
