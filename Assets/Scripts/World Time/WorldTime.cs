@@ -64,6 +64,7 @@ public class WorldTime : MonoBehaviour
         if (IsTimeStopped) return;
 
         CurrentTime += TimeSpan.FromSeconds(Time.deltaTime * TimeScale);
+        //Debug.Log($"Шаг времени:<color=green>{GetFormattedTime(TimeSpan.FromSeconds(Time.deltaTime * TimeScale))}</color>");
     }
 
     /// <summary>
@@ -159,11 +160,11 @@ public class WorldTime : MonoBehaviour
     }
 
     /// <summary>
-    /// Возвращает текущее время в формате "День X, HH:MM".
+    /// Возвращает текущее время в формате "День X: HH:MM:SS".
     /// </summary>
     public string GetFormattedTime(TimeSpan time)
     {
-        return $"День {time.Days}, {time.Hours:00}:{time.Minutes:00}:{time.Seconds:00}";
+        return $"День {time.Days}: {time.Hours:00}:{time.Minutes:00}:{time.Seconds:00}:{time.Milliseconds:00}";
     }
 
     /// <summary>

@@ -26,8 +26,13 @@ Material:
     m_Ints: []
     m_Floats:
     - _Distance: 0.005
+    - _Height: 1000
+    - _Impact_Light: 0.4
+    - _Min_Intensity_Fog: 0
+    - _Softness_Height: 0.001
+    - _Transparency: 1
     m_Colors:
     - _Color_Fog: {r: 2.097255, g: 2.5466666, b: 2.9960785, a: 0.5019608}
-    - _Sun_Direction: {r: 0, g: -0.65333474, b: 0.7570692, a: 0}
+    - _Sun_Direction: {r: 0, g: -0.5578527, b: 0.82993996, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

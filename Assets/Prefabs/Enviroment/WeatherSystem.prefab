@@ -49,12 +49,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92df9d1163366944f8537e5cbf2789e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weatherProfiles:
+  <WeatherProfiles>k__BackingField:
   - {fileID: 11400000, guid: 62b6db9f95725c349b09f93c1854c909, type: 2}
   - {fileID: 11400000, guid: 05059311190a3f847b37c6959c77c5bb, type: 2}
   _isProfilesValide: 1
   <CurrentWeatherProfile>k__BackingField: {fileID: 11400000, guid: 62b6db9f95725c349b09f93c1854c909, type: 2}
-  <NewWeatherProfile>k__BackingField: {fileID: 11400000, guid: 62b6db9f95725c349b09f93c1854c909, type: 2}
+  <NewWeatherProfile>k__BackingField: {fileID: 11400000, guid: 05059311190a3f847b37c6959c77c5bb, type: 2}
   <Temperature>k__BackingField: 0
   <Wetness>k__BackingField: 0
   <Toxicity>k__BackingField: 0
@@ -69,7 +69,7 @@ MonoBehaviour:
   <WeatherSkyboxSystem>k__BackingField: {fileID: 7197166586690042323}
   _isPostProcessSystemValide: 1
   <WeatherPostProcessSystem>k__BackingField: {fileID: 7528676310365337471}
-  _isVFXValide: 0
+  _isVFXValide: 1
   <WeatherVFXSystem>k__BackingField: {fileID: 7611072829369350415}
 --- !u!1 &5253470689031542207
 GameObject:
@@ -306,7 +306,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <MaxWindTemperature>k__BackingField: -15
   _windGloabalDirection: {x: 0, y: 0}
-  _currentSpeed: 0
+  <CurrentSpeed>k__BackingField: 0
   _minWindSpeed: 2
   _maxWindSpeed: 15
   _intensityChangeSpeed: 1
