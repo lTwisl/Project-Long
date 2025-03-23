@@ -171,7 +171,9 @@ public class WorldTime : MonoBehaviour
     /// </summary>
     public string GetFormattedTime(TimeSpan time)
     {
-        return $"Äåíü {time.Days}: {time.Hours:00}:{time.Minutes:00}:{time.Seconds:00}:{time.Milliseconds:00}";
+        //return $"Äåíü {time.Days}: {time.Hours:00}:{time.Minutes:00}:{time.Seconds:00}:{time.Milliseconds:00}";
+        return $"Äåíü {time.Days}: {time.Hours:00}:{time.Minutes:00}:{time.Seconds:00}";
+        //return $"Äåíü {time.Days}: {time.Hours:00}:{time.Minutes:00}";
     }
 
     /// <summary>

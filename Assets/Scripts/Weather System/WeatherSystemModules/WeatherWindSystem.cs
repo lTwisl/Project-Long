@@ -4,46 +4,44 @@ using UnityEngine;
 
 public class WeatherWindSystem : MonoBehaviour
 {
-    public static WeatherWindSystem Instance { get; private set; }
-
-    [field: SerializeField] 
+    [field: SerializeField]
     public float MaxWindTemperature { get; private set; }
 
-    [DisableEdit, SerializeField] 
+    [DisableEdit, SerializeField]
     private Vector2 _windGloabalDirection;
-    [field: DisableEdit, SerializeField] 
+    [field: DisableEdit, SerializeField]
     public float CurrentSpeed { get; private set; }
 
     [Header("Параметры глобального ветра:")]
-    [DisableEdit, SerializeField, Tooltip("Минимальная скорость ветра"), Min(1)] 
+    [DisableEdit, SerializeField, Tooltip("Минимальная скорость ветра"), Min(1)]
     private float _minWindSpeed = 2f;
-    [DisableEdit, SerializeField, Tooltip("Максимальная скорость ветра"), Min(1)] 
+    [DisableEdit, SerializeField, Tooltip("Максимальная скорость ветра"), Min(1)]
     private float _maxWindSpeed = 15f;
-    [DisableEdit, SerializeField, Tooltip("Интенсивность изменений скорости ветра"), Range(0.01f, 5f)] 
+    [DisableEdit, SerializeField, Tooltip("Интенсивность изменений скорости ветра"), Range(0.01f, 5f)]
     private float _intensityChangeSpeed = 1f;
     [Space(8)]
-    [DisableEdit, SerializeField, Tooltip("Резкость изменения направления ветра по шуму Перлина (0.01 - штиль; 0.3 - порывистый ветер)"), Range(0.001f, 2f)] 
+    [DisableEdit, SerializeField, Tooltip("Резкость изменения направления ветра по шуму Перлина (0.01 - штиль; 0.3 - порывистый ветер)"), Range(0.001f, 2f)]
     private float _directionChangeSharpness = 0.3f;
-    [DisableEdit, SerializeField, Tooltip("Интенсивность изменения направления ветра"), Range(0.01f, 5f)] 
+    [DisableEdit, SerializeField, Tooltip("Интенсивность изменения направления ветра"), Range(0.01f, 5f)]
     private float _intensityChangeDirection = 1f;
 
     [Header("Параметры локального ветра:")]
-    [SerializeField, Tooltip("Размер шума перлина для изменения интенсивности"), Range(0.001f, 0.5f)] 
+    [SerializeField, Tooltip("Размер шума перлина для изменения интенсивности"), Range(0.001f, 0.5f)]
     private float _tilingNoiseWindSpeed = 0.005f;
-    [SerializeField, Tooltip("На сколько сильно интенсивность зависит от шума"), Range(0f, 1f)] 
+    [SerializeField, Tooltip("На сколько сильно интенсивность зависит от шума"), Range(0f, 1f)]
     private float _influenceNoiseWindSpeed = 1f;
-    [SerializeField, Tooltip("Включить движения шума интенсивности")] 
+    [SerializeField, Tooltip("Включить движения шума интенсивности")]
     private bool _useNoiseWindSpeedMotion = true;
-    [HideIf(nameof(_useNoiseWindSpeedMotion), false), SerializeField, Tooltip("Множитель смещения шума от скорости глобального ветра"), Range(0.1f, 10f)] 
+    [HideIf(nameof(_useNoiseWindSpeedMotion), false), SerializeField, Tooltip("Множитель смещения шума от скорости глобального ветра"), Range(0.1f, 10f)]
     private float _noiseWindSpeedSpeedMul = 1f;
 
     [Header("Параметры визуализации:")]
     [SerializeField] private bool _drawWindField = true;
-    [HideIf(nameof(_drawWindField), false), SerializeField, Range(1, 100)] 
+    [HideIf(nameof(_drawWindField), false), SerializeField, Range(1, 100)]
     private int _vectorsGrid = 4;
-    [HideIf(nameof(_drawWindField), false), SerializeField, Range(0.1f, 10)] 
+    [HideIf(nameof(_drawWindField), false), SerializeField, Range(0.1f, 10)]
     private float _vectorsSizeMul = 1f;
-    [HideIf(nameof(_drawWindField), false), SerializeField] 
+    [HideIf(nameof(_drawWindField), false), SerializeField]
     private Gradient _intensityColorGradient;
     private const float _maxSize = 33f; // Рабочий параметр шкалы Бофорта = 33 м/с
 
@@ -56,15 +54,7 @@ public class WeatherWindSystem : MonoBehaviour
     #region Инициализация системы
     private void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-            InitializeWindSystem();
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        InitializeWindSystem();
     }
 
     private void InitializeWindSystem()
@@ -304,7 +294,7 @@ public class WeatherWindSystem : MonoBehaviour
         Vector3 basePosition = transform.position;
         float gridSize = (_vectorsGrid - 1) * _maxSize;
         Vector3 startPosition = basePosition - new Vector3(gridSize * 0.5f, 0, gridSize * 0.5f);
-        
+
         // Отрисовка фона сетки
         Gizmos.color = new Color(0.1f, 0.1f, 0.1f, 1f); // Темно-серый с прозрачностью
         for (int x = 0; x < _vectorsGrid; x++)

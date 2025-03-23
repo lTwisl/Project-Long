@@ -1,30 +1,26 @@
 ﻿using UnityEngine;
-using UnityEngine.VFX;
 
 public class VFXSnowController : VFXController
 {
     private WeatherWindSystem _windSystem;
 
-    void Start()
+    private void Awake()
     {
-        _windSystem = WeatherWindSystem.Instance;
+        _windSystem = FindAnyObjectByType<WeatherWindSystem>();
     }
 
     public override void ValidateReferences()
     {
-        isValide = _vfx != null && _windSystem != null;
+        _isControllerValide = _vfx != null && _windSystem != null;
 
-        if (!isValide) Debug.LogWarning("<color=orange>Не найдены референсы скрипта VFX Controller</color>", this);
+        if (!_isControllerValide) Debug.LogWarning("<color=orange>Не найдены референсы скрипта VFX Controller</color>", this);
     }
 
     void Update()
     {
-        ValidateReferences();
-        if (isValide)
-        {
-            SetVFXPermanentParameters();
-            
-        }
+        if (!_isControllerValide) return;
+
+        SetVFXPermanentParameters();
     }
 
     public override void SetVFXPermanentParameters()

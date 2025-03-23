@@ -56,6 +56,11 @@ public class ShelterEntrance : MonoBehaviour
 #endif
     }
 
+    private void ChangeNaming()
+    {
+        gameObject.name = $"[{_currentType}] {_entranceID}";
+    }
+
     #region ВИЗУАЛИЗАЦИЯ
     private void OnDrawGizmos()
     {
@@ -126,11 +131,6 @@ public class ShelterEntrance : MonoBehaviour
     {
         ChangeNaming();
         CacheCollider();
-    }
-
-    private void ChangeNaming()
-    {
-        gameObject.name = $"[{_currentType}] {_entranceID}";
     }
 
     private void CacheCollider()

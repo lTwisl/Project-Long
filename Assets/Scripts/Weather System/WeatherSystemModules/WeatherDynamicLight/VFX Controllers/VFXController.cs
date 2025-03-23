@@ -4,7 +4,7 @@ using UnityEngine.VFX;
 public class VFXController : MonoBehaviour
 {
     // Общие переменные
-    [DisableEdit, SerializeField] protected bool isValide;
+    [DisableEdit, SerializeField] protected bool _isControllerValide;
 
     // Общие ссылки
     public VisualEffect _vfx;

@@ -9,17 +9,18 @@ public class ShelterSystem : MonoBehaviour
     [Inject] private World _world;
 
     [Header("Параметры укрытия:")]
-    [SerializeField] private bool _hideEntrances = false;
-    [SerializeField] private bool _hideShelterInfo = true;
     [SerializeField, Range(-25, 25)] private float _temperature;
     [SerializeField, Range(0, 100)] private float _wetness;
     [SerializeField, Range(0, 15)] private float _toxicity;
+    [Space(10)]
+    [SerializeField] private bool _hideEntrances = false;
+    [SerializeField] private bool _hideShelterInfo = true;
 
     [Header("Входы и выходы укрытия:")]
     [SerializeField] private bool _entrancesState = true;
     [SerializeField] private List<ShelterEntrance> _entrances = new();
 
-    #region Параметры укрытия
+
     public float Temperature
     {
         get => _temperature;
@@ -47,7 +48,12 @@ public class ShelterSystem : MonoBehaviour
             _toxicity = value;
         }
     }
-    #endregion
+
+
+    private void OnValidate()
+    {
+        ChangeEntrancesStatus(_entrancesState);
+    }
 
     /// <summary>
     /// Сменить состояние всех входов/выходов
@@ -62,11 +68,13 @@ public class ShelterSystem : MonoBehaviour
 
         foreach (var entrance in _entrances)
         {
-            if (entrance != null)
+            if (entrance == null)
             {
-                entrance.SetEntranceStatus(!state);
-                _entrancesState = !state;
+                Debug.LogWarning("<color=orange>Где-то потерялась дверка!</color>");
+                continue;
             }
+            entrance.SetEntranceStatus(!state);
+            _entrancesState = !state;
         }
     }
 
@@ -150,11 +158,6 @@ public class ShelterSystem : MonoBehaviour
     #endregion
 
     #region EDITOR
-    private void OnValidate()
-    {
-        ChangeEntrancesStatus(_entrancesState);
-    }
-
     public void FindAndConfigureEntrances()
     {
         // Найти все входы и выходы и иерархии

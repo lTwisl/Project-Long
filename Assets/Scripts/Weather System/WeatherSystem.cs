@@ -6,8 +6,6 @@ using UnityEngine;
 
 public class WeatherSystem : MonoBehaviour
 {
-    public static WeatherSystem Instance { get; private set; }
-
     public event Action<WeatherProfile> OnWeatherTransitionStarted;
     public event Action<WeatherProfile> OnWeatherTransitionCompleted;
 
@@ -68,15 +66,7 @@ public class WeatherSystem : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-            ValidateReferences();
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        ValidateReferences();
     }
 
     private void OnValidate()
