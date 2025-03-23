@@ -21,10 +21,8 @@ public class WeatherSkyboxSystem : MonoBehaviour
         // Инициализация трансформа солнца в сцене:
         DynamicLightingColor[] dynamicLightingColors = FindObjectsByType<DynamicLightingColor>(FindObjectsSortMode.None);
         foreach (DynamicLightingColor dyn in dynamicLightingColors)
-        {
             if (dyn.isSun)
                 _sunTransform = dyn.transform;
-        }
 
         // Проверка ссылок на метериалы:
         if (_skyboxMaterial == null)
@@ -106,15 +104,19 @@ public class WeatherSkyboxSystem : MonoBehaviour
         ValidateReferences();
     }
 
+    private void OnValidate()
+    {
+        ValidateReferences();
+    }
+
     void Update()
     {
-        if (!_isSkyboxValide) return;
         UpdateSunDirection();
     }
 
     public void UpdateSunDirection()
     {
-        if (_sunTransform == null) return;
+        if (_sunTransform == null || !_isSkyboxValide) return;
 
         _skyboxMaterial.SetVector("_Sun_Direction", _sunTransform.transform.forward);
     }

@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-[DefaultExecutionOrder(-90)]
 public class WeatherSystem : MonoBehaviour
 {
     public static WeatherSystem Instance { get; private set; }
@@ -80,13 +79,18 @@ public class WeatherSystem : MonoBehaviour
         }
     }
 
+    private void OnValidate()
+    {
+        FindReferences();
+    }
+
     /// <summary>
     /// Проверка модулей погоды и условий для смены
     /// </summary>
     public void ValidateReferences()
     {
         _isProfilesValide = CurrentWeatherProfile != null && NewWeatherProfile != null;
-        _isLightingSystemsValide = SunLight != null && MoonLight != null && RenderSettings.sun == SunLight.GetComponent<Light>();
+        _isLightingSystemsValide = SunLight != null && MoonLight != null;
         _isWindSystemValide = WindSystem != null;
         _isFogSystemValide = WeatherFogSystem != null;
         _isSkyboxSystemValide = WeatherSkyboxSystem != null;
@@ -95,7 +99,7 @@ public class WeatherSystem : MonoBehaviour
 
         // Выводы для отладки:
         if (!_isProfilesValide) Debug.LogWarning("<color=orange>В сцене не инициализированы профили погоды</color>", this);
-        if (!_isLightingSystemsValide) Debug.LogWarning("<color=orange>Потеряна ссылка на WeatherLightingSystems</color>", this);
+        if (!_isLightingSystemsValide) Debug.LogWarning("<color=orange>Потеряна ссылка на источник света</color>", this);
         if (!_isWindSystemValide) Debug.LogWarning("<color=orange>Потеряна ссылка на WeatherWindSystem</color>", this);
         if (!_isFogSystemValide) Debug.LogWarning("<color=orange>Потеряна ссылка на WeatherFogSystem</color>", this);
         if (!_isSkyboxSystemValide) Debug.LogWarning("<color=orange>Потеряна ссылка на WeatherSkyboxSystem</color>", this);
@@ -299,8 +303,13 @@ public class WeatherSystem : MonoBehaviour
     }
 
     #region Функции EDITOR
-    public void FindReferences()
+    private void FindReferences()
     {
+#if UNITY_EDITOR
+        Undo.RecordObject(this, "Инициализировали ссылки на модули WeatherSystem");
+        EditorUtility.SetDirty(this);
+#endif
+
         if (CurrentWeatherProfile != null)
         {
             Temperature = CurrentWeatherProfile.temperature;
@@ -324,14 +333,14 @@ public class WeatherSystem : MonoBehaviour
         }
 
         ValidateReferences();
-#if UNITY_EDITOR
-        Undo.RecordObject(this, "Инициализировали ссылки на модули WeatherSystem");
-        EditorUtility.SetDirty(this);
-#endif
     }
 
     public void SetNewWeatherImmediatelyEditor()
     {
+#if UNITY_EDITOR
+        Undo.RecordObject(this, "Инициализировали сцены");
+        EditorUtility.SetDirty(this);
+#endif
         if (CurrentWeatherProfile == null)
         {
             Debug.LogWarning("<color=orange>Попытка установить null профиль погоды! Установи сменяемый профиль в переменной currentProfile</color>");
@@ -339,10 +348,6 @@ public class WeatherSystem : MonoBehaviour
         }
 
         UpdateWeatherParameters(CurrentWeatherProfile, CurrentWeatherProfile, 1f);
-#if UNITY_EDITOR
-        Undo.RecordObject(this, "Инициализировали сцены");
-        EditorUtility.SetDirty(this);
-#endif
     }
     #endregion
 }

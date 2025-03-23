@@ -1,7 +1,4 @@
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.Rendering.Universal;
-using UnityEngine.Rendering;
 using System.Collections.Generic;
 
 public class WeatherVFXSystem: MonoBehaviour
@@ -40,6 +37,7 @@ public class WeatherVFXSystem: MonoBehaviour
                 vfx.DestroyVFX();
             }
             CurrentVFXControllers.Clear();
+
             // Заставляем появиться новые эффекты
             foreach (VFXController vfx in NewVFXControllers)
             {

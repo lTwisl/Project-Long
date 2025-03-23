@@ -1,17 +1,18 @@
 ﻿using System.Collections.Generic;
 using UnityEditor;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
-[DefaultExecutionOrder(-80)]
 public class WeatherWindSystem : MonoBehaviour
 {
     public static WeatherWindSystem Instance { get; private set; }
 
-    [field: SerializeField] public float MaxWindTemperature { get; private set; }
+    [field: SerializeField] 
+    public float MaxWindTemperature { get; private set; }
 
-    [DisableEdit, SerializeField] private Vector2 _windGloabalDirection;
-    [field: DisableEdit, SerializeField] public float CurrentSpeed { get; private set; }
+    [DisableEdit, SerializeField] 
+    private Vector2 _windGloabalDirection;
+    [field: DisableEdit, SerializeField] 
+    public float CurrentSpeed { get; private set; }
 
     [Header("Параметры глобального ветра:")]
     [DisableEdit, SerializeField, Tooltip("Минимальная скорость ветра"), Min(1)] 
@@ -38,9 +39,12 @@ public class WeatherWindSystem : MonoBehaviour
 
     [Header("Параметры визуализации:")]
     [SerializeField] private bool _drawWindField = true;
-    [HideIf(nameof(_drawWindField), false), SerializeField, Range(1, 100)] private int _vectorsGrid = 4;
-    [HideIf(nameof(_drawWindField), false), SerializeField, Range(0.1f, 10)] private float _vectorsSizeMul = 1f;
-    [HideIf(nameof(_drawWindField), false), SerializeField] private Gradient _intensityColorGradient;
+    [HideIf(nameof(_drawWindField), false), SerializeField, Range(1, 100)] 
+    private int _vectorsGrid = 4;
+    [HideIf(nameof(_drawWindField), false), SerializeField, Range(0.1f, 10)] 
+    private float _vectorsSizeMul = 1f;
+    [HideIf(nameof(_drawWindField), false), SerializeField] 
+    private Gradient _intensityColorGradient;
     private const float _maxSize = 33f; // Рабочий параметр шкалы Бофорта = 33 м/с
 
     [Header("Ветровые локальные зоны влияния:")]
@@ -81,7 +85,6 @@ public class WeatherWindSystem : MonoBehaviour
         UpdateNoiseOffset();
     }
 
-    #region Логика направления ветра
     private void UpdateWindDirection()
     {
         Vector2 noiseVector = new Vector2(
@@ -95,18 +98,14 @@ public class WeatherWindSystem : MonoBehaviour
             Time.deltaTime * _intensityChangeDirection
         ).normalized;
     }
-    #endregion
 
-    #region Логика скорости ветра
     private void UpdateWindSpeed()
     {
         float noise = Mathf.PerlinNoise(Time.time * _tilingNoiseWindSpeed, _intensityNoiseOffset.x);
         float targetSpeed = Mathf.Lerp(_minWindSpeed, _maxWindSpeed, noise);
         CurrentSpeed = Mathf.Lerp(CurrentSpeed, targetSpeed, Time.deltaTime * _intensityChangeSpeed);
     }
-    #endregion
 
-    #region Логика смещения шумов
     private void UpdateNoiseOffset()
     {
         if (_useNoiseWindSpeedMotion)
@@ -118,7 +117,6 @@ public class WeatherWindSystem : MonoBehaviour
             _intensityNoiseOffset -= _windGloabalDirection * (CurrentSpeed * _noiseWindSpeedSpeedMul * Time.deltaTime);
         }
     }
-    #endregion
 
     #region Работа с системой ветра
 
