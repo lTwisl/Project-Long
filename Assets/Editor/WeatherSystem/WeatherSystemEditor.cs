@@ -22,12 +22,6 @@ public class WeatherSystemEditor : Editor
             weatherSystem.ValidateReferences();
         }
 
-        GUI.backgroundColor = new Color(0.961f, 0.651f, 0.137f);
-        if (GUILayout.Button("Найти модули"))
-        {
-            weatherSystem.FindReferences();
-        }
-
         GUI.backgroundColor = new Color(0.494f, 0.827f, 0.129f);
         if (GUILayout.Button("Настроить сцену"))
         {

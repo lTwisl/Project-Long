@@ -7454,7 +7454,7 @@
     "m_Title": "Height Attenuation",
     "m_Position": {
         "x": -4643.2001953125,
-        "y": -1412.0001220703125
+        "y": -1411.9998779296875
     }
 }
 
@@ -9176,8 +9176,8 @@
     "m_ObjectId": "817ec21bd3364cb5ba4a5e77c622e069",
     "m_Title": "Use Light Color",
     "m_Position": {
-        "x": -4061.599853515625,
-        "y": -752.7999877929688
+        "x": -4061.60009765625,
+        "y": -752.800048828125
     }
 }
 
@@ -9193,7 +9193,7 @@
     "m_RefNameGeneratedByDisplayName": "Sun Direction",
     "m_DefaultReferenceName": "_Sun_Direction",
     "m_OverrideReferenceName": "",
-    "m_GeneratePropertyBlock": false,
+    "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,
     "m_CustomSlotLabel": "",
     "m_DismissedVersion": 0,
@@ -11077,8 +11077,8 @@
     "m_ObjectId": "a5e15c7b48ad4644bbe34fff5196fa95",
     "m_Title": "Get Light Intensity",
     "m_Position": {
-        "x": -5056.80029296875,
-        "y": -909.5999755859375
+        "x": -5056.7998046875,
+        "y": -909.599853515625
     }
 }
 
@@ -11759,7 +11759,7 @@
     "m_Title": "Scattering",
     "m_Position": {
         "x": -4453.60009765625,
-        "y": -1144.0
+        "y": -1143.999755859375
     }
 }
 
@@ -14368,8 +14368,8 @@
     "m_ObjectId": "deb5ed6efc334ea08817ba72ea6dc29b",
     "m_Title": "Blend Base Colors Skybox",
     "m_Position": {
-        "x": -3450.400146484375,
-        "y": -2230.39990234375
+        "x": -3450.39990234375,
+        "y": -2230.400146484375
     }
 }
 
@@ -16199,7 +16199,7 @@
     "m_ObjectId": "fa1a7e41be0b4203bcb60b6f990adeb7",
     "m_Title": "Moon Mask",
     "m_Position": {
-        "x": -3587.2001953125,
+        "x": -3587.199951171875,
         "y": -3531.199951171875
     }
 }

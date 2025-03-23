@@ -1,9 +1,6 @@
 using System;
 using UnityEngine;
 
-/// <summary>
-/// Класс предназначенный для управления изменением положения солнца на небе в зависимости от времени суток
-/// </summary>
 public class DynamicLightingAngle : MonoBehaviour
 {
     private const float DegreesPerSecond = 0.25f / 60f; // Градусов в секунду

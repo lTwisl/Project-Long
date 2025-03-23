@@ -138,15 +138,19 @@ public class WeatherFogSystem : MonoBehaviour
         ValidateReferences();
     }
 
+    private void OnValidate()
+    {
+        ValidateReferences();
+    }
+
     void Update()
     {
-        if (!_isFogValide) return;
         UpdateSunDirection();
     }
 
     public void UpdateSunDirection()
     {
-        if (_sunTransform == null) return;
+        if (_sunTransform == null || !_isFogValide) return;
 
         _nearFogMaterial.SetVector("_Sun_Direction", _sunTransform.transform.forward);
         _farFogMaterial.SetVector("_Sun_Direction", _sunTransform.transform.forward);

@@ -54,4 +54,9 @@ public class WeatherPostProcessSystem : MonoBehaviour
     {
         ValidateReferences();
     }
+
+    private void OnValidate()
+    {
+        ValidateReferences();
+    }
 }
