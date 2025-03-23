@@ -60,51 +60,140 @@ public class Inventory
 
     public void Init()
     {
-        Slots = new LinkedList<InventorySlot>(_initSlots);
+        if (_initSlots != null)
+            Slots = new LinkedList<InventorySlot>(_initSlots);
+        else
+            Slots = new LinkedList<InventorySlot>();
+        
         RecalculateWeight();
     }
 
-    public void AddItem(InventoryItem item, float capacity, float condition)
+    /// <summary>
+    /// Основной метод добавления предмета в инвентарь
+    /// </summary>
+    public void AddItem(InventoryItem item, float quantity, float condition)
     {
-        if (item == null || capacity <= 0 || condition <= 0)
+        if (!IsValidAdditionParameters(item, quantity, condition))
             return;
 
-        Weight += item.Weight * capacity;
-
-        OnItemAdded?.Invoke(new InventorySlot(item, capacity, condition));
+        Weight += item.Weight * quantity;
 
         if (!item.IsStackable)
         {
-            Slots.AddLast(new InventorySlot(item, capacity, condition));
+            CreateNewSlot(item, quantity, condition);
             return;
         }
 
-        InventorySlot slotForStak = Slots.Where(slot => slot.Item == item && slot.Condition == condition && !slot.IsFull).FirstOrDefault();
-
-        if (slotForStak == null)
-        {
-            Slots.AddLast(new InventorySlot(item, capacity, condition));
-            return;
-        }
-
-        float newCapacity = slotForStak.Capacity + capacity;
-
-        if (newCapacity <= item.MaxCapacity)
-        {
-            slotForStak.Capacity = newCapacity;
-            return;
-        }
-
-        float remains = capacity - (item.MaxCapacity - slotForStak.Capacity);
-        slotForStak.Capacity = item.MaxCapacity;
-
-        Slots.AddLast(new InventorySlot(item, remains, condition));
+        TryAddToExistingSlots(item, quantity, condition);
     }
+
+    /// <summary>
+    /// Проверяет валидность входных параметров для добавления предмета
+    /// </summary>
+    /// <returns>
+    /// True - если предмет существует, количество и состояние положительные,
+    /// а вес предмета корректен
+    /// </returns>
+    private bool IsValidAdditionParameters(InventoryItem item, float quantity, float condition)
+    {
+        return item != null
+            && quantity > 0
+            && condition > 0
+            && item.Weight >= 0;
+    }
+
+    /// <summary>
+    /// Пытается добавить предмет в существующие подходящие слоты,
+    /// создает новые слоты для остатка
+    /// </summary>
+    private void TryAddToExistingSlots(InventoryItem item, float quantity, float condition)
+    {
+        float remainingQuantity = quantity;
+        InventorySlot existingSlot = FindPartialSlot(item, condition);
+
+        if (existingSlot != null)
+        {
+            remainingQuantity = FillExistingSlot(existingSlot, remainingQuantity, item.MaxCapacity);
+        }
+
+        if (remainingQuantity > 0)
+        {
+            CreateNewSlotsWithRemaining(item, remainingQuantity, condition, item.MaxCapacity);
+        }
+    }
+
+    /// <summary>
+    /// Ищет частично заполненный слот с совпадающими характеристиками
+    /// </summary>
+    /// <returns>
+    /// Первый найденный слот, удовлетворяющий условиям:
+    /// - Тот же тип предмета
+    /// - Такое же состояние
+    /// - Не заполнен до максимума
+    /// </returns>
+    private InventorySlot FindPartialSlot(InventoryItem item, float condition)
+    {
+        return Slots.FirstOrDefault(slot =>
+            slot.Item == item
+            && slot.Condition == condition
+            && !slot.IsFull);
+    }
+
+    /// <summary>
+    /// Заполняет существующий слот и возвращает остаток количества
+    /// </summary>
+    /// <returns>Не поместившееся количество</returns>
+    private float FillExistingSlot(InventorySlot slot, float quantity, float maxCapacity)
+    {
+        float availableSpace = maxCapacity - slot.Capacity;
+        float addedQuantity = Math.Min(quantity, availableSpace);
+
+        slot.Capacity += addedQuantity;
+        OnItemAdded?.Invoke(new InventorySlot(slot.Item, addedQuantity, slot.Condition));
+
+        return quantity - addedQuantity;
+    }
+
+    /// <summary>
+    /// Создает новые слоты для оставшегося количества, распределяя:
+    /// 1. Полные слоты до максимальной вместимости
+    /// 2. Один слот для остатка (если есть)
+    /// </summary>
+    private void CreateNewSlotsWithRemaining(InventoryItem item, float quantity, float condition, float maxCapacity)
+    {
+        int fullSlotsCount = (int)(quantity / maxCapacity);
+        float remainder = quantity % maxCapacity;
+
+        for (int i = 0; i < fullSlotsCount; i++)
+        {
+            CreateNewSlot(item, maxCapacity, condition);
+        }
+
+        if (remainder > 0)
+        {
+            CreateNewSlot(item, remainder, condition);
+        }
+    }
+
+    /// <summary>
+    /// Создает новый слот и инициирует событие добавления предмета
+    /// </summary>
+    private void CreateNewSlot(InventoryItem item, float quantity, float condition)
+    {
+        InventorySlot newSlot = new InventorySlot(item, quantity, condition);
+        Slots.AddLast(newSlot);
+        OnItemAdded?.Invoke(newSlot);
+    }
+
 
 
     public void RemoveItem(InventorySlot slot)
     {
-        Slots.Remove(slot);
+        if (!Slots.Remove(slot))
+            return;
+            
+        Weight -= slot.GetWeight();
+        OnItemRemoved?.Invoke(slot);
     }
 
 
@@ -138,7 +227,7 @@ public class Inventory
             InventorySlot slot = currentNode.Value;
             bool shouldRemove = false;
 
-            if (slot.IsEmpty)
+                if (slot.IsEmpty)
             {
                 shouldRemove = true;
             }
@@ -147,7 +236,7 @@ public class Inventory
                 InventoryItem item = slot.Item;
 
                 // Деградация предмета
-                if ((item.DegradeType == DegradationType.Rate && (item is not ClothingItem))/* || ((item is ClothesItem) && slot.IsWearing)*/)
+                if (item.DegradeType == DegradationType.Rate && (item is not ClothingItem))
                 {
                     slot.Condition -= item.DegradationValue * deltaTime;
                     shouldRemove = slot.Condition <= 0;
@@ -157,14 +246,11 @@ public class Inventory
 
             if (shouldRemove)
             {
-                Slots.Remove(currentNode);
-                OnItemRemoved?.Invoke(currentNode.Value);
+                RemoveItem(slot);
             }
 
             currentNode = nextNode;
         }
-
-        RecalculateWeight();
     }
 
 
@@ -199,9 +285,11 @@ public class Inventory
 
     public void RecalculateWeight()
     {
+        Weight = 0;
+
         if (Slots.Count == 0)
             return;
-        Weight = 0;
+
         foreach (var slot in Slots)
         {
             Weight += slot.GetWeight();

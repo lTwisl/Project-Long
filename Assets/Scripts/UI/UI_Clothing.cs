@@ -66,7 +66,7 @@ public class UI_Clothing : MonoBehaviour
                 p2 += clothes.WaterProtection;
                 p3 += clothes.WindProtection;
                 p4 += clothes.FrictionBonus;
-                p5 += clothes.ToxisityProtection;
+                p5 += clothes.ToxicityProtection;
             }
         }
 

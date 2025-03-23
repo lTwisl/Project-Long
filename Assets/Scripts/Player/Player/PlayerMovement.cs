@@ -117,11 +117,11 @@ public class PlayerMovement : MonoBehaviour
     {
         if (!_grounded)
             MoveMode = PlayerMoveMode.Falling;
-        else if (_input.move == Vector2.zero || _parameters.GetCurrentWeightRange() == WeightRange.UltimateImmovable)
+        else if (_input.move == Vector2.zero || !_parameters.Capacity.IsCanWalk())
             MoveMode = PlayerMoveMode.Idel;
         else if (_isCrouching)
             MoveMode = PlayerMoveMode.Crouching;
-        else if (_input.sprint && !_parameters.Stamina.IsZero && _parameters.GetCurrentWeightRange() < WeightRange.Ultimate)
+        else if (_input.sprint && !_parameters.Stamina.IsZero && _parameters.Capacity.IsCanSprint())
             MoveMode = PlayerMoveMode.Sprint;
         else
             MoveMode = PlayerMoveMode.Walk;
@@ -252,18 +252,23 @@ public class PlayerMovement : MonoBehaviour
             _ => _moveConfig.MoveSpeed,
         };
 
+
         // Ограничение максимальной скорости спринта в зависимости от текущей загрузки инвенторя
-        if (MoveMode == PlayerMoveMode.Sprint && _parameters.GetCurrentWeightRange() == WeightRange.Critical)
+        if (MoveMode == PlayerMoveMode.Sprint && _parameters.Capacity.GetCurrentWeightRange() == WeightRange.Critical)
         {
-            targetSpeed = Utility.MapRange(_parameters.CurrentLoad, _parameters.RangeLoadCapacity[0], _parameters.RangeLoadCapacity[1],
+            targetSpeed = Utility.MapRange(_parameters.Capacity.Current, 
+                _parameters.Capacity.GetRangeLoadCapacity(WeightRange.Critical), 
+                _parameters.Capacity.GetRangeLoadCapacity(WeightRange.Ultimate),
                 _moveConfig.SprintSpeed, _moveConfig.MoveSpeed);
             return targetSpeed;
         }
 
         // Ограничение максимальной скорости шага в зависимости от текущей загрузки инвенторя
-        if (MoveMode == PlayerMoveMode.Walk && _parameters.GetCurrentWeightRange() == WeightRange.Ultimate)
+        if (MoveMode == PlayerMoveMode.Walk && _parameters.Capacity.GetCurrentWeightRange() == WeightRange.Ultimate)
         {
-            targetSpeed = Utility.MapRange(_parameters.CurrentLoad, _parameters.RangeLoadCapacity[1], _parameters.RangeLoadCapacity[2],
+            targetSpeed = Utility.MapRange(_parameters.Capacity.Current, 
+                _parameters.Capacity.GetRangeLoadCapacity(WeightRange.Ultimate), 
+                _parameters.Capacity.GetRangeLoadCapacity(WeightRange.UltimateImmovable),
                 _moveConfig.MoveSpeed, 0.0f);
             return targetSpeed;
         }

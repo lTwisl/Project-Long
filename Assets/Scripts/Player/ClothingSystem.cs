@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Zenject;
 
 [Serializable]
 public class ClothingSlot
@@ -39,6 +40,15 @@ public class ClothingSystem
     public float TotalTemperatureBonus { get; private set; }
     public float TotalFrictionBonus { get; private set; }
     public float TotalOffsetStamina { get; private set; }
+    public float TotalToxicityProtection { get; private set; }
+
+    private readonly World _world;
+
+    [Inject]
+    public ClothingSystem(World world)
+    {
+        _world = world;
+    }
 
     public void Init()
     {
@@ -71,6 +81,7 @@ public class ClothingSystem
 
         RecalculateTotalTemperatureBonus();
         RecalculateTotalFrictionBonus();
+        RecalculateTotalToxicityBonus();
     }
 
     // Деградация одежды
@@ -94,7 +105,7 @@ public class ClothingSystem
     // Намокание одежды
     private void GettingWet(float deltaTime)
     {
-        float normTemp = Utility.MapRange(WeatherSystem.Instance.Temperature, 10, 50, 0, 1, true);
+        float normTemp = Utility.MapRange(_world.Weather.Temperature, 10, 50, 0, 1, true);
 
         foreach (var clothingSlot in SlotCache.Values)
         {
@@ -109,7 +120,7 @@ public class ClothingSystem
 
                 ClothingItem clothesItem = slot.Item as ClothingItem;
 
-                float wetChange = WeatherSystem.Instance.Wetness * (100f - clothesItem.WaterProtection * slot.Condition) / 100f;
+                float wetChange = _world.Weather.Wetness * (100f - clothesItem.WaterProtection * slot.Condition) / 100f;
                 wetChange -= clothesItem.DryingRatio * normTemp;
 
                 slot.Wet = Mathf.Min(slot.Wet + wetChange, 100f) * deltaTime;
@@ -193,7 +204,8 @@ public class ClothingSystem
     {
         TotalTemperatureBonus = 0;
 
-        float normForceWind = Utility.MapRange(WeatherWindSystem.Instance.CurrentSpeed, 0, 33, 0, 1, true);
+        float t = _world.GetWindLocalIntensity();
+        float normForceWind = Utility.MapRange(_world.GetWindLocalIntensity(), 0, 33, 0, 1, true);
 
         foreach (var clothingSlot in SlotCache.Values)
         {
@@ -203,13 +215,13 @@ public class ClothingSystem
                 {
                     float value = item.TemperatureBonus * slot.Condition / 100;
                     value *= (100 - slot.Wet * 1.5f) / 100;
-                    value += (100 - item.WindProtection * slot.Condition) / 100 * WeatherWindSystem.Instance.MaxWindTemperature * normForceWind;
+                    value += (100 - item.WindProtection * slot.Condition) / 100 * _world.Wind.MaxWindTemperature * normForceWind;
 
                     TotalTemperatureBonus += value;
                 }
                 else
                 {
-                    TotalTemperatureBonus += WeatherWindSystem.Instance.MaxWindTemperature * normForceWind;
+                    TotalTemperatureBonus += _world.Wind.MaxWindTemperature * normForceWind;
                 }
 
             }
@@ -227,6 +239,21 @@ public class ClothingSystem
                     continue;
 
                 TotalFrictionBonus += item.FrictionBonus * slot.Condition / 100f;
+            }
+        }
+    }
+
+    private void RecalculateTotalToxicityBonus()
+    {
+        TotalToxicityProtection = 0;
+        foreach (var clothingSlot in SlotCache.Values)
+        {
+            foreach (var slot in clothingSlot.Layers)
+            {
+                if (slot.Item is not ClothingItem item)
+                    continue;
+
+                TotalToxicityProtection += item.ToxicityProtection * slot.Condition / 100f;
             }
         }
     }

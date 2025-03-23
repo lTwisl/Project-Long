@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using UnityEngine;
 using Zenject;
@@ -7,12 +8,11 @@ using Zenject;
 [RequireComponent(typeof(PlayerMovement))]
 public class PlayerStatusController : MonoBehaviour
 {
-    public float MaxExternalHeat { get; private set; }
-    
-    private List<IExternalHeat> _externalHeats = new List<IExternalHeat>();
+    [Inject] private World _world;
 
     private PlayerMovement _playerMovement;
     private PlayerParameters _playerParameters;
+
 
     [Inject]
     private void Construct(PlayerParameters playerParameters)
@@ -20,40 +20,51 @@ public class PlayerStatusController : MonoBehaviour
         _playerParameters = playerParameters;
     }
 
+
     private void Awake()
     {
         _playerParameters.AllReset();
-
         _playerMovement = GetComponent<PlayerMovement>();
+    }
 
+    private void OnEnable()
+    {
         AutoSubscribe();
     }
 
+
     private void FixedUpdate()
     {
+        _playerParameters.Heat.ChangeRate = _world.TotalTemperature;
+
         foreach (var parameter in _playerParameters.AllParameters)
         {
             parameter.UpdateParameter(WorldTime.Instance.FixedDeltaTime / 60f);
         }
-
-        //Debug.Log(GetMaxExternalHeatsByPosiotion());
     }
 
-    private void OnDestroy()
+    private void OnDisable()
     {
         UnsubscribeAll();
     }
 
+
+    /// <summary>
+    /// Обработчик изменения энергии. Регулирует максимальную вместимость
+    /// </summary>
     private void EnergyChanged(float value)
     {
         if (value > 0.5f * _playerParameters.Energy.Max)
             return;
 
         float value01 = Utility.MapRange(value, 0, 0.5f * _playerParameters.Energy.Max, 1, 0, true);
-
-        _playerParameters.OffsetMaxLoadCapacity = Mathf.Lerp(0, 15, value01);
+        _playerParameters.Capacity.OffsetMax = 15 * value01;
     }
 
+
+    /// <summary>
+    /// Обработчик изменения режима движения. Обновляет параметры статусов
+    /// </summary>
     private void ChangedMoveMode(PlayerMovement.PlayerMoveMode mode)
     {
         foreach (var param in _playerParameters.AllParameters.OfType<MovementStatusParameter>())
@@ -62,6 +73,10 @@ public class PlayerStatusController : MonoBehaviour
         }
     }
 
+
+    /// <summary>
+    /// Автоматическая подписка на события параметров
+    /// </summary>
     private void AutoSubscribe()
     {
         foreach (var param in _playerParameters.AllParameters.OfType<StatusParameter>())
@@ -69,14 +84,19 @@ public class PlayerStatusController : MonoBehaviour
             if (Mathf.Approximately(param.DecreasedHealthRate, 0))
                 continue;
 
-            param.OnReachZero += () => _playerParameters.Health.AddChangeRate(param.DecreasedHealthRate);
-            param.OnRecoverFromZero += () => _playerParameters.Health.AddChangeRate(-param.DecreasedHealthRate);
+            param.OnReachZero += () => _playerParameters.Health.ChangeRate += param.DecreasedHealthRate;
+            param.OnRecoverFromZero += () => _playerParameters.Health.ChangeRate -= param.DecreasedHealthRate;
         }
 
+        _playerParameters.Capacity.OnValueChanged += UpdateStaminaChangeRateRatioByCapacity;
         _playerParameters.Energy.OnValueChanged += EnergyChanged;
         _playerMovement.OnChangedMoveMode += ChangedMoveMode;
     }
 
+
+    /// <summary>
+    /// Отписка от всех событий для предотвращения утечек памяти
+    /// </summary>
     private void UnsubscribeAll()
     {
         foreach (var param in _playerParameters.AllParameters.OfType<StatusParameter>())
@@ -87,48 +107,27 @@ public class PlayerStatusController : MonoBehaviour
             param.UnsubscribeAll();
         }
 
+        _playerParameters.Capacity.OnValueChanged -= UpdateStaminaChangeRateRatioByCapacity;
         _playerParameters.Energy.OnValueChanged -= EnergyChanged;
         _playerMovement.OnChangedMoveMode -= ChangedMoveMode;
     }
 
 
-    public void Add(ParameterType parameter, float value)
+    /// <summary>
+    /// Добавить значение к указанному параметру
+    /// </summary>
+    public void ModifyParameter(ParameterType parameter, float value)
     {
-        _playerParameters.Add(parameter, value);
+        _playerParameters.ModifyParameter(parameter, value);
     }
 
-    public void AddExternalHeat(IExternalHeat externalHeat)
+
+    /// <summary>
+    /// Обновить коэффициент изменения выносливости в зависимости от веса инвентаря
+    /// </summary>
+    private void UpdateStaminaChangeRateRatioByCapacity(float capcsity)
     {
-        _externalHeats.Add(externalHeat);
-
-        if (externalHeat.Temp > MaxExternalHeat)
-            MaxExternalHeat = externalHeat.Temp;
-    }
-
-    public void RemoveExternalHeat(IExternalHeat externalHeat)
-    {
-        _externalHeats.Remove(externalHeat);
-
-        if (externalHeat.Temp == MaxExternalHeat)
-        {
-            if (_externalHeats.Count == 0)
-                MaxExternalHeat = 0;
-            else
-                MaxExternalHeat = _externalHeats.Max(p => p.Temp);
-        }
-    }
-
-    public float GetMaxExternalHeatsByPosiotion()
-    {
-        if (_externalHeats.Count == 0)
-            return 0;
-
-        return _externalHeats.Max(p =>
-        {
-            return Utility.MapRange((p.Position - transform.position).sqrMagnitude,
-                Mathf.Pow(p.MinRadius, 2), Mathf.Pow(p.MaxRadius, 2),
-                p.Temp, 0, true);
-        });
+        _playerParameters.Stamina.ChangeRateRatioByCapacity = Utility.MapRange(capcsity, 30, 60, 1, 0, true);
     }
 
 

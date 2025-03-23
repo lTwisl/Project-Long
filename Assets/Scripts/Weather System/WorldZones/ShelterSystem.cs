@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
 [ExecuteAlways]
 public class ShelterSystem : MonoBehaviour
 {
-    public static Action<ShelterSystem> OnEnterShelter;
-    public static Action<ShelterSystem> OnExitShelter;
+    [Inject] private World _world;
 
     [Header("Параметры укрытия:")]
     [SerializeField] private bool _hideEntrances = false;
@@ -56,9 +56,9 @@ public class ShelterSystem : MonoBehaviour
     public void PlayerEntered(bool state)
     {
         if (state == true)
-            OnEnterShelter?.Invoke(this);
+            _world.InvokeOnEnterShelter(this);
         else
-            OnExitShelter?.Invoke(this);
+            _world.InvokeOnExitShelter(this);
 
         foreach (var entrance in _entrances)
         {

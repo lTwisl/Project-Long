@@ -83,6 +83,6 @@ public class UI_SelectClothing : MonoBehaviour
             $" | Water = {clothes.WaterProtection}" +
             $" | Wind = {clothes.WindProtection}" +
             $" | Friction = {clothes.FrictionBonus}" +
-            $" | Toxisity = {clothes.ToxisityProtection}";
+            $" | Toxisity = {clothes.ToxicityProtection}";
     }
 }

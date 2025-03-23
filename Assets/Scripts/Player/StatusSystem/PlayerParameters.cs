@@ -19,34 +19,41 @@ public enum ParameterType
     Energy,
     Heat,
     Toxicity,
+    Capacity,
 }
 
 [CreateAssetMenu(fileName = "PlayerParameters", menuName = "Scriptable Objects/PlayerParameters")]
 public class PlayerParameters : ScriptableObject
 {
-    [field: SerializeField] public HealthStatusParameter Health { get; private set; }
+    [field: SerializeField] public BaseStatusParameter Health { get; private set; }
 
     [field: Space(10)]
     [field: SerializeField] public StaminaStatusParameter Stamina { get; private set; }
 
-
-    [Header("LoadCapacity")]
-    public float OffsetMaxLoadCapacity = 0;
-    public readonly float[] RangeLoadCapacity = { 30, 45, 60 };
-    public float CurrentLoad => _playerInventory.Weight;
-
+    [field: Space(10)]
+    [field: SerializeField] public CapacityStatusParameter Capacity { get; private set; }
 
     [field: Header("StatusParameters")]
     [field: SerializeField] public MovementStatusParameter FoodBalance { get; private set; }
+
+    [field: Space(10)]
     [field: SerializeField] public MovementStatusParameter WaterBalance { get; private set; }
+
+    [field: Space(10)]
     [field: SerializeField] public MovementStatusParameter Energy { get; private set; }
+
+    [field: Space(10)]
     [field: SerializeField] public StatusParameter Heat { get; private set; }
+
+    [field: Space(10)]
     [field: SerializeField] public StatusParameter Toxicity { get; private set; }
 
-    Dictionary<ParameterType, BaseStatusParameter> _statusParameterCache;
-    public IEnumerable<IStatusParameter> AllParameters => _statusParameterCache.Values.AsEnumerable();
 
-    private Inventory _playerInventory;
+
+
+
+    private Dictionary<ParameterType, BaseStatusParameter> _statusParameterCache;
+    public IEnumerable<IStatusParameter> AllParameters => _statusParameterCache.Values.AsEnumerable();
 
     public void Init(Inventory playerInventory)
     {
@@ -59,10 +66,15 @@ public class PlayerParameters : ScriptableObject
             { ParameterType.Energy, Energy},
             { ParameterType.Heat, Heat},
             { ParameterType.Toxicity, Toxicity},
+            { ParameterType.Capacity, Capacity},
         };
-
-        _playerInventory = playerInventory;
     }
+
+    public void ModifyParameter(ParameterType parameter, float value)
+    {
+        _statusParameterCache[parameter].Current += value;
+    }
+
 
     [ContextMenu("AllReset")]
     public void AllReset()
@@ -71,26 +83,5 @@ public class PlayerParameters : ScriptableObject
         {
             parameter.Reset();
         }
-
-        OffsetMaxLoadCapacity = 0.0f;
-    }
-
-    public WeightRange GetCurrentWeightRange()
-    {
-        if (CurrentLoad < RangeLoadCapacity[0])
-            return WeightRange.Acceptable;
-
-        if (CurrentLoad < RangeLoadCapacity[1])
-            return WeightRange.Critical;
-
-        if (CurrentLoad < RangeLoadCapacity[2])
-            return WeightRange.Ultimate;
-
-        return WeightRange.UltimateImmovable;
-    }
-
-    public void Add(ParameterType parameter, float value)
-    {
-        _statusParameterCache[parameter].Current += value;
     }
 }

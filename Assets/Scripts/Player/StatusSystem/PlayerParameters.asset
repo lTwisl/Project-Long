@@ -21,49 +21,54 @@ MonoBehaviour:
     _current: 100
     <Max>k__BackingField: 100
     <OffsetMax>k__BackingField: 0
-    <ChangeRate>k__BackingField: 1
+    <ChangeRate>k__BackingField: 20
     <DecreasedHealthRate>k__BackingField: 0
-    <IdleChangeRate>k__BackingField: 1
-    <WalkChangeRate>k__BackingField: 0
-    <SprintChangeRate>k__BackingField: 0
-    <Reload>k__BackingField: 0
-  OffsetMaxLoadCapacity: 0
+    <IdleChangeRate>k__BackingField: 20
+    <WalkChangeRate>k__BackingField: 5
+    <SprintChangeRate>k__BackingField: -15
+    _reload: 1
   <FoodBalance>k__BackingField:
-    _current: 100
-    <Max>k__BackingField: 100
+    _current: 3497.2773
+    <Max>k__BackingField: 3500
     <OffsetMax>k__BackingField: 0
-    <ChangeRate>k__BackingField: 0
-    <DecreasedHealthRate>k__BackingField: 0
-    <IdleChangeRate>k__BackingField: 0
-    <WalkChangeRate>k__BackingField: 0
-    <SprintChangeRate>k__BackingField: 0
+    <ChangeRate>k__BackingField: -10
+    <DecreasedHealthRate>k__BackingField: -10
+    <IdleChangeRate>k__BackingField: -10
+    <WalkChangeRate>k__BackingField: -20
+    <SprintChangeRate>k__BackingField: -40
   <WaterBalance>k__BackingField:
-    _current: 100
-    <Max>k__BackingField: 100
+    _current: 3489.126
+    <Max>k__BackingField: 3500
     <OffsetMax>k__BackingField: 0
-    <ChangeRate>k__BackingField: 0
-    <DecreasedHealthRate>k__BackingField: 0
-    <IdleChangeRate>k__BackingField: 0
-    <WalkChangeRate>k__BackingField: 0
-    <SprintChangeRate>k__BackingField: 0
+    <ChangeRate>k__BackingField: -40
+    <DecreasedHealthRate>k__BackingField: -10
+    <IdleChangeRate>k__BackingField: -40
+    <WalkChangeRate>k__BackingField: -60
+    <SprintChangeRate>k__BackingField: -100
   <Energy>k__BackingField:
-    _current: 99.07251
-    <Max>k__BackingField: 100
+    _current: 1434.5629
+    <Max>k__BackingField: 1440
     <OffsetMax>k__BackingField: 0
-    <ChangeRate>k__BackingField: -1
-    <DecreasedHealthRate>k__BackingField: 5
-    <IdleChangeRate>k__BackingField: -1
-    <WalkChangeRate>k__BackingField: -5
-    <SprintChangeRate>k__BackingField: -10
+    <ChangeRate>k__BackingField: -20
+    <DecreasedHealthRate>k__BackingField: -10
+    <IdleChangeRate>k__BackingField: -20
+    <WalkChangeRate>k__BackingField: -40
+    <SprintChangeRate>k__BackingField: -60
   <Heat>k__BackingField:
-    _current: 100
-    <Max>k__BackingField: 100
+    _current: 2500
+    <Max>k__BackingField: 2500
     <OffsetMax>k__BackingField: 0
     <ChangeRate>k__BackingField: 0
-    <DecreasedHealthRate>k__BackingField: 0
+    <DecreasedHealthRate>k__BackingField: -10
   <Toxicity>k__BackingField:
-    _current: 100
-    <Max>k__BackingField: 100
+    _current: 1000
+    <Max>k__BackingField: 1000
     <OffsetMax>k__BackingField: 0
+    <ChangeRate>k__BackingField: 0
+    <DecreasedHealthRate>k__BackingField: -10
+  <Capacity>k__BackingField:
+    _current: 0
+    <Max>k__BackingField: 60
+    <OffsetMax>k__BackingField: 0.0000012715658
     <ChangeRate>k__BackingField: 0
     <DecreasedHealthRate>k__BackingField: 0

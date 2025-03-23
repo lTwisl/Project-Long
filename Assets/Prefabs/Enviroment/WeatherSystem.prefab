@@ -49,6 +49,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92df9d1163366944f8537e5cbf2789e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _useAutoChange: 1
   <WeatherProfiles>k__BackingField:
   - {fileID: 11400000, guid: 62b6db9f95725c349b09f93c1854c909, type: 2}
   - {fileID: 11400000, guid: 05059311190a3f847b37c6959c77c5bb, type: 2}
@@ -304,7 +305,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de6396b1decb90746b62072ca6f3d543, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <MaxWindTemperature>k__BackingField: -15
+  <MaxWindTemperature>k__BackingField: -1
   _windGloabalDirection: {x: 0, y: 0}
   <CurrentSpeed>k__BackingField: 0
   _minWindSpeed: 2

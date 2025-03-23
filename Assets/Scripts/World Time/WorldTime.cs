@@ -1,12 +1,11 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class WorldTime : MonoBehaviour
 {
     public static WorldTime Instance { get; private set; }
-    
+
     private TimeSpan _currentTime = new TimeSpan(1, 8, 0, 0);
     public TimeSpan CurrentTime
     {
@@ -57,6 +56,14 @@ public class WorldTime : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+    private void Start()
+    {
+        OnTimeChanged?.Invoke(CurrentTime);
+        OnMinuteChanged?.Invoke(CurrentTime);
+        OnHourChanged?.Invoke(CurrentTime);
+        OnDayChanged?.Invoke(CurrentTime);
     }
 
     private void Update()
@@ -185,9 +192,9 @@ public class WorldTime : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (Instance == this)
+        /*if (Instance == this)
         {
             Instance = null;
-        }
+        }*/
     }
 }

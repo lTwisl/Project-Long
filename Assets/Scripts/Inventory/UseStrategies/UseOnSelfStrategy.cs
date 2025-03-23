@@ -8,7 +8,7 @@ public class UseOnSelfStrategy : UseStrategy
         if (item is ConsumablesItem consumables)
         {
             foreach (var parameter in consumables.StatusParameterImpacts)
-                _player.GetComponent<PlayerStatusController>().Add(parameter.ParameterType, parameter.Value);
+                _player.GetComponent<PlayerStatusController>().ModifyParameter(parameter.ParameterType, parameter.Value);
 
             Debug.Log($"Use item (ConsumablesItem) {consumables.Name} on self");
             return;
@@ -17,7 +17,7 @@ public class UseOnSelfStrategy : UseStrategy
         if (item is MedicineItem medicine)
         {
             foreach (var parameter in medicine.StatusParameterImpacts)
-                _player.GetComponent<PlayerStatusController>().Add(parameter.ParameterType, parameter.Value);
+                _player.GetComponent<PlayerStatusController>().ModifyParameter(parameter.ParameterType, parameter.Value);
 
             Debug.Log($"Use item (MedicineItem) {item.Name} on self");
             return;

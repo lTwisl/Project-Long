@@ -63,7 +63,7 @@ public class StatusParameter : BaseStatusParameter
 public class BaseStatusParameter : IStatusParameter
 {
     [Tooltip("Текущее значение")]
-    [SerializeField] private float _current;
+    [SerializeField, DisableEdit] private float _current;
     public float Current
     {
         get => _current;
@@ -71,7 +71,7 @@ public class BaseStatusParameter : IStatusParameter
         {
             if (Mathf.Approximately(_current, value)) 
                 return;
-            _current = value;
+            _current = Mathf.Clamp(value, 0f, Max + OffsetMax);
             OnValueChanged?.Invoke(_current);
         }
     }
@@ -80,9 +80,9 @@ public class BaseStatusParameter : IStatusParameter
     [field: SerializeField] public float Max { get; set; }
 
     [field: Tooltip("Смещение максимального значение")]
-    [field: SerializeField] public float OffsetMax { get; set; }
+    [field: SerializeField, DisableEdit] public float OffsetMax { get; set; }
 
-    [field: Tooltip("Скорость изменения [ед/м]")]
+    [field: Tooltip("Скорость изменения [ед/м]"), DisableEdit]
     [field: SerializeField] public float ChangeRate { get; set; }
 
     public event Action<float> OnValueChanged;
@@ -94,6 +94,11 @@ public class BaseStatusParameter : IStatusParameter
     }
 
     public virtual void UpdateParameter(float deltaSeconds)
+    {
+        ChangeParameter(deltaSeconds);
+    }
+
+    public virtual void ChangeParameter(float deltaSeconds)
     {
         Current = Mathf.Clamp(Current + ChangeRate * deltaSeconds, 0f, Max + OffsetMax);
     }

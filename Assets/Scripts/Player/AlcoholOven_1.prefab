@@ -158,7 +158,8 @@ MonoBehaviour:
     <Item>k__BackingField: {fileID: 11400000, guid: ff9bfe36f37fed946bdfe117acb4fdda, type: 2}
     _capacity: 8.22
     _condition: 20.7
-  <MinRadius>k__BackingField: 2.27
+  <MaxRadius>k__BackingField: 5
+  <MinRadius>k__BackingField: 1.5
 --- !u!135 &1943411254000087718
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -178,5 +179,5 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 4.9
+  m_Radius: 5
   m_Center: {x: 0, y: 0.5, z: 0}

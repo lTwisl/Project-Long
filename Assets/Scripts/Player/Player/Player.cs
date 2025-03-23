@@ -6,8 +6,8 @@ using Zenject;
 [SelectionBase]
 public class Player : MonoBehaviour
 {
-    [field: SerializeField] public Inventory Inventory { get; private set; }
-    [field: SerializeField] public ClothingSystem ClothingSystem { get; private set; }
+    [field: Inject] public Inventory Inventory { get; private set; }
+    [field: Inject] public ClothingSystem ClothingSystem { get; private set; }
 
     [Header("UI")]
     [SerializeField] private Slider _slider;
@@ -19,9 +19,6 @@ public class Player : MonoBehaviour
     public Camera MainCamera { get; private set; }
 
     
-
-    
-
     private void Awake()
     {
         Inventory.Init();
@@ -34,7 +31,10 @@ public class Player : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
     }
 
-
+    private void Start()
+    {
+        _playerParameters.Capacity.Current = Inventory.Weight;
+    }
 
     private void OnEnable()
     {
@@ -47,6 +47,9 @@ public class Player : MonoBehaviour
         WorldTime.Instance.OnMinuteChanged += ClothingSystemUpdateMinuteChanged;
 
         Inventory.OnItemRemoved += ClothingSystem.HandleItemRemoved;
+
+        Inventory.OnItemAdded += UpdateCurrentCapacity;
+        Inventory.OnItemRemoved += UpdateCurrentCapacity;
     }
 
     private void OnDisable()
@@ -60,12 +63,17 @@ public class Player : MonoBehaviour
         WorldTime.Instance.OnMinuteChanged -= ClothingSystemUpdateMinuteChanged;
 
         Inventory.OnItemRemoved -= ClothingSystem.HandleItemRemoved;
+
+        Inventory.OnItemAdded -= UpdateCurrentCapacity;
+        Inventory.OnItemRemoved -= UpdateCurrentCapacity;
     }
 
     private void InventoryUpdateMinuteChanged(TimeSpan _) => Inventory.Update(1);
     private void ClothingSystemUpdateMinuteChanged(TimeSpan _) => ClothingSystem.Update(1);
 
     private void UpdateClothesOffsetMax(InventorySlot _) => _playerParameters.Stamina.OffsetMax = ClothingSystem.TotalOffsetStamina;
+
+    public void UpdateCurrentCapacity(InventorySlot _) => _playerParameters.Capacity.Current = Inventory.Weight;
 
     public void SetVisibilityUiPlayer(bool newVisibility)
     {

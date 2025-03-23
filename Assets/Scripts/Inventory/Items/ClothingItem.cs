@@ -21,7 +21,7 @@ public class ClothingItem : InventoryItem
     [field: SerializeField] public float WindProtection { get; private set; }
     [field: SerializeField] public float WaterProtection { get; private set; }
     [field: SerializeField] public float TemperatureBonus { get; private set; }
-    [field: SerializeField] public float ToxisityProtection { get; private set; }
+    [field: SerializeField] public float ToxicityProtection { get; private set; }
     [field: SerializeField, Range(0f, 1f)] public float FrictionBonus { get; private set; }
     [field: SerializeField] public float OffsetStamina { get; private set; }
     [field: SerializeField] public float DryingRatio { get; private set; }
@@ -37,6 +37,7 @@ public class ClothingItem : InventoryItem
         MeasuredAsInteger = true;
         MaxCapacity = 1;
         DegradeType = DegradationType.Rate;
+        CostOfUse = 0;
     }
 
     public override string ToString()
@@ -45,6 +46,6 @@ public class ClothingItem : InventoryItem
             $"Water: {WaterProtection}\n" +
             $"Wind: {WindProtection} | " +
             $"Friction: {FrictionBonus}\n" +
-            $"Toxisity: {ToxisityProtection}\n";
+            $"Toxisity: {ToxicityProtection}\n";
     }
 }

@@ -3,8 +3,15 @@
 [System.Serializable]
 public class StaminaStatusParameter : MovementStatusParameter
 {
-    [field: Tooltip("Штраф за достижения нуля [м]")]
-    [field: SerializeField] public float Reload {  get; private set; }
+    [Tooltip("Штраф за достижения нуля [м]")]
+    [SerializeField] private float _reload;
+
+    private float _changeRateRatioByCapacity = 1;
+    public float ChangeRateRatioByCapacity {
+        get => _changeRateRatioByCapacity;
+        set => _changeRateRatioByCapacity = Mathf.Clamp01(value);
+    }
+
     private float _timer = 0f;
 
     public override void UpdateParameter(float deltaTime)
@@ -18,7 +25,18 @@ public class StaminaStatusParameter : MovementStatusParameter
         base.UpdateParameter(deltaTime);
 
         if (Current <= 0)
-            _timer = Reload;
+            _timer = _reload;
+    }
+
+    public override void ChangeParameter(float deltaSeconds)
+    {
+        Current = Mathf.Clamp(Current + ChangeRate * deltaSeconds * ChangeRateRatioByCapacity, 0f, Max + OffsetMax);
+    }
+
+    public override void Reset()
+    {
+        base.Reset();
+        ChangeRateRatioByCapacity = 1;
     }
 }
 

@@ -62,6 +62,9 @@ public class InventorySlot
         Item.Use();
 
         Capacity -= Item.CostOfUse;
+
+        if (Capacity <= 0)
+            Clear();
     }
 
 
