@@ -26,8 +26,8 @@ MonoBehaviour:
   maxIntensityMoon: 0.1
   colorZenithMoon: {r: 0.83137256, g: 0.84705883, b: 0.85882354, a: 1}
   colorSunsetMoon: {r: 0.7058824, g: 0.7607843, b: 0.8039216, a: 1}
-  minWindSpeed: 3
-  maxWindSpeed: 10
+  minWindSpeed: 1
+  maxWindSpeed: 33
   intensityChangeSpeed: 1
   directionChangeSharpness: 0.05
   intensityChangeDirection: 1

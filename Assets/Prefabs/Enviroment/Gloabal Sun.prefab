@@ -269,7 +269,7 @@ MonoBehaviour:
   _maxIntensity: 2
   _temperature: 8000
   colorAtZenith: {r: 1, g: 1, b: 1, a: 1}
-  colorAtSunset: {r: 1, g: 0.5, b: 0, a: 1}
+  colorAtSunset: {r: 1, g: 0.5019608, b: 0, a: 1}
   _horizontOffset: 0.2
   _colorTransitionRangeAngles: {x: 90, y: -10}
   _maxAmbientIntensity: 1.2

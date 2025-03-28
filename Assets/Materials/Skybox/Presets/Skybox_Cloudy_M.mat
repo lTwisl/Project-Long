@@ -47,7 +47,6 @@ Material:
     - _Stars_Speed: 0.04
     - _Sun_Phase: 0.93
     m_Colors:
-    - _Color_On_Horizon: {r: 1, g: 1, b: 1, a: 1}
     - _Sun_Direction: {r: 0.8148129, g: -0.57357633, b: 0.08420274, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

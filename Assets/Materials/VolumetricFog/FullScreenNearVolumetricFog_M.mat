@@ -60,6 +60,7 @@ Material:
     - _Height_Additional: 10000
     - _Height_Base: 15
     - _HideFog: 0
+    - _Impact_Light: 0.4
     - _Impact_LightColor: 0.4
     - _Intensity: 1
     - _Intensity_AdditionalFog: 1
@@ -81,6 +82,7 @@ Material:
     - _MinHeight_AdditionalFog: -500
     - _MinHeight_BaseFog: -100
     - _MinIntensity_Fog: 0
+    - _Min_Intensity_Fog: 0
     - _Moon_Phase: 0.5
     - _NoFogArea: 24.8
     - _NoFogArea_1: 15
