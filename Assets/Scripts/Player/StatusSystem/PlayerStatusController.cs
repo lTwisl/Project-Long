@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Data.Common;
 using System.Linq;
 using UnityEngine;
 using Zenject;
@@ -8,22 +6,22 @@ using Zenject;
 [RequireComponent(typeof(PlayerMovement))]
 public class PlayerStatusController : MonoBehaviour
 {
-    [Inject] private World _world;
+    public PlayerParameters PlayerParameters { get; private set; }
+    private World _world;
 
     private PlayerMovement _playerMovement;
-    private PlayerParameters _playerParameters;
-
 
     [Inject]
-    private void Construct(PlayerParameters playerParameters)
+    private void Construct(PlayerParameters playerParameters, World world)
     {
-        _playerParameters = playerParameters;
+        PlayerParameters = playerParameters;
+        _world = world;
     }
 
 
     private void Awake()
     {
-        _playerParameters.AllReset();
+        PlayerParameters.AllReset();
         _playerMovement = GetComponent<PlayerMovement>();
     }
 
@@ -35,9 +33,10 @@ public class PlayerStatusController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        _playerParameters.Heat.ChangeRate = _world.TotalTemperature;
+        PlayerParameters.Heat.ChangeRate = _world.TotalTemperature;
+        PlayerParameters.Toxicity.ChangeRate = _world.TotalToxicity;
 
-        foreach (var parameter in _playerParameters.AllParameters)
+        foreach (var parameter in PlayerParameters.AllParameters)
         {
             parameter.UpdateParameter(WorldTime.Instance.FixedDeltaTime / 60f);
         }
@@ -54,11 +53,11 @@ public class PlayerStatusController : MonoBehaviour
     /// </summary>
     private void EnergyChanged(float value)
     {
-        if (value > 0.5f * _playerParameters.Energy.Max)
+        if (value > 0.5f * PlayerParameters.Energy.Max)
             return;
 
-        float value01 = Utility.MapRange(value, 0, 0.5f * _playerParameters.Energy.Max, 1, 0, true);
-        _playerParameters.Capacity.OffsetMax = 15 * value01;
+        float value01 = Utility.MapRange(value, 0, 0.5f * PlayerParameters.Energy.Max, 1, 0, true);
+        PlayerParameters.Capacity.OffsetMax = 15 * value01;
     }
 
 
@@ -67,7 +66,7 @@ public class PlayerStatusController : MonoBehaviour
     /// </summary>
     private void ChangedMoveMode(PlayerMovement.PlayerMoveMode mode)
     {
-        foreach (var param in _playerParameters.AllParameters.OfType<MovementStatusParameter>())
+        foreach (var param in PlayerParameters.AllParameters.OfType<MovementStatusParameter>())
         {
             param.SetChangeRateByMoveMode(mode);
         }
@@ -79,17 +78,17 @@ public class PlayerStatusController : MonoBehaviour
     /// </summary>
     private void AutoSubscribe()
     {
-        foreach (var param in _playerParameters.AllParameters.OfType<StatusParameter>())
+        foreach (var param in PlayerParameters.AllParameters.OfType<StatusParameter>())
         {
             if (Mathf.Approximately(param.DecreasedHealthRate, 0))
                 continue;
 
-            param.OnReachZero += () => _playerParameters.Health.ChangeRate += param.DecreasedHealthRate;
-            param.OnRecoverFromZero += () => _playerParameters.Health.ChangeRate -= param.DecreasedHealthRate;
+            param.OnReachZero += () => PlayerParameters.Health.ChangeRate += param.DecreasedHealthRate;
+            param.OnRecoverFromZero += () => PlayerParameters.Health.ChangeRate -= param.DecreasedHealthRate;
         }
 
-        _playerParameters.Capacity.OnValueChanged += UpdateStaminaChangeRateRatioByCapacity;
-        _playerParameters.Energy.OnValueChanged += EnergyChanged;
+        PlayerParameters.Capacity.OnValueChanged += UpdateStaminaChangeRateRatioByCapacity;
+        PlayerParameters.Energy.OnValueChanged += EnergyChanged;
         _playerMovement.OnChangedMoveMode += ChangedMoveMode;
     }
 
@@ -99,7 +98,7 @@ public class PlayerStatusController : MonoBehaviour
     /// </summary>
     private void UnsubscribeAll()
     {
-        foreach (var param in _playerParameters.AllParameters.OfType<StatusParameter>())
+        foreach (var param in PlayerParameters.AllParameters.OfType<StatusParameter>())
         {
             if (Mathf.Approximately(param.DecreasedHealthRate, 0))
                 continue;
@@ -107,8 +106,8 @@ public class PlayerStatusController : MonoBehaviour
             param.UnsubscribeAll();
         }
 
-        _playerParameters.Capacity.OnValueChanged -= UpdateStaminaChangeRateRatioByCapacity;
-        _playerParameters.Energy.OnValueChanged -= EnergyChanged;
+        PlayerParameters.Capacity.OnValueChanged -= UpdateStaminaChangeRateRatioByCapacity;
+        PlayerParameters.Energy.OnValueChanged -= EnergyChanged;
         _playerMovement.OnChangedMoveMode -= ChangedMoveMode;
     }
 
@@ -118,7 +117,7 @@ public class PlayerStatusController : MonoBehaviour
     /// </summary>
     public void ModifyParameter(ParameterType parameter, float value)
     {
-        _playerParameters.ModifyParameter(parameter, value);
+        PlayerParameters.ModifyParameter(parameter, value);
     }
 
 
@@ -127,23 +126,23 @@ public class PlayerStatusController : MonoBehaviour
     /// </summary>
     private void UpdateStaminaChangeRateRatioByCapacity(float capcsity)
     {
-        _playerParameters.Stamina.ChangeRateRatioByCapacity = Utility.MapRange(capcsity, 30, 60, 1, 0, true);
+        PlayerParameters.Stamina.ChangeRateRatioByCapacity = Utility.MapRange(capcsity, 30, 60, 1, 0, true);
     }
 
 
 #if UNITY_EDITOR
     private void OnGUI()
     {
-        if (_playerParameters == null)
+        if (PlayerParameters == null)
             return;
 
-        GUILayout.Label($"\n\nЗдоровье: {_playerParameters.Health.Current:f1}");
-        GUILayout.Label($"Выносливость: {_playerParameters.Stamina.Current:f1}");
-        GUILayout.Label($"Сытость: {_playerParameters.FoodBalance.Current:f1}");
-        GUILayout.Label($"Жажда: {_playerParameters.WaterBalance.Current:f1}");
-        GUILayout.Label($"Бодрость: {_playerParameters.Energy.Current:f1}");
-        GUILayout.Label($"Тепло: {_playerParameters.Heat.Current:f1}");
-        GUILayout.Label($"Заражённость: {_playerParameters.Toxicity.Current:f1}");
+        GUILayout.Label($"\n\nЗдоровье: {PlayerParameters.Health.Current:f1}");
+        GUILayout.Label($"Выносливость: {PlayerParameters.Stamina.Current:f1}");
+        GUILayout.Label($"Сытость: {PlayerParameters.FoodBalance.Current:f1}");
+        GUILayout.Label($"Жажда: {PlayerParameters.WaterBalance.Current:f1}");
+        GUILayout.Label($"Бодрость: {PlayerParameters.Energy.Current:f1}");
+        GUILayout.Label($"Тепло: {PlayerParameters.Heat.Current:f1}");
+        GUILayout.Label($"Заражённость: {PlayerParameters.Toxicity.Current:f1}");
     }
 #endif
 }

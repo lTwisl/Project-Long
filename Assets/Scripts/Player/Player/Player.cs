@@ -6,6 +6,7 @@ using Zenject;
 [SelectionBase]
 public class Player : MonoBehaviour
 {
+    [Inject] private World _world;
     [field: Inject] public Inventory Inventory { get; private set; }
     [field: Inject] public ClothingSystem ClothingSystem { get; private set; }
 
@@ -18,7 +19,7 @@ public class Player : MonoBehaviour
     public PlayerInputs PlayerInputs { get; private set; }
     public Camera MainCamera { get; private set; }
 
-    
+
     private void Awake()
     {
         Inventory.Init();
@@ -50,6 +51,12 @@ public class Player : MonoBehaviour
 
         Inventory.OnItemAdded += UpdateCurrentCapacity;
         Inventory.OnItemRemoved += UpdateCurrentCapacity;
+
+        _world.OnEnterToxicityZone += zone =>
+        {
+            if (zone.CurrentType == ToxicityZone.ZoneType.Single)
+                _playerParameters.Toxicity.Current -= zone.Toxicity * (1 - ClothingSystem.TotalToxicityProtection / 100);
+        };
     }
 
     private void OnDisable()
@@ -110,7 +117,7 @@ public class Player : MonoBehaviour
 
         if (slot.Item is ClothingItem clothes && slot.IsWearing)
             ClothingSystem.Unequip(slot);
-        
+
         Inventory.RemoveItem(slot);
     }
 

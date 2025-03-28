@@ -1,13 +1,11 @@
-using System;
 using UnityEditor;
 using UnityEngine;
+using Zenject;
 
 [RequireComponent(typeof(Collider))]
-[ExecuteAlways]
 public class ToxicityZone : MonoBehaviour
 {
-    public static Action<float> OnImpactRateToxicity;
-    public static Action<float> OnImpactSingleToxicity;
+    [Inject] private World _world;
 
     [SerializeField] private bool _hideGizmo = true;
     public enum ZoneType
@@ -28,31 +26,18 @@ public class ToxicityZone : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
-        {
-            if (_currentType == ZoneType.Rate)
-                OnImpactRateToxicity?.Invoke(Toxicity);
+        if (!other.CompareTag("Player"))
+            return;
 
-            if (_currentType == ZoneType.Single)
-                OnImpactSingleToxicity?.Invoke(Toxicity);
-        }
+        _world.InvokeOnEnterToxicityZone(this);
     }
-
-    //private void OnTriggerStay(Collider other)
-    //{
-    //    if (other.CompareTag("Player"))
-    //    {
-
-    //    }
-    //}
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Player"))
-        {
-            if (_currentType == ZoneType.Rate)
-                OnImpactRateToxicity?.Invoke(0);
-        }
+        if (!other.CompareTag("Player"))
+            return;
+
+        _world.InvokeOnExitToxicityZone(this);
     }
 
     #region ¬»«”¿À»«¿÷»ﬂ

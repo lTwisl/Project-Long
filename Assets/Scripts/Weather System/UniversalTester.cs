@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class UniversalTester : MonoBehaviour
 {
-    [DisableEdit] public float Toxicity;
+    /*[DisableEdit] public float Toxicity;
     [DisableEdit] public float SingleToxicity;
 
     private void Awake()
@@ -33,5 +33,5 @@ public class UniversalTester : MonoBehaviour
     {
         ToxicityZone.OnImpactRateToxicity -= UpdateValue;
         ToxicityZone.OnImpactSingleToxicity -= UpdateValue;
-    }
+    }*/
 }

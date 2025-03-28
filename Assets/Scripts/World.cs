@@ -21,6 +21,8 @@ public class World : MonoBehaviour
     [field: SerializeField] public float AreaToxicity { get; private set; }
     public float WeatherToxicity => Weather.Toxicity;
     [field: SerializeField, DisableEdit] public float ShelterToxicity { get; private set; }
+    [field: SerializeField, DisableEdit] public float ZoneToxicity { get; private set; }
+    [field: SerializeField, DisableEdit] public float TotalToxicity { get; private set; }
 
 
     public WeatherSystem Weather { get; private set; }
@@ -29,9 +31,15 @@ public class World : MonoBehaviour
     public event Action<ShelterSystem> OnEnterShelter;
     public event Action<ShelterSystem> OnExitShelter;
 
+    public event Action<HeatZone> OnEnterHeatZone;
+    public event Action<HeatZone> OnExitHeatZone;
+
+    public event Action<ToxicityZone> OnEnterToxicityZone;
+    public event Action<ToxicityZone> OnExitToxicityZone;
+
     private Player _player;
 
-    private List<IExternalHeat> _externalHeats = new List<IExternalHeat>();
+    private List<HeatZone> _externalHeats = new List<HeatZone>();
     private float _currentMaxExternalTemp;
 
     private void Awake()
@@ -45,11 +53,13 @@ public class World : MonoBehaviour
     private void OnEnable()
     {
         WorldTime.Instance.OnMinuteChanged += CalculateTotalTemperature;
+        WorldTime.Instance.OnMinuteChanged += CalculateTotalToxicity;
     }
 
     private void OnDisable()
     {
         WorldTime.Instance.OnMinuteChanged -= CalculateTotalTemperature;
+        WorldTime.Instance.OnMinuteChanged -= CalculateTotalToxicity;
     }
 
     public void InvokeOnEnterShelter(ShelterSystem shelterSystem)
@@ -59,6 +69,7 @@ public class World : MonoBehaviour
         ShelterToxicity = shelterSystem.Toxicity;
 
         CalculateTotalTemperature(WorldTime.Instance.CurrentTime);
+        CalculateTotalToxicity(WorldTime.Instance.CurrentTime);
 
         OnEnterShelter?.Invoke(shelterSystem);
     }
@@ -70,8 +81,43 @@ public class World : MonoBehaviour
         ShelterToxicity -= shelterSystem.Toxicity;
 
         CalculateTotalTemperature(WorldTime.Instance.CurrentTime);
+        CalculateTotalToxicity(WorldTime.Instance.CurrentTime);
 
         OnExitShelter?.Invoke(shelterSystem);
+    }
+
+    public void InvokeOnEnterHeatZone(HeatZone heatZone)
+    {
+        AddExternalHeat(heatZone);
+        OnEnterHeatZone?.Invoke(heatZone);
+    }
+
+    public void InvokeOnExitHeatZone(HeatZone heatZone)
+    {
+        RemoveExternalHeat(heatZone);
+        OnExitHeatZone?.Invoke(heatZone);
+    }
+
+    public void InvokeOnEnterToxicityZone(ToxicityZone toxicityZone)
+    {
+        if (toxicityZone.CurrentType == ToxicityZone.ZoneType.Rate)
+        {
+            ZoneToxicity += toxicityZone.Toxicity;
+            CalculateTotalToxicity(WorldTime.Instance.CurrentTime);
+        }
+
+        OnEnterToxicityZone?.Invoke(toxicityZone);
+    }
+
+    public void InvokeOnExitToxicityZone(ToxicityZone toxicityZone)
+    {
+        if (toxicityZone.CurrentType == ToxicityZone.ZoneType.Rate)
+        {
+            ZoneToxicity -= toxicityZone.Toxicity;
+            CalculateTotalToxicity(WorldTime.Instance.CurrentTime);
+        }
+
+        OnExitToxicityZone?.Invoke(toxicityZone);
     }
 
     public float GetWindLocalIntensity()
@@ -89,15 +135,15 @@ public class World : MonoBehaviour
         TotalTemperature = AreaTemperature + WeatherTemperature + ShelterTemperature + GetMaxExternalHeatsByPosiotion() + _player.ClothingSystem.TotalTemperatureBonus;
     }
 
-    public float GetTotalToxicity()
+    public void CalculateTotalToxicity(TimeSpan _)
     {
-        return AreaToxicity + WeatherToxicity + ShelterToxicity + _player.ClothingSystem.TotalToxicityProtection;
+        TotalToxicity = -(AreaToxicity + WeatherToxicity + ShelterToxicity + ZoneToxicity) * (1 - _player.ClothingSystem.TotalToxicityProtection / 100);
     }
 
     /// <summary>
     /// ƒобавить внешний источник тепла и обновить максимальную температуру
     /// </summary>
-    public void AddExternalHeat(IExternalHeat externalHeat)
+    private void AddExternalHeat(HeatZone externalHeat)
     {
         _externalHeats.Add(externalHeat);
 
@@ -108,7 +154,7 @@ public class World : MonoBehaviour
     /// <summary>
     /// ”далить внешний источник тепла и пересчитать максимальную температуру
     /// </summary>
-    public void RemoveExternalHeat(IExternalHeat externalHeat)
+    private void RemoveExternalHeat(HeatZone externalHeat)
     {
         _externalHeats.Remove(externalHeat);
 
@@ -129,7 +175,7 @@ public class World : MonoBehaviour
         if (_externalHeats.Count == 0)
             return 0;
 
-        return _externalHeats.Max(p => Utility.MapRange((p.Position - _player.transform.position).sqrMagnitude,
+        return _externalHeats.Max(p => Utility.MapRange((p.transform.position - _player.transform.position).sqrMagnitude,
             Mathf.Pow(p.MinRadius, 2), Mathf.Pow(p.MaxRadius, 2), p.Temp, 0, true));
     }
 }
