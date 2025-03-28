@@ -44,7 +44,7 @@ public class World : MonoBehaviour
 
     private void Awake()
     {
-        Weather = GetComponentInChildren<WeatherSystem>();
+        Weather = FindAnyObjectByType<WeatherSystem>();
         _player = FindAnyObjectByType<Player>();
 
         

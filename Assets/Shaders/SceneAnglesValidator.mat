@@ -12,7 +12,7 @@ Material:
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
-  - _ENUM_4_STEP
+  - _ENUM_8_STEP
   m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -39,16 +39,16 @@ Material:
     m_Ints: []
     m_Floats:
     - _Alpha: 0
-    - _ENUM: 0
-    - _MaxWalkAngle: 30
+    - _ENUM: 1
+    - _MaxWalkAngle: 25
     - _Steps: 4
     - _Visualise: 1
     m_Colors:
     - _ColorGoHardZone: {r: 1, g: 0.61228013, b: 0, a: 1}
     - _ColorGoZone: {r: 0.2610556, g: 1, b: 0, a: 1}
     - _ColorNoGoZone: {r: 0, g: 0, b: 0, a: 1}
-    - _ColorNoWalk: {r: 0.528, g: 0, b: 0, a: 1}
-    - _ColorWalk_Max: {r: 1, g: 0, b: 0, a: 1}
+    - _ColorNoWalk: {r: 0, g: 0, b: 0, a: 1}
+    - _ColorWalk_Max: {r: 1, g: 0.54371965, b: 0, a: 1}
     - _ColorWalk_Min: {r: 0, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

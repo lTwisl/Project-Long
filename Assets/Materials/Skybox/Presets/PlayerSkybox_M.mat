@@ -41,28 +41,17 @@ Material:
     m_Floats:
     - _Boolean: 1
     - _Flick_Noise_Scale: 10
-    - _Float: 5
-    - _Horizon_Offset: 1.5
-    - _Moon_Phase: 0.65
+    - _Float: 0.7
+    - _MoonSize: 0.18
     - _Offset_Skyline_Mask: 1
-    - _Range_Skyline_Mask: 1
     - _Ray_Leight_Phase: 1
-    - _Scale_Flick_Noise: 15
-    - _Softness_Gradient_Mask: 0.5
-    - _Softness_Ground_Mask: 0.2
-    - _Softness_Skyline_Mask: 0.6
-    - _Speed_Flick_Noise: 0.05
     - _Stars_Speed: 0.04
     - _Sun_Phase: 0.93
-    - _Sun_Phase_In: 0.9999
-    - _Sun_Phase_Out: 0.86
     m_Colors:
     - _Color_On_Ground: {r: 0.038461532, g: 0.1153846, b: 0.19999996, a: 1}
-    - _Color_On_Horizon: {r: 0.563786, g: 0.781893, b: 1, a: 1}
-    - _Color_On_Skyline: {r: 1.4980392, g: 0.8026144, b: 0.45490196, a: 1}
-    - _Color_On_Zenith: {r: 0.003921569, g: 0.3607843, b: 0.68627447, a: 1}
-    - _Color_Stars: {r: 4, g: 4, b: 4, a: 1}
+    - _Color_On_Zenith: {r: 0.1715686, g: 0.4407538, b: 0.68627447, a: 1}
     - _Moon_Color: {r: 1.3195078, g: 1.187557, b: 1.0556062, a: 1}
-    - _Sun_Direction: {r: 0, g: -0.3060276, b: 0.9520227, a: 0}
+    - _Night_Color: {r: 0.0063749994, g: 0.010624998, b: 0.017, a: 1}
+    - _Sun_Direction: {r: 0, g: -0.25881898, b: 0.9659259, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

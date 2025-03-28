@@ -1345,42 +1345,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 106e99c36c1477143b2e98c486a514aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <Inventory>k__BackingField:
-    Filter: 0
-    _initSlots: []
-    <Weight>k__BackingField: 0
-  <ClothingSystem>k__BackingField:
-    _bodySlots:
-    - ClothesType: 0
-      MaxLayers: 2
-      Layers: []
-    - ClothesType: 1
-      MaxLayers: 2
-      Layers: []
-    - ClothesType: 2
-      MaxLayers: 2
-      Layers: []
-    - ClothesType: 3
-      MaxLayers: 1
-      Layers: []
-    - ClothesType: 4
-      MaxLayers: 2
-      Layers: []
-    - ClothesType: 5
-      MaxLayers: 2
-      Layers: []
-    - ClothesType: 6
-      MaxLayers: 2
-      Layers: []
-    - ClothesType: 7
-      MaxLayers: 1
-      Layers: []
-    - ClothesType: 8
-      MaxLayers: 2
-      Layers: []
   _slider: {fileID: 1326464309226117634}
   _uiWindowsController: {fileID: 1888074167577568934}
-  TemperatureOfExternalSources: 0
 --- !u!1 &9047379012467677245
 GameObject:
   m_ObjectHideFlags: 0

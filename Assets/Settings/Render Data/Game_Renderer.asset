@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: FullScreenPassRendererFeature
   m_EditorClassIdentifier: 
   m_Active: 1
-  injectionPoint: 450
+  injectionPoint: 550
   fetchColorBuffer: 0
   requirements: 2
   passMaterial: {fileID: 2100000, guid: 84197f253d362d74a9bf111758bfbcea, type: 2}
@@ -68,7 +68,7 @@ MonoBehaviour:
   m_Name: FullScreenVolumetricFogFar
   m_EditorClassIdentifier: 
   m_Active: 1
-  injectionPoint: 450
+  injectionPoint: 550
   fetchColorBuffer: 1
   requirements: 0
   passMaterial: {fileID: 2100000, guid: e7dbaa0ea93db594b9a594c85ed9df52, type: 2}
@@ -87,8 +87,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b00045f12942b46c698459096c89274e, type: 3}
   m_Name: FullScreenVolumetricFogNear
   m_EditorClassIdentifier: 
-  m_Active: 1
-  injectionPoint: 450
+  m_Active: 0
+  injectionPoint: 550
   fetchColorBuffer: 1
   requirements: 0
   passMaterial: {fileID: 2100000, guid: 47d7ec949da0c28458603888c2c87755, type: 2}

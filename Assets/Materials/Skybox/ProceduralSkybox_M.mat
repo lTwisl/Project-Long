@@ -33,8 +33,8 @@ Material:
   stringTagMap: {}
   disabledShaderPasses:
   - MOTIONVECTORS
-  m_LockedProperties: _Height_Atmosphere _HideSkybox _Mask_Texture_Stars _Min_Scaterring
-    _MoonSize _Ray_Leight_Intensity _Ready _Tiling_Stars
+  m_LockedProperties: _Height_Atmosphere _HideSkybox _Mask_Texture_Stars _Min_Light_Color
+    _Min_Scaterring _MoonSize _Ray_Leight_Intensity _Ready
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -77,7 +77,7 @@ Material:
     - _Boolean: 1
     - _Bright: 0
     - _Flick_Noise_Scale: 1
-    - _Float: 32
+    - _Float: 0
     - _Float_1: 0.78
     - _GradientMaskSoftness: 0.35
     - _GroundMaskSoftness: 0.084
@@ -86,13 +86,13 @@ Material:
     - _Henye_Greenstein_Phase: 0.995
     - _Henyey_Greenstein_Phase: 0.964
     - _HideSkybox: 0
-    - _Horizon_Offset: 1.5
+    - _Horizon_Offset: 2
     - _HorizontMaskSoftness: 0.167
     - _HorizontSize: 0.561
     - _Mask: 1.89
     - _Mask_Stars: 2
-    - _Min_Scaterring: 1
-    - _MoonSize: 0.15
+    - _Min_Scaterring: 0.7
+    - _MoonSize: 0.16
     - _Moon_Phase: 0.65
     - _QueueControl: 0
     - _QueueOffset: 0
@@ -107,7 +107,7 @@ Material:
     - _Softness_Gradient_Mask: 0.5
     - _Softness_Ground_Mask: 0.2
     - _Softness_Skyline_Mask: 0.6
-    - _Speed_Flick_Noise: 0.05
+    - _Speed_Flick_Noise: 0.03
     - _StarsDensity: 10
     - _Stars_Speed: 0.005
     - _Step: 0.06
@@ -115,19 +115,22 @@ Material:
     - _Sun_Phase_In: 0.9999
     - _Sun_Phase_Out: 0.86
     - _Tiling: 2
-    - _Tiling_Stars: 3
+    - _Tiling_Stars: 2
     m_Colors:
+    - _Color: {r: 0, g: 0, b: 0, a: 1}
     - _Color_Ground: {r: 0.25, g: 0.25, b: 0.25, a: 1}
     - _Color_Horizont: {r: 1, g: 1, b: 1, a: 1}
     - _Color_On_Ground: {r: 0.038461532, g: 0.11538463, b: 0.2, a: 1}
-    - _Color_On_Horizon: {r: 0.56378603, g: 0.781893, b: 1, a: 1}
+    - _Color_On_Horizon: {r: 0.45, g: 0.72252244, b: 1, a: 1}
     - _Color_On_Horizont: {r: 0.59006757, g: 0.8270055, b: 0.8339623, a: 1}
-    - _Color_On_Skyline: {r: 1.4980392, g: 0.8026144, b: 0.45490196, a: 1}
-    - _Color_On_Zenith: {r: 0.003921569, g: 0.36078432, b: 0.6862745, a: 1}
+    - _Color_On_Skyline: {r: 2.1185474, g: 1.1350682, b: 0.6433285, a: 1}
+    - _Color_On_Zenith: {r: 0.17156863, g: 0.44075382, b: 0.6862745, a: 1}
     - _Color_Sky_Down: {r: 0.31372547, g: 0.76307184, b: 0.8039216, a: 1}
     - _Color_Sky_Up: {r: 0.3139266, g: 0.5672469, b: 0.8037735, a: 1}
-    - _Color_Stars: {r: 4, g: 4, b: 4, a: 1}
+    - _Color_Stars: {r: 11.984313, g: 11.984313, b: 11.984313, a: 1}
+    - _Min_Light_Color: {r: 0.017249998, g: 0.028749995, b: 0.046, a: 1}
     - _Moon_Color: {r: 1.3195078, g: 1.187557, b: 1.0556062, a: 1}
+    - _Night_Color: {r: 0.01, g: 0.02, b: 0.03, a: 1}
     - _Stars_Colors: {r: 2.9960785, g: 2.9960785, b: 2.9960785, a: 1}
     - _Sun_Direction: {r: 0, g: 0.020942396, b: 0.99978065, a: 0}
     - _Sun_Position: {r: 0.28058124, g: 0.18823838, b: 0.941191, a: 0}
