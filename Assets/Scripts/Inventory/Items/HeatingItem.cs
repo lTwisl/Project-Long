@@ -5,10 +5,9 @@ public class HeatingItem : InventoryItem
 {
     public enum HeatingType
     {
-        Fuel = 0,
-        Igniter = 1,
-        Spiral = 2,
-        Antifreeze = 3,
+        AlcoholFuel = 0,
+        HeatingSpiral = 1,
+        ThermalIsolPaste = 2,
     }
 
     [field: Header("Additional Properties")]
@@ -19,6 +18,7 @@ public class HeatingItem : InventoryItem
     private void OnEnable()
     {
         Category = Category.Heating;
+        DegradeType = DegradationType.Used;
     }
 
     public override string ToString()
@@ -27,9 +27,3 @@ public class HeatingItem : InventoryItem
             $"ChanceHeating: {ChanceHeating}";
     }
 }
-
-
-
-
-
-

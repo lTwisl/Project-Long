@@ -127,23 +127,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6caf9051984cfcf48a766f85aa5c4543, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _bodySlots:
-  - {fileID: 577141103026810119}
-  - {fileID: 5224137437653243974}
-  - {fileID: 2940191648282012027}
-  - {fileID: 5723536704850741380}
-  - {fileID: 2621803531097741412}
-  - {fileID: 339754818187243910}
-  - {fileID: 2778746184340603433}
-  - {fileID: 890823964478838248}
-  - {fileID: 4039007186220135049}
-  - {fileID: 2291006341010292909}
-  - {fileID: 4292962290647645245}
-  - {fileID: 237103731585527411}
-  - {fileID: 4671174825351073659}
-  - {fileID: 8292729311116947633}
-  - {fileID: 7778150951610007503}
-  - {fileID: 5256759717531624962}
   _uiSelectClothes: {fileID: 0}
   _text: {fileID: 2010216810923740351}
   _uiSlotCache:
@@ -162,7 +145,7 @@ MonoBehaviour:
       - {fileID: 339754818187243910}
     - Key: 3
       Value:
-      - {fileID: 339754818187243910}
+      - {fileID: 2778746184340603433}
     - Key: 4
       Value:
       - {fileID: 890823964478838248}
@@ -1568,7 +1551,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5571354618643622187, guid: 7a636d0c14edfda4c9a7c8076948c607, type: 3}
       propertyPath: m_Name
-      value: ClothesSlot_6
+      value: ClothesSlot_5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2045,7 +2028,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5571354618643622187, guid: 7a636d0c14edfda4c9a7c8076948c607, type: 3}
       propertyPath: m_Name
-      value: ClothesSlot_5
+      value: ClothesSlot_6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

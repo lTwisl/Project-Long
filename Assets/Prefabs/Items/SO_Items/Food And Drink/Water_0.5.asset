@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39f62fc6dd942274291135a3b8afe6a0, type: 3}
+  m_Name: Water_0.5
+  m_EditorClassIdentifier: 
+  <Category>k__BackingField: 3
+  <UseType>k__BackingField: 1
+  <UseStrategy>k__BackingField: {fileID: 11400000, guid: 00377d1a194340949b38a77e4180c5ab, type: 2}
+  <Actions>k__BackingField: 0
+  <Name>k__BackingField: "\u0411\u0443\u0442\u044B\u043B\u043A\u0430 \u0432\u043E\u0434\u044B
+    0.5\u043B"
+  <Description>k__BackingField: "\u0427\u0438\u0441\u0442\u0430\u044F \u043C\u0430\u043B\u0435\u043D\u044C\u043A\u0430\u044F
+    \u0431\u0443\u0442\u044B\u043B\u043A\u0430 \u0432\u043E\u0434\u044B"
+  <Icon>k__BackingField: {fileID: 21300000, guid: 8bc299ec55cdeb44993e3ee931d2670b, type: 3}
+  <ItemPrefab>k__BackingField: {fileID: 0}
+  <Weight>k__BackingField: 0.5
+  <IsStackable>k__BackingField: 0
+  <MeasuredAsInteger>k__BackingField: 0
+  <MaxCapacity>k__BackingField: 1
+  <UnitMeasurement>k__BackingField: "\u041B."
+  <CostOfUse>k__BackingField: 0.5
+  <DegradeType>k__BackingField: 0
+  <DegradationValue>k__BackingField: 1
+  <ReceivedItemsAfterDeconstruct>k__BackingField: []
+  <StatusParameterImpacts>k__BackingField:
+  - ParameterType: 3
+    Value: 500
+  <GivesBonus>k__BackingField: []

@@ -192,6 +192,7 @@ public class InventoryItemEditor : Editor
         GUI.enabled = typeName switch
         {
             nameof(ToolItem) => false,
+            nameof(HeatingItem) => false,
             _ => true,
         };
 

@@ -1546,6 +1546,24 @@ MonoBehaviour:
     - <Item>k__BackingField: {fileID: 11400000, guid: 840025672c744a44e962de2b9ba48977, type: 2}
       _capacity: 1
       _condition: 100
+    - <Item>k__BackingField: {fileID: 11400000, guid: c7a4b8175b5b10c43a581f3e740299b5, type: 2}
+      _capacity: 1
+      _condition: 100
+    - <Item>k__BackingField: {fileID: 11400000, guid: ca47c3a9dc3e75348956bc895adbfd60, type: 2}
+      _capacity: 1
+      _condition: 100
+    - <Item>k__BackingField: {fileID: 11400000, guid: de1179026cc1e1d4ca4711119571598f, type: 2}
+      _capacity: 1
+      _condition: 100
+    - <Item>k__BackingField: {fileID: 11400000, guid: bf1bbef48343bbf4085eac155e6a390f, type: 2}
+      _capacity: 1
+      _condition: 100
+    - <Item>k__BackingField: {fileID: 11400000, guid: 4d556aee08895d64db3efef6a76f71ae, type: 2}
+      _capacity: 1
+      _condition: 100
+    - <Item>k__BackingField: {fileID: 11400000, guid: 7ed95cd52f525fb4d8708f018dbe58e2, type: 2}
+      _capacity: 5
+      _condition: 100
     <Weight>k__BackingField: 0
   <InteractionType>k__BackingField: 1
 --- !u!4 &1428558444
