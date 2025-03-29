@@ -4,9 +4,9 @@ public enum ClothesType
 {
     Hat,
     Outerwear,
-    Undergarments,
+    Undershirt,
     Gloves,
-    Trousers,
+    Pants,
     Underpants,
     Socks,
     Boots,
@@ -16,16 +16,18 @@ public enum ClothesType
 [CreateAssetMenu(fileName = "ClothingItem", menuName = "Items/Clothing")]
 public class ClothingItem : InventoryItem
 {
-    [field: Header("Additional Properties")]
+    [field: Header("- - Additional Properties - -")]
     [field: SerializeField] public ClothesType ClothingType { get; private set; }
-    [field: SerializeField] public float WindProtection { get; private set; }
-    [field: SerializeField] public float WaterProtection { get; private set; }
-    [field: SerializeField] public float TemperatureBonus { get; private set; }
-    [field: SerializeField] public float ToxicityProtection { get; private set; }
+    [field: SerializeField, Min(0)] public float TemperatureBonus { get; private set; }
+    [field: SerializeField, Range(0, 100)] public float WaterProtection { get; private set; }
+    [field: SerializeField, Range(0, 100)] public float WindProtection { get; private set; }
+    [field: SerializeField, Range(0, 100)] public float ToxicityProtection { get; private set; }
+    [field: SerializeField, Range(0, 100)] public float PhysicProtection { get; private set; }
+    [field: SerializeField, Range(-100, 100)] public float OffsetStamina { get; private set; }
     [field: SerializeField, Range(0f, 1f)] public float FrictionBonus { get; private set; }
-    [field: SerializeField] public float OffsetStamina { get; private set; }
-    [field: SerializeField] public float DryingRatio { get; private set; }
-    [field: SerializeField] public float WaterAbsorptionRatio { get; private set; }
+    [field: Space(8)]
+    [field: SerializeField, Min(0)] public float DryingRate { get; private set; }
+    [field: SerializeField, Range(0, 5)] public float WaterAbsorptionRatio { get; private set; }
 
     private void OnEnable()
     {

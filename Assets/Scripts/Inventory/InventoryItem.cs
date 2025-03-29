@@ -63,7 +63,7 @@ public abstract class InventoryItem : ScriptableObject
 
 
     [field: Tooltip("Описание предмета")]
-    [field: SerializeField, Multiline] public string Description { get; private set; } = string.Empty;
+    [field: SerializeField, TextArea(3, 150)] public string Description { get; private set; } = string.Empty;
 
 
     [field: Tooltip("Иконка предмета")]

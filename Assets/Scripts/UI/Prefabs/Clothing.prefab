@@ -458,6 +458,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5386865547064305003, guid: 7a636d0c14edfda4c9a7c8076948c607, type: 3}
+      propertyPath: IndexLayer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5386865547064305003, guid: 7a636d0c14edfda4c9a7c8076948c607, type: 3}
       propertyPath: ClothesType
       value: 7
       objectReference: {fileID: 0}

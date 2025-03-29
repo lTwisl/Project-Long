@@ -21,9 +21,9 @@ public class ClothingSystem
     {
         new ClothingSlot { ClothesType = ClothesType.Hat, MaxLayers = 2 },
         new ClothingSlot { ClothesType = ClothesType.Outerwear, MaxLayers = 3 },
-        new ClothingSlot { ClothesType = ClothesType.Undergarments, MaxLayers = 2 },
+        new ClothingSlot { ClothesType = ClothesType.Undershirt, MaxLayers = 2 },
         new ClothingSlot { ClothesType = ClothesType.Gloves, MaxLayers = 1 },
-        new ClothingSlot { ClothesType = ClothesType.Trousers, MaxLayers = 2 },
+        new ClothingSlot { ClothesType = ClothesType.Pants, MaxLayers = 2 },
         new ClothingSlot { ClothesType = ClothesType.Underpants, MaxLayers = 2 },
         new ClothingSlot { ClothesType = ClothesType.Socks, MaxLayers = 2 },
         new ClothingSlot { ClothesType = ClothesType.Boots, MaxLayers = 1 },
@@ -121,7 +121,7 @@ public class ClothingSystem
                 ClothingItem clothesItem = slot.Item as ClothingItem;
 
                 float wetChange = _world.Weather.Wetness * (100f - clothesItem.WaterProtection * slot.Condition) / 100f;
-                wetChange -= clothesItem.DryingRatio * normTemp;
+                wetChange -= clothesItem.DryingRate * normTemp;
 
                 slot.Wet = Mathf.Min(slot.Wet + wetChange, 100f) * deltaTime;
 
