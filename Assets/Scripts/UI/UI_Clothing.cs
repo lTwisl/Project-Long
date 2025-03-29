@@ -1,16 +1,16 @@
+using AYellowpaper.SerializedCollections;
 using System.Collections.Generic;
-using System.Linq;
 using TMPro;
 using UnityEngine;
 using Zenject;
 
 public class UI_Clothing : MonoBehaviour
 {
-    [SerializeField] private List<UI_ClothesSlot> _bodySlots;
     [SerializeField] private UI_SelectClothing _uiSelectClothes;
     [SerializeField] private TMP_Text _text;
 
-    private Dictionary<ClothesType, List<UI_ClothesSlot>> _uiSlotCache = new Dictionary<ClothesType, List<UI_ClothesSlot>>();
+    [SerializeField]
+    private SerializedDictionary<ClothesType, List<UI_ClothesSlot>> _uiSlotCache = new SerializedDictionary<ClothesType, List<UI_ClothesSlot>>();
 
     private ClothingSystem _clothesSystem;
 
@@ -22,19 +22,12 @@ public class UI_Clothing : MonoBehaviour
 
     private void Awake()
     {
-        _bodySlots.ForEach(slot => slot.Init(null, _uiSelectClothes));
-
-        var groupedSlots = _bodySlots
-            .GroupBy(slot => slot.ClothesType)
-            .Select(group => new 
-            {
-                Type = group.Key,
-                Slots = group.OrderBy(slot => slot.IndexLayer).ToList()
-            });
-
-        foreach (var group in groupedSlots)
+        foreach (var group in _uiSlotCache.Values)
         {
-            _uiSlotCache[group.Type] = group.Slots;
+            foreach (var slot in group)
+            {
+                slot.Init(null, _uiSelectClothes);
+            }
         }
     }
 

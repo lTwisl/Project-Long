@@ -146,6 +146,42 @@ MonoBehaviour:
   - {fileID: 5256759717531624962}
   _uiSelectClothes: {fileID: 0}
   _text: {fileID: 2010216810923740351}
+  _uiSlotCache:
+    _serializedList:
+    - Key: 0
+      Value:
+      - {fileID: 577141103026810119}
+      - {fileID: 5224137437653243974}
+    - Key: 1
+      Value:
+      - {fileID: 2940191648282012027}
+      - {fileID: 5723536704850741380}
+    - Key: 2
+      Value:
+      - {fileID: 2621803531097741412}
+      - {fileID: 339754818187243910}
+    - Key: 3
+      Value:
+      - {fileID: 339754818187243910}
+    - Key: 4
+      Value:
+      - {fileID: 890823964478838248}
+      - {fileID: 4039007186220135049}
+    - Key: 5
+      Value:
+      - {fileID: 2291006341010292909}
+      - {fileID: 4292962290647645245}
+    - Key: 6
+      Value:
+      - {fileID: 237103731585527411}
+      - {fileID: 4671174825351073659}
+    - Key: 7
+      Value:
+      - {fileID: 5256759717531624962}
+    - Key: 8
+      Value:
+      - {fileID: 8292729311116947633}
+      - {fileID: 7778150951610007503}
 --- !u!1 &5998260418175199235
 GameObject:
   m_ObjectHideFlags: 0
@@ -323,9 +359,9 @@ RectTransform:
   - {fileID: 7971272873793981060}
   - {fileID: 6216744927151429834}
   - {fileID: 1576071602218334658}
+  - {fileID: 2161674049003950267}
   - {fileID: 2745433648640149000}
   - {fileID: 4538932502820358518}
-  - {fileID: 2161674049003950267}
   m_Father: {fileID: 387963899786284404}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
