@@ -65,7 +65,14 @@ public class GameTimeEditor : Editor
             if (_initHoursProp.intValue < 0)
             {
                 _initDaysProp.intValue -= 1;
-                _initHoursProp.intValue = 0;
+
+                if (_initDaysProp.intValue < 0)
+                {
+                    _initDaysProp.intValue = 0;
+                    _initHoursProp.intValue = 0;
+                }
+                else
+                    _initHoursProp.intValue = 23;
             }
             else if (_initHoursProp.intValue > 23)
             {
@@ -90,7 +97,14 @@ public class GameTimeEditor : Editor
             if (_initMinutesProp.intValue < 0)
             {
                 _initHoursProp.intValue -= 1;
-                _initMinutesProp.intValue = 0;
+
+                if (_initHoursProp.intValue < 0)
+                {
+                    _initHoursProp.intValue = 0;
+                    _initMinutesProp.intValue = 0;
+                }
+                else
+                    _initMinutesProp.intValue = 59;
             }
             else if (_initMinutesProp.intValue > 59)
             {
