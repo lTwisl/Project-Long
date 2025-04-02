@@ -33,14 +33,7 @@ MonoBehaviour:
   <CostOfUse>k__BackingField: 1
   <DegradeType>k__BackingField: 2
   <DegradationValue>k__BackingField: 0.001
-  <ReceivedItemsAfterDeconstruct>k__BackingField:
-  - {fileID: 11400000, guid: 4840668f728669744b3cebe30091faf8, type: 2}
-  - {fileID: 11400000, guid: 4840668f728669744b3cebe30091faf8, type: 2}
-  - {fileID: 11400000, guid: 4840668f728669744b3cebe30091faf8, type: 2}
-  - {fileID: 11400000, guid: 4840668f728669744b3cebe30091faf8, type: 2}
-  - {fileID: 11400000, guid: 4840668f728669744b3cebe30091faf8, type: 2}
-  - {fileID: 11400000, guid: 4840668f728669744b3cebe30091faf8, type: 2}
-  - {fileID: 11400000, guid: 4840668f728669744b3cebe30091faf8, type: 2}
+  <ReceivedItemsAfterDeconstruct>k__BackingField: []
   <ClothingType>k__BackingField: 3
   <TemperatureBonus>k__BackingField: 0.5
   <WaterProtection>k__BackingField: 65

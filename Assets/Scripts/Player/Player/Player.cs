@@ -19,7 +19,6 @@ public class Player : MonoBehaviour
     public PlayerInputs PlayerInputs { get; private set; }
     public Camera MainCamera { get; private set; }
 
-
     private void Awake()
     {
         Inventory.Init();
@@ -124,5 +123,8 @@ public class Player : MonoBehaviour
     public void UseItem(InventorySlot slot)
     {
         slot.UseItem();
+
+        if (slot.IsEmpty)
+            Inventory.RemoveItem(slot);
     }
 }

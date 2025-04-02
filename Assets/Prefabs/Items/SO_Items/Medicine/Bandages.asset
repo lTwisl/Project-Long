@@ -31,9 +31,7 @@ MonoBehaviour:
   <CostOfUse>k__BackingField: 1
   <DegradeType>k__BackingField: 0
   <DegradationValue>k__BackingField: 1
-  <ReceivedItemsAfterDeconstruct>k__BackingField:
-  - {fileID: 11400000, guid: 4840668f728669744b3cebe30091faf8, type: 2}
-  - {fileID: 11400000, guid: 4840668f728669744b3cebe30091faf8, type: 2}
+  <ReceivedItemsAfterDeconstruct>k__BackingField: []
   <StatusParameterImpacts>k__BackingField:
   - ParameterType: 0
     Value: 10

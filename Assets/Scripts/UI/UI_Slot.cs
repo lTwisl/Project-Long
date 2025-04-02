@@ -44,8 +44,6 @@ public class UI_Slot : MonoBehaviour, IPointerDownHandler
 
     public void UpdateView()
     {
-
-
         _icon.sprite = Slot.Item.Icon;
         _capacity.text = Slot.Capacity.ToString("0.##") + $" {Slot.Item.UnitMeasurement}";
         _condition.text = ((int)Slot.Condition).ToString() + " %";

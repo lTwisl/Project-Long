@@ -1,3 +1,4 @@
+using EditorAttributes;
 using UnityEditor;
 using UnityEngine;
 using Zenject;
@@ -8,8 +9,8 @@ public class HeatZone : MonoBehaviour
     [Inject] private World _world;
 
     public float Temp { get; private set; }
-    public float MaxRadius { get; private set; }
-    public float MinRadius { get; private set; }
+    [field: SerializeField] public float MaxRadius { get; private set; }
+    [field: SerializeField] public float MinRadius { get; private set; }
 
     private SphereCollider _sphereCollider;
 

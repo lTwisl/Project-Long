@@ -15,7 +15,6 @@ MonoBehaviour:
   <Category>k__BackingField: 4
   <UseType>k__BackingField: 1
   <UseStrategy>k__BackingField: {fileID: 11400000, guid: 00377d1a194340949b38a77e4180c5ab, type: 2}
-  <Actions>k__BackingField: 1
   <Name>k__BackingField: InventoryItem
   <Description>k__BackingField: 
   <Icon>k__BackingField: {fileID: 0}
@@ -24,8 +23,13 @@ MonoBehaviour:
   <IsStackable>k__BackingField: 0
   <MeasuredAsInteger>k__BackingField: 1
   <MaxCapacity>k__BackingField: 1
-  <UnitMeasurement>k__BackingField: 
+  <UnitMeasurement>k__BackingField: 0
   <CostOfUse>k__BackingField: 1
   <DegradeType>k__BackingField: 1
   <DegradationValue>k__BackingField: 1
-  <ReceivedItemsAfterDeconstruct>k__BackingField: []
+  <Actions>k__BackingField: 1
+  <DeconstructNead>k__BackingField: []
+  <RepairNead>k__BackingField:
+    NeadTool: {fileID: 0}
+    NeadMaterials: []
+  <ChargeNead>k__BackingField: {fileID: 0}

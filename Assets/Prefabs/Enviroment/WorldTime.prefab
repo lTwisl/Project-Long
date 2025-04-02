@@ -48,7 +48,7 @@ MonoBehaviour:
   _IsTimeSpeedUp: 0
   <IsTimeStopped>k__BackingField: 0
   <TimeScaleGame>k__BackingField: 12
-  <TimeScaleSpeedUp>k__BackingField: 2000
+  <TimeScaleSpeedUp>k__BackingField: 96
 --- !u!114 &9069172265152485664
 MonoBehaviour:
   m_ObjectHideFlags: 0

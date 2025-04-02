@@ -15,7 +15,6 @@ MonoBehaviour:
   <Category>k__BackingField: 5
   <UseType>k__BackingField: 0
   <UseStrategy>k__BackingField: {fileID: 0}
-  <Actions>k__BackingField: 16
   <Name>k__BackingField: Stick
   <Description>k__BackingField: 
   <Icon>k__BackingField: {fileID: 0}
@@ -24,8 +23,13 @@ MonoBehaviour:
   <IsStackable>k__BackingField: 1
   <MeasuredAsInteger>k__BackingField: 0
   <MaxCapacity>k__BackingField: 10
-  <UnitMeasurement>k__BackingField: 
+  <UnitMeasurement>k__BackingField: 0
   <CostOfUse>k__BackingField: 1
   <DegradeType>k__BackingField: 0
   <DegradationValue>k__BackingField: 1
-  <ReceivedItemsAfterDeconstruct>k__BackingField: []
+  <Actions>k__BackingField: 8
+  <DeconstructNead>k__BackingField: []
+  <RepairNead>k__BackingField:
+    NeadTool: {fileID: 0}
+    NeadMaterials: []
+  <ChargeNead>k__BackingField: {fileID: 0}

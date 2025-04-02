@@ -12,8 +12,9 @@ public class HeatingItem : InventoryItem
 
     [field: Header("Additional Properties")]
     [field: SerializeField] public HeatingType TypeHeating { get; private set; }
-    [field: SerializeField] public float Value {  get; private set; }
+    [field: SerializeField] public float Value { get; private set; }
     [field: SerializeField, Range(0, 100)] public float ChanceHeating { get; private set; }
+
 
     private void OnEnable()
     {
@@ -23,7 +24,7 @@ public class HeatingItem : InventoryItem
 
     public override string ToString()
     {
-         return base.ToString() + $"Type: {TypeHeating} | Temp: {Value}\n" +
-            $"ChanceHeating: {ChanceHeating}";
+        return base.ToString() + $"Type: {TypeHeating} | Temp: {Value}\n" +
+           $"ChanceHeating: {ChanceHeating}";
     }
 }

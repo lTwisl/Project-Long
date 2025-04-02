@@ -14,20 +14,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <Category>k__BackingField: 1
   <UseType>k__BackingField: 1
-  <UseStrategy>k__BackingField: {fileID: 11400000, guid: 00377d1a194340949b38a77e4180c5ab, type: 2}
-  <Actions>k__BackingField: 0
+  <UseStrategy>k__BackingField: {fileID: 11400000, guid: 80c95c19e30a80d479fc161997d4b4c3, type: 2}
   <Name>k__BackingField: InventoryItem
   <Description>k__BackingField: 
-  <Icon>k__BackingField: {fileID: 0}
+  <Icon>k__BackingField: {fileID: 21300000, guid: 411c95b05f8786343b4cca4ee9940c38, type: 3}
   <ItemPrefab>k__BackingField: {fileID: 0}
-  <Weight>k__BackingField: 1
+  <Weight>k__BackingField: 1.21
   <IsStackable>k__BackingField: 0
   <MeasuredAsInteger>k__BackingField: 0
   <MaxCapacity>k__BackingField: 1
-  <UnitMeasurement>k__BackingField: 
-  <DegradeType>k__BackingField: 0
-  <DegradationValue>k__BackingField: 1
-  <ReceivedItemsAfterDeconstruct>k__BackingField: []
-  <PairsParamterAndValue>k__BackingField: []
+  <UnitMeasurement>k__BackingField: 0
+  <CostOfUse>k__BackingField: 1
+  <DegradeType>k__BackingField: 2
+  <DegradationValue>k__BackingField: 0.001
+  <Actions>k__BackingField: 1
+  <DeconstructNead>k__BackingField: []
+  <RepairNead>k__BackingField:
+    NeadTool: {fileID: 0}
+    NeadMaterials: []
+  <ChargeNead>k__BackingField: {fileID: 0}
+  <StatusParameterImpacts>k__BackingField: []
   <HealsDisease>k__BackingField: []
   <GivesBonus>k__BackingField: []

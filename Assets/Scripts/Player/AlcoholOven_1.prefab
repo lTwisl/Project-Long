@@ -118,6 +118,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2020029291441665465}
   - component: {fileID: 5285284975586297992}
+  - component: {fileID: 9157051314031879154}
   - component: {fileID: 1943411254000087718}
   m_Layer: 0
   m_Name: AlcoholOven_1
@@ -135,7 +136,7 @@ Transform:
   m_GameObject: {fileID: 7129585543832503827}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 12.68, y: 0, z: 14.53}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -160,6 +161,20 @@ MonoBehaviour:
     _condition: 20.7
   <MaxRadius>k__BackingField: 5
   <MinRadius>k__BackingField: 1.5
+--- !u!114 &9157051314031879154
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7129585543832503827}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68b3a3a041ab18e44a525221a0628100, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <MaxRadius>k__BackingField: 3.06
+  <MinRadius>k__BackingField: 0.65
 --- !u!135 &1943411254000087718
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -179,5 +194,5 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 5
+  m_Radius: 3.06
   m_Center: {x: 0, y: 0.5, z: 0}

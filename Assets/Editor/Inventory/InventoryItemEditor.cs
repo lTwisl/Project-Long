@@ -2,7 +2,9 @@ using System;
 using System.Linq;
 using System.Reflection;
 using UnityEditor;
+using UnityEditor.UIElements;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 [CustomEditor(typeof(InventoryItem), true)]
 public class InventoryItemEditor : Editor
@@ -27,7 +29,12 @@ public class InventoryItemEditor : Editor
     protected SerializedProperty _costOfUseProp;
     protected SerializedProperty _degradeTypeProp;
     protected SerializedProperty _degradationValueProp;
-    protected SerializedProperty _receivedItemsAfterDeconstructProp;
+    protected SerializedProperty _lifeTimeProp;
+    protected SerializedProperty _deconstructNeadProp;
+    protected SerializedProperty _repairNeadProp;
+    protected SerializedProperty _chargeNeadProp;
+
+    VisualElement root;
 
     protected virtual void OnEnable()
     {
@@ -47,54 +54,48 @@ public class InventoryItemEditor : Editor
         _costOfUseProp = serializedObject.FindProperty("<CostOfUse>k__BackingField");
         _degradeTypeProp = serializedObject.FindProperty("<DegradeType>k__BackingField");
         _degradationValueProp = serializedObject.FindProperty("<DegradationValue>k__BackingField");
-        _receivedItemsAfterDeconstructProp = serializedObject.FindProperty("<ReceivedItemsAfterDeconstruct>k__BackingField");
+        _deconstructNeadProp = serializedObject.FindProperty("<DeconstructNead>k__BackingField");
+        _repairNeadProp = serializedObject.FindProperty("<RepairNead>k__BackingField");
+        _chargeNeadProp = serializedObject.FindProperty("<ChargeNead>k__BackingField");
     }
 
-    public override void OnInspectorGUI()
+    public override VisualElement CreateInspectorGUI()
     {
-        serializedObject.Update();
+        root = new VisualElement();
 
         string typeName = serializedObject.targetObject.GetType().Name;
 
         DrawCategoryProp(typeName);
+
         DrawUseTypeProp(typeName);
 
         DrawUseStrategyProp();
 
-        EditorGUILayout.PropertyField(_actionsProp);
-        EditorGUILayout.PropertyField(_nameProp);
-        EditorGUILayout.PropertyField(_descriptionProp);
 
-        DrawIconPreview();
 
-        EditorGUILayout.PropertyField(_objectItemProp);
-        EditorGUILayout.PropertyField(_weightProp);
+        root.Add(new PropertyField(_nameProp));
 
-        EditorGUILayout.Space(10);
+        root.Add(new PropertyField(_descriptionProp));
 
-        DrawIsStackableProp(typeName);
-        DrawMeasuredAsIntegerProp(typeName);
-        DrawMaxCapacityProp(typeName);
+        root.Add(new PropertyField(_iconProp));
+
+        root.Add(new PropertyField(_objectItemProp));
+
+        root.Add(new PropertyField(_weightProp));
 
         DrawUnitMeasurement(typeName);
 
+        DrawIsStackableProp(typeName);
+
+        DrawMeasuredAsIntegerProp(typeName);
+
+        DrawMaxCapacityProp(typeName);
+
         DrawCostOfUseProp();
 
-        EditorGUILayout.Space(10);
+        DrawDegradeTypeAndValue(typeName);
 
-        DrawDegradeType(typeName);
-
-        EditorGUI.indentLevel++;
-        if (_degradeTypeProp.enumValueIndex == 1)
-            EditorGUILayout.PropertyField(_degradationValueProp, new GUIContent("Degradation Used"));
-        else if (_degradeTypeProp.enumValueIndex == 2)
-            EditorGUILayout.PropertyField(_degradationValueProp, new GUIContent("Degradation Rate"));
-        EditorGUI.indentLevel--;
-
-        if (((ActionType)_actionsProp.enumValueFlag).HasFlag(ActionType.Deconstruct))
-            EditorGUILayout.PropertyField(_receivedItemsAfterDeconstructProp);
-
-        EditorGUILayout.Space(20);
+        DrawActionsAndValues();
 
         var fieldIterator = serializedObject.GetIterator();
         var last = typeof(InventoryItem).GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public).Last();
@@ -109,71 +110,38 @@ public class InventoryItemEditor : Editor
         // Отрисовать все поля дочернего класса
         while (fieldIterator.NextVisible(false))
         {
-            EditorGUILayout.PropertyField(fieldIterator);
+            root.Add(new PropertyField(fieldIterator));
         }
 
-        serializedObject.ApplyModifiedProperties();
+        return root;
     }
 
-    private void DrawCostOfUseProp()
+    private void DrawUseStrategyProp()
     {
-        if (_measuredAsIntegerProp.boolValue)
-        {
-            GUI.enabled = false;
-            _costOfUseProp.floatValue = 1;
-        }
+        var field = new PropertyField(_useStrategyProp);
 
-        EditorGUILayout.PropertyField(_costOfUseProp);
+        field.RegisterValueChangeCallback(value => OnUseTypeChanged((MethodOfUse)_useTypeProp.enumValueIndex));
 
-        GUI.enabled = true;
-    }
-
-    private void DrawIconPreview()
-    {
-        EditorGUILayout.BeginHorizontal();
-
-        // Лейбл "Icon"
-        EditorGUILayout.PrefixLabel("Icon");
-
-        // Получаем текущий спрайт
-        Sprite currentSprite = _iconProp.objectReferenceValue as Sprite;
-
-        // Отображаем ObjectField с превью
-        Sprite newSprite = (Sprite)EditorGUILayout.ObjectField(
-            currentSprite,
-            typeof(Sprite),
-            false, // Не разрешаем объекты из сцены
-            GUILayout.Width(256), // Ширина превью
-            GUILayout.Height(256) // Высота превью
-        );
-
-        // Обновляем значение, если спрайт изменился
-        if (newSprite != currentSprite)
-        {
-            _iconProp.objectReferenceValue = newSprite;
-        }
-
-        EditorGUILayout.EndHorizontal();
+        root.Add(field);
     }
 
     private void DrawCategoryProp(string typeName)
     {
-        GUI.enabled = typeName switch
+        bool isEnable = typeName switch
         {
             nameof(ClothingItem) => false,
             nameof(MedicineItem) => false,
             nameof(HeatingItem) => false,
             _ => true,
         };
-
-        EditorGUILayout.PropertyField(_categoryProp);
-
-        GUI.enabled = true;
+        var field = new PropertyField(_categoryProp);
+        field.SetEnabled(isEnable);
+        root.Add(field);
     }
 
     private void DrawUseTypeProp(string typeName)
     {
-        GUI.enabled = typeName switch
+        bool isEnable = typeName switch
         {
             nameof(ConsumablesItem) => false,
             nameof(ClothingItem) => false,
@@ -182,134 +150,222 @@ public class InventoryItemEditor : Editor
             _ => true,
         };
 
-        EditorGUILayout.PropertyField(_useTypeProp);
+        var field = new PropertyField(_useTypeProp);
+        field.RegisterValueChangeCallback(value => OnUseTypeChanged((MethodOfUse)value.changedProperty.enumValueIndex));
 
-        GUI.enabled = true;
+        field.SetEnabled(isEnable);
+        root.Add(field);
     }
 
-    private void DrawDegradeType(string typeName)
+    private void OnUseTypeChanged(MethodOfUse methodOfUse)
     {
-        GUI.enabled = typeName switch
+        // Устанавливаем соответствующую стратегию
+        switch (methodOfUse)
+        {
+            case MethodOfUse.OnSelf:
+                SetUseStrategy(typeof(UseOnSelfStrategy),
+                    _equipHandStrategy);
+                break;
+            case MethodOfUse.EquipHand:
+                SetUseStrategy(typeof(EquipHandStrategy),
+                    _useOnSelfStrategy);
+                break;
+            case MethodOfUse.Wear:
+                SetUseStrategy(typeof(WearStrategy),
+                    _wearStrategy);
+                break;
+            default:
+                _useStrategyProp.objectReferenceValue = null;
+                serializedObject.ApplyModifiedProperties();
+                break;
+        }
+    }
+
+    private void SetUseStrategy(Type requiredType, UnityEngine.Object defaultStrategy)
+    {
+        if (_useStrategyProp.objectReferenceValue == null)
+        {
+            _useStrategyProp.objectReferenceValue = defaultStrategy;
+        }
+        else if (!_useStrategyProp.objectReferenceValue.GetType().IsSubclassOf(requiredType))
+        {
+            _useStrategyProp.objectReferenceValue = defaultStrategy;
+        }
+
+        serializedObject.ApplyModifiedProperties();
+    }
+
+    private void DrawDegradeTypeAndValue(string typeName)
+    {
+        bool isEnable = typeName switch
         {
             nameof(ToolItem) => false,
             nameof(HeatingItem) => false,
             _ => true,
         };
 
-        EditorGUILayout.PropertyField(_degradeTypeProp);
+        var degradeTypeField = new PropertyField(_degradeTypeProp);
+        degradeTypeField.SetEnabled(isEnable);
+        root.Add(degradeTypeField);
 
-        GUI.enabled = true;
+        var degradeValueField = new PropertyField(_degradationValueProp);
+        //degradeValueField.style.left = 20;
+        root.Add(degradeValueField);
+
+        UpdateDegradationValueField((DegradationType)_degradeTypeProp.enumValueIndex);
+        degradeTypeField.RegisterValueChangeCallback(value => UpdateDegradationValueField((DegradationType)value.changedProperty.enumValueIndex));
+
+        void UpdateDegradationValueField(DegradationType type)
+        {
+            switch (type)
+            {
+                case DegradationType.None:
+                    degradeValueField.style.display = DisplayStyle.None;
+                    break;
+                case DegradationType.Used:
+                    degradeValueField.label = "Degradation Used";
+                    degradeValueField.style.display = DisplayStyle.Flex;
+                    break;
+                case DegradationType.Rate:
+                    degradeValueField.label = "Degradation Rate";
+                    degradeValueField.style.display = DisplayStyle.Flex;
+                    break;
+            }
+        }
     }
 
     private void DrawIsStackableProp(string typeName)
     {
-        GUI.enabled = typeName switch
+        bool isEnable = typeName switch
         {
             nameof(ToolItem) => false,
             nameof(ClothingItem) => false,
             _ => true,
         };
 
-        EditorGUILayout.PropertyField(_isStackableProp);
-
-        GUI.enabled = true;
+        var field = new PropertyField(_isStackableProp);
+        field.SetEnabled(isEnable);
+        root.Add(field);
     }
 
     private void DrawMeasuredAsIntegerProp(string typeName)
     {
-        GUI.enabled = typeName switch
+        bool isEnable = typeName switch
         {
             nameof(ToolItem) => false,
             nameof(ClothingItem) => false,
             _ => true,
         };
 
-        EditorGUILayout.PropertyField(_measuredAsIntegerProp);
-
-        GUI.enabled = true;
+        var measuredField = new PropertyField(_measuredAsIntegerProp);
+        measuredField.SetEnabled(isEnable);
+        root.Add(measuredField);
     }
 
     private void DrawMaxCapacityProp(string typeName)
     {
-        GUI.enabled = typeName switch
+        var container = new BindableElement();
+        container.SetEnabled(typeName != nameof(ToolItem) && typeName != nameof(ClothingItem));
+
+        // Создаем оба варианта полей
+        var integerField = new IntegerField("Max Capacity [integer]");
+        integerField.AddToClassList("unity-base-field__aligned");
+
+        var floatField = new PropertyField(_maxStackSizeProp, "Max Capacity [float]");
+
+        // Настраиваем начальное состояние
+        UpdateCapacityFields(_measuredAsIntegerProp.boolValue);
+
+        // Подписываемся на изменения MeasuredAsInteger
+        container.TrackPropertyValue(_measuredAsIntegerProp, prop =>
         {
-            nameof(ToolItem) => false,
-            nameof(ClothingItem) => false,
-            _ => true,
-        };
+            bool useInteger = prop.boolValue;
+            UpdateCapacityFields(useInteger);
 
-        if (_measuredAsIntegerProp.boolValue)
+            // Конвертация значений при переключении
+            if (useInteger)
+                _maxStackSizeProp.floatValue = Mathf.Max(1, (int)_maxStackSizeProp.floatValue);
+        });
+
+        // Обработчик изменения integer поля
+        integerField.RegisterValueChangedCallback(evt =>
         {
-            int currentValue = (int)_maxStackSizeProp.floatValue;
-            int newValue = EditorGUILayout.IntField("Max Capacity [integer]", currentValue);
-
-            newValue = Mathf.Max(1, newValue);
-
+            int newValue = Mathf.Max(1, evt.newValue);
             _maxStackSizeProp.floatValue = newValue;
-        }
-        else
-        {
-            EditorGUILayout.PropertyField(_maxStackSizeProp, new GUIContent("Max Capacity [float]"));
-        }
+            integerField.value = newValue;
+            _maxStackSizeProp.serializedObject.ApplyModifiedProperties();
+        });
 
-        GUI.enabled = true;
+        // Добавляем элементы
+        container.Add(integerField);
+        container.Add(floatField);
+
+        root.Add(container);
+
+        void UpdateCapacityFields(bool showInteger)
+        {
+            integerField.style.display = showInteger ? DisplayStyle.Flex : DisplayStyle.None;
+            floatField.style.display = showInteger ? DisplayStyle.None : DisplayStyle.Flex;
+
+            if (showInteger)
+                integerField.value = Mathf.Max(1, (int)_maxStackSizeProp.floatValue);
+        }
+    }
+
+    private void DrawCostOfUseProp()
+    {
+
+        var field = new PropertyField(_costOfUseProp);
+
+        UpdateCostOfUseFields(_measuredAsIntegerProp);
+        field.TrackPropertyValue(_measuredAsIntegerProp, UpdateCostOfUseFields);
+
+        root.Add(field);
+
+        void UpdateCostOfUseFields(SerializedProperty prop)
+        {
+            field.SetEnabled(!prop.boolValue);
+            _costOfUseProp.floatValue = 1;
+            serializedObject.ApplyModifiedProperties();
+        }
+    }
+
+    private void DrawActionsAndValues()
+    {
+        var actionsField = new PropertyField(_actionsProp);
+        root.Add(actionsField);
+
+        var deconstructNeadField = new PropertyField(_deconstructNeadProp);
+        root.Add(deconstructNeadField);
+
+        var repairNeadField = new PropertyField(_repairNeadProp);
+        root.Add(repairNeadField);
+
+        var chargeNeadField = new PropertyField(_chargeNeadProp);
+        root.Add(chargeNeadField);
+
+        UpdateValuesField((ActionType)_actionsProp.enumValueFlag);
+        actionsField.RegisterValueChangeCallback(value => { UpdateValuesField((ActionType)value.changedProperty.enumValueFlag); });
+
+        void UpdateValuesField(ActionType type)
+        {
+            deconstructNeadField.style.display = type.HasFlag(ActionType.Deconstruct) ? DisplayStyle.Flex : DisplayStyle.None;
+            repairNeadField.style.display = type.HasFlag(ActionType.Repair) ? DisplayStyle.Flex : DisplayStyle.None;
+            chargeNeadField.style.display = (type.HasFlag(ActionType.Charge) || type.HasFlag(ActionType.Discharge)) ? DisplayStyle.Flex : DisplayStyle.None;
+        }
     }
 
     private void DrawUnitMeasurement(string typeName)
     {
-        GUI.enabled = typeName switch
+        bool isEnable = typeName switch
         {
             nameof(ToolItem) => false,
             nameof(ClothingItem) => false,
             _ => true,
         };
 
-        EditorGUILayout.PropertyField(_unitMeasurementProp);
-
-        GUI.enabled = true;
-    }
-
-    private void DrawUseStrategyProp()
-    {
-        MethodOfUse methodOfUse = (MethodOfUse)_useTypeProp.enumValueIndex;
-        GUI.enabled = methodOfUse switch
-        {
-            MethodOfUse.None => false,
-            _ => true,
-        };
-
-        EditorGUILayout.PropertyField(_useStrategyProp);
-
-        GUI.enabled = true;
-
-        switch (methodOfUse)
-        {
-            case MethodOfUse.OnSelf:
-                SetUseStrategyIfNotSubclass(typeof(UseOnSelfStrategy), _useOnSelfStrategy);
-                break;
-            case MethodOfUse.EquipHand:
-                SetUseStrategyIfNotSubclass(typeof(EquipHandStrategy), _equipHandStrategy);
-                break;
-            case MethodOfUse.Wear:
-                SetUseStrategyIfNotSubclass(typeof(WearStrategy), _wearStrategy);
-                break;
-            default:
-                _useStrategyProp.objectReferenceValue = null;
-                break;
-        }
-    }
-
-    private void SetUseStrategyIfNotSubclass(Type typeStrategy, UseStrategy useStrategy)
-    {
-        if (_useStrategyProp.objectReferenceValue == null)
-        {
-            _useStrategyProp.objectReferenceValue = useStrategy;
-            return;
-        }
-
-        if (!_useStrategyProp.objectReferenceValue.GetType().IsSubclassOf(typeStrategy))
-        {
-            _useStrategyProp.objectReferenceValue = useStrategy;
-        }
+        var unitMeasurementField = new PropertyField(_unitMeasurementProp);
+        unitMeasurementField.SetEnabled(isEnable);
+        root.Add(unitMeasurementField);
     }
 }

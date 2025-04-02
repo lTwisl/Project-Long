@@ -13,7 +13,7 @@ OcclusionCullingSettings:
 --- !u!104 &2
 RenderSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 9
+  serializedVersion: 10
   m_Fog: 0
   m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   m_FogMode: 3
@@ -42,8 +42,8 @@ RenderSettings:
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 12
-  m_GIWorkflowMode: 1
+  serializedVersion: 13
+  m_BakeOnSceneLoad: 0
   m_GISettings:
     serializedVersion: 2
     m_BounceScale: 1
@@ -66,9 +66,6 @@ LightmapSettings:
     m_LightmapParameters: {fileID: 0}
     m_LightmapsBakeMode: 1
     m_TextureCompression: 1
-    m_FinalGather: 0
-    m_FinalGatherFiltering: 1
-    m_FinalGatherRayCount: 256
     m_ReflectionCompression: 2
     m_MixedBakeMode: 2
     m_BakeBackend: 1
@@ -222,7 +219,7 @@ MonoBehaviour:
   interfaceFilter: {fileID: 49585174}
 --- !u!95 &49585175
 Animator:
-  serializedVersion: 5
+  serializedVersion: 7
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -236,6 +233,7 @@ Animator:
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
@@ -717,9 +715,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d1ce0ec69ae593429f8798d7b1b0c3d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  states: 0
-  flags: 0
-  stringField: Value01
 --- !u!1 &532377688
 GameObject:
   m_ObjectHideFlags: 0
@@ -2400,7 +2395,7 @@ MonoBehaviour:
   stringField: FloatParam
 --- !u!95 &1663799430
 Animator:
-  serializedVersion: 5
+  serializedVersion: 7
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -2414,6 +2409,7 @@ Animator:
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
@@ -2466,7 +2462,7 @@ MonoBehaviour:
   intDropdown: 2
   stringDropdown: Value01
   floatDropdown: 0.5
-  vectorDropdown: {x: 0, y: 0, z: 1}
+  vectorDropdown: {x: 0, y: 0, z: 0}
 --- !u!1 &1697542415
 GameObject:
   m_ObjectHideFlags: 0

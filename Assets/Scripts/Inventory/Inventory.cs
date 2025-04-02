@@ -1,6 +1,8 @@
+using EditorAttributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
 
 [System.Serializable]
@@ -53,17 +55,15 @@ public class Inventory
     public event Action<InventorySlot> OnItemAdded;
     public event Action<InventorySlot> OnItemRemoved;
 
-    [SerializeField] public List<InventorySlot> _initSlots;
+
+    [SerializeField] public List<InventorySlot> InitSlots = new();
     public LinkedList<InventorySlot> Slots { get; private set; }
 
     [field: SerializeField, DisableEdit] public float Weight { get; private set; }
 
     public void Init()
     {
-        if (_initSlots != null)
-            Slots = new LinkedList<InventorySlot>(_initSlots);
-        else
-            Slots = new LinkedList<InventorySlot>();
+        Slots = new LinkedList<InventorySlot>(InitSlots);
         
         RecalculateWeight();
     }

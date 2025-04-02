@@ -16,11 +16,10 @@ public class ClothingSlot
 [Serializable]
 public class ClothingSystem
 {
-    [SerializeField]
     private List<ClothingSlot> _bodySlots = new List<ClothingSlot>
     {
         new ClothingSlot { ClothesType = ClothesType.Hat, MaxLayers = 2 },
-        new ClothingSlot { ClothesType = ClothesType.Outerwear, MaxLayers = 3 },
+        new ClothingSlot { ClothesType = ClothesType.Outerwear, MaxLayers = 2 },
         new ClothingSlot { ClothesType = ClothesType.Undershirt, MaxLayers = 2 },
         new ClothingSlot { ClothesType = ClothesType.Gloves, MaxLayers = 1 },
         new ClothingSlot { ClothesType = ClothesType.Pants, MaxLayers = 2 },
@@ -94,7 +93,11 @@ public class ClothingSystem
                 if (slot == null || slot.Item == null)
                     continue;
 
-                slot.Condition -= slot.Item.DegradationValue * (UpperClothes.Contains(slot) ? 2f : 1f) * deltaTime;
+                if (clothingSlot.ClothesType == ClothesType.Accessories)
+                    slot.Condition -= slot.Item.DegradationValue * deltaTime;
+                else
+                    slot.Condition -= slot.Item.DegradationValue * (UpperClothes.Contains(slot) ? 2f : 1f) * deltaTime;
+
                 if (slot.Condition <= 0)
                     slot.IsWearing = false;
 
@@ -109,6 +112,9 @@ public class ClothingSystem
 
         foreach (var clothingSlot in SlotCache.Values)
         {
+            if (clothingSlot.ClothesType == ClothesType.Accessories)
+                continue;
+
             bool updateLower = false;
             foreach (var slot in clothingSlot.Layers)
             {

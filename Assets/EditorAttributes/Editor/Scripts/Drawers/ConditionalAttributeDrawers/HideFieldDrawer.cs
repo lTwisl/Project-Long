@@ -20,20 +20,26 @@ namespace EditorAttributes.Editor
 
 			root.Add(propertyField);
 
-			UpdateVisualElement(root, () =>
-			{
-				if (!GetConditionValue(conditionalProperty, hideAttribute, property, errorBox))
+            if (string.IsNullOrEmpty(hideAttribute.ConditionName))
+            {
+                RemoveElement(root, propertyField);
+            }
+            else
+            {
+                UpdateVisualElement(root, () =>
 				{
-					AddElement(root, propertyField);
-				}
-				else
-				{
-					RemoveElement(root, propertyField);
-				}
+					if (!GetConditionValue(conditionalProperty, hideAttribute, property, errorBox))
+					{
+						AddElement(root, propertyField);
+					}
+					else
+					{
+						RemoveElement(root, propertyField);
+					}
 
-				DisplayErrorBox(root, errorBox);
-			});
-
+					DisplayErrorBox(root, errorBox);
+				});
+			}
 			return root;
 		}
 	}

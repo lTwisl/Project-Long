@@ -20,13 +20,19 @@ namespace EditorAttributes.Editor
 
 			root.Add(propertyField);
 
-			UpdateVisualElement(root, () => 
+			if (string.IsNullOrEmpty(disableAttribute.ConditionName))
 			{
-				propertyField.SetEnabled(!GetConditionValue(conditionalProperty, disableAttribute, property, errorBox));
+				propertyField.SetEnabled(false);
+			}
+			else
+			{
+				UpdateVisualElement(root, () =>
+				{
+					propertyField.SetEnabled(!GetConditionValue(conditionalProperty, disableAttribute, property, errorBox));
 
-				DisplayErrorBox(root, errorBox);
-			});
-
+					DisplayErrorBox(root, errorBox);
+				});
+			}
 			return root;
 		}
 	}

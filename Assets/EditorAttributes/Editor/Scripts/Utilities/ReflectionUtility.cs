@@ -19,13 +19,13 @@ namespace EditorAttributes.Editor.Utility
 		/// <returns>The field info of the desired field</returns>
 		public static FieldInfo FindField(string fieldName, SerializedProperty property)
 		{
-			if (fieldName.Contains('.'))
+		if (fieldName.Contains('.'))
 				return GetStaticMemberInfoFromPath(fieldName, MemberTypes.Field) as FieldInfo;
 
 			var fieldInfo = FindField(fieldName, property.serializedObject.targetObject);
 
-			// If the field null we try to see if its inside a serialized object
-			if (fieldInfo == null)
+            // If the field null we try to see if its inside a serialized object
+            if (fieldInfo == null)
 			{
 				var serializedObjectType = GetNestedObjectType(property, out _);				
 

@@ -2,9 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Zenject;
 
 
-public class World : MonoBehaviour
+public class World : MonoBehaviour, IInitializable
 {
     [field: Header("Температура")]
     [field: SerializeField] public float AreaTemperature { get; private set; }
@@ -46,8 +47,6 @@ public class World : MonoBehaviour
     {
         Weather = FindAnyObjectByType<WeatherSystem>();
         _player = FindAnyObjectByType<Player>();
-
-        
     }
 
     private void OnEnable()
@@ -177,5 +176,10 @@ public class World : MonoBehaviour
 
         return _externalHeats.Max(p => Utility.MapRange((p.transform.position - _player.transform.position).sqrMagnitude,
             Mathf.Pow(p.MinRadius, 2), Mathf.Pow(p.MaxRadius, 2), p.Temp, 0, true));
+    }
+
+    public void Initialize()
+    {
+        
     }
 }

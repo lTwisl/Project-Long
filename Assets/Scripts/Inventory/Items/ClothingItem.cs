@@ -18,16 +18,33 @@ public class ClothingItem : InventoryItem
 {
     [field: Header("- - Additional Properties - -")]
     [field: SerializeField] public ClothesType ClothingType { get; private set; }
-    [field: SerializeField, Min(0)] public float TemperatureBonus { get; private set; }
-    [field: SerializeField, Range(0, 100)] public float WaterProtection { get; private set; }
-    [field: SerializeField, Range(0, 100)] public float WindProtection { get; private set; }
-    [field: SerializeField, Range(0, 100)] public float ToxicityProtection { get; private set; }
-    [field: SerializeField, Range(0, 100)] public float PhysicProtection { get; private set; }
-    [field: SerializeField, Range(-100, 100)] public float OffsetStamina { get; private set; }
-    [field: SerializeField, Range(0f, 1f)] public float FrictionBonus { get; private set; }
-    [field: Space(8)]
-    [field: SerializeField, Min(0)] public float DryingRate { get; private set; }
-    [field: SerializeField, Range(0, 5)] public float WaterAbsorptionRatio { get; private set; }
+
+    [field: Min(0), Tooltip("Температурный бонус [град. Цельсия]")]
+    [field: SerializeField] public float TemperatureBonus { get; private set; }
+
+    [field: Range(0, 100), Tooltip("Защита от влаги [%]")]
+    [field: SerializeField] public float WaterProtection { get; private set; }
+
+    [field: Range(0, 100), Tooltip("Защита от ветра [%]")]
+    [field: SerializeField] public float WindProtection { get; private set; }
+
+    [field: Range(0, 100), Tooltip("Защита от заражения [%]")]
+    [field: SerializeField] public float ToxicityProtection { get; private set; }
+
+    [field: Range(0, 100), Tooltip("Защита от физического урона [--]")]
+    [field: SerializeField] public float PhysicProtection { get; private set; }
+
+    [field: Range(-100, 100), Tooltip("Добавочное значение к максимальному значению выносливости [%]")]
+    [field: SerializeField] public float OffsetStamina { get; private set; }
+
+    [field: Range(0f, 1f), Tooltip("Бонус к трению с поверхностью [ед]")]
+    [field: SerializeField] public float FrictionBonus { get; private set; }
+
+    [field: Space(8), Min(0), Tooltip("Скорость высыхания [ед/мин]")]
+    [field: SerializeField] public float DryingRate { get; private set; }
+
+    [field: Range(0, 5), Tooltip("Коэффициент впитывания влаги")]
+    [field: SerializeField] public float WaterAbsorptionRatio { get; private set; }
 
     private void OnEnable()
     {

@@ -1,3 +1,4 @@
+using EditorAttributes;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -39,9 +40,26 @@ public enum ActionType
 {
     Repair = 1,         // Ремонтировать
     Charge = 2,         // Зарядить
-    Discharge = 4,      // Заправить 
-    Refuel = 8,         // Разрядить 
-    Deconstruct = 16,   // Разобрать 
+    Discharge = 4,      // Разрядить  
+    Deconstruct = 8,   // Разобрать 
+}
+
+public enum UnitsMeasurement
+{
+    None,
+    Kg,
+    L,
+    Unit,
+    Charge,
+}
+
+
+
+[System.Serializable]
+public struct RepairNead
+{
+    public ToolItem NeadTool;
+    public List<InventorySlot> NeadMaterials;
 }
 
 public abstract class InventoryItem : ScriptableObject
@@ -52,10 +70,9 @@ public abstract class InventoryItem : ScriptableObject
 
     [field: Tooltip("Способ приминения")]
     [field: SerializeField] public MethodOfUse UseType { get; protected set; }
-    [field: SerializeField] public UseStrategy UseStrategy { get; protected set; }
 
-    [field: Tooltip("Способы взаимодействия с предеметом")]
-    [field: SerializeField] public ActionType Actions { get; protected set; }
+    [field: DisableField(nameof(UseType), MethodOfUse.None)]
+    [field: SerializeField] public UseStrategy UseStrategy { get; protected set; }
 
 
     [field: Tooltip("Название предмета")]
@@ -67,14 +84,14 @@ public abstract class InventoryItem : ScriptableObject
 
 
     [field: Tooltip("Иконка предмета")]
-    [field: SerializeField] public Sprite Icon { get; private set; }
+    [field: SerializeField, AssetPreview(150, 150)] public Sprite Icon { get; private set; }
 
 
     [field: Tooltip("Префам предмета")]
     [field: SerializeField] public WorldItem ItemPrefab { get; private set; }
 
 
-    [field: Tooltip("Вес предмета"), Min(0.001f)]
+    [field: Tooltip("Вес предмета [кг]"), Min(0.001f), Space(10)]
     [field: SerializeField] public float Weight { get; private set; } = 1;
 
 
@@ -90,20 +107,28 @@ public abstract class InventoryItem : ScriptableObject
     [field: SerializeField] public float MaxCapacity { get; protected set; } = 1;
 
     [field: Tooltip("Единица измерения")]
-    [field: SerializeField] public string UnitMeasurement { get; protected set; } = "";
+    [field: SerializeField] public UnitsMeasurement UnitMeasurement { get; protected set; }
 
-    [field: SerializeField] public float CostOfUse { get; protected set; } = 1f;
+    [field: Tooltip("Цена за использование")]
+    [field: SerializeField, Min(0.001f)] public float CostOfUse { get; protected set; } = 1f;
 
-    [field: Tooltip("Деградирования предмета")]
+    [field: Tooltip("Способ деградировании предмета"), Space(10)]
     [field: SerializeField] public DegradationType DegradeType { get; protected set; }
 
-
-    [field: Tooltip("Скорость порчи предмета [единиц в игровую минуту]"), Min(0.001f)]
+    [field: Tooltip("Скорость порчи предмета [ед/мин]"), Min(0.001f)]
     [field: SerializeField] public float DegradationValue { get; private set; } = 1;
 
+    [field: Tooltip("Способы взаимодействия с предеметом"), Space(10)]
+    [field: SerializeField] public ActionType Actions { get; protected set; }
 
     [field: Tooltip("Получаемые предметы после разбора")]
-    [field: SerializeField] public List<InventoryItem> ReceivedItemsAfterDeconstruct { get; protected set; }
+    [field: SerializeField] public List<InventorySlot> DeconstructNead { get; protected set; }
+
+    [field: Tooltip("Необходимый инструмент и необходимые материалы для починки")]
+    [field: SerializeField] public RepairNead RepairNead { get; protected set; }
+
+    [field: Tooltip("Этим предметом заряжается или получает при разряжении")]
+    [field: SerializeField] public InventoryItem ChargeNead { get; protected set; }
 
     public override string ToString()
     {

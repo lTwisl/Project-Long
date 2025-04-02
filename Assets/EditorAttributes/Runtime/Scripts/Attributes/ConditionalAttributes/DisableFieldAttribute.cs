@@ -10,11 +10,21 @@ namespace EditorAttributes
         public string ConditionName { get; private set; }
 		public int EnumValue { get; private set; }
 
-		/// <summary>
-		/// Attribute to disable a field based on a condition
-		/// </summary>
-		/// <param name="conditionName">The name of the condition to evaluate</param>
-		public DisableFieldAttribute(string conditionName)
+        /// <summary>
+        /// Attribute to disable a field unconditionally
+        /// </summary>
+        public DisableFieldAttribute()
+#if UNITY_2023_3_OR_NEWER
+        : base(true)
+#endif
+            => ConditionName = string.Empty;
+        
+
+        /// <summary>
+        /// Attribute to disable a field based on a condition
+        /// </summary>
+        /// <param name="conditionName">The name of the condition to evaluate</param>
+        public DisableFieldAttribute(string conditionName)
 #if UNITY_2023_3_OR_NEWER
         : base(true) 
 #endif

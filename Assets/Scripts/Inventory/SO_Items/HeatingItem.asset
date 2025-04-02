@@ -14,17 +14,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <Category>k__BackingField: 0
   <UseType>k__BackingField: 0
-  <Actions>k__BackingField: 0
+  <UseStrategy>k__BackingField: {fileID: 0}
   <Name>k__BackingField: InventoryItem
   <Description>k__BackingField: 
-  <Icon>k__BackingField: {fileID: 0}
+  <Icon>k__BackingField: {fileID: 21300000, guid: 7349fbc6521f08c478111946e646caf7, type: 3}
   <ItemPrefab>k__BackingField: {fileID: 0}
-  <Weight>k__BackingField: 1
+  <Weight>k__BackingField: 0.001
   <IsStackable>k__BackingField: 0
-  <MeasuredAsInteger>k__BackingField: 0
-  <MaxCapacity>k__BackingField: 1
-  <DegradeType>k__BackingField: 0
+  <MeasuredAsInteger>k__BackingField: 1
+  <MaxCapacity>k__BackingField: 27
+  <UnitMeasurement>k__BackingField: 0
+  <CostOfUse>k__BackingField: 1
+  <DegradeType>k__BackingField: 1
   <DegradationValue>k__BackingField: 1
-  <TypeHeating>k__BackingField: 0
+  <Actions>k__BackingField: 0
+  <DeconstructNead>k__BackingField: []
+  <RepairNead>k__BackingField:
+    NeadTool: {fileID: 0}
+    NeadMaterials: []
+  <ChargeNead>k__BackingField: {fileID: 0}
+  <TypeHeating>k__BackingField: 1
   <Value>k__BackingField: 0
   <ChanceHeating>k__BackingField: 0
