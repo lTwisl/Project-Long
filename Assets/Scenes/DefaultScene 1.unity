@@ -2758,11 +2758,6 @@ Transform:
   - {fileID: 1574247758}
   m_Father: {fileID: 1185320739}
   m_LocalEulerAnglesHint: {x: -10, y: 180, z: 0}
---- !u!1 &728835366 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 324625207786621930, guid: 0817ad807ecd81f4db152f1045a40f66, type: 3}
-  m_PrefabInstance: {fileID: 1763463843}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &744133678
 GameObject:
   m_ObjectHideFlags: 0
@@ -4710,25 +4705,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7901084338802630068, guid: 0817ad807ecd81f4db152f1045a40f66, type: 3}
   m_PrefabInstance: {fileID: 1763463843}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1444998674
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 728835366}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ee481fcc38204c547aeeee515e075307, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _initDays: 0
-  _initHours: 23
-  _initMinutes: 59
-  _useSpeedUp: 0
-  _isTimeStopped: 0
-  _timeScale: 12
-  _speedUpTimeScale: 96
 --- !u!1 &1477035439
 GameObject:
   m_ObjectHideFlags: 0
@@ -4839,7 +4815,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7828725762744367070, guid: 7c5f26e0638bb1344bbb1c2128e7dba2, type: 3}
       propertyPath: _useAutoChange
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7828725762744367070, guid: 7c5f26e0638bb1344bbb1c2128e7dba2, type: 3}
       propertyPath: _isLightingSystemsValide
@@ -5373,9 +5349,13 @@ PrefabInstance:
       propertyPath: m_Name
       value: WorldTime
       objectReference: {fileID: 0}
-    - target: {fileID: 2617561183448690812, guid: 0817ad807ecd81f4db152f1045a40f66, type: 3}
-      propertyPath: <TimeScaleGame>k__BackingField
-      value: 12
+    - target: {fileID: 5846936336618201156, guid: 0817ad807ecd81f4db152f1045a40f66, type: 3}
+      propertyPath: _initDays
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5846936336618201156, guid: 0817ad807ecd81f4db152f1045a40f66, type: 3}
+      propertyPath: _initHours
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 7901084338802630068, guid: 0817ad807ecd81f4db152f1045a40f66, type: 3}
       propertyPath: m_LocalPosition.x
@@ -5417,13 +5397,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 2617561183448690812, guid: 0817ad807ecd81f4db152f1045a40f66, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 324625207786621930, guid: 0817ad807ecd81f4db152f1045a40f66, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1444998674}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0817ad807ecd81f4db152f1045a40f66, type: 3}
 --- !u!1 &1836168636
 GameObject:

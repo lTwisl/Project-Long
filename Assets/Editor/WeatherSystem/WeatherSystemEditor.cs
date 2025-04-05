@@ -59,31 +59,23 @@ public class WeatherSystemEditor : Editor
         EditorGUILayout.LabelField("Временная информация:", EditorStyles.boldLabel);
 
         EditorGUI.BeginDisabledGroup(true);
-        if (WorldTime.Instance != null)
-        {
-            EditorGUILayout.TextField("Начало текущей погоды:", WorldTime.Instance.GetFormattedTime(weatherSystem.TimeStartCurrentWeather));
-            EditorGUILayout.TextField("Конец текущей погоды:", WorldTime.Instance.GetFormattedTime(weatherSystem.TimeEndCurrentWeather));
-            EditorGUILayout.TextField("Время перехода:", weatherSystem.TransitionDuration.ToString());
-        }
-        else
-        {
-            EditorGUILayout.TextField("Начало текущей погоды:", weatherSystem.TimeStartCurrentWeather.ToString());
-            EditorGUILayout.TextField("Конец текущей погоды:", weatherSystem.TimeEndCurrentWeather.ToString());
-            EditorGUILayout.TextField("Время перехода:", weatherSystem.TransitionDuration.ToString());
-        }
+
+        EditorGUILayout.TextField("Начало текущей погоды:", GameTime.GetFormattedTime(weatherSystem.TimeStartCurrentWeather));
+        EditorGUILayout.TextField("Конец текущей погоды:", GameTime.GetFormattedTime(weatherSystem.TimeEndCurrentWeather));
+        EditorGUILayout.TextField("Время перехода:", weatherSystem.TransitionDuration.ToString());
+
         EditorGUI.EndDisabledGroup();
     }
 
     private float GetTransitionProgress(WeatherSystem weatherSystem)
     {
         if (!weatherSystem.CheckHasTransition()) return 0;
-        if (WorldTime.Instance == null) return 0;
 
         // Получаем реальную длительность из системы
         TimeSpan duration = weatherSystem.TransitionDuration;
 
         // Используем время начала перехода, а не погоды
-        TimeSpan passed = WorldTime.Instance.GetPassedTime(weatherSystem.TimeEndCurrentWeather);
+        TimeSpan passed = GameTime.GetPassedTime(weatherSystem.TimeEndCurrentWeather);
 
         return Mathf.Clamp01((float)(passed.TotalSeconds / duration.TotalSeconds));
     }

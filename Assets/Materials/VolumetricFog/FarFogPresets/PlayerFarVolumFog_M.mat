@@ -25,14 +25,14 @@ Material:
     m_TexEnvs: []
     m_Ints: []
     m_Floats:
-    - _Distance: 0.005
+    - _Distance: 0.01
     - _Height: 1000
     - _Impact_Light: 0.4
     - _Min_Intensity_Fog: 0
     - _Softness_Height: 0.001
     - _Transparency: 1
     m_Colors:
-    - _Color_Fog: {r: 2.097255, g: 2.5466666, b: 2.9960785, a: 0.5019608}
-    - _Sun_Direction: {r: 0, g: -0.5266734, b: 0.85006773, a: 0}
+    - _Color_Fog: {r: 2.6964707, g: 2.8489027, b: 2.9960785, a: 0.5019608}
+    - _Sun_Direction: {r: 0, g: -0.9965875, b: 0.08254254, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

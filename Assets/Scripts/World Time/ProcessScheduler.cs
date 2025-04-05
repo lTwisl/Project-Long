@@ -49,7 +49,7 @@ public class ProcessScheduler : MonoBehaviour
             // Ожидать, пока текущее время не достигнет EndTime текущего Min
             yield return new WaitWhile(() =>
                 _waitingProcesses.Count > 0 &&
-                WorldTime.Instance.CurrentTime < _waitingProcesses.Min.EndTime);
+                GameTime.Time < _waitingProcesses.Min.EndTime);
 
             if (_waitingProcesses.Count == 0) yield break;
 

@@ -7,10 +7,10 @@ public class DynamicLightingAngle : MonoBehaviour
 
     private void Update()
     {        
-        if (WorldTime.Instance == null) return;
+        //if (WorldTime.Instance == null) return;
 
         // Получаем текущее время из WorldTime
-        TimeSpan currentTime = WorldTime.Instance.CurrentTime;
+        TimeSpan currentTime = GameTime.Time;
 
         // Вычисляем угол поворота солнца
         float sunRotationAngle = CalculateSunRotation(currentTime);

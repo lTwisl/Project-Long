@@ -112,11 +112,6 @@ public class WeatherSystem : MonoBehaviour
             Debug.LogError("Попытка установить null профиль погоды!");
             return;
         }
-        if (WorldTime.Instance == null)
-        {
-            Debug.LogError("World Time Instance отсутсвует!");
-            return;
-        }
 
         if (CurrentWeatherProfile == null)
             CurrentWeatherProfile = weatherProfile;
@@ -143,11 +138,6 @@ public class WeatherSystem : MonoBehaviour
         if (weatherProfile == null)
         {
             Debug.LogError("Попытка установить null профиль погоды!");
-            return;
-        }
-        if (WorldTime.Instance == null)
-        {
-            Debug.LogError("World Time Instance отсутсвует!");
             return;
         }
 
@@ -185,7 +175,7 @@ public class WeatherSystem : MonoBehaviour
     private IEnumerator WeatherTransitionCoroutine()
     {
         OnWeatherTransitionStarted?.Invoke(NewWeatherProfile);
-        TimeSpan startTime = WorldTime.Instance.CurrentTime;
+        TimeSpan startTime = GameTime.Time;
         //Debug.Log($"<color=yellow>Началась смена погоды! Меняем: {CurrentWeatherProfile.weatherIdentifier} на {NewWeatherProfile.weatherIdentifier}. Время начала: {WorldTime.Instance.GetFormattedTime(startTime)}</color>");
 
         // Процесс перехода
@@ -193,7 +183,7 @@ public class WeatherSystem : MonoBehaviour
         WeatherVFXSystem.SpawnVFX(NewWeatherProfile, FindAnyObjectByType<Player>().transform);
         while (t < 1f)
         {
-            TimeSpan passedTime = WorldTime.Instance.GetPassedTime(startTime);
+            TimeSpan passedTime = GameTime.GetPassedTime(startTime);
             t = Mathf.Clamp01((float)(passedTime.TotalSeconds / TransitionDuration.TotalSeconds));
             UpdateWeatherParameters(CurrentWeatherProfile, NewWeatherProfile, t);
             yield return new WaitForEndOfFrame();
@@ -249,7 +239,7 @@ public class WeatherSystem : MonoBehaviour
     /// </summary>
     private void CalculateTimeWeather()
     {
-        TimeStartCurrentWeather = WorldTime.Instance.CurrentTime;
+        TimeStartCurrentWeather = GameTime.Time;
         int lifetimeHours = UnityEngine.Random.Range(CurrentWeatherProfile.minLifetimeHours, CurrentWeatherProfile.maxLifetimeHours + 1);
         TimeEndCurrentWeather = TimeStartCurrentWeather + TimeSpan.FromHours(lifetimeHours);
         //Debug.Log($"<color=lightblue>Текущая погода закончится в: {WorldTime.Instance.GetFormattedTime(TimeEndCurrentWeather)}, после начнется переход на предсказанную погоду</color>");

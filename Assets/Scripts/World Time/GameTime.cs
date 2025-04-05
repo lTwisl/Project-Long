@@ -165,9 +165,27 @@ public class GameTime : MonoBehaviour
         OnSpeedUpEnded?.Invoke();
     }
 
+    /// <summary>
+    /// Возвращает количество прошедшего времени с момента oldTime.
+    /// </summary>
+    public static TimeSpan GetPassedTime(TimeSpan oldTime)
+    {
+        return Time - oldTime;
+    }
+
     public static bool HasTimePassed(TimeSpan checkTime, TimeSpan requiredDuration)
         => Time - checkTime >= requiredDuration;
 
     public static string GetFormattedTime(string format = "d':'hh':'mm':'ss")
         => $"Day {Time.Days}: {Time.ToString(format)}";
+
+    /// <summary>
+    /// Возвращает текущее время в формате "День X: HH:MM:SS".
+    /// </summary>
+    public static string GetFormattedTime(TimeSpan time)
+    {
+        //return $"День {time.Days}: {time.Hours:00}:{time.Minutes:00}:{time.Seconds:00}:{time.Milliseconds:00}";
+        return $"День {time.Days}: {time.Hours:00}:{time.Minutes:00}:{time.Seconds:00}";
+        //return $"День {time.Days}: {time.Hours:00}:{time.Minutes:00}";
+    }
 }
