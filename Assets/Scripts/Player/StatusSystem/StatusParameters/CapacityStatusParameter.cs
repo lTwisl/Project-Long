@@ -33,5 +33,6 @@ public class CapacityStatusParameter : StatusParameter
     public override void Reset()
     {
         Max = _rangeLoadCapacity.Values.Max();
+        OffsetMax = 0;
     }
 }

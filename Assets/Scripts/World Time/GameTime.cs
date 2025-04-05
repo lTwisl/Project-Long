@@ -14,14 +14,15 @@ public class GameTime : MonoBehaviour
     [SerializeField, Range(24, 12000)] private float _speedUpTimeScale = 96;
 
     // Статический API
-    public static TimeSpan CurrentTime => _instance == null ? TimeSpan.Zero : _instance._currentTime;
+    public static TimeSpan Time => _instance == null ? TimeSpan.Zero : _instance._currentTime;
     public static float TimeScale => _instance == null ? 12 : _instance._timeScale;
     public static float SpeedUpTimeScale => _instance == null ? 96 : _instance._speedUpTimeScale;
     public static bool IsTimeStopped => _instance == null ? false : _instance._isTimeStopped;
     public static bool UseSpeedUp => _instance == null ? false : _instance._useSpeedUp;
-    public static float DeltaTime => IsTimeStopped ? 0f : (UseSpeedUp ? SpeedUpTimeScale : TimeScale) * Time.deltaTime;
+    public static float DeltaTime => IsTimeStopped ? 0f : (UseSpeedUp ? SpeedUpTimeScale : TimeScale) * UnityEngine.Time.deltaTime;
 
-    public static event Action<TimeSpan> OnTimeChanged;
+    public static event Action OnTimeChanged;
+    public static event Action OnLateTimeChanged;
     public static event Action OnMinuteChanged;
     public static event Action OnHourChanged;
     public static event Action OnDayChanged;
@@ -48,7 +49,7 @@ public class GameTime : MonoBehaviour
         if (IsTimeStopped)
             return;
 
-        var newTime = CurrentTime.Add(TimeSpan.FromSeconds(DeltaTime));
+        var newTime = Time.Add(TimeSpan.FromSeconds(DeltaTime));
         UpdateTime(newTime);
     }
 
@@ -69,7 +70,7 @@ public class GameTime : MonoBehaviour
 
     private void UpdateTime(TimeSpan newTime)
     {
-        TimeSpan oldTime = CurrentTime;
+        TimeSpan oldTime = Time;
         TimeSpan delta = newTime - oldTime;
 
         if (delta <= TimeSpan.Zero)
@@ -94,7 +95,8 @@ public class GameTime : MonoBehaviour
         }
 
         _currentTime = newTime;
-        OnTimeChanged?.Invoke(delta);
+        OnTimeChanged?.Invoke();
+        OnLateTimeChanged?.Invoke();
     }
 
     public static void StartSpeedUp(TimeSpan duration)
@@ -135,8 +137,8 @@ public class GameTime : MonoBehaviour
         _useSpeedUp = true;
         OnSpeedUpStarted?.Invoke();
 
-        var startTime = CurrentTime;
-        while (CurrentTime - startTime < duration)
+        var startTime = Time;
+        while (Time - startTime < duration)
         {
             yield return null;
         }
@@ -149,7 +151,7 @@ public class GameTime : MonoBehaviour
         _useSpeedUp = true;
         OnSpeedUpStarted?.Invoke();
 
-        while (CurrentTime < targetTime)
+        while (Time < targetTime)
         {
             yield return null;
         }
@@ -164,8 +166,8 @@ public class GameTime : MonoBehaviour
     }
 
     public static bool HasTimePassed(TimeSpan checkTime, TimeSpan requiredDuration)
-        => CurrentTime - checkTime >= requiredDuration;
+        => Time - checkTime >= requiredDuration;
 
     public static string GetFormattedTime(string format = "d':'hh':'mm':'ss")
-        => $"Day {CurrentTime.Days}: {CurrentTime.ToString(format)}";
+        => $"Day {Time.Days}: {Time.ToString(format)}";
 }

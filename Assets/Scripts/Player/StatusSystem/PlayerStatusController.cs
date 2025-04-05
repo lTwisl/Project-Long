@@ -28,23 +28,26 @@ public class PlayerStatusController : MonoBehaviour
     private void OnEnable()
     {
         AutoSubscribe();
+
+        GameTime.OnTimeChanged += HanldeChangedTime;
     }
 
+    private void OnDisable()
+    {
+        UnsubscribeAll();
 
-    private void FixedUpdate()
+        GameTime.OnTimeChanged -= HanldeChangedTime;
+    }
+
+    private void HanldeChangedTime()
     {
         PlayerParameters.Heat.ChangeRate = _world.TotalTemperature;
         PlayerParameters.Toxicity.ChangeRate = _world.TotalToxicity;
 
         foreach (var parameter in PlayerParameters.AllParameters)
         {
-            parameter.UpdateParameter(WorldTime.Instance.FixedDeltaTime / 60f);
+            parameter.UpdateParameter(GameTime.DeltaTime / 60f);
         }
-    }
-
-    private void OnDisable()
-    {
-        UnsubscribeAll();
     }
 
 
@@ -126,7 +129,7 @@ public class PlayerStatusController : MonoBehaviour
     /// </summary>
     private void UpdateStaminaChangeRateRatioByCapacity(float capcsity)
     {
-        PlayerParameters.Stamina.ChangeRateRatioByCapacity = Utility.MapRange(capcsity, 30, 60, 1, 0, true);
+        PlayerParameters.Stamina.ChangeRateRatioByCapacity = Utility.MapRange(capcsity, 30, 45, 1, 0, true);
     }
 
 

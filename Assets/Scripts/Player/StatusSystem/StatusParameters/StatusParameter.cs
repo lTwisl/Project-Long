@@ -89,7 +89,8 @@ public class BaseStatusParameter : IStatusParameter
 
     public virtual void Reset()
     {
-        Current = Max + OffsetMax;
+        OffsetMax = 0;
+        Current = Max;
         ChangeRate = 0.0f;
     }
 

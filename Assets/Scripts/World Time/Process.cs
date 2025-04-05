@@ -39,7 +39,7 @@ public class Process : IComparable<Process>, IDisposable
         if (!ProcessScheduler.Instance.RemoveProcess(this)) 
             return false;
 
-        TimeSpan remaining = EndTime - WorldTime.Instance.CurrentTime;
+        TimeSpan remaining = EndTime - GameTime.Time;
         Duration = remaining > TimeSpan.Zero ? remaining : TimeSpan.Zero;
         StartTime = TimeSpan.Zero;
         return true;
@@ -50,7 +50,7 @@ public class Process : IComparable<Process>, IDisposable
         if (_disposed)
             return;
 
-        StartTime = WorldTime.Instance.CurrentTime;
+        StartTime = GameTime.Time;
         ProcessScheduler.Instance.AddProcess(this);
     }
 
@@ -62,7 +62,7 @@ public class Process : IComparable<Process>, IDisposable
         if (!ProcessScheduler.Instance.RemoveProcess(this))
             return false;
 
-        TimeSpan remainsTime = EndTime - WorldTime.Instance.CurrentTime;
+        TimeSpan remainsTime = EndTime - GameTime.Time;
         _terminateAction?.Invoke(remainsTime);
         Dispose();
 

@@ -43,8 +43,7 @@ public class Player : MonoBehaviour
         ClothingSystem.OnEquip += UpdateClothesOffsetMax;
         ClothingSystem.OnUnequip += UpdateClothesOffsetMax;
 
-        WorldTime.Instance.OnMinuteChanged += InventoryUpdateMinuteChanged;
-        WorldTime.Instance.OnMinuteChanged += ClothingSystemUpdateMinuteChanged;
+        GameTime.OnMinuteChanged += HandleChangedMinute;
 
         Inventory.OnItemRemoved += ClothingSystem.HandleItemRemoved;
 
@@ -65,8 +64,7 @@ public class Player : MonoBehaviour
         ClothingSystem.OnEquip -= UpdateClothesOffsetMax;
         ClothingSystem.OnUnequip -= UpdateClothesOffsetMax;
 
-        WorldTime.Instance.OnMinuteChanged -= InventoryUpdateMinuteChanged;
-        WorldTime.Instance.OnMinuteChanged -= ClothingSystemUpdateMinuteChanged;
+        GameTime.OnMinuteChanged -= HandleChangedMinute;
 
         Inventory.OnItemRemoved -= ClothingSystem.HandleItemRemoved;
 
@@ -74,8 +72,11 @@ public class Player : MonoBehaviour
         Inventory.OnItemRemoved -= UpdateCurrentCapacity;
     }
 
-    private void InventoryUpdateMinuteChanged(TimeSpan _) => Inventory.Update(1);
-    private void ClothingSystemUpdateMinuteChanged(TimeSpan _) => ClothingSystem.Update(1);
+    private void HandleChangedMinute()
+    {
+        Inventory.Update(1);
+        ClothingSystem.Update(1);
+    }
 
     private void UpdateClothesOffsetMax(InventorySlot _) => _playerParameters.Stamina.OffsetMax = ClothingSystem.TotalOffsetStamina;
 

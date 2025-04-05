@@ -2,10 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using Zenject;
 
 
-public class World : MonoBehaviour, IInitializable
+public class World : MonoBehaviour
 {
     [field: Header("Температура")]
     [field: SerializeField] public float AreaTemperature { get; private set; }
@@ -51,14 +50,18 @@ public class World : MonoBehaviour, IInitializable
 
     private void OnEnable()
     {
-        WorldTime.Instance.OnMinuteChanged += CalculateTotalTemperature;
-        WorldTime.Instance.OnMinuteChanged += CalculateTotalToxicity;
+        GameTime.OnMinuteChanged += HandleChangedMinute;
     }
 
     private void OnDisable()
     {
-        WorldTime.Instance.OnMinuteChanged -= CalculateTotalTemperature;
-        WorldTime.Instance.OnMinuteChanged -= CalculateTotalToxicity;
+        GameTime.OnMinuteChanged -= HandleChangedMinute;
+    }
+
+    private void HandleChangedMinute()
+    {
+        CalculateTotalTemperature();
+        CalculateTotalToxicity();
     }
 
     public void InvokeOnEnterShelter(ShelterSystem shelterSystem)
@@ -67,8 +70,8 @@ public class World : MonoBehaviour, IInitializable
         ShelterWetness = shelterSystem.Wetness;
         ShelterToxicity = shelterSystem.Toxicity;
 
-        CalculateTotalTemperature(WorldTime.Instance.CurrentTime);
-        CalculateTotalToxicity(WorldTime.Instance.CurrentTime);
+        CalculateTotalTemperature();
+        CalculateTotalToxicity();
 
         OnEnterShelter?.Invoke(shelterSystem);
     }
@@ -79,8 +82,8 @@ public class World : MonoBehaviour, IInitializable
         ShelterWetness -= shelterSystem.Wetness;
         ShelterToxicity -= shelterSystem.Toxicity;
 
-        CalculateTotalTemperature(WorldTime.Instance.CurrentTime);
-        CalculateTotalToxicity(WorldTime.Instance.CurrentTime);
+        CalculateTotalTemperature();
+        CalculateTotalToxicity();
 
         OnExitShelter?.Invoke(shelterSystem);
     }
@@ -102,7 +105,7 @@ public class World : MonoBehaviour, IInitializable
         if (toxicityZone.CurrentType == ToxicityZone.ZoneType.Rate)
         {
             ZoneToxicity += toxicityZone.Toxicity;
-            CalculateTotalToxicity(WorldTime.Instance.CurrentTime);
+            CalculateTotalToxicity();
         }
 
         OnEnterToxicityZone?.Invoke(toxicityZone);
@@ -113,7 +116,7 @@ public class World : MonoBehaviour, IInitializable
         if (toxicityZone.CurrentType == ToxicityZone.ZoneType.Rate)
         {
             ZoneToxicity -= toxicityZone.Toxicity;
-            CalculateTotalToxicity(WorldTime.Instance.CurrentTime);
+            CalculateTotalToxicity();
         }
 
         OnExitToxicityZone?.Invoke(toxicityZone);
@@ -129,15 +132,12 @@ public class World : MonoBehaviour, IInitializable
         return Wind.GetWindLocalVector(_player.transform.position);
     }
 
-    private void CalculateTotalTemperature(TimeSpan _)
-    {
-        TotalTemperature = AreaTemperature + WeatherTemperature + ShelterTemperature + GetMaxExternalHeatsByPosiotion() + _player.ClothingSystem.TotalTemperatureBonus;
-    }
+    private void CalculateTotalTemperature()
+        => TotalTemperature = AreaTemperature + WeatherTemperature + ShelterTemperature + GetMaxExternalHeatsByPosiotion() + _player.ClothingSystem.TotalTemperatureBonus;
 
-    public void CalculateTotalToxicity(TimeSpan _)
-    {
-        TotalToxicity = -(AreaToxicity + WeatherToxicity + ShelterToxicity + ZoneToxicity) * (1 - _player.ClothingSystem.TotalToxicityProtection / 100);
-    }
+
+    public void CalculateTotalToxicity()
+        => TotalToxicity = (AreaToxicity + WeatherToxicity + ShelterToxicity + ZoneToxicity) * (1 - _player.ClothingSystem.TotalToxicityProtection / 100);
 
     /// <summary>
     /// Добавить внешний источник тепла и обновить максимальную температуру
@@ -176,10 +176,5 @@ public class World : MonoBehaviour, IInitializable
 
         return _externalHeats.Max(p => Utility.MapRange((p.transform.position - _player.transform.position).sqrMagnitude,
             Mathf.Pow(p.MinRadius, 2), Mathf.Pow(p.MaxRadius, 2), p.Temp, 0, true));
-    }
-
-    public void Initialize()
-    {
-        
     }
 }

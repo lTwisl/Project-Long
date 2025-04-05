@@ -46,7 +46,7 @@ public class PlayerParameters : ScriptableObject
     [field: SerializeField] public StatusParameter Heat { get; private set; }
 
     [field: Space(10)]
-    [field: SerializeField] public StatusParameter Toxicity { get; private set; }
+    [field: SerializeField] public ToxicityStatusParameter Toxicity { get; private set; }
 
 
 

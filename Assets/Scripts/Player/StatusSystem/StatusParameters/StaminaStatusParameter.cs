@@ -30,7 +30,8 @@ public class StaminaStatusParameter : MovementStatusParameter
 
     public override void ChangeParameter(float deltaSeconds)
     {
-        Current = Mathf.Clamp(Current + ChangeRate * deltaSeconds * ChangeRateRatioByCapacity, 0f, Max + OffsetMax);
+        float newChangeRate = ChangeRate * (ChangeRate > 0 ? ChangeRateRatioByCapacity : (2 - ChangeRateRatioByCapacity));
+        Current = Mathf.Clamp(Current + newChangeRate * deltaSeconds, 0f, Max + OffsetMax);
     }
 
     public override void Reset()

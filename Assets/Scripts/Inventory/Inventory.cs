@@ -1,9 +1,8 @@
-using EditorAttributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor;
 using UnityEngine;
+using Zenject;
 
 [System.Serializable]
 public class Inventory
@@ -64,7 +63,7 @@ public class Inventory
     public void Init()
     {
         Slots = new LinkedList<InventorySlot>(InitSlots);
-        
+
         RecalculateWeight();
     }
 
@@ -191,7 +190,7 @@ public class Inventory
     {
         if (!Slots.Remove(slot))
             return;
-            
+
         Weight -= slot.GetWeight();
         OnItemRemoved?.Invoke(slot);
     }
@@ -227,7 +226,7 @@ public class Inventory
             InventorySlot slot = currentNode.Value;
             bool shouldRemove = false;
 
-                if (slot.IsEmpty)
+            if (slot.IsEmpty)
             {
                 shouldRemove = true;
             }

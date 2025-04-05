@@ -16,11 +16,11 @@ MonoBehaviour:
     _current: 100
     <Max>k__BackingField: 100
     <OffsetMax>k__BackingField: 0
-    <ChangeRate>k__BackingField: 0
+    <ChangeRate>k__BackingField: 10
   <Stamina>k__BackingField:
-    _current: 125
+    _current: 67.12827
     <Max>k__BackingField: 100
-    <OffsetMax>k__BackingField: 25
+    <OffsetMax>k__BackingField: 0
     <ChangeRate>k__BackingField: 20
     <DecreasedHealthRate>k__BackingField: 0
     <IdleChangeRate>k__BackingField: 20
@@ -28,13 +28,13 @@ MonoBehaviour:
     <SprintChangeRate>k__BackingField: -15
     _reload: 1
   <Capacity>k__BackingField:
-    _current: 7.5
+    _current: 44.9
     <Max>k__BackingField: 60
-    <OffsetMax>k__BackingField: 0.0000012715658
+    <OffsetMax>k__BackingField: 0
     <ChangeRate>k__BackingField: 0
     <DecreasedHealthRate>k__BackingField: 0
   <FoodBalance>k__BackingField:
-    _current: 3477.8184
+    _current: 3398.1323
     <Max>k__BackingField: 3500
     <OffsetMax>k__BackingField: 0
     <ChangeRate>k__BackingField: -10
@@ -43,7 +43,7 @@ MonoBehaviour:
     <WalkChangeRate>k__BackingField: -20
     <SprintChangeRate>k__BackingField: -40
   <WaterBalance>k__BackingField:
-    _current: 3469.6167
+    _current: 3216.8777
     <Max>k__BackingField: 3500
     <OffsetMax>k__BackingField: 0
     <ChangeRate>k__BackingField: -40
@@ -52,7 +52,7 @@ MonoBehaviour:
     <WalkChangeRate>k__BackingField: -60
     <SprintChangeRate>k__BackingField: -100
   <Energy>k__BackingField:
-    _current: 1395.7043
+    _current: 1272.8939
     <Max>k__BackingField: 1440
     <OffsetMax>k__BackingField: 0
     <ChangeRate>k__BackingField: -20
@@ -61,14 +61,14 @@ MonoBehaviour:
     <WalkChangeRate>k__BackingField: -40
     <SprintChangeRate>k__BackingField: -60
   <Heat>k__BackingField:
-    _current: 2476.058
+    _current: 2449.8496
     <Max>k__BackingField: 2500
     <OffsetMax>k__BackingField: 0
-    <ChangeRate>k__BackingField: -17
+    <ChangeRate>k__BackingField: -16
     <DecreasedHealthRate>k__BackingField: -10
   <Toxicity>k__BackingField:
-    _current: 998.8165
+    _current: 2.1448674
     <Max>k__BackingField: 10000
     <OffsetMax>k__BackingField: 0
-    <ChangeRate>k__BackingField: -0.54
+    <ChangeRate>k__BackingField: 0.54
     <DecreasedHealthRate>k__BackingField: -10

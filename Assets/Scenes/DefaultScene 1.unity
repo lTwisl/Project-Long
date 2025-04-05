@@ -3672,7 +3672,10 @@ MonoBehaviour:
   _initItems: []
   <Inventory>k__BackingField:
     Filter: 0
-    InitSlots: []
+    InitSlots:
+    - <Item>k__BackingField: {fileID: 11400000, guid: cbcf3144d25f83749a6c3e52e990abf8, type: 2}
+      _capacity: 44.9
+      _condition: 100
     <Weight>k__BackingField: 0
   <InteractionType>k__BackingField: 1
 --- !u!65 &1162289111
@@ -4720,8 +4723,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _initDays: 0
-  _initHours: 0
-  _initMinutes: 0
+  _initHours: 23
+  _initMinutes: 59
   _useSpeedUp: 0
   _isTimeStopped: 0
   _timeScale: 12

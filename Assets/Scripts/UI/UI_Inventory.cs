@@ -58,7 +58,7 @@ public class UI_Inventory : MonoBehaviour
         uiSlot.OnClick += slot =>
         {
             _selectesSlot = slot;
-            _btnUse.gameObject.SetActive(slot.Slot.Item.UseType != MethodOfUse.None);
+            _btnUse.gameObject.SetActive(!(slot.Slot.Item.UseType == MethodOfUse.None || slot.Slot.Item.UseType == MethodOfUse.Wear));
             _uiDetails.UpdateView(_selectesSlot.Slot.Item);
         };
     }
