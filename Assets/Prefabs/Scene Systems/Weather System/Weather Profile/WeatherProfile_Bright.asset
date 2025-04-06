@@ -16,7 +16,7 @@ MonoBehaviour:
   weatherTransitions: 2
   minLifetimeHours: 2
   maxLifetimeHours: 2
-  temperature: 0
+  temperature: -10
   wetness: 18
   toxicity: 0
   maxIntensitySun: 2

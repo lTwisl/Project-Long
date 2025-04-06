@@ -54,9 +54,9 @@ public class InventoryItemEditor : Editor
         _costOfUseProp = serializedObject.FindProperty("<CostOfUse>k__BackingField");
         _degradeTypeProp = serializedObject.FindProperty("<DegradeType>k__BackingField");
         _degradationValueProp = serializedObject.FindProperty("<DegradationValue>k__BackingField");
-        _deconstructNeadProp = serializedObject.FindProperty("<DeconstructNead>k__BackingField");
-        _repairNeadProp = serializedObject.FindProperty("<RepairNead>k__BackingField");
-        _chargeNeadProp = serializedObject.FindProperty("<ChargeNead>k__BackingField");
+        _deconstructNeadProp = serializedObject.FindProperty("<DeconstructRecipe>k__BackingField");
+        _repairNeadProp = serializedObject.FindProperty("<RepairRecipe>k__BackingField");
+        _chargeNeadProp = serializedObject.FindProperty("<ChargeRecipe>k__BackingField");
     }
 
     public override VisualElement CreateInspectorGUI()
@@ -164,11 +164,11 @@ public class InventoryItemEditor : Editor
         {
             case MethodOfUse.OnSelf:
                 SetUseStrategy(typeof(UseOnSelfStrategy),
-                    _equipHandStrategy);
+                    _useOnSelfStrategy);
                 break;
             case MethodOfUse.EquipHand:
                 SetUseStrategy(typeof(EquipHandStrategy),
-                    _useOnSelfStrategy);
+                    _equipHandStrategy);
                 break;
             case MethodOfUse.Wear:
                 SetUseStrategy(typeof(WearStrategy),
@@ -325,9 +325,11 @@ public class InventoryItemEditor : Editor
         void UpdateCostOfUseFields(SerializedProperty prop)
         {
             field.SetEnabled(!prop.boolValue);
-            _costOfUseProp.floatValue = 1;
+            if (prop.boolValue == true) 
+                _costOfUseProp.floatValue = 1;
             serializedObject.ApplyModifiedProperties();
         }
+        //serializedObject.ApplyModifiedProperties();
     }
 
     private void DrawActionsAndValues()

@@ -1428,6 +1428,67 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 106e99c36c1477143b2e98c486a514aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1001 &247082602
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1832725519269946446, guid: 69fdeb31679f363438180bc11b58e536, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 12.90667
+      objectReference: {fileID: 0}
+    - target: {fileID: 1832725519269946446, guid: 69fdeb31679f363438180bc11b58e536, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1832725519269946446, guid: 69fdeb31679f363438180bc11b58e536, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 12.9555
+      objectReference: {fileID: 0}
+    - target: {fileID: 1832725519269946446, guid: 69fdeb31679f363438180bc11b58e536, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1832725519269946446, guid: 69fdeb31679f363438180bc11b58e536, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1832725519269946446, guid: 69fdeb31679f363438180bc11b58e536, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1832725519269946446, guid: 69fdeb31679f363438180bc11b58e536, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1832725519269946446, guid: 69fdeb31679f363438180bc11b58e536, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1832725519269946446, guid: 69fdeb31679f363438180bc11b58e536, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1832725519269946446, guid: 69fdeb31679f363438180bc11b58e536, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3569913043921540147, guid: 69fdeb31679f363438180bc11b58e536, type: 3}
+      propertyPath: <Inventory>k__BackingField.InitSlots.Array.data[24]._capacity
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7724258789137610259, guid: 69fdeb31679f363438180bc11b58e536, type: 3}
+      propertyPath: m_Name
+      value: All Items Storage
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 69fdeb31679f363438180bc11b58e536, type: 3}
 --- !u!1 &248026275
 GameObject:
   m_ObjectHideFlags: 0
@@ -1722,7 +1783,7 @@ MonoBehaviour:
   <Inventory>k__BackingField:
     Filter: 0
     InitSlots: []
-    <Weight>k__BackingField: 13.499999
+    <Weight>k__BackingField: 0
   <InteractionType>k__BackingField: 1
   _initItems: []
 --- !u!65 &354229966
@@ -3651,12 +3712,49 @@ MonoBehaviour:
   <Inventory>k__BackingField:
     Filter: 0
     InitSlots:
-    - <Item>k__BackingField: {fileID: 11400000, guid: cbcf3144d25f83749a6c3e52e990abf8, type: 2}
-      _capacity: 44.9
+    - <Item>k__BackingField: {fileID: 11400000, guid: 7ed95cd52f525fb4d8708f018dbe58e2, type: 2}
+      _capacity: 5
+      _condition: 100
+    - <Item>k__BackingField: {fileID: 11400000, guid: 7ed95cd52f525fb4d8708f018dbe58e2, type: 2}
+      _capacity: 5
+      _condition: 100
+    - <Item>k__BackingField: {fileID: 11400000, guid: 7ed95cd52f525fb4d8708f018dbe58e2, type: 2}
+      _capacity: 5
+      _condition: 100
+    - <Item>k__BackingField: {fileID: 11400000, guid: 7ed95cd52f525fb4d8708f018dbe58e2, type: 2}
+      _capacity: 5
+      _condition: 100
+    - <Item>k__BackingField: {fileID: 11400000, guid: 7ed95cd52f525fb4d8708f018dbe58e2, type: 2}
+      _capacity: 5
+      _condition: 100
+    - <Item>k__BackingField: {fileID: 11400000, guid: 7ed95cd52f525fb4d8708f018dbe58e2, type: 2}
+      _capacity: 5
+      _condition: 100
+    - <Item>k__BackingField: {fileID: 11400000, guid: 7ed95cd52f525fb4d8708f018dbe58e2, type: 2}
+      _capacity: 5
+      _condition: 100
+    - <Item>k__BackingField: {fileID: 11400000, guid: 7ed95cd52f525fb4d8708f018dbe58e2, type: 2}
+      _capacity: 5
+      _condition: 100
+    - <Item>k__BackingField: {fileID: 11400000, guid: 7ed95cd52f525fb4d8708f018dbe58e2, type: 2}
+      _capacity: 5
+      _condition: 100
+    - <Item>k__BackingField: {fileID: 11400000, guid: 7ed95cd52f525fb4d8708f018dbe58e2, type: 2}
+      _capacity: 5
+      _condition: 100
+    - <Item>k__BackingField: {fileID: 11400000, guid: 7ed95cd52f525fb4d8708f018dbe58e2, type: 2}
+      _capacity: 5
+      _condition: 100
+    - <Item>k__BackingField: {fileID: 11400000, guid: 7ed95cd52f525fb4d8708f018dbe58e2, type: 2}
+      _capacity: 5
+      _condition: 100
+    - <Item>k__BackingField: {fileID: 11400000, guid: 7ed95cd52f525fb4d8708f018dbe58e2, type: 2}
+      _capacity: 5
       _condition: 100
     <Weight>k__BackingField: 0
   <InteractionType>k__BackingField: 1
-  _initItems: []
+  _initItems:
+  - {fileID: 11400000, guid: 7ed95cd52f525fb4d8708f018dbe58e2, type: 2}
 --- !u!65 &1162289111
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3823,9 +3921,6 @@ MonoBehaviour:
     - <Item>k__BackingField: {fileID: 11400000, guid: 9a64b42a70fa26c49a9eaae3b8fa5c34, type: 2}
       _capacity: 1
       _condition: 100
-    - <Item>k__BackingField: {fileID: 11400000, guid: f659b186f41240e4985431e48bd34ba0, type: 2}
-      _capacity: 1
-      _condition: 100
     - <Item>k__BackingField: {fileID: 11400000, guid: 9168e7e2ff215354d9bf3f09fa6d3cbf, type: 2}
       _capacity: 1
       _condition: 100
@@ -3846,7 +3941,16 @@ MonoBehaviour:
       _condition: 100
     <Weight>k__BackingField: 0
   <InteractionType>k__BackingField: 1
-  _initItems: []
+  _initItems:
+  - {fileID: 11400000, guid: 840025672c744a44e962de2b9ba48977, type: 2}
+  - {fileID: 11400000, guid: 7068a0a6394573d45b9367a50e91f717, type: 2}
+  - {fileID: 11400000, guid: 9a64b42a70fa26c49a9eaae3b8fa5c34, type: 2}
+  - {fileID: 11400000, guid: 9168e7e2ff215354d9bf3f09fa6d3cbf, type: 2}
+  - {fileID: 11400000, guid: 2c47166d6fcfccd499572d9a0694a3d9, type: 2}
+  - {fileID: 11400000, guid: 881906dd0a15ffc45997d3f6db7ae58c, type: 2}
+  - {fileID: 11400000, guid: cc924cca16ecc564f9d71558daffdf7a, type: 2}
+  - {fileID: 11400000, guid: c288e1861e221654b882697df167be60, type: 2}
+  - {fileID: 11400000, guid: c7a4b8175b5b10c43a581f3e740299b5, type: 2}
 --- !u!65 &1172467472
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4794,7 +4898,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7828725762744367070, guid: 7c5f26e0638bb1344bbb1c2128e7dba2, type: 3}
       propertyPath: _useAutoChange
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7828725762744367070, guid: 7c5f26e0638bb1344bbb1c2128e7dba2, type: 3}
       propertyPath: _isLightingSystemsValide
@@ -4812,6 +4916,10 @@ PrefabInstance:
       propertyPath: <WindSystem>k__BackingField
       value: 
       objectReference: {fileID: 1489413334}
+    - target: {fileID: 7828725762744367070, guid: 7c5f26e0638bb1344bbb1c2128e7dba2, type: 3}
+      propertyPath: <Temperature>k__BackingField
+      value: -10
+      objectReference: {fileID: 0}
     - target: {fileID: 7828725762744367070, guid: 7c5f26e0638bb1344bbb1c2128e7dba2, type: 3}
       propertyPath: <WeatherFogSystem>k__BackingField
       value: 
@@ -5430,7 +5538,7 @@ GameObject:
   - component: {fileID: 1919853801}
   - component: {fileID: 1919853800}
   m_Layer: 0
-  m_Name: '[Single] Toxicity Zone 1'
+  m_Name: '[Rate] Toxicity Zone 1'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5450,8 +5558,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _hideGizmo: 0
   _zoneID: Toxicity Zone 1
-  <Toxicity>k__BackingField: 10
-  _currentType: 1
+  <Toxicity>k__BackingField: 0
+  _currentType: 0
   _collider: {fileID: 1919853801}
 --- !u!65 &1919853801
 BoxCollider:
@@ -5893,3 +6001,4 @@ SceneRoots:
   - {fileID: 1090969589}
   - {fileID: 1489413330}
   - {fileID: 1077523682}
+  - {fileID: 247082602}

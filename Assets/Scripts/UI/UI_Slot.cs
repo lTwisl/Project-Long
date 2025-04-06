@@ -45,7 +45,12 @@ public class UI_Slot : MonoBehaviour, IPointerDownHandler
     public void UpdateView()
     {
         _icon.sprite = Slot.Item.Icon;
-        _capacity.text = Slot.Capacity.ToString("0.##") + $" {Slot.Item.UnitMeasurement}";
+
+        if (Slot.Item.UnitMeasurement == UnitsMeasurement.None)
+            _capacity.text = Slot.Capacity.ToString("0.##");
+        else
+            _capacity.text = Slot.Capacity.ToString("0.##") + $" {Slot.Item.UnitMeasurement}";
+
         _condition.text = ((int)Slot.Condition).ToString() + " %";
         _weight.text = (Slot.Capacity * Slot.Item.Weight).ToString("0.##") + $" Í„";
     }

@@ -7,18 +7,18 @@ using UnityEngine;
 public class World : MonoBehaviour
 {
     [field: Header("Температура")]
-    [field: SerializeField] public float AreaTemperature { get; private set; }
+    [field: SerializeField] public float Temperature { get; private set; }
     public float WeatherTemperature => Weather.Temperature;
     [field: SerializeField, DisableEdit] public float ShelterTemperature { get; private set; }
     [field: SerializeField, DisableEdit] public float TotalTemperature { get; private set; }
 
     [field: Header("Влажность")]
-    [field: SerializeField] public float AreaWetness { get; private set; }
+    [field: SerializeField] public float Wetness { get; private set; }
     public float WeatherWetness => Weather.Wetness;
     [field: SerializeField, DisableEdit] public float ShelterWetness { get; private set; }
 
     [field: Header("Заражённость")]
-    [field: SerializeField] public float AreaToxicity { get; private set; }
+    [field: SerializeField] public float Toxicity { get; private set; }
     public float WeatherToxicity => Weather.Toxicity;
     [field: SerializeField, DisableEdit] public float ShelterToxicity { get; private set; }
     [field: SerializeField, DisableEdit] public float ZoneToxicity { get; private set; }
@@ -31,8 +31,8 @@ public class World : MonoBehaviour
     public event Action<ShelterSystem> OnEnterShelter;
     public event Action<ShelterSystem> OnExitShelter;
 
-    public event Action<TemperatureZone> OnEnterHeatZone;
-    public event Action<TemperatureZone> OnExitHeatZone;
+    public event Action<TemperatureZone> OnEnterTemperatureZone;
+    public event Action<TemperatureZone> OnExitTemperatureZone;
 
     public event Action<ToxicityZone> OnEnterToxicityZone;
     public event Action<ToxicityZone> OnExitToxicityZone;
@@ -88,16 +88,16 @@ public class World : MonoBehaviour
         OnExitShelter?.Invoke(shelterSystem);
     }
 
-    public void InvokeOnEnterHeatZone(TemperatureZone heatZone)
+    public void InvokeOnEnterTemperatureZone(TemperatureZone heatZone)
     {
         AddExternalHeat(heatZone);
-        OnEnterHeatZone?.Invoke(heatZone);
+        OnEnterTemperatureZone?.Invoke(heatZone);
     }
 
-    public void InvokeOnExitHeatZone(TemperatureZone heatZone)
+    public void InvokeOnExitTemperatureZone(TemperatureZone heatZone)
     {
         RemoveExternalHeat(heatZone);
-        OnExitHeatZone?.Invoke(heatZone);
+        OnExitTemperatureZone?.Invoke(heatZone);
     }
 
     public void InvokeOnEnterToxicityZone(ToxicityZone toxicityZone)
@@ -133,11 +133,11 @@ public class World : MonoBehaviour
     }
 
     private void CalculateTotalTemperature()
-        => TotalTemperature = AreaTemperature + WeatherTemperature + ShelterTemperature + GetMaxExternalHeatsByPosiotion() + _player.ClothingSystem.TotalTemperatureBonus;
+        => TotalTemperature = Temperature + WeatherTemperature + ShelterTemperature + GetMaxExternalHeatsByPosiotion() + _player.ClothingSystem.TotalTemperatureBonus;
 
 
     public void CalculateTotalToxicity()
-        => TotalToxicity = (AreaToxicity + WeatherToxicity + ShelterToxicity + ZoneToxicity) * (1 - _player.ClothingSystem.TotalToxicityProtection / 100);
+        => TotalToxicity = (Toxicity + WeatherToxicity + ShelterToxicity + ZoneToxicity) * (1 - _player.ClothingSystem.TotalToxicityProtection / 100);
 
     /// <summary>
     /// Добавить внешний источник тепла и обновить максимальную температуру

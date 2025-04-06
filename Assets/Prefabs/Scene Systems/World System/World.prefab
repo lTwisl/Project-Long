@@ -57,8 +57,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee481fcc38204c547aeeee515e075307, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _initDays: 0
-  _initHours: 0
+  _initDays: 1
+  _initHours: 8
   _initMinutes: 0
   _useSpeedUp: 0
   _isTimeStopped: 0
@@ -109,12 +109,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1751f519ca51b4b4e90feac8b1b7e6b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <AreaTemperature>k__BackingField: 0
+  <Temperature>k__BackingField: 0
   <ShelterTemperature>k__BackingField: 0
   <TotalTemperature>k__BackingField: 0
-  <AreaWetness>k__BackingField: 0
+  <Wetness>k__BackingField: 0
   <ShelterWetness>k__BackingField: 0
-  <AreaToxicity>k__BackingField: 0
+  <Toxicity>k__BackingField: 0
   <ShelterToxicity>k__BackingField: 0
   <ZoneToxicity>k__BackingField: 0
   <TotalToxicity>k__BackingField: 0

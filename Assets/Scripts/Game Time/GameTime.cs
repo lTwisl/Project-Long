@@ -82,8 +82,6 @@ public class GameTime : MonoBehaviour
             TimeSpan next = current.Add(TimeSpan.FromMinutes(1));
             if (next > newTime) next = newTime;
 
-            current = next;
-
             if (current.Minutes != next.Minutes)
                 OnMinuteChanged?.Invoke();
 
@@ -92,6 +90,8 @@ public class GameTime : MonoBehaviour
 
             if (current.Days != next.Days)
                 OnDayChanged?.Invoke();
+            
+            current = next;
         }
 
         _currentTime = newTime;

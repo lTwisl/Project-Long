@@ -56,10 +56,10 @@ public enum UnitsMeasurement
 
 
 [System.Serializable]
-public struct RepairNead
+public struct RepairRecipe
 {
-    public ToolItem NeadTool;
-    public List<InventorySlot> NeadMaterials;
+    public ToolItem Tool;
+    public List<InventorySlot> Items;
 }
 
 public abstract class InventoryItem : ScriptableObject
@@ -122,13 +122,13 @@ public abstract class InventoryItem : ScriptableObject
     [field: SerializeField] public ActionType Actions { get; protected set; }
 
     [field: Tooltip("Получаемые предметы после разбора")]
-    [field: SerializeField] public List<InventorySlot> DeconstructNead { get; protected set; }
+    [field: SerializeField] public List<InventorySlot> DeconstructRecipe { get; protected set; }
 
     [field: Tooltip("Необходимый инструмент и необходимые материалы для починки")]
-    [field: SerializeField] public RepairNead RepairNead { get; protected set; }
+    [field: SerializeField] public RepairRecipe RepairRecipe { get; protected set; }
 
     [field: Tooltip("Этим предметом заряжается или получает при разряжении")]
-    [field: SerializeField] public InventoryItem ChargeNead { get; protected set; }
+    [field: SerializeField] public InventoryItem ChargeRecipe { get; protected set; }
 
     public override string ToString()
     {

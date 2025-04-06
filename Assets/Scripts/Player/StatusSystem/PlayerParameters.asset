@@ -16,9 +16,9 @@ MonoBehaviour:
     _current: 100
     <Max>k__BackingField: 100
     <OffsetMax>k__BackingField: 0
-    <ChangeRate>k__BackingField: 10
+    <ChangeRate>k__BackingField: 0
   <Stamina>k__BackingField:
-    _current: 67.12827
+    _current: 100
     <Max>k__BackingField: 100
     <OffsetMax>k__BackingField: 0
     <ChangeRate>k__BackingField: 20
@@ -28,13 +28,13 @@ MonoBehaviour:
     <SprintChangeRate>k__BackingField: -15
     _reload: 1
   <Capacity>k__BackingField:
-    _current: 44.9
-    <Max>k__BackingField: 60
+    _current: 20.349997
+    <Max>k__BackingField: 999999
     <OffsetMax>k__BackingField: 0
     <ChangeRate>k__BackingField: 0
     <DecreasedHealthRate>k__BackingField: 0
   <FoodBalance>k__BackingField:
-    _current: 3398.1323
+    _current: 3422.9812
     <Max>k__BackingField: 3500
     <OffsetMax>k__BackingField: 0
     <ChangeRate>k__BackingField: -10
@@ -43,7 +43,7 @@ MonoBehaviour:
     <WalkChangeRate>k__BackingField: -20
     <SprintChangeRate>k__BackingField: -40
   <WaterBalance>k__BackingField:
-    _current: 3216.8777
+    _current: 3192.4583
     <Max>k__BackingField: 3500
     <OffsetMax>k__BackingField: 0
     <ChangeRate>k__BackingField: -40
@@ -52,7 +52,7 @@ MonoBehaviour:
     <WalkChangeRate>k__BackingField: -60
     <SprintChangeRate>k__BackingField: -100
   <Energy>k__BackingField:
-    _current: 1272.8939
+    _current: 1285.9562
     <Max>k__BackingField: 1440
     <OffsetMax>k__BackingField: 0
     <ChangeRate>k__BackingField: -20
@@ -61,14 +61,14 @@ MonoBehaviour:
     <WalkChangeRate>k__BackingField: -40
     <SprintChangeRate>k__BackingField: -60
   <Heat>k__BackingField:
-    _current: 2449.8496
+    _current: 2500
     <Max>k__BackingField: 2500
     <OffsetMax>k__BackingField: 0
-    <ChangeRate>k__BackingField: -16
+    <ChangeRate>k__BackingField: 0
     <DecreasedHealthRate>k__BackingField: -10
   <Toxicity>k__BackingField:
-    _current: 2.1448674
+    _current: 0
     <Max>k__BackingField: 10000
     <OffsetMax>k__BackingField: 0
-    <ChangeRate>k__BackingField: 0.54
+    <ChangeRate>k__BackingField: 0
     <DecreasedHealthRate>k__BackingField: -10

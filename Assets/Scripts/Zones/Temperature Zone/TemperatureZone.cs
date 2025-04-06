@@ -24,7 +24,7 @@ public class TemperatureZone : MonoBehaviour
         if (!other.CompareTag("Player"))
             return;
 
-        _world.InvokeOnEnterHeatZone(this);
+        _world.InvokeOnEnterTemperatureZone(this);
     }
 
     private void OnTriggerExit(Collider other)
@@ -32,7 +32,7 @@ public class TemperatureZone : MonoBehaviour
         if (!other.CompareTag("Player"))
             return;
 
-        _world.InvokeOnExitHeatZone(this);
+        _world.InvokeOnExitTemperatureZone(this);
     }
 
 #if UNITY_EDITOR

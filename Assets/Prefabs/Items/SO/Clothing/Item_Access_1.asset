@@ -25,17 +25,17 @@ MonoBehaviour:
   <MeasuredAsInteger>k__BackingField: 1
   <MaxCapacity>k__BackingField: 1
   <UnitMeasurement>k__BackingField: 0
-  <CostOfUse>k__BackingField: 1
+  <CostOfUse>k__BackingField: 0
   <DegradeType>k__BackingField: 2
   <DegradationValue>k__BackingField: 0.001
   <Actions>k__BackingField: 9
-  <DeconstructNead>k__BackingField: []
-  <RepairNead>k__BackingField:
-    NeadTool: {fileID: 0}
-    NeadMaterials: []
-  <ChargeNead>k__BackingField: {fileID: 0}
+  <DeconstructRecipe>k__BackingField: []
+  <RepairRecipe>k__BackingField:
+    Tool: {fileID: 0}
+    Items: []
+  <ChargeRecipe>k__BackingField: {fileID: 0}
   <ClothingType>k__BackingField: 8
-  <TemperatureBonus>k__BackingField: 5
+  <TemperatureBonus>k__BackingField: 25
   <WaterProtection>k__BackingField: 100
   <WindProtection>k__BackingField: 0
   <ToxicityProtection>k__BackingField: 0
