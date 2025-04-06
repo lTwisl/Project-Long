@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7330d1d72e694e94e8c0d12864f239d9, type: 3}
+  m_Name: Aid Kit
+  m_EditorClassIdentifier: 
+  <Category>k__BackingField: 1
+  <UseType>k__BackingField: 1
+  <UseStrategy>k__BackingField: {fileID: 11400000, guid: 00377d1a194340949b38a77e4180c5ab, type: 2}
+  <Actions>k__BackingField: 0
+  <Name>k__BackingField: "\u0411\u043E\u043B\u044C\u0448\u0430\u044F \u0430\u043F\u0442\u0435\u0447\u043A\u0430"
+  <Description>k__BackingField: "\u0425\u043E\u0440\u043E\u0448\u043E \u0443\u043F\u0430\u043A\u043E\u0432\u0430\u043D\u043D\u0430\u044F
+    \u0431\u043E\u043B\u044C\u0448\u0430\u044F \u0430\u043F\u0442\u0435\u0447\u043A\u0430"
+  <Icon>k__BackingField: {fileID: 21300000, guid: 6baa75d8a8561a840a579778c0d303f0, type: 3}
+  <ItemPrefab>k__BackingField: {fileID: 4055471026960374171, guid: 53fe6ce27d49be64b9dbe20388ecb079, type: 3}
+  <Weight>k__BackingField: 1
+  <IsStackable>k__BackingField: 0
+  <MeasuredAsInteger>k__BackingField: 1
+  <MaxCapacity>k__BackingField: 1
+  <UnitMeasurement>k__BackingField: "\u0428\u0442."
+  <CostOfUse>k__BackingField: 1
+  <DegradeType>k__BackingField: 0
+  <DegradationValue>k__BackingField: 1
+  <ReceivedItemsAfterDeconstruct>k__BackingField: []
+  <StatusParameterImpacts>k__BackingField:
+  - ParameterType: 0
+    Value: 50
+  <HealsDisease>k__BackingField: []
+  <GivesBonus>k__BackingField: []

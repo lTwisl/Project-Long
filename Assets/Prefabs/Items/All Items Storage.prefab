@@ -1,0 +1,242 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5314400193098867823
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1029623496838019837}
+  - component: {fileID: 5876025436576379046}
+  - component: {fileID: 8498447443607487750}
+  - component: {fileID: 5123566889988745417}
+  m_Layer: 0
+  m_Name: Mesh
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1029623496838019837
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5314400193098867823}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.498, y: 0, z: 0}
+  m_LocalScale: {x: 5, y: 5, z: 5}
+  m_ConstrainProportionsScale: 1
+  m_Children: []
+  m_Father: {fileID: 1832725519269946446}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &5876025436576379046
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5314400193098867823}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.20459926, y: 0.13352323, z: 0.38477272}
+  m_Center: {x: 0.09371759, y: 0.06751166, z: -0.00025068223}
+--- !u!33 &8498447443607487750
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5314400193098867823}
+  m_Mesh: {fileID: -2432090755550338912, guid: 66c31215ee13a444eaf1771c4289f4a3, type: 3}
+--- !u!23 &5123566889988745417
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5314400193098867823}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 00d2afac3ac3dd84d9b6a6b680528aa9, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &7724258789137610259
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1832725519269946446}
+  - component: {fileID: 3569913043921540147}
+  m_Layer: 6
+  m_Name: All Items Storage
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1832725519269946446
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7724258789137610259}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1029623496838019837}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3569913043921540147
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7724258789137610259}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f2b55e3e6e461243be92ab046658e89, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Inventory>k__BackingField:
+    Filter: 0
+    InitSlots:
+    - <Item>k__BackingField: {fileID: 11400000, guid: 840025672c744a44e962de2b9ba48977, type: 2}
+      _capacity: 1
+      _condition: 100
+    - <Item>k__BackingField: {fileID: 11400000, guid: 7068a0a6394573d45b9367a50e91f717, type: 2}
+      _capacity: 1
+      _condition: 100
+    - <Item>k__BackingField: {fileID: 11400000, guid: 9a64b42a70fa26c49a9eaae3b8fa5c34, type: 2}
+      _capacity: 1
+      _condition: 100
+    - <Item>k__BackingField: {fileID: 11400000, guid: 9168e7e2ff215354d9bf3f09fa6d3cbf, type: 2}
+      _capacity: 1
+      _condition: 100
+    - <Item>k__BackingField: {fileID: 11400000, guid: 2c47166d6fcfccd499572d9a0694a3d9, type: 2}
+      _capacity: 1
+      _condition: 100
+    - <Item>k__BackingField: {fileID: 11400000, guid: 881906dd0a15ffc45997d3f6db7ae58c, type: 2}
+      _capacity: 1
+      _condition: 100
+    - <Item>k__BackingField: {fileID: 11400000, guid: cc924cca16ecc564f9d71558daffdf7a, type: 2}
+      _capacity: 1
+      _condition: 100
+    - <Item>k__BackingField: {fileID: 11400000, guid: c288e1861e221654b882697df167be60, type: 2}
+      _capacity: 1
+      _condition: 100
+    - <Item>k__BackingField: {fileID: 11400000, guid: c7a4b8175b5b10c43a581f3e740299b5, type: 2}
+      _capacity: 1
+      _condition: 100
+    - <Item>k__BackingField: {fileID: 11400000, guid: ca47c3a9dc3e75348956bc895adbfd60, type: 2}
+      _capacity: 1
+      _condition: 100
+    - <Item>k__BackingField: {fileID: 11400000, guid: de1179026cc1e1d4ca4711119571598f, type: 2}
+      _capacity: 1
+      _condition: 100
+    - <Item>k__BackingField: {fileID: 11400000, guid: 7ed95cd52f525fb4d8708f018dbe58e2, type: 2}
+      _capacity: 1
+      _condition: 100
+    - <Item>k__BackingField: {fileID: 11400000, guid: 4d556aee08895d64db3efef6a76f71ae, type: 2}
+      _capacity: 1
+      _condition: 100
+    - <Item>k__BackingField: {fileID: 11400000, guid: bf1bbef48343bbf4085eac155e6a390f, type: 2}
+      _capacity: 1
+      _condition: 100
+    - <Item>k__BackingField: {fileID: 11400000, guid: b6140c26260ea7743907e6f367f8bdd0, type: 2}
+      _capacity: 1
+      _condition: 100
+    - <Item>k__BackingField: {fileID: 11400000, guid: 46fcc58dd76b1024aa96418b9c556cbb, type: 2}
+      _capacity: 1
+      _condition: 100
+    - <Item>k__BackingField: {fileID: 11400000, guid: b002374376027204ab584b83760c7887, type: 2}
+      _capacity: 1
+      _condition: 100
+    - <Item>k__BackingField: {fileID: 11400000, guid: 4840668f728669744b3cebe30091faf8, type: 2}
+      _capacity: 1
+      _condition: 100
+    - <Item>k__BackingField: {fileID: 11400000, guid: ab825bca8886d344383923f0b5293031, type: 2}
+      _capacity: 1
+      _condition: 100
+    - <Item>k__BackingField: {fileID: 11400000, guid: 6b4888fc5cdc7fc49b79de15e21984ff, type: 2}
+      _capacity: 1
+      _condition: 100
+    - <Item>k__BackingField: {fileID: 11400000, guid: 0741750cbbd82434b9cfc983899ffd0f, type: 2}
+      _capacity: 1
+      _condition: 100
+    - <Item>k__BackingField: {fileID: 11400000, guid: f7c11734fdef53343b0686d38cd89efb, type: 2}
+      _capacity: 1
+      _condition: 100
+    - <Item>k__BackingField: {fileID: 11400000, guid: 858d033b7ee5d694fadaa8647f4dd4aa, type: 2}
+      _capacity: 1
+      _condition: 100
+    - <Item>k__BackingField: {fileID: 11400000, guid: 0326110bc71dbb64dab23f8b663aa8ec, type: 2}
+      _capacity: 1
+      _condition: 100
+    - <Item>k__BackingField: {fileID: 11400000, guid: 726f5ffd78b278447a2ec616d8914065, type: 2}
+      _capacity: 1
+      _condition: 100
+    - <Item>k__BackingField: {fileID: 11400000, guid: 93fa603eff4cc3643bbf5df6e829ae86, type: 2}
+      _capacity: 1
+      _condition: 100
+    - <Item>k__BackingField: {fileID: 11400000, guid: a489917256198a54283d601df54065ba, type: 2}
+      _capacity: 1
+      _condition: 100
+    <Weight>k__BackingField: 0
+  <InteractionType>k__BackingField: 1
+  _initItems: []

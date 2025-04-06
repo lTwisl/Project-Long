@@ -1,82 +1,132 @@
 ﻿using System;
 using UnityEditor;
+using UnityEditor.UIElements;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 [CustomEditor(typeof(WeatherSystem))]
 public class WeatherSystemEditor : Editor
 {
-    private Color _baseColor;
+    private const float SPACING = 15f;
 
-    public override void OnInspectorGUI()
+    public override VisualElement CreateInspectorGUI()
     {
-        DrawDefaultInspector();
-        WeatherSystem weatherSystem = (WeatherSystem)target;
+        var container = new VisualElement();
 
-        _baseColor = GUI.backgroundColor;
+        // Основной инспектор по умолчанию
+        InspectorElement.FillDefaultInspector(container, serializedObject, this);
 
-        GUILayout.Space(15);
-        EditorGUILayout.BeginHorizontal();
-        GUI.backgroundColor = new Color(0.29f, 0.565f, 0.886f);
-        if (GUILayout.Button("Проверить модули"))
-        {
-            weatherSystem.ValidateReferences();
-        }
+        // Кастомные элементы управления
+        CreateValidationControls(container);
+        CreateTransitionControls(container);
+        CreateTimeInfoSection(container);
 
-        GUI.backgroundColor = new Color(0.494f, 0.827f, 0.129f);
-        if (GUILayout.Button("Настроить сцену"))
-        {
-            weatherSystem.SetNewWeatherImmediatelyEditor();
-        }
-        EditorGUILayout.EndHorizontal();
-
-
-        DrawTransitionControls(weatherSystem);
-        DrawTimeInfo(weatherSystem);
+        return container;
     }
 
-    void DrawTransitionControls(WeatherSystem weatherSystem)
+    private void CreateValidationControls(VisualElement container)
     {
-        EditorGUILayout.Space();
-        EditorGUILayout.LabelField("Контроль перехода:", EditorStyles.boldLabel);
-
-        EditorGUILayout.BeginHorizontal();
-        GUI.backgroundColor = new Color(1f, 0.4f, 0.4f);
-        if (GUILayout.Button("Остановить преход"))
+        var horizontalBox = new VisualElement
         {
-            weatherSystem.StopWeatherTransition();
-        }
-        GUI.backgroundColor = _baseColor;
-        EditorGUILayout.EndHorizontal();
+            style =
+            {
+                flexDirection = FlexDirection.Row,
+                justifyContent = Justify.SpaceBetween,
+                marginTop = SPACING
+            }
+        };
 
-        // Прогресс перехода
-        Rect rect = EditorGUILayout.GetControlRect();
-        EditorGUI.ProgressBar(rect, GetTransitionProgress(weatherSystem), "Прогресс перехода");
+        var buttonValidateRefs = new Button(() => ((WeatherSystem)target).ValidateReferences())
+        {
+            text = "Проверить модули",
+            style =
+            {
+                backgroundColor = Color.green,
+                color = Color.white,
+                flexGrow = 1,
+                marginLeft = 5,
+                marginRight = 5
+            }
+        };
+        horizontalBox.Add(buttonValidateRefs);
+
+        var buttonCheckModules = new Button(() => ((WeatherSystem)target).SetNewWeatherImmediatelyEditor())
+        {
+            text = "Настроить сцену",
+            style =
+            {
+                backgroundColor = Color.blue,
+                color = Color.white,
+                flexGrow = 1,
+                marginLeft = 5,
+                marginRight = 5
+            }
+        };
+        horizontalBox.Add(buttonCheckModules);
+
+        container.Add(horizontalBox);
     }
 
-    void DrawTimeInfo(WeatherSystem weatherSystem)
+    private void CreateTransitionControls(VisualElement container)
     {
-        EditorGUILayout.Space();
-        EditorGUILayout.LabelField("Временная информация:", EditorStyles.boldLabel);
+        var transitionSection = new VisualElement { style = { marginTop = SPACING } };
 
-        EditorGUI.BeginDisabledGroup(true);
+        var progressBar = new ProgressBar
+        {
+            title = "Прогресс перехода",
+            style = { height = 20, marginTop = 5 }
+        };
 
-        EditorGUILayout.TextField("Начало текущей погоды:", GameTime.GetFormattedTime(weatherSystem.TimeStartCurrentWeather));
-        EditorGUILayout.TextField("Конец текущей погоды:", GameTime.GetFormattedTime(weatherSystem.TimeEndCurrentWeather));
-        EditorGUILayout.TextField("Время перехода:", weatherSystem.TransitionDuration.ToString());
+        var stopButton = new Button(() => ((WeatherSystem)target).StopWeatherTransition())
+        {
+            text = "Остановить переход",
+            style =
+            {
+                backgroundColor = new Color(1f, 0.4f, 0.4f),
+                color = Color.white,
+                unityFontStyleAndWeight = FontStyle.Bold
+            }
+        };
 
-        EditorGUI.EndDisabledGroup();
+        // Обновление прогресса в реальном времени
+        progressBar.schedule.Execute(() =>
+        {
+            progressBar.value = GetTransitionProgress((WeatherSystem)target) * 100;
+        }).Every(100);
+
+        transitionSection.Add(new Label("Контроль перехода:") { style = { unityFontStyleAndWeight = FontStyle.Bold } });
+        transitionSection.Add(stopButton);
+        transitionSection.Add(progressBar);
+
+        container.Add(transitionSection);
+    }
+
+    private void CreateTimeInfoSection(VisualElement container)
+    {
+        var timeSection = new VisualElement { style = { marginTop = SPACING } };
+        var system = (WeatherSystem)target;
+
+        CreateReadOnlyField("Начало текущей погоды:", GameTime.GetFormattedTime(system.TimeStartCurrentWeather), timeSection);
+        CreateReadOnlyField("Конец текущей погоды:", GameTime.GetFormattedTime(system.TimeEndCurrentWeather), timeSection);
+        CreateReadOnlyField("Время перехода:", system.TransitionDuration.ToString(), timeSection);
+
+        container.Add(new Label("Временная информация:") { style = { unityFontStyleAndWeight = FontStyle.Bold } });
+        container.Add(timeSection);
+    }
+
+    private void CreateReadOnlyField(string label, string value, VisualElement parent)
+    {
+        var field = new TextField(label) { value = value };
+        field.SetEnabled(false);
+        field.style.marginTop = 5;
+        parent.Add(field);
     }
 
     private float GetTransitionProgress(WeatherSystem weatherSystem)
     {
         if (!weatherSystem.CheckHasTransition()) return 0;
 
-        // Получаем реальную длительность из системы
-        TimeSpan duration = weatherSystem.TransitionDuration;
-
-        // Используем время начала перехода, а не погоды
         TimeSpan passed = GameTime.GetPassedTime(weatherSystem.TimeEndCurrentWeather);
-
-        return Mathf.Clamp01((float)(passed.TotalSeconds / duration.TotalSeconds));
+        return Mathf.Clamp01((float)(passed.TotalSeconds / weatherSystem.TransitionDuration.TotalSeconds));
     }
 }

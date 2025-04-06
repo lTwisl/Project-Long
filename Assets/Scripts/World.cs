@@ -31,15 +31,15 @@ public class World : MonoBehaviour
     public event Action<ShelterSystem> OnEnterShelter;
     public event Action<ShelterSystem> OnExitShelter;
 
-    public event Action<HeatZone> OnEnterHeatZone;
-    public event Action<HeatZone> OnExitHeatZone;
+    public event Action<TemperatureZone> OnEnterHeatZone;
+    public event Action<TemperatureZone> OnExitHeatZone;
 
     public event Action<ToxicityZone> OnEnterToxicityZone;
     public event Action<ToxicityZone> OnExitToxicityZone;
 
     private Player _player;
 
-    private List<HeatZone> _externalHeats = new List<HeatZone>();
+    private List<TemperatureZone> _externalHeats = new List<TemperatureZone>();
     private float _currentMaxExternalTemp;
 
     private void Awake()
@@ -88,13 +88,13 @@ public class World : MonoBehaviour
         OnExitShelter?.Invoke(shelterSystem);
     }
 
-    public void InvokeOnEnterHeatZone(HeatZone heatZone)
+    public void InvokeOnEnterHeatZone(TemperatureZone heatZone)
     {
         AddExternalHeat(heatZone);
         OnEnterHeatZone?.Invoke(heatZone);
     }
 
-    public void InvokeOnExitHeatZone(HeatZone heatZone)
+    public void InvokeOnExitHeatZone(TemperatureZone heatZone)
     {
         RemoveExternalHeat(heatZone);
         OnExitHeatZone?.Invoke(heatZone);
@@ -142,7 +142,7 @@ public class World : MonoBehaviour
     /// <summary>
     /// ƒобавить внешний источник тепла и обновить максимальную температуру
     /// </summary>
-    private void AddExternalHeat(HeatZone externalHeat)
+    private void AddExternalHeat(TemperatureZone externalHeat)
     {
         _externalHeats.Add(externalHeat);
 
@@ -153,7 +153,7 @@ public class World : MonoBehaviour
     /// <summary>
     /// ”далить внешний источник тепла и пересчитать максимальную температуру
     /// </summary>
-    private void RemoveExternalHeat(HeatZone externalHeat)
+    private void RemoveExternalHeat(TemperatureZone externalHeat)
     {
         _externalHeats.Remove(externalHeat);
 
