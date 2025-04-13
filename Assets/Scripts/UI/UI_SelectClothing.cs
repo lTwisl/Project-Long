@@ -79,7 +79,7 @@ public class UI_SelectClothing : MonoBehaviour
         var clothes = Slots[_currentIndex].Item as ClothingItem;
 
         _text.text = $"{clothes.Name}: " +
-            $"Temp = {clothes.TemperatureBonus}" +
+            $"Temperature = {clothes.TemperatureBonus}" +
             $" | Water = {clothes.WaterProtection}" +
             $" | Wind = {clothes.WindProtection}" +
             $" | Friction = {clothes.FrictionBonus}" +

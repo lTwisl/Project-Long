@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
 [System.Serializable]
-public class CapacityStatusParameter : StatusParameter
+public class CapacityStatusParameter : BaseStatusParameter
 {
     private readonly Dictionary<WeightRange, float> _rangeLoadCapacity = new Dictionary<WeightRange, float>()
     {
@@ -32,7 +31,7 @@ public class CapacityStatusParameter : StatusParameter
 
     public override void Reset()
     {
-        Max = /*_rangeLoadCapacity.Values.Max()*/999999;
+        Max = float.MaxValue;
         OffsetMax = 0;
     }
 }

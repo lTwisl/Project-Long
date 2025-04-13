@@ -75,7 +75,7 @@ public class GameTime : MonoBehaviour
 
         if (delta <= TimeSpan.Zero)
             return;
-
+        int i = 0;
         TimeSpan current = oldTime;
         while (current < newTime)
         {
@@ -90,10 +90,12 @@ public class GameTime : MonoBehaviour
 
             if (current.Days != next.Days)
                 OnDayChanged?.Invoke();
-            
-            current = next;
-        }
 
+
+            current = next;
+            ++i;
+        }
+        //Debug.Log(i);
         _currentTime = newTime;
         OnTimeChanged?.Invoke();
         OnLateTimeChanged?.Invoke();

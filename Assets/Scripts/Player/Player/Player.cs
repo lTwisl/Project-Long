@@ -1,7 +1,7 @@
-using System;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
+
 
 [SelectionBase]
 public class Player : MonoBehaviour
@@ -9,6 +9,8 @@ public class Player : MonoBehaviour
     [Inject] private World _world;
     [field: Inject] public Inventory Inventory { get; private set; }
     [field: Inject] public ClothingSystem ClothingSystem { get; private set; }
+
+    [SerializeField] private float _degradationScaleOutside = 2;
 
     [Header("UI")]
     [SerializeField] private Slider _slider;
@@ -18,6 +20,8 @@ public class Player : MonoBehaviour
 
     public PlayerInputs PlayerInputs { get; private set; }
     public Camera MainCamera { get; private set; }
+
+
 
     private void Awake()
     {
@@ -33,15 +37,17 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
+        HandlerExitShelter(null);
         _playerParameters.Capacity.Current = Inventory.Weight;
     }
 
     private void OnEnable()
     {
+
         PlayerInputs.OnChangeVisibilityUiPlayer += SetVisibilityUiPlayer;
 
-        ClothingSystem.OnEquip += UpdateClothesOffsetMax;
-        ClothingSystem.OnUnequip += UpdateClothesOffsetMax;
+        ClothingSystem.OnEquip += UpdateClothesStaminaOffsetMax;
+        ClothingSystem.OnUnequip += UpdateClothesStaminaOffsetMax;
 
         GameTime.OnMinuteChanged += HandleChangedMinute;
 
@@ -55,14 +61,19 @@ public class Player : MonoBehaviour
             if (zone.CurrentType == ToxicityZone.ZoneType.Single)
                 _playerParameters.Toxicity.Current -= zone.Toxicity * (1 - ClothingSystem.TotalToxicityProtection / 100);
         };
+
+        _world.OnEnterShelter += HandlerEnterShelter;
+        _world.OnExitShelter += HandlerExitShelter;
+
+
     }
 
     private void OnDisable()
     {
         PlayerInputs.OnChangeVisibilityUiPlayer -= SetVisibilityUiPlayer;
 
-        ClothingSystem.OnEquip -= UpdateClothesOffsetMax;
-        ClothingSystem.OnUnequip -= UpdateClothesOffsetMax;
+        ClothingSystem.OnEquip -= UpdateClothesStaminaOffsetMax;
+        ClothingSystem.OnUnequip -= UpdateClothesStaminaOffsetMax;
 
         GameTime.OnMinuteChanged -= HandleChangedMinute;
 
@@ -70,6 +81,9 @@ public class Player : MonoBehaviour
 
         Inventory.OnItemAdded -= UpdateCurrentCapacity;
         Inventory.OnItemRemoved -= UpdateCurrentCapacity;
+
+        _world.OnEnterShelter -= HandlerEnterShelter;
+        _world.OnExitShelter -= HandlerExitShelter;
     }
 
     private void HandleChangedMinute()
@@ -78,7 +92,19 @@ public class Player : MonoBehaviour
         ClothingSystem.Update(1);
     }
 
-    private void UpdateClothesOffsetMax(InventorySlot _) => _playerParameters.Stamina.OffsetMax = ClothingSystem.TotalOffsetStamina;
+    private void HandlerEnterShelter(ShelterSystem _)
+    {
+        Inventory.DegradationScale = 1;
+        ClothingSystem.DegradationScale = 1;
+    }
+
+    private void HandlerExitShelter(ShelterSystem _)
+    {
+        Inventory.DegradationScale = _degradationScaleOutside;
+        ClothingSystem.DegradationScale = _degradationScaleOutside;
+    }
+
+    private void UpdateClothesStaminaOffsetMax(InventorySlot _) => _playerParameters.Stamina.OffsetMax = ClothingSystem.TotalOffsetStamina;
 
     public void UpdateCurrentCapacity(InventorySlot _) => _playerParameters.Capacity.Current = Inventory.Weight;
 
@@ -111,7 +137,16 @@ public class Player : MonoBehaviour
 
         if (slot.Item.ItemPrefab != null)
         {
-            WorldItem item = Instantiate(slot.Item.ItemPrefab, transform.position, transform.rotation);
+            Vector3 pos = transform.position;
+            Vector3 up = transform.up;
+            if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hitInfo))
+            {
+                pos = hitInfo.point;
+                up = hitInfo.normal;
+            }
+
+            WorldItem item = Instantiate(slot.Item.ItemPrefab, pos, transform.rotation);
+            item.transform.up = up;
             item.InventorySlot = new InventorySlot(slot.Item, slot.Capacity, slot.Condition);
         }
 

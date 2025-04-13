@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "UseOnSelfStrategy", menuName = "Scriptable Objects/UseOnSelfStrategy")]
+[CreateAssetMenu(fileName = "UseOnSelfStrategy", menuName = "Use Item Strategy/UseOnSelfStrategy")]
 public class UseOnSelfStrategy : UseStrategy
 {
     public override void Execute(InventoryItem item)

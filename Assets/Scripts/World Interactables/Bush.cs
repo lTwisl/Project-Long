@@ -1,16 +1,39 @@
 using UnityEngine;
+using EditorAttributes;
 
 public class Bush : Storage
 {
-    [SerializeField] private GameObject[] _objects;
+    [SerializeField] private GameObject[] _hideAfterPickup;
+    [SerializeField, Suffix("days")] private float _reload = 3;
+
+    private float timer = 0;
 
     public override void Interact(Player player)
     {
         base.Interact(player);
 
-        foreach (var obj in _objects)
+        timer = _reload * 24 * 60; // Перевод из дней в минуты
+        GameTime.OnMinuteChanged += HandleChangedMinute;
+
+        foreach (var obj in _hideAfterPickup)
         {
             obj.SetActive(false);
+        }
+    }
+
+    private void HandleChangedMinute()
+    {
+        timer -= GameTime.DeltaTime;
+
+        if (timer <= 0)
+        {
+            IsCanInteract = true;
+            Inventory.Init();
+            foreach (var obj in _hideAfterPickup)
+            {
+                obj.SetActive(true);
+            }
+            GameTime.OnMinuteChanged -= HandleChangedMinute;
         }
     }
 }

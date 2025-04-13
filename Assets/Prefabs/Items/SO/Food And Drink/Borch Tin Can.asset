@@ -32,13 +32,13 @@ MonoBehaviour:
   <UnitMeasurement>k__BackingField: 0
   <CostOfUse>k__BackingField: 1
   <DegradeType>k__BackingField: 2
-  <DegradationValue>k__BackingField: 1
+  <DegradationValue>k__BackingField: 0.034722222222222224
   <Actions>k__BackingField: 0
-  <DeconstructNead>k__BackingField: []
-  <RepairNead>k__BackingField:
-    NeadTool: {fileID: 0}
-    NeadMaterials: []
-  <ChargeNead>k__BackingField: {fileID: 0}
+  <DeconstructRecipe>k__BackingField: []
+  <RepairRecipe>k__BackingField:
+    Tool: {fileID: 0}
+    Items: []
+  <ChargeRecipe>k__BackingField: {fileID: 0}
   <StatusParameterImpacts>k__BackingField:
   - ParameterType: 2
     Value: 600

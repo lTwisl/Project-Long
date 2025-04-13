@@ -28,7 +28,7 @@ MonoBehaviour:
   <UnitMeasurement>k__BackingField: 0
   <CostOfUse>k__BackingField: 0
   <DegradeType>k__BackingField: 2
-  <DegradationValue>k__BackingField: 0.001
+  <DegradationValue>k__BackingField: 0.0007716049382716049
   <Actions>k__BackingField: 9
   <DeconstructRecipe>k__BackingField: []
   <RepairRecipe>k__BackingField:
@@ -45,3 +45,4 @@ MonoBehaviour:
   <FrictionBonus>k__BackingField: 0
   <DryingRate>k__BackingField: 1
   <WaterAbsorptionRatio>k__BackingField: 2
+  <GivesBonus>k__BackingField: []
