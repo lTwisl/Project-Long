@@ -1,4 +1,3 @@
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
@@ -7,14 +6,13 @@ public class WeatherPostProcessSystem : MonoBehaviour
 {
     [DisableEdit, SerializeField] private bool _isPostProcessValide = false;
 
-    [Header("Материал скайбокса:")]
+    [Header("Обьем простпроцессинга:")]
     [DisableEdit, SerializeField] private Volume _volume;
 
     public void ValidateReferences()
     {
 #if UNITY_EDITOR
-        Undo.RecordObject(this, "Валидация скайбокса");
-        EditorUtility.SetDirty(this);
+        UnityEditor.Undo.RecordObject(this, "Валидация пост процессинга");
 #endif
         _volume = FindFirstObjectByType<Volume>();
 
@@ -55,8 +53,10 @@ public class WeatherPostProcessSystem : MonoBehaviour
         ValidateReferences();
     }
 
+#if UNITY_EDITOR
     private void OnValidate()
     {
         ValidateReferences();
     }
+#endif
 }

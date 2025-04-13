@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 
 public class WeatherSystem : MonoBehaviour
@@ -67,11 +66,6 @@ public class WeatherSystem : MonoBehaviour
     private void Awake()
     {
         ValidateReferences();
-    }
-
-    private void OnValidate()
-    {
-        FindReferences();
     }
 
     /// <summary>
@@ -282,13 +276,16 @@ public class WeatherSystem : MonoBehaviour
         StopAllCoroutines();
     }
 
-    #region Функции EDITOR
+#if UNITY_EDITOR
+    private void OnValidate()
+    {
+        if (!_isFogSystemValide || !_isLightingSystemsValide || !_isPostProcessSystemValide || !_isSkyboxSystemValide || !_isWindSystemValide)
+            FindReferences();
+    }
+
     private void FindReferences()
     {
-#if UNITY_EDITOR
-        Undo.RecordObject(this, "Инициализировали ссылки на модули WeatherSystem");
-        EditorUtility.SetDirty(this);
-#endif
+        UnityEditor.Undo.RecordObject(this, "Инициализированы ссылки на модули WeatherSystem");
 
         if (CurrentWeatherProfile != null)
         {
@@ -315,12 +312,10 @@ public class WeatherSystem : MonoBehaviour
         ValidateReferences();
     }
 
-    public void SetNewWeatherImmediatelyEditor()
+    public void SetSceneWeatherInEditor()
     {
-#if UNITY_EDITOR
-        Undo.RecordObject(this, "Инициализировали сцены");
-        EditorUtility.SetDirty(this);
-#endif
+        UnityEditor.Undo.RecordObject(this, "Выставлена погода по пресету в редакторе");
+
         if (CurrentWeatherProfile == null)
         {
             Debug.LogWarning("<color=orange>Попытка установить null профиль погоды! Установи сменяемый профиль в переменной currentProfile</color>");
@@ -329,5 +324,5 @@ public class WeatherSystem : MonoBehaviour
 
         UpdateWeatherParameters(CurrentWeatherProfile, CurrentWeatherProfile, 1f);
     }
-    #endregion
+#endif
 }

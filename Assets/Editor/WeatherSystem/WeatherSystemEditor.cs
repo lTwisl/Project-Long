@@ -50,7 +50,7 @@ public class WeatherSystemEditor : Editor
         };
         horizontalBox.Add(buttonValidateRefs);
 
-        var buttonCheckModules = new Button(() => ((WeatherSystem)target).SetNewWeatherImmediatelyEditor())
+        var buttonCheckModules = new Button(() => ((WeatherSystem)target).SetSceneWeatherInEditor())
         {
             text = "Настроить сцену",
             style =

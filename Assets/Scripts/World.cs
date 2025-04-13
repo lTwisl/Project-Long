@@ -28,8 +28,8 @@ public class World : MonoBehaviour
     public WeatherSystem Weather { get; private set; }
     public WeatherWindSystem Wind => Weather.WindSystem;
 
-    public event Action<ShelterSystem> OnEnterShelter;
-    public event Action<ShelterSystem> OnExitShelter;
+    public event Action<Shelter> OnEnterShelter;
+    public event Action<Shelter> OnExitShelter;
 
     public event Action<TemperatureZone> OnEnterTemperatureZone;
     public event Action<TemperatureZone> OnExitTemperatureZone;
@@ -64,7 +64,7 @@ public class World : MonoBehaviour
         CalculateTotalToxicity();
     }
 
-    public void InvokeOnEnterShelter(ShelterSystem shelterSystem)
+    public void InvokeOnEnterShelter(Shelter shelterSystem)
     {
         ShelterTemperature = shelterSystem.Temperature;
         ShelterWetness = shelterSystem.Wetness;
@@ -76,7 +76,7 @@ public class World : MonoBehaviour
         OnEnterShelter?.Invoke(shelterSystem);
     }
 
-    public void InvokeOnExitShelter(ShelterSystem shelterSystem)
+    public void InvokeOnExitShelter(Shelter shelterSystem)
     {
         ShelterTemperature -= shelterSystem.Temperature;
         ShelterWetness -= shelterSystem.Wetness;

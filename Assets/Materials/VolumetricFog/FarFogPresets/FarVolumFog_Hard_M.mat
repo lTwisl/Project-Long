@@ -27,6 +27,6 @@ Material:
     m_Floats:
     - _Distance: 0.01
     m_Colors:
-    - _Color_Fog: {r: 2.6964707, g: 2.8489027, b: 2.9960785, a: 0.5019608}
+    - _Color_Fog: {r: 2.6964707, g: 2.8489027, b: 2.9960785, a: 0.7490196}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

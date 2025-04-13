@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b00045f12942b46c698459096c89274e, type: 3}
-  m_Name: FullScreenPassRendererFeature
+  m_Name: Angles Map
   m_EditorClassIdentifier: 
   m_Active: 1
   injectionPoint: 550
@@ -36,15 +36,15 @@ MonoBehaviour:
   m_Settings:
     AOMethod: 1
     Downsample: 0
-    AfterOpaque: 0
+    AfterOpaque: 1
     Source: 1
-    NormalSamples: 1
-    Intensity: 0.5
-    DirectLightingStrength: 0.25
-    Radius: 5
+    NormalSamples: 2
+    Intensity: 0.1
+    DirectLightingStrength: 0
+    Radius: 1
     Samples: 0
     BlurQuality: 0
-    Falloff: 25
+    Falloff: 30
     SampleCount: -1
   m_BlueNoise256Textures:
   - {fileID: 2800000, guid: 36f118343fc974119bee3d09e2111500, type: 3}
@@ -120,11 +120,11 @@ MonoBehaviour:
     probeSamplingDebugTexture: {fileID: 0}
     probeVolumeBlendStatesCS: {fileID: 0}
   m_RendererFeatures:
-  - {fileID: -4771592466879060175}
   - {fileID: -1753871306529863744}
   - {fileID: -2675411701934795552}
   - {fileID: -9009198015177929433}
-  m_RendererFeatureMap: 3167beaeeee5c7bdc08789d056ffa8e7e0d440663b07dfda274d2a5223e6f882
+  - {fileID: -4771592466879060175}
+  m_RendererFeatureMap: c08789d056ffa8e7e0d440663b07dfda274d2a5223e6f8823167beaeeee5c7bd
   m_UseNativeRenderPass: 1
   xrSystemData: {fileID: 0}
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}

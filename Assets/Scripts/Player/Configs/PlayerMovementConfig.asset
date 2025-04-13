@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d545b10e291f194eb0e2704dfd88121, type: 3}
   m_Name: PlayerMovementConfig
   m_EditorClassIdentifier: 
-  <MoveSpeed>k__BackingField: 4
-  <SprintSpeed>k__BackingField: 6
+  <MoveSpeed>k__BackingField: 8
+  <SprintSpeed>k__BackingField: 12
   <RotationSpeed>k__BackingField: 1
   <SpeedChangeRate>k__BackingField: 10
   <SpeedChangeRateCurve>k__BackingField:
@@ -113,7 +113,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  <SlidingAngle>k__BackingField: 30
+  <SlidingAngle>k__BackingField: 45
   <SlidingAngleCurve>k__BackingField:
     serializedVersion: 2
     m_Curve:

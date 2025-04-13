@@ -1,4 +1,3 @@
-using UnityEditor;
 using UnityEngine;
 
 public class WeatherSkyboxSystem : MonoBehaviour
@@ -13,8 +12,7 @@ public class WeatherSkyboxSystem : MonoBehaviour
     public void ValidateReferences()
     {
 #if UNITY_EDITOR
-        Undo.RecordObject(this, "Валидация скайбокса");
-        EditorUtility.SetDirty(this);
+        UnityEditor.Undo.RecordObject(this, "Валидация скайбокса");
 #endif
         _skyboxMaterial = RenderSettings.skybox;
 
@@ -104,11 +102,6 @@ public class WeatherSkyboxSystem : MonoBehaviour
         ValidateReferences();
     }
 
-    private void OnValidate()
-    {
-        ValidateReferences();
-    }
-
     void Update()
     {
         UpdateSunDirection();
@@ -120,4 +113,11 @@ public class WeatherSkyboxSystem : MonoBehaviour
 
         _skyboxMaterial.SetVector("_Sun_Direction", _sunTransform.transform.forward);
     }
+
+#if UNITY_EDITOR
+    private void OnValidate()
+    {
+        ValidateReferences();
+    }
+#endif
 }

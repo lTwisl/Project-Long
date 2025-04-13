@@ -1,5 +1,4 @@
 using System.Linq;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
@@ -21,9 +20,9 @@ public class WeatherFogSystem : MonoBehaviour
     public void ValidateReferences()
     {
 #if UNITY_EDITOR
-        Undo.RecordObject(this, "Валидация тумана");
-        EditorUtility.SetDirty(this);
+        UnityEditor.Undo.RecordObject(this, "Валидация тумана");
 #endif
+
         // Ищем ссылки на материалы тумана
         var pipeline = GraphicsSettings.currentRenderPipeline as UniversalRenderPipelineAsset;
 
@@ -94,9 +93,6 @@ public class WeatherFogSystem : MonoBehaviour
     /// <summary>
     /// Обновить параметры обьемного тумана
     /// </summary>
-    /// <param name="currentProfile"></param>
-    /// <param name="newProfile"></param>
-    /// <param name="t"></param>
     public void UpdateFog(WeatherProfile currentProfile, WeatherProfile newProfile, float t)
     {
         if (!_isFogValide)
@@ -104,6 +100,7 @@ public class WeatherFogSystem : MonoBehaviour
             Debug.Log("<color=orange>Модуль тумана в сцене неисправен, либо отстутствует. Погода не будет менять туман!</color>");
             return;
         }
+
         //// Classic Fog
         // Color
         _nearFogMaterial.SetColor("_Color_Fog", Color.Lerp(currentProfile.nearVolumFogMat.GetColor("_Color_Fog"), newProfile.nearVolumFogMat.GetColor("_Color_Fog"), t));
@@ -138,12 +135,7 @@ public class WeatherFogSystem : MonoBehaviour
         ValidateReferences();
     }
 
-    private void OnValidate()
-    {
-        ValidateReferences();
-    }
-
-    void Update()
+    private void Update()
     {
         UpdateSunDirection();
     }
@@ -155,5 +147,12 @@ public class WeatherFogSystem : MonoBehaviour
         _nearFogMaterial.SetVector("_Sun_Direction", _sunTransform.transform.forward);
         _farFogMaterial.SetVector("_Sun_Direction", _sunTransform.transform.forward);
     }
+
+#if UNITY_EDITOR
+    private void OnValidate()
+    {
+        ValidateReferences();
+    }
+#endif
 }
 

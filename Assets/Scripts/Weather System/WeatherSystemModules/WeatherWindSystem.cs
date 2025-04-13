@@ -277,10 +277,9 @@ public class WeatherWindSystem : MonoBehaviour
     {
         _windZones.Clear();
     }
-
     #endregion
 
-    #region Отрисовка поля векторов ветра
+#if UNITY_EDITOR
     private void OnDrawGizmos()
     {
         DrawWindZones();
@@ -404,5 +403,5 @@ public class WeatherWindSystem : MonoBehaviour
     //        }
     //    }
     //}
-    #endregion
+    #endif
 }

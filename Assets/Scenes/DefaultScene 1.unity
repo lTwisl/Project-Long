@@ -4888,6 +4888,10 @@ PrefabInstance:
       propertyPath: _volume
       value: 
       objectReference: {fileID: 47031860}
+    - target: {fileID: 7528676310365337471, guid: 7c5f26e0638bb1344bbb1c2128e7dba2, type: 3}
+      propertyPath: _isPostProcessValide
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7828725762744367070, guid: 7c5f26e0638bb1344bbb1c2128e7dba2, type: 3}
       propertyPath: m_Enabled
       value: 1
@@ -4901,6 +4905,18 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7828725762744367070, guid: 7c5f26e0638bb1344bbb1c2128e7dba2, type: 3}
+      propertyPath: _isFogSystemValide
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7828725762744367070, guid: 7c5f26e0638bb1344bbb1c2128e7dba2, type: 3}
+      propertyPath: _isWindSystemValide
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7828725762744367070, guid: 7c5f26e0638bb1344bbb1c2128e7dba2, type: 3}
+      propertyPath: _isSkyboxSystemValide
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7828725762744367070, guid: 7c5f26e0638bb1344bbb1c2128e7dba2, type: 3}
       propertyPath: _isLightingSystemsValide
       value: 1
       objectReference: {fileID: 0}
@@ -4912,6 +4928,10 @@ PrefabInstance:
       propertyPath: <MoonLight>k__BackingField
       value: 
       objectReference: {fileID: 321848914}
+    - target: {fileID: 7828725762744367070, guid: 7c5f26e0638bb1344bbb1c2128e7dba2, type: 3}
+      propertyPath: _isPostProcessSystemValide
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7828725762744367070, guid: 7c5f26e0638bb1344bbb1c2128e7dba2, type: 3}
       propertyPath: <WindSystem>k__BackingField
       value: 
