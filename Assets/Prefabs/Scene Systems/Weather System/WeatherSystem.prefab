@@ -53,7 +53,6 @@ MonoBehaviour:
   <WeatherProfiles>k__BackingField:
   - {fileID: 11400000, guid: 62b6db9f95725c349b09f93c1854c909, type: 2}
   - {fileID: 11400000, guid: 05059311190a3f847b37c6959c77c5bb, type: 2}
-  _isProfilesValide: 1
   <CurrentWeatherProfile>k__BackingField: {fileID: 11400000, guid: 62b6db9f95725c349b09f93c1854c909, type: 2}
   <NewWeatherProfile>k__BackingField: {fileID: 11400000, guid: 05059311190a3f847b37c6959c77c5bb, type: 2}
   <Temperature>k__BackingField: -10

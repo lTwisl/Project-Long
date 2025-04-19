@@ -92,13 +92,13 @@ public class Player : MonoBehaviour
         ClothingSystem.Update(1);
     }
 
-    private void HandlerEnterShelter(ShelterSystem _)
+    private void HandlerEnterShelter(Shelter _)
     {
         Inventory.DegradationScale = 1;
         ClothingSystem.DegradationScale = 1;
     }
 
-    private void HandlerExitShelter(ShelterSystem _)
+    private void HandlerExitShelter(Shelter _)
     {
         Inventory.DegradationScale = _degradationScaleOutside;
         ClothingSystem.DegradationScale = _degradationScaleOutside;

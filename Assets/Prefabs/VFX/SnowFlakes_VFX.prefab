@@ -47,7 +47,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 926ca930c18bb8343aadaea1a709a221, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isValide: 0
+  _isControllerValide: 0
   _vfx: {fileID: 8515436157885312802}
 --- !u!2083052967 &8515436157885312802
 VisualEffect:
@@ -259,7 +259,7 @@ MonoBehaviour:
   bakeOnAwake: 1
   center: {x: 0, y: 0, z: 0}
   size: {x: 80, y: 80, z: 80}
-  maxResolution: 15
+  maxResolution: 200
   signPassesCount: 1
   threshold: 0.5
   offset: 0

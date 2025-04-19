@@ -7,7 +7,6 @@ public class ToxicityZone : MonoBehaviour
 {
     [Inject] private World _world;
 
-    [SerializeField] private bool _hideGizmo = true;
     public enum ZoneType
     {
         Rate,
@@ -40,11 +39,30 @@ public class ToxicityZone : MonoBehaviour
         _world.InvokeOnExitToxicityZone(this);
     }
 
-    #region ¬»«”јЋ»«ј÷»я
-    private void OnDrawGizmos()
-    {
-        if (_hideGizmo) return;
+#if UNITY_EDITOR
 
+    private void OnValidate()
+    {
+        ChangeNaming();
+        CacheCollider();
+    }
+
+    private void ChangeNaming()
+    {
+        gameObject.name = $"[{_currentType}] {_zoneID}";
+    }
+
+    private void CacheCollider()
+    {
+        if (_collider == null)
+            _collider = GetComponent<Collider>();
+
+        if (_collider != null || _collider.isTrigger != true)
+            _collider.isTrigger = true;
+    }
+
+    private void OnDrawGizmosSelected()
+    {
         var color = _currentType == ZoneType.Rate ? new Color(0.5f, 0, 1, 1) : new Color(1, 0, 0.5f, 1);
         Gizmos.color = color;
 
@@ -70,31 +88,5 @@ public class ToxicityZone : MonoBehaviour
             _guiStyle
         );
     }
-    #endregion
-
-    #region EDITOR
-    private void OnValidate()
-    {
-        ChangeNaming();
-        CacheCollider();
-#if UNITY_EDITOR
-        Undo.RecordObject(this, "»нициализировали ссылки на модули WeatherSystem");
-        EditorUtility.SetDirty(this);
 #endif
-    }
-
-    private void ChangeNaming()
-    {
-        gameObject.name = $"[{_currentType}] {_zoneID}";
-    }
-
-    private void CacheCollider()
-    {
-        if (_collider == null)
-        {
-            _collider = GetComponent<Collider>();
-            _collider.isTrigger = true;
-        }
-    }
-    #endregion
 }

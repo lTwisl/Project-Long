@@ -30,10 +30,10 @@ public class World : MonoBehaviour
     public WeatherWindSystem Wind => Weather.WindSystem;
 
 
-    public ShelterSystem PlayerEnteredLastShelter { get; private set; }
+    public Shelter PlayerEnteredLastShelter { get; private set; }
 
-    public event Action<ShelterSystem> OnEnterShelter;
-    public event Action<ShelterSystem> OnExitShelter;
+    public event Action<Shelter> OnEnterShelter;
+    public event Action<Shelter> OnExitShelter;
 
     public event Action<TemperatureZone> OnEnterTemperatureZone;
     public event Action<TemperatureZone> OnExitTemperatureZone;
@@ -69,7 +69,7 @@ public class World : MonoBehaviour
         CalculateTotalToxicity();
     }
 
-    public void InvokeOnEnterShelter(ShelterSystem shelterSystem)
+    public void InvokeOnEnterShelter(Shelter shelterSystem)
     {
 #if UNITY_EDITOR
         if (PlayerEnteredLastShelter != null)
@@ -87,7 +87,7 @@ public class World : MonoBehaviour
         OnEnterShelter?.Invoke(shelterSystem);
     }
 
-    public void InvokeOnExitShelter(ShelterSystem shelterSystem)
+    public void InvokeOnExitShelter(Shelter shelterSystem)
     {
 #if UNITY_EDITOR
         if (PlayerEnteredLastShelter != shelterSystem)

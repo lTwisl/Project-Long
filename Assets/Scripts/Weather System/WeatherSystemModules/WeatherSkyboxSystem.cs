@@ -12,15 +12,11 @@ public class WeatherSkyboxSystem : MonoBehaviour
 
     public void ValidateReferences()
     {
-#if UNITY_EDITOR
-        Undo.RecordObject(this, "Валидация скайбокса");
-        EditorUtility.SetDirty(this);
-#endif
         _skyboxMaterial = RenderSettings.skybox;
 
         // Инициализация трансформа солнца в сцене:
-        DynamicLightingColor[] dynamicLightingColors = FindObjectsByType<DynamicLightingColor>(FindObjectsSortMode.None);
-        foreach (DynamicLightingColor dyn in dynamicLightingColors)
+        WeatherLightingColor[] dynamicLightingColors = FindObjectsByType<WeatherLightingColor>(FindObjectsSortMode.None);
+        foreach (WeatherLightingColor dyn in dynamicLightingColors)
             if (dyn.isSun)
                 _sunTransform = dyn.transform;
 
@@ -59,6 +55,11 @@ public class WeatherSkyboxSystem : MonoBehaviour
         isValidePropertys &= _skyboxMaterial.HasProperty("_Sun_Direction");
 
         _isSkyboxValide = isValidePropertys;
+
+#if UNITY_EDITOR
+        if (PrefabUtility.IsPartOfPrefabInstance(this))
+            PrefabUtility.RecordPrefabInstancePropertyModifications(this);
+#endif
     }
 
     /// <summary>
@@ -104,11 +105,6 @@ public class WeatherSkyboxSystem : MonoBehaviour
         ValidateReferences();
     }
 
-    private void OnValidate()
-    {
-        ValidateReferences();
-    }
-
     void Update()
     {
         UpdateSunDirection();
@@ -120,4 +116,11 @@ public class WeatherSkyboxSystem : MonoBehaviour
 
         _skyboxMaterial.SetVector("_Sun_Direction", _sunTransform.transform.forward);
     }
+
+#if UNITY_EDITOR
+    private void OnValidate()
+    {
+        ValidateReferences();
+    }
+#endif
 }

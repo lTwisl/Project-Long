@@ -16,7 +16,6 @@ public class WeatherSystem : MonoBehaviour
 
 
     [field: Header("Используемые Weather Profiles:")]
-    [DisableEdit, SerializeField] private bool _isProfilesValide = false;
     [field: SerializeField] public WeatherProfile CurrentWeatherProfile { get; private set; }
     [field: SerializeField] public WeatherProfile NewWeatherProfile { get; private set; }
 
@@ -29,8 +28,8 @@ public class WeatherSystem : MonoBehaviour
 
     [field: Header("Освещение сцены:")]
     [DisableEdit, SerializeField] private bool _isLightingSystemsValide = false;
-    [field: SerializeField] public DynamicLightingColor SunLight { get; private set; }
-    [field: SerializeField] public DynamicLightingColor MoonLight { get; private set; }
+    [field: SerializeField] public WeatherLightingColor SunLight { get; private set; }
+    [field: SerializeField] public WeatherLightingColor MoonLight { get; private set; }
 
 
     [field: Header("Система ветра:")]
@@ -69,17 +68,11 @@ public class WeatherSystem : MonoBehaviour
         ValidateReferences();
     }
 
-    private void OnValidate()
-    {
-        FindReferences();
-    }
-
     /// <summary>
     /// Проверка модулей погоды и условий для смены
     /// </summary>
     public void ValidateReferences()
     {
-        _isProfilesValide = CurrentWeatherProfile != null && NewWeatherProfile != null;
         _isLightingSystemsValide = SunLight != null && MoonLight != null;
         _isWindSystemValide = WindSystem != null;
         _isFogSystemValide = WeatherFogSystem != null;
@@ -282,14 +275,15 @@ public class WeatherSystem : MonoBehaviour
         StopAllCoroutines();
     }
 
-    #region Функции EDITOR
+#if UNITY_EDITOR
+    private void OnValidate()
+    {
+        if (!_isFogSystemValide || !_isLightingSystemsValide || !_isPostProcessSystemValide || !_isSkyboxSystemValide || !_isWindSystemValide)
+            FindReferences();
+    }
+
     private void FindReferences()
     {
-#if UNITY_EDITOR
-        Undo.RecordObject(this, "Инициализировали ссылки на модули WeatherSystem");
-        EditorUtility.SetDirty(this);
-#endif
-
         if (CurrentWeatherProfile != null)
         {
             Temperature = CurrentWeatherProfile.temperature;
@@ -303,7 +297,7 @@ public class WeatherSystem : MonoBehaviour
         WindSystem = FindFirstObjectByType<WeatherWindSystem>();
         WeatherPostProcessSystem = FindFirstObjectByType<WeatherPostProcessSystem>();
 
-        var dynamicLightingColor = FindObjectsByType<DynamicLightingColor>(FindObjectsSortMode.None);
+        var dynamicLightingColor = FindObjectsByType<WeatherLightingColor>(FindObjectsSortMode.None);
         foreach (var dyn in dynamicLightingColor)
         {
             if (dyn.isSun)
@@ -313,14 +307,14 @@ public class WeatherSystem : MonoBehaviour
         }
 
         ValidateReferences();
+        if (PrefabUtility.IsPartOfPrefabInstance(this))
+            PrefabUtility.RecordPrefabInstancePropertyModifications(this);
     }
 
-    public void SetNewWeatherImmediatelyEditor()
+    public void SetSceneWeatherInEditor()
     {
-#if UNITY_EDITOR
-        Undo.RecordObject(this, "Инициализировали сцены");
-        EditorUtility.SetDirty(this);
-#endif
+        Undo.RecordObject(this, "Выставлена погода по пресету в редакторе");
+
         if (CurrentWeatherProfile == null)
         {
             Debug.LogWarning("<color=orange>Попытка установить null профиль погоды! Установи сменяемый профиль в переменной currentProfile</color>");
@@ -329,5 +323,5 @@ public class WeatherSystem : MonoBehaviour
 
         UpdateWeatherParameters(CurrentWeatherProfile, CurrentWeatherProfile, 1f);
     }
-    #endregion
+#endif
 }

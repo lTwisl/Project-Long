@@ -25,7 +25,7 @@ MonoBehaviour:
   <MeasuredAsInteger>k__BackingField: 1
   <MaxCapacity>k__BackingField: 1
   <UnitMeasurement>k__BackingField: 0
-  <CostOfUse>k__BackingField: 0
+  <CostOfUse>k__BackingField: 1
   <DegradeType>k__BackingField: 2
   <DegradationValue>k__BackingField: 0.00992063492063492
   <Actions>k__BackingField: 9

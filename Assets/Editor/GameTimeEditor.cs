@@ -40,7 +40,7 @@ public class GameTimeEditor : Editor
         {
             labels[i] = new Label();
 
-            labels[i].style.fontSize = 14;
+            labels[i].style.fontSize = 12;
             labels[i].style.maxHeight = 34;
             labels[i].style.minWidth = 200;
 
@@ -56,7 +56,7 @@ public class GameTimeEditor : Editor
 
         Func<string, VisualElement> createHeaderLabel = (string text) =>
         {
-            var v = new Label("<b><size=14>" + text + "</b></size>");
+            var v = new Label("<b><size=12>" + text + "</b></size>");
             v.style.maxHeight = 34;
             v.style.minWidth = 200;
 

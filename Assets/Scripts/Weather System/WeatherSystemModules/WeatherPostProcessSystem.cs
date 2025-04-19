@@ -7,15 +7,11 @@ public class WeatherPostProcessSystem : MonoBehaviour
 {
     [DisableEdit, SerializeField] private bool _isPostProcessValide = false;
 
-    [Header("Материал скайбокса:")]
+    [Header("Обьем простпроцессинга:")]
     [DisableEdit, SerializeField] private Volume _volume;
 
     public void ValidateReferences()
     {
-#if UNITY_EDITOR
-        Undo.RecordObject(this, "Валидация скайбокса");
-        EditorUtility.SetDirty(this);
-#endif
         _volume = FindFirstObjectByType<Volume>();
 
         // Проверка ссылок на метериалы:
@@ -32,6 +28,11 @@ public class WeatherPostProcessSystem : MonoBehaviour
         //isValidePropertys &= _volume.profile.TryGet<Bloom>(out var bloom);
 
         _isPostProcessValide = isValidePropertys;
+
+#if UNITY_EDITOR
+        if (PrefabUtility.IsPartOfPrefabInstance(this))
+            PrefabUtility.RecordPrefabInstancePropertyModifications(this);
+#endif
     }
 
     public void UpdatePostProcessing(WeatherProfile currentProfile, WeatherProfile newProfile, float t)
@@ -55,8 +56,10 @@ public class WeatherPostProcessSystem : MonoBehaviour
         ValidateReferences();
     }
 
+#if UNITY_EDITOR
     private void OnValidate()
     {
         ValidateReferences();
     }
+#endif
 }
