@@ -136,7 +136,9 @@ public class PlayerStatusController : MonoBehaviour
         PlayerParameters.Stamina.ChangeRateRatioByCapacity = Utility.MapRange(capcsity, 
             PlayerParameters.Capacity.GetRangeLoadCapacity(WeightRange.Critical), 
             PlayerParameters.Capacity.GetRangeLoadCapacity(WeightRange.Ultimate), 
-            1, 0, true);
+            1, 3, true);
+        // 1 - скорость убывания/пополнения стандартная
+        // 3 - скорость убываания в 3 раза больше, скорость пополнения 0.
     }
 
     /// <summary>
@@ -147,7 +149,9 @@ public class PlayerStatusController : MonoBehaviour
         PlayerParameters.FoodBalance.ChangeRateRatioByCapacity = Utility.MapRange(capcsity,
             PlayerParameters.Capacity.GetRangeLoadCapacity(WeightRange.Critical),
             PlayerParameters.Capacity.GetRangeLoadCapacity(WeightRange.Ultimate),
-            1, 0, true);
+            1, 2, true);
+        // 1 - скорость убывания/пополнения стандартная
+        // 2 - скорость убываания в 2 раза больше, скорость пополнения 0.
     }
 
     /// <summary>
@@ -158,7 +162,9 @@ public class PlayerStatusController : MonoBehaviour
         PlayerParameters.WaterBalance.ChangeRateRatioByCapacity = Utility.MapRange(capcsity,
             PlayerParameters.Capacity.GetRangeLoadCapacity(WeightRange.Critical),
             PlayerParameters.Capacity.GetRangeLoadCapacity(WeightRange.Ultimate),
-            1, 0, true);
+            1, 2, true);
+        // 1 - скорость убывания/пополнения стандартная
+        // 2 - скорость убываания в 2 раза больше, скорость пополнения 0.
     }
 
 

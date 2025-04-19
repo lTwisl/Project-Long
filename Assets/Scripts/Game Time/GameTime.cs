@@ -39,7 +39,7 @@ public class GameTime : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-
+        
         _instance = this;
         _currentTime = new TimeSpan(_initDays, _initHours, _initMinutes, 0);
     }
@@ -48,7 +48,7 @@ public class GameTime : MonoBehaviour
     {
         if (IsTimeStopped)
             return;
-
+        
         var newTime = Time.Add(TimeSpan.FromSeconds(DeltaTime));
         UpdateTime(newTime);
     }
@@ -83,7 +83,10 @@ public class GameTime : MonoBehaviour
             if (next > newTime) next = newTime;
 
             if (current.Minutes != next.Minutes)
+            {
+
                 OnMinuteChanged?.Invoke();
+            }
 
             if (current.Hours != next.Hours)
                 OnHourChanged?.Invoke();
@@ -189,5 +192,12 @@ public class GameTime : MonoBehaviour
         //return $"Δενό {time.Days}: {time.Hours:00}:{time.Minutes:00}:{time.Seconds:00}:{time.Milliseconds:00}";
         return $"Δενό {time.Days}: {time.Hours:00}:{time.Minutes:00}:{time.Seconds:00}";
         //return $"Δενό {time.Days}: {time.Hours:00}:{time.Minutes:00}";
+    }
+
+    public static IEnumerator YieldNull()
+    {
+        do
+            yield return null;
+        while (IsTimeStopped);
     }
 }

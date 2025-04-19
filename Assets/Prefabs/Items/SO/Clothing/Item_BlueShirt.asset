@@ -43,6 +43,6 @@ MonoBehaviour:
   <PhysicProtection>k__BackingField: 0
   <OffsetStamina>k__BackingField: 0
   <FrictionBonus>k__BackingField: 0
-  <DryingRate>k__BackingField: 1
   <WaterAbsorptionRatio>k__BackingField: 2
+  <DryingRate>k__BackingField: 1
   <GivesBonus>k__BackingField: []

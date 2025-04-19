@@ -7,12 +7,20 @@ public class FoodBalanceStatusParameter : MovementStatusParameter
     public float ChangeRateRatioByCapacity
     {
         get => _changeRateRatioByCapacity;
-        set => _changeRateRatioByCapacity = Mathf.Clamp01(value);
+        set => _changeRateRatioByCapacity = Mathf.Clamp(value, _minChangeRateRatioByCapacity, _maxChangeRateRatioByCapacity);
     }
+
+    private const float _minChangeRateRatioByCapacity = 1;
+    private const float _maxChangeRateRatioByCapacity = 2;
 
     public override void ChangeParameter(float deltaSeconds)
     {
-        float newChangeRate = ChangeRate * (ChangeRate > 0 ? ChangeRateRatioByCapacity : (2 - ChangeRateRatioByCapacity));
+        float newChangeRate = ChangeRate;
+        if (ChangeRate > 0)
+            newChangeRate *= Utility.MapRange(ChangeRateRatioByCapacity, _minChangeRateRatioByCapacity, _maxChangeRateRatioByCapacity, 1, 0, true);
+        else
+            newChangeRate *= ChangeRateRatioByCapacity;
+
         Current = Mathf.Clamp(Current + newChangeRate * deltaSeconds, 0f, Max + OffsetMax);
     }
 

@@ -266,6 +266,7 @@ public class InventoryItemEditor : Editor
         lifeTimeField.AddToClassList("unity-base-field__aligned");
         lifeTimeField.RegisterValueChangedCallback(value =>
         {
+            Undo.RecordObject(serializedObject.targetObject, "Change Degradation Rate"); // Исправлено
             lifeTimeField.value = Math.Clamp(value.newValue, lifeTime.min, lifeTime.max);
             _degradationValueProp.doubleValue = convert(lifeTimeField.value);
             serializedObject.ApplyModifiedProperties();
@@ -276,10 +277,21 @@ public class InventoryItemEditor : Editor
         degradeValueField.AddToClassList("unity-base-field__aligned");
         degradeValueField.RegisterValueChangedCallback(value =>
         {
+            Undo.RecordObject(serializedObject.targetObject, "Change Degradation Rate"); // Исправлено
             degradeValueField.value = Math.Clamp(value.newValue, degradationRate.min, degradationRate.max);
             _degradationValueProp.doubleValue = degradeValueField.value;
             serializedObject.ApplyModifiedProperties();
         });
+
+        root.TrackPropertyValue(_degradationValueProp, prop =>
+        {
+            DegradationType currentType = (DegradationType)_degradeTypeProp.enumValueIndex;
+            if (currentType == DegradationType.Rate)
+                lifeTimeField.value = convert(prop.doubleValue);
+            else if (currentType == DegradationType.Used)
+                degradeValueField.value = prop.doubleValue;
+        });
+
 
         root.Add(lifeTimeField);
         root.Add(degradeValueField);
@@ -346,6 +358,12 @@ public class InventoryItemEditor : Editor
         var integerField = new IntegerField("Max Capacity [integer]");
         integerField.AddToClassList("unity-base-field__aligned");
 
+        root.TrackPropertyValue(_maxStackSizeProp, prop =>
+        {
+            if (_measuredAsIntegerProp.boolValue)
+                integerField.value = (int)prop.floatValue;
+        });
+
         var floatField = new PropertyField(_maxStackSizeProp, "Max Capacity [float]");
 
         // Настраиваем начальное состояние
@@ -403,7 +421,6 @@ public class InventoryItemEditor : Editor
                 _costOfUseProp.floatValue = 1;
             serializedObject.ApplyModifiedProperties();
         }
-        //serializedObject.ApplyModifiedProperties();
     }
 
     private void DrawActionsAndValues()
