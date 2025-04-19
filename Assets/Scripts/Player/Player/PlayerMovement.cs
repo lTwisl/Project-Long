@@ -256,8 +256,8 @@ public class PlayerMovement : MonoBehaviour
         // Ограничение максимальной скорости спринта в зависимости от текущей загрузки инвенторя
         if (MoveMode == PlayerMoveMode.Sprint && _parameters.Capacity.GetCurrentWeightRange() == WeightRange.Critical)
         {
-            targetSpeed = Utility.MapRange(_parameters.Capacity.Current, 
-                _parameters.Capacity.GetRangeLoadCapacity(WeightRange.Critical), 
+            targetSpeed = Utility.MapRange(_parameters.Capacity.Current,
+                _parameters.Capacity.GetRangeLoadCapacity(WeightRange.Critical),
                 _parameters.Capacity.GetRangeLoadCapacity(WeightRange.Ultimate),
                 _moveConfig.SprintSpeed, _moveConfig.MoveSpeed);
             return targetSpeed;
@@ -266,8 +266,8 @@ public class PlayerMovement : MonoBehaviour
         // Ограничение максимальной скорости шага в зависимости от текущей загрузки инвенторя
         if (MoveMode == PlayerMoveMode.Walk && _parameters.Capacity.GetCurrentWeightRange() == WeightRange.Ultimate)
         {
-            targetSpeed = Utility.MapRange(_parameters.Capacity.Current, 
-                _parameters.Capacity.GetRangeLoadCapacity(WeightRange.Ultimate), 
+            targetSpeed = Utility.MapRange(_parameters.Capacity.Current,
+                _parameters.Capacity.GetRangeLoadCapacity(WeightRange.Ultimate),
                 _parameters.Capacity.GetRangeLoadCapacity(WeightRange.UltimateImmovable),
                 _moveConfig.MoveSpeed, 0.0f);
             return targetSpeed;
@@ -310,8 +310,10 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnGUI()
     {
-        if (_controller != null)
-            GUILayout.Label($"Speed: {_controller.velocity.magnitude:f2}");
+        if (_controller == null) return;
+
+        GUI.color = Color.red;
+        GUILayout.Label($"<size=34>Speed: {_controller.velocity.magnitude:f2}</size>");
     }
 #endif
 }

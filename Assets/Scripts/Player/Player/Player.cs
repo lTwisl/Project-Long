@@ -59,7 +59,7 @@ public class Player : MonoBehaviour
         _world.OnEnterToxicityZone += zone =>
         {
             if (zone.CurrentType == ToxicityZone.ZoneType.Single)
-                _playerParameters.Toxicity.Current -= zone.Toxicity * (1 - ClothingSystem.TotalToxicityProtection / 100);
+                _playerParameters.Toxicity.Current += zone.Toxicity * (1 - ClothingSystem.TotalToxicityProtection / 100);
         };
 
         _world.OnEnterShelter += HandlerEnterShelter;

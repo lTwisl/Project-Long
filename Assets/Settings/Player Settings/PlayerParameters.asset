@@ -1,0 +1,74 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9a4507f1c0885e489075a2930acf630, type: 3}
+  m_Name: PlayerParameters
+  m_EditorClassIdentifier: 
+  <Health>k__BackingField:
+    _current: 100
+    <Max>k__BackingField: 100
+    <OffsetMax>k__BackingField: 0
+    <ChangeRate>k__BackingField: 10
+  <Stamina>k__BackingField:
+    _current: 100000
+    <Max>k__BackingField: 100000
+    <OffsetMax>k__BackingField: 0
+    <ChangeRate>k__BackingField: 20
+    <DecreasedHealthRate>k__BackingField: 0
+    <IdleChangeRate>k__BackingField: 20
+    <WalkChangeRate>k__BackingField: 5
+    <SprintChangeRate>k__BackingField: -15
+    _reload: 1
+  <Capacity>k__BackingField:
+    _current: 0
+    <Max>k__BackingField: 3.4028235e+38
+    <OffsetMax>k__BackingField: 0
+    <ChangeRate>k__BackingField: 0
+    <DecreasedHealthRate>k__BackingField: 0
+  <FoodBalance>k__BackingField:
+    _current: 3450.0027
+    <Max>k__BackingField: 3500
+    <OffsetMax>k__BackingField: 0
+    <ChangeRate>k__BackingField: -10
+    <DecreasedHealthRate>k__BackingField: -10
+    <IdleChangeRate>k__BackingField: -10
+    <WalkChangeRate>k__BackingField: -20
+    <SprintChangeRate>k__BackingField: -40
+  <WaterBalance>k__BackingField:
+    _current: 3363.442
+    <Max>k__BackingField: 3500
+    <OffsetMax>k__BackingField: 0
+    <ChangeRate>k__BackingField: -40
+    <DecreasedHealthRate>k__BackingField: -10
+    <IdleChangeRate>k__BackingField: -40
+    <WalkChangeRate>k__BackingField: -60
+    <SprintChangeRate>k__BackingField: -100
+  <Energy>k__BackingField:
+    _current: 1360.4419
+    <Max>k__BackingField: 1440
+    <OffsetMax>k__BackingField: 0
+    <ChangeRate>k__BackingField: -20
+    <DecreasedHealthRate>k__BackingField: -10
+    <IdleChangeRate>k__BackingField: -20
+    <WalkChangeRate>k__BackingField: -40
+    <SprintChangeRate>k__BackingField: -60
+  <Heat>k__BackingField:
+    _current: 2482.3884
+    <Max>k__BackingField: 2500
+    <OffsetMax>k__BackingField: 0
+    <ChangeRate>k__BackingField: -21.271103
+    <DecreasedHealthRate>k__BackingField: -10
+  <Toxicity>k__BackingField:
+    _current: 3.772786
+    <Max>k__BackingField: 10000
+    <OffsetMax>k__BackingField: 0
+    <ChangeRate>k__BackingField: 0
+    <DecreasedHealthRate>k__BackingField: -10

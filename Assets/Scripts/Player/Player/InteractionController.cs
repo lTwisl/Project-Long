@@ -45,10 +45,10 @@ public class InteractionController : MonoBehaviour
 
     private void StartInteraction()
     {
-#if UNITY_EDITOR
-        if (Physics.Raycast(_mainCamera.transform.position, _mainCamera.transform.forward, out RaycastHit hitInfo1, _distRaycast))
-            Debug.Log($"Попытка провзаимодействовать с {hitInfo1.transform.name}");
-#endif
+//#if UNITY_EDITOR
+//        if (Physics.Raycast(_mainCamera.transform.position, _mainCamera.transform.forward, out RaycastHit hitInfo1, _distRaycast))
+//            Debug.Log($"Попытка провзаимодействовать с {hitInfo1.transform.name}");
+//#endif
 
         if (!Physics.Raycast(_mainCamera.transform.position, _mainCamera.transform.forward, out RaycastHit hitInfo, _distRaycast, _interactionLayer))
             return;
@@ -64,7 +64,7 @@ public class InteractionController : MonoBehaviour
 
         switch (_currentInteractible.InteractionType)
         {
-            case InteractionType.Instant:
+            case InteractionType.Click:
 
                 _currentInteractible.Interact(_player);
 

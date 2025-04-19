@@ -54,7 +54,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 5
+  m_Radius: 6
   m_Center: {x: 0, y: 0.5, z: 0}
 --- !u!114 &4832235943717582429
 MonoBehaviour:
@@ -69,8 +69,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <Temperature>k__BackingField: 30
-  <MaxRadius>k__BackingField: 5
-  <MinRadius>k__BackingField: 1.5
+  <MinRadius>k__BackingField: 2.5
+  <MaxRadius>k__BackingField: 6
+  _gridSize: {x: 3, y: 3}
+  _spacing: {x: 0.3, y: 0.6}
+  _layerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  _drawRays: 1
 --- !u!1 &5068338230764760499
 GameObject:
   m_ObjectHideFlags: 0

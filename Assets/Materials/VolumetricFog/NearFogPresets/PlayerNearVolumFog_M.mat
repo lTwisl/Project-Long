@@ -33,6 +33,6 @@ Material:
     - _Transparency: 1
     m_Colors:
     - _Color_Fog: {r: 1.4, g: 1.7, b: 2, a: 0.7490196}
-    - _Sun_Direction: {r: 0, g: -0.5134818, b: 0.8581005, a: 0}
+    - _Sun_Direction: {r: 0, g: -0.42261827, b: 0.9063078, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

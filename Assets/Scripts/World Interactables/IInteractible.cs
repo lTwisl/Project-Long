@@ -9,7 +9,7 @@ public interface IInteractible
 
 public enum InteractionType
 {
-    Instant,   // Мгновенное
-    Hold       // Требует удержания
+    Click,   // Нажатие
+    Hold     // Удерджание
 }
 

@@ -235,7 +235,7 @@ public class ClothingSystem
                 {
                     float value = item.TemperatureBonus * (float)slot.Condition / 100;
                     value *= (100 - slot.Wet * 1.5f) / 100;
-                    value += (100 - item.WindProtection * (float)slot.Condition) / 100 * _world.Wind.MaxWindTemperature * normForceWind;
+                    value += (1 - item.WindProtection * (float)slot.Condition / 10000) * _world.Wind.MaxWindTemperature * normForceWind;
 
                     TotalTemperatureBonus += value;
                 }

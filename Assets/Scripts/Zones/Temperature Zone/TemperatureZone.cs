@@ -8,9 +8,8 @@ public class TemperatureZone : MonoBehaviour
     [Inject] private World _world;
 
     [field: SerializeField, Min(0f)] public float Temperature { get; private set; }
-    [field: SerializeField] public float MaxRadius { get; private set; }
     [field: SerializeField] public float MinRadius { get; private set; }
-    public Vector3 maxObstacleSize = new Vector3(0.5f, 0.5f, 0.5f); // Макс. размер "маленького" объекта
+    [field: SerializeField] public float MaxRadius { get; private set; }
 
     private SphereCollider _sphereCollider;
     private bool _isIn = false;
@@ -73,6 +72,8 @@ public class TemperatureZone : MonoBehaviour
             int halfHeight = Mathf.FloorToInt(_gridSize.y / 2);
 
             bool newIsIn = false;
+            int counterHits = 0;
+
             for (int x = -halfWidth; x <= halfWidth; x++)
             {
                 for (int y = -halfHeight; y <= halfHeight; y++)
@@ -88,21 +89,34 @@ public class TemperatureZone : MonoBehaviour
 
                     Vector3 dir = end - transform.position;
 
-                    if (_drawRays)
-                        Debug.DrawLine(transform.position, end, Color.green);
 
                     if (!Physics.Raycast(transform.position, dir.normalized, out RaycastHit hitInfo, dir.magnitude, _layerMask))
+                    {
                         continue;
+                    }
 
                     if (!hitInfo.collider.CompareTag("Player"))
+                    {
+                        if (_drawRays)
+                            Debug.DrawLine(transform.position, end, Color.red);
                         continue;
+                    }
+                    else
+                    {
+                        if (_drawRays)
+                            Debug.DrawLine(transform.position, end, Color.green);
+                    }
 
-                    newIsIn = true;
+                        newIsIn = true;
                     break;
                 }
 
-                if (newIsIn)
+                counterHits += 1;
+                if (counterHits >= 3)
+                {
+                    newIsIn = true;
                     break;
+                }
             }
 
             if (_isIn && !newIsIn)

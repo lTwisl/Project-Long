@@ -16,8 +16,8 @@ MonoBehaviour:
   weatherTransitions: 2
   minLifetimeHours: 2
   maxLifetimeHours: 2
-  temperature: -10
-  wetness: 18
+  temperature: 0
+  wetness: 0
   toxicity: 0
   maxIntensitySun: 2
   temperatureSun: 8000
@@ -27,7 +27,7 @@ MonoBehaviour:
   colorZenithMoon: {r: 0.83137256, g: 0.84705883, b: 0.85882354, a: 1}
   colorSunsetMoon: {r: 0.7058824, g: 0.7607843, b: 0.8039216, a: 1}
   minWindSpeed: 1
-  maxWindSpeed: 33
+  maxWindSpeed: 1
   intensityChangeSpeed: 1
   directionChangeSharpness: 0.05
   intensityChangeDirection: 1

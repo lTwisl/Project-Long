@@ -131,40 +131,40 @@ public class PlayerStatusController : MonoBehaviour
     /// <summary>
     /// Обновить коэффициент изменения выносливости в зависимости от веса инвентаря
     /// </summary>
-    private void UpdateStaminaChangeRateRatioByCapacity(float capcsity)
+    private void UpdateStaminaChangeRateRatioByCapacity(float capacity)
     {
-        PlayerParameters.Stamina.ChangeRateRatioByCapacity = Utility.MapRange(capcsity, 
+        PlayerParameters.Stamina.ChangeRateRatioByCapacity = Utility.MapRange(capacity, 
             PlayerParameters.Capacity.GetRangeLoadCapacity(WeightRange.Critical), 
             PlayerParameters.Capacity.GetRangeLoadCapacity(WeightRange.Ultimate), 
             1, 3, true);
         // 1 - скорость убывания/пополнения стандартная
-        // 3 - скорость убываания в 3 раза больше, скорость пополнения 0.
+        // 3 - скорость убывания в 3 раза больше, скорость пополнения 0.
     }
 
     /// <summary>
     /// Обновить коэффициент изменения еды в зависимости от веса инвентаря
     /// </summary>
-    private void UpdateFoodBalanceChangeRateRatioByCapacity(float capcsity)
+    private void UpdateFoodBalanceChangeRateRatioByCapacity(float capacity)
     {
-        PlayerParameters.FoodBalance.ChangeRateRatioByCapacity = Utility.MapRange(capcsity,
+        PlayerParameters.FoodBalance.ChangeRateRatioByCapacity = Utility.MapRange(capacity,
             PlayerParameters.Capacity.GetRangeLoadCapacity(WeightRange.Critical),
             PlayerParameters.Capacity.GetRangeLoadCapacity(WeightRange.Ultimate),
             1, 2, true);
         // 1 - скорость убывания/пополнения стандартная
-        // 2 - скорость убываания в 2 раза больше, скорость пополнения 0.
+        // 2 - скорость убывания в 2 раза больше, скорость пополнения 0.
     }
 
     /// <summary>
     /// Обновить коэффициент изменения воды в зависимости от веса инвентаря
     /// </summary>
-    private void UpdateWaterBalanceChangeRateRatioByCapacity(float capcsity)
+    private void UpdateWaterBalanceChangeRateRatioByCapacity(float capacity)
     {
-        PlayerParameters.WaterBalance.ChangeRateRatioByCapacity = Utility.MapRange(capcsity,
+        PlayerParameters.WaterBalance.ChangeRateRatioByCapacity = Utility.MapRange(capacity,
             PlayerParameters.Capacity.GetRangeLoadCapacity(WeightRange.Critical),
             PlayerParameters.Capacity.GetRangeLoadCapacity(WeightRange.Ultimate),
             1, 2, true);
         // 1 - скорость убывания/пополнения стандартная
-        // 2 - скорость убываания в 2 раза больше, скорость пополнения 0.
+        // 2 - скорость убывания в 2 раза больше, скорость пополнения 0.
     }
 
 
@@ -174,13 +174,14 @@ public class PlayerStatusController : MonoBehaviour
         if (PlayerParameters == null)
             return;
 
-        GUILayout.Label($"\n\nЗдоровье: {PlayerParameters.Health.Current:f1}");
-        GUILayout.Label($"Выносливость: {PlayerParameters.Stamina.Current:f1}");
-        GUILayout.Label($"Сытость: {PlayerParameters.FoodBalance.Current:f1}");
-        GUILayout.Label($"Жажда: {PlayerParameters.WaterBalance.Current:f1}");
-        GUILayout.Label($"Бодрость: {PlayerParameters.Energy.Current:f1}");
-        GUILayout.Label($"Тепло: {PlayerParameters.Heat.Current:f1}");
-        GUILayout.Label($"Заражённость: {PlayerParameters.Toxicity.Current:f1}");
+        GUI.color = Color.red;
+        GUILayout.Label($"<size=34>\n\nЗдоровье: {PlayerParameters.Health.Current:f1}</size>");
+        GUILayout.Label($"<size=34>Выносливость: {PlayerParameters.Stamina.Current:f1}</size>");
+        GUILayout.Label($"<size=34>Сытость: {PlayerParameters.FoodBalance.Current:f1}</size>");
+        GUILayout.Label($"<size=34>Жажда: {PlayerParameters.WaterBalance.Current:f1}</size>");
+        GUILayout.Label($"<size=34>Бодрость: {PlayerParameters.Energy.Current:f1}</size>");
+        GUILayout.Label($"<size=34>Тепло: {PlayerParameters.Heat.Current:f1}</size>");
+        GUILayout.Label($"<size=34>Заражённость: {PlayerParameters.Toxicity.Current:f1}</size>");
     }
 #endif
 }

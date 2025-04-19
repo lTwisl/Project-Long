@@ -15,7 +15,6 @@ MonoBehaviour:
   <Category>k__BackingField: 5
   <UseType>k__BackingField: 0
   <UseStrategy>k__BackingField: {fileID: 0}
-  <Actions>k__BackingField: 16
   <Name>k__BackingField: "\u0422\u043A\u0430\u043D\u044C"
   <Description>k__BackingField: "\u041E\u0431\u044B\u0447\u043D\u044B\u0439 \u043A\u0443\u0441\u043E\u043A
     \u043E\u0431\u0440\u0435\u0437\u0430\u043D\u043D\u043E\u0439 \u0442\u043A\u0430\u043D\u0438"
@@ -25,8 +24,13 @@ MonoBehaviour:
   <IsStackable>k__BackingField: 1
   <MeasuredAsInteger>k__BackingField: 1
   <MaxCapacity>k__BackingField: 999
-  <UnitMeasurement>k__BackingField: "\u0428\u0442."
+  <UnitMeasurement>k__BackingField: 0
   <CostOfUse>k__BackingField: 1
   <DegradeType>k__BackingField: 0
   <DegradationValue>k__BackingField: 1
-  <ReceivedItemsAfterDeconstruct>k__BackingField: []
+  <Actions>k__BackingField: 8
+  <DeconstructRecipe>k__BackingField: []
+  <RepairRecipe>k__BackingField:
+    Tool: {fileID: 0}
+    Items: []
+  <ChargeRecipe>k__BackingField: {fileID: 0}

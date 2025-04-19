@@ -548,7 +548,7 @@ MonoBehaviour:
   _initItems: []
   _hideAfterPickup:
   - {fileID: 2873970813048369962}
-  _reload: 5
+  _reload: 0.0069
 --- !u!1 &6765638359455625659
 GameObject:
   m_ObjectHideFlags: 0

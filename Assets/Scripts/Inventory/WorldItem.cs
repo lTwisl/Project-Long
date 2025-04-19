@@ -4,7 +4,7 @@ public class WorldItem : MonoBehaviour, IInteractible
 {
     public InventorySlot InventorySlot;
 
-    public virtual InteractionType InteractionType => InteractionType.Instant;
+    public virtual InteractionType InteractionType => InteractionType.Click;
 
     public virtual bool IsCanInteract => true;
 

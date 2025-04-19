@@ -31,8 +31,11 @@ MonoBehaviour:
   <Actions>k__BackingField: 9
   <DeconstructRecipe>k__BackingField: []
   <RepairRecipe>k__BackingField:
-    Tool: {fileID: 0}
-    Items: []
+    Tool: {fileID: 11400000, guid: a489917256198a54283d601df54065ba, type: 2}
+    Items:
+    - <Item>k__BackingField: {fileID: 0}
+      _capacity: 1
+      _condition: 100
   <ChargeRecipe>k__BackingField: {fileID: 0}
   <ClothingType>k__BackingField: 8
   <TemperatureBonus>k__BackingField: 25

@@ -26,15 +26,18 @@ MonoBehaviour:
   <Icon>k__BackingField: {fileID: 21300000, guid: 8191779cba4b2a4479d98498be3c9f14, type: 3}
   <ItemPrefab>k__BackingField: {fileID: 4055471026960374171, guid: 5dc8c7cc28042dd438fa7a5af09219d1, type: 3}
   <Weight>k__BackingField: 0.5
-  <IsStackable>k__BackingField: 0
+  <IsStackable>k__BackingField: 1
   <MeasuredAsInteger>k__BackingField: 1
-  <MaxCapacity>k__BackingField: 1
+  <MaxCapacity>k__BackingField: 3
   <UnitMeasurement>k__BackingField: 0
   <CostOfUse>k__BackingField: 1
   <DegradeType>k__BackingField: 2
   <DegradationValue>k__BackingField: 0.034722222222222224
-  <Actions>k__BackingField: 0
-  <DeconstructRecipe>k__BackingField: []
+  <Actions>k__BackingField: 7
+  <DeconstructRecipe>k__BackingField:
+  - <Item>k__BackingField: {fileID: 0}
+    _capacity: 1
+    _condition: 100
   <RepairRecipe>k__BackingField:
     Tool: {fileID: 0}
     Items: []

@@ -23,7 +23,7 @@ public class Bush : Storage
 
     private void HandleChangedMinute()
     {
-        timer -= GameTime.DeltaTime;
+        timer -= 1;
 
         if (timer <= 0)
         {

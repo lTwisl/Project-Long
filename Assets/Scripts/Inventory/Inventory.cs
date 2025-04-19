@@ -241,7 +241,7 @@ public class Inventory
                 InventoryItem item = slot.Item;
 
                 // Деградация предмета
-                if (item.DegradeType == DegradationType.Rate && ((item is not ClothingItem) || item is not HeatingItem))
+                if (item.DegradeType == DegradationType.Rate && item is not ClothingItem && item is not HeatingItem)
                 {
                     slot.Condition -= item.DegradationValue * DegradationScale * deltaTime;
                     shouldRemove = slot.Condition <= 0;

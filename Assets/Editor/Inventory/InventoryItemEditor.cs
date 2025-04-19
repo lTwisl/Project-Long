@@ -272,7 +272,7 @@ public class InventoryItemEditor : Editor
             serializedObject.ApplyModifiedProperties();
         });
 
-        var degradeValueField = new DoubleField("Degradation Rate [unit/min]");
+        var degradeValueField = new DoubleField("Condition Loss [%]");
         degradeValueField.value = _degradationValueProp.doubleValue;
         degradeValueField.AddToClassList("unity-base-field__aligned");
         degradeValueField.RegisterValueChangedCallback(value =>
