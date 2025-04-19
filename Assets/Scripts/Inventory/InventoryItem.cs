@@ -116,7 +116,7 @@ public abstract class InventoryItem : ScriptableObject
     [field: SerializeField] public DegradationType DegradeType { get; protected set; }
 
     [field: Tooltip("Скорость порчи предмета [ед/мин]"), Min(0.001f)]
-    [field: SerializeField] public float DegradationValue { get; private set; } = 1;
+    [field: SerializeField] public double DegradationValue { get; private set; } = 1;
 
     [field: Tooltip("Способы взаимодействия с предеметом"), Space(10)]
     [field: SerializeField] public ActionType Actions { get; protected set; }

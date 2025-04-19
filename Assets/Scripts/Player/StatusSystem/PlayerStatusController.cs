@@ -81,7 +81,7 @@ public class PlayerStatusController : MonoBehaviour
     /// </summary>
     private void AutoSubscribe()
     {
-        foreach (var param in PlayerParameters.AllParameters.OfType<StatusParameter>())
+        foreach (var param in PlayerParameters.AllParameters.OfType<BaseStatusParameter>())
         {
             if (Mathf.Approximately(param.DecreasedHealthRate, 0))
                 continue;
@@ -91,6 +91,8 @@ public class PlayerStatusController : MonoBehaviour
         }
 
         PlayerParameters.Capacity.OnValueChanged += UpdateStaminaChangeRateRatioByCapacity;
+        PlayerParameters.Capacity.OnValueChanged += UpdateFoodBalanceChangeRateRatioByCapacity;
+        PlayerParameters.Capacity.OnValueChanged += UpdateWaterBalanceChangeRateRatioByCapacity;
         PlayerParameters.Energy.OnValueChanged += EnergyChanged;
         _playerMovement.OnChangedMoveMode += ChangedMoveMode;
     }
@@ -101,7 +103,7 @@ public class PlayerStatusController : MonoBehaviour
     /// </summary>
     private void UnsubscribeAll()
     {
-        foreach (var param in PlayerParameters.AllParameters.OfType<StatusParameter>())
+        foreach (var param in PlayerParameters.AllParameters.OfType<BaseStatusParameter>())
         {
             if (Mathf.Approximately(param.DecreasedHealthRate, 0))
                 continue;
@@ -110,6 +112,8 @@ public class PlayerStatusController : MonoBehaviour
         }
 
         PlayerParameters.Capacity.OnValueChanged -= UpdateStaminaChangeRateRatioByCapacity;
+        PlayerParameters.Capacity.OnValueChanged -= UpdateFoodBalanceChangeRateRatioByCapacity;
+        PlayerParameters.Capacity.OnValueChanged -= UpdateWaterBalanceChangeRateRatioByCapacity;
         PlayerParameters.Energy.OnValueChanged -= EnergyChanged;
         _playerMovement.OnChangedMoveMode -= ChangedMoveMode;
     }
@@ -129,7 +133,32 @@ public class PlayerStatusController : MonoBehaviour
     /// </summary>
     private void UpdateStaminaChangeRateRatioByCapacity(float capcsity)
     {
-        PlayerParameters.Stamina.ChangeRateRatioByCapacity = Utility.MapRange(capcsity, 30, 45, 1, 0, true);
+        PlayerParameters.Stamina.ChangeRateRatioByCapacity = Utility.MapRange(capcsity, 
+            PlayerParameters.Capacity.GetRangeLoadCapacity(WeightRange.Critical), 
+            PlayerParameters.Capacity.GetRangeLoadCapacity(WeightRange.Ultimate), 
+            1, 0, true);
+    }
+
+    /// <summary>
+    /// Обновить коэффициент изменения еды в зависимости от веса инвентаря
+    /// </summary>
+    private void UpdateFoodBalanceChangeRateRatioByCapacity(float capcsity)
+    {
+        PlayerParameters.FoodBalance.ChangeRateRatioByCapacity = Utility.MapRange(capcsity,
+            PlayerParameters.Capacity.GetRangeLoadCapacity(WeightRange.Critical),
+            PlayerParameters.Capacity.GetRangeLoadCapacity(WeightRange.Ultimate),
+            1, 0, true);
+    }
+
+    /// <summary>
+    /// Обновить коэффициент изменения воды в зависимости от веса инвентаря
+    /// </summary>
+    private void UpdateWaterBalanceChangeRateRatioByCapacity(float capcsity)
+    {
+        PlayerParameters.WaterBalance.ChangeRateRatioByCapacity = Utility.MapRange(capcsity,
+            PlayerParameters.Capacity.GetRangeLoadCapacity(WeightRange.Critical),
+            PlayerParameters.Capacity.GetRangeLoadCapacity(WeightRange.Ultimate),
+            1, 0, true);
     }
 
 

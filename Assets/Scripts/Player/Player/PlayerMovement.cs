@@ -129,7 +129,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void CrouchHandler()
     {
-        if (_input.crouch && !_isCrouching && _grounded)
+        if (_input.crouch && !_isCrouching && _grounded && _parameters.Capacity.IsCanWalk())
         {
             _isCrouching = true;
             _isTransitioning = true;

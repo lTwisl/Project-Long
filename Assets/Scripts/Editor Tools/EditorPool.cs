@@ -25,10 +25,12 @@ public class EditorPool : MonoBehaviour
     [Button("Найти ссылки в сцене", buttonHeight: 30)]
     public void FindReferences()
     {
-        //Undo.RecordObject(this, "Find References");
-        EditorUtility.SetDirty(this);
+        Undo.RecordObject(this, "Find References");
 
         _weatherSystem = FindAnyObjectByType<WeatherSystem>();
+
+        if (PrefabUtility.IsPartOfPrefabInstance(this))
+            PrefabUtility.RecordPrefabInstancePropertyModifications(this);
     }
 }
 #endif

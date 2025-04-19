@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 [System.Serializable]
-public class MovementStatusParameter : StatusParameter
+public class MovementStatusParameter : BaseStatusParameter
 {
     [field: Tooltip("Скорость изменения в покое [ед/м]")]
     [field: SerializeField] public float IdleChangeRate {  get; protected set; }

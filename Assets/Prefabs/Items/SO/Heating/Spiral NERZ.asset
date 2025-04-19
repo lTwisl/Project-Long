@@ -15,7 +15,6 @@ MonoBehaviour:
   <Category>k__BackingField: 0
   <UseType>k__BackingField: 0
   <UseStrategy>k__BackingField: {fileID: 0}
-  <Actions>k__BackingField: 0
   <Name>k__BackingField: "\u0421\u043F\u0438\u0440\u0430\u043B\u044C \"\u041D\u0415\u0420\u0416\""
   <Description>k__BackingField: "\u041D\u0430\u0433\u0440\u0435\u0432\u0430\u0442\u0435\u043B\u044C\u043D\u0430\u044F
     \u0441\u043F\u0438\u0440\u0430\u043B\u044C \u0434\u043B\u044F \u0441\u043F\u0438\u0440\u0442\u043E\u0432\u043E\u0439
@@ -27,11 +26,16 @@ MonoBehaviour:
   <IsStackable>k__BackingField: 0
   <MeasuredAsInteger>k__BackingField: 1
   <MaxCapacity>k__BackingField: 1
-  <UnitMeasurement>k__BackingField: "\u0428\u0442."
+  <UnitMeasurement>k__BackingField: 0
   <CostOfUse>k__BackingField: 1
   <DegradeType>k__BackingField: 1
   <DegradationValue>k__BackingField: 1
-  <ReceivedItemsAfterDeconstruct>k__BackingField: []
-  <TypeHeating>k__BackingField: 2
-  <Value>k__BackingField: 0
+  <Actions>k__BackingField: 0
+  <DeconstructRecipe>k__BackingField: []
+  <RepairRecipe>k__BackingField:
+    Tool: {fileID: 0}
+    Items: []
+  <ChargeRecipe>k__BackingField: {fileID: 0}
+  <TypeHeating>k__BackingField: 1
+  <MaxTemperature>k__BackingField: 0
   <ChanceHeating>k__BackingField: 0

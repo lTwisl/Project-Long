@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class WeatherSystem : MonoBehaviour
@@ -15,7 +16,6 @@ public class WeatherSystem : MonoBehaviour
 
 
     [field: Header("Используемые Weather Profiles:")]
-    [DisableEdit, SerializeField] private bool _isProfilesValide = false;
     [field: SerializeField] public WeatherProfile CurrentWeatherProfile { get; private set; }
     [field: SerializeField] public WeatherProfile NewWeatherProfile { get; private set; }
 
@@ -28,8 +28,8 @@ public class WeatherSystem : MonoBehaviour
 
     [field: Header("Освещение сцены:")]
     [DisableEdit, SerializeField] private bool _isLightingSystemsValide = false;
-    [field: SerializeField] public DynamicLightingColor SunLight { get; private set; }
-    [field: SerializeField] public DynamicLightingColor MoonLight { get; private set; }
+    [field: SerializeField] public WeatherLightingColor SunLight { get; private set; }
+    [field: SerializeField] public WeatherLightingColor MoonLight { get; private set; }
 
 
     [field: Header("Система ветра:")]
@@ -73,7 +73,6 @@ public class WeatherSystem : MonoBehaviour
     /// </summary>
     public void ValidateReferences()
     {
-        _isProfilesValide = CurrentWeatherProfile != null && NewWeatherProfile != null;
         _isLightingSystemsValide = SunLight != null && MoonLight != null;
         _isWindSystemValide = WindSystem != null;
         _isFogSystemValide = WeatherFogSystem != null;
@@ -285,8 +284,6 @@ public class WeatherSystem : MonoBehaviour
 
     private void FindReferences()
     {
-        UnityEditor.Undo.RecordObject(this, "Инициализированы ссылки на модули WeatherSystem");
-
         if (CurrentWeatherProfile != null)
         {
             Temperature = CurrentWeatherProfile.temperature;
@@ -300,7 +297,7 @@ public class WeatherSystem : MonoBehaviour
         WindSystem = FindFirstObjectByType<WeatherWindSystem>();
         WeatherPostProcessSystem = FindFirstObjectByType<WeatherPostProcessSystem>();
 
-        var dynamicLightingColor = FindObjectsByType<DynamicLightingColor>(FindObjectsSortMode.None);
+        var dynamicLightingColor = FindObjectsByType<WeatherLightingColor>(FindObjectsSortMode.None);
         foreach (var dyn in dynamicLightingColor)
         {
             if (dyn.isSun)
@@ -310,11 +307,13 @@ public class WeatherSystem : MonoBehaviour
         }
 
         ValidateReferences();
+        if (PrefabUtility.IsPartOfPrefabInstance(this))
+            PrefabUtility.RecordPrefabInstancePropertyModifications(this);
     }
 
     public void SetSceneWeatherInEditor()
     {
-        UnityEditor.Undo.RecordObject(this, "Выставлена погода по пресету в редакторе");
+        Undo.RecordObject(this, "Выставлена погода по пресету в редакторе");
 
         if (CurrentWeatherProfile == null)
         {

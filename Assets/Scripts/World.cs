@@ -1,3 +1,4 @@
+using EditorAttributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,24 +10,27 @@ public class World : MonoBehaviour
     [field: Header("Температура")]
     [field: SerializeField] public float Temperature { get; private set; }
     public float WeatherTemperature => Weather.Temperature;
-    [field: SerializeField, DisableEdit] public float ShelterTemperature { get; private set; }
-    [field: SerializeField, DisableEdit] public float TotalTemperature { get; private set; }
+    [field: SerializeField, DisableField] public float ShelterTemperature { get; private set; }
+    [field: SerializeField, DisableField] public float TotalTemperature { get; private set; }
 
     [field: Header("Влажность")]
     [field: SerializeField] public float Wetness { get; private set; }
     public float WeatherWetness => Weather.Wetness;
-    [field: SerializeField, DisableEdit] public float ShelterWetness { get; private set; }
+    [field: SerializeField, DisableField] public float ShelterWetness { get; private set; }
 
     [field: Header("Заражённость")]
     [field: SerializeField] public float Toxicity { get; private set; }
     public float WeatherToxicity => Weather.Toxicity;
-    [field: SerializeField, DisableEdit] public float ShelterToxicity { get; private set; }
-    [field: SerializeField, DisableEdit] public float ZoneToxicity { get; private set; }
-    [field: SerializeField, DisableEdit] public float TotalToxicity { get; private set; }
+    [field: SerializeField, DisableField] public float ShelterToxicity { get; private set; }
+    [field: SerializeField, DisableField] public float ZoneToxicity { get; private set; }
+    [field: SerializeField, DisableField] public float TotalToxicity { get; private set; }
 
 
     public WeatherSystem Weather { get; private set; }
     public WeatherWindSystem Wind => Weather.WindSystem;
+
+
+    public Shelter PlayerEnteredLastShelter { get; private set; }
 
     public event Action<Shelter> OnEnterShelter;
     public event Action<Shelter> OnExitShelter;
@@ -41,6 +45,7 @@ public class World : MonoBehaviour
 
     private List<TemperatureZone> _externalHeats = new List<TemperatureZone>();
     private float _currentMaxExternalTemp;
+
 
     private void Awake()
     {
@@ -66,6 +71,11 @@ public class World : MonoBehaviour
 
     public void InvokeOnEnterShelter(Shelter shelterSystem)
     {
+#if UNITY_EDITOR
+        if (PlayerEnteredLastShelter != null)
+            Debug.LogWarning($"Игрок вошёл в новое укрытие \"{shelterSystem.gameObject.name}\", но не вышел из пердыдущего \"{PlayerEnteredLastShelter.gameObject.name}\"");
+#endif
+
         ShelterTemperature = shelterSystem.Temperature;
         ShelterWetness = shelterSystem.Wetness;
         ShelterToxicity = shelterSystem.Toxicity;
@@ -73,19 +83,31 @@ public class World : MonoBehaviour
         CalculateTotalTemperature();
         CalculateTotalToxicity();
 
+        PlayerEnteredLastShelter = shelterSystem;
         OnEnterShelter?.Invoke(shelterSystem);
     }
 
     public void InvokeOnExitShelter(Shelter shelterSystem)
     {
-        ShelterTemperature -= shelterSystem.Temperature;
-        ShelterWetness -= shelterSystem.Wetness;
-        ShelterToxicity -= shelterSystem.Toxicity;
+#if UNITY_EDITOR
+        if (PlayerEnteredLastShelter != shelterSystem)
+        {
+            if (PlayerEnteredLastShelter != null)
+                Debug.LogWarning($"Игрок пытается выйти из укрытия \"{shelterSystem.gameObject.name}\", но входил он в укрытие \"{PlayerEnteredLastShelter.gameObject.name}\"");
+            else
+                Debug.LogWarning($"Игрок пытается выйти из укрытия \"{shelterSystem.gameObject.name}\", но он не входил ни в одно укрытие");
+        }
+#endif
+
+        ShelterTemperature = 0;
+        ShelterWetness = 0;
+        ShelterToxicity = 0;
 
         CalculateTotalTemperature();
         CalculateTotalToxicity();
 
         OnExitShelter?.Invoke(shelterSystem);
+        PlayerEnteredLastShelter = null;
     }
 
     public void InvokeOnEnterTemperatureZone(TemperatureZone heatZone)
@@ -146,8 +168,8 @@ public class World : MonoBehaviour
     {
         _externalHeats.Add(externalHeat);
 
-        if (externalHeat.Temp > _currentMaxExternalTemp)
-            _currentMaxExternalTemp = externalHeat.Temp;
+        if (externalHeat.Temperature > _currentMaxExternalTemp)
+            _currentMaxExternalTemp = externalHeat.Temperature;
     }
 
     /// <summary>
@@ -157,12 +179,12 @@ public class World : MonoBehaviour
     {
         _externalHeats.Remove(externalHeat);
 
-        if (externalHeat.Temp == _currentMaxExternalTemp)
+        if (externalHeat.Temperature == _currentMaxExternalTemp)
         {
             if (_externalHeats.Count == 0)
                 _currentMaxExternalTemp = 0;
             else
-                _currentMaxExternalTemp = _externalHeats.Max(p => p.Temp);
+                _currentMaxExternalTemp = _externalHeats.Max(p => p.Temperature);
         }
     }
 
@@ -175,6 +197,6 @@ public class World : MonoBehaviour
             return 0;
 
         return _externalHeats.Max(p => Utility.MapRange((p.transform.position - _player.transform.position).sqrMagnitude,
-            Mathf.Pow(p.MinRadius, 2), Mathf.Pow(p.MaxRadius, 2), p.Temp, 0, true));
+            Mathf.Pow(p.MinRadius, 2), Mathf.Pow(p.MaxRadius, 2), p.Temperature, 0, true));
     }
 }

@@ -1,3 +1,4 @@
+using UnityEditor;
 using UnityEngine;
 
 public class WeatherSkyboxSystem : MonoBehaviour
@@ -11,14 +12,11 @@ public class WeatherSkyboxSystem : MonoBehaviour
 
     public void ValidateReferences()
     {
-#if UNITY_EDITOR
-        UnityEditor.Undo.RecordObject(this, "Валидация скайбокса");
-#endif
         _skyboxMaterial = RenderSettings.skybox;
 
         // Инициализация трансформа солнца в сцене:
-        DynamicLightingColor[] dynamicLightingColors = FindObjectsByType<DynamicLightingColor>(FindObjectsSortMode.None);
-        foreach (DynamicLightingColor dyn in dynamicLightingColors)
+        WeatherLightingColor[] dynamicLightingColors = FindObjectsByType<WeatherLightingColor>(FindObjectsSortMode.None);
+        foreach (WeatherLightingColor dyn in dynamicLightingColors)
             if (dyn.isSun)
                 _sunTransform = dyn.transform;
 
@@ -57,6 +55,11 @@ public class WeatherSkyboxSystem : MonoBehaviour
         isValidePropertys &= _skyboxMaterial.HasProperty("_Sun_Direction");
 
         _isSkyboxValide = isValidePropertys;
+
+#if UNITY_EDITOR
+        if (PrefabUtility.IsPartOfPrefabInstance(this))
+            PrefabUtility.RecordPrefabInstancePropertyModifications(this);
+#endif
     }
 
     /// <summary>

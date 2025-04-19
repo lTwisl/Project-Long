@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public enum ClothesType
@@ -31,7 +32,7 @@ public class ClothingItem : InventoryItem
     [field: Range(0, 100), Tooltip("Защита от заражения [%]")]
     [field: SerializeField] public float ToxicityProtection { get; private set; }
 
-    [field: Range(0, 100), Tooltip("Защита от физического урона [--]")]
+    [field: Range(0, 100), Tooltip("Защита от физического урона [%]")]
     [field: SerializeField] public float PhysicProtection { get; private set; }
 
     [field: Range(-100, 100), Tooltip("Добавочное значение к максимальному значению выносливости [%]")]
@@ -40,11 +41,14 @@ public class ClothingItem : InventoryItem
     [field: Range(0f, 1f), Tooltip("Бонус к трению с поверхностью [ед]")]
     [field: SerializeField] public float FrictionBonus { get; private set; }
 
+    [field: Range(0, 5), Tooltip("Коэффициент впитывания влаги (множитель веса, если равен 0, то вещь не намокает)")]
+    [field: SerializeField] public float WaterAbsorptionRatio { get; private set; }
+
     [field: Space(8), Min(0), Tooltip("Скорость высыхания [ед/мин]")]
     [field: SerializeField] public float DryingRate { get; private set; }
 
-    [field: Range(0, 5), Tooltip("Коэффициент впитывания влаги")]
-    [field: SerializeField] public float WaterAbsorptionRatio { get; private set; }
+
+    [field: SerializeField] public List<ScriptableObject> GivesBonus { get; private set; }
 
     private void OnEnable()
     {
@@ -61,10 +65,16 @@ public class ClothingItem : InventoryItem
 
     public override string ToString()
     {
-        return base.ToString() + $"Temp: {TemperatureBonus} | " +
+        return base.ToString() + $"Temperature: {TemperatureBonus} | " +
             $"Water: {WaterProtection}\n" +
             $"Wind: {WindProtection} | " +
             $"Friction: {FrictionBonus}\n" +
             $"Toxisity: {ToxicityProtection}\n";
+    }
+
+    private void OnValidate()
+    {
+        if (DegradeType == DegradationType.Used)
+            DegradeType = DegradationType.Rate;
     }
 }

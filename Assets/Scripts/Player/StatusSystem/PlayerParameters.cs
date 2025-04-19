@@ -25,7 +25,7 @@ public enum ParameterType
 [CreateAssetMenu(fileName = "PlayerParameters", menuName = "Scriptable Objects/PlayerParameters")]
 public class PlayerParameters : ScriptableObject
 {
-    [field: SerializeField] public BaseStatusParameter Health { get; private set; }
+    [field: SerializeField] public StatusParameter Health { get; private set; }
 
     [field: Space(10)]
     [field: SerializeField] public StaminaStatusParameter Stamina { get; private set; }
@@ -34,16 +34,16 @@ public class PlayerParameters : ScriptableObject
     [field: SerializeField] public CapacityStatusParameter Capacity { get; private set; }
 
     [field: Header("StatusParameters")]
-    [field: SerializeField] public MovementStatusParameter FoodBalance { get; private set; }
+    [field: SerializeField] public FoodBalanceStatusParameter FoodBalance { get; private set; }
 
     [field: Space(10)]
-    [field: SerializeField] public MovementStatusParameter WaterBalance { get; private set; }
+    [field: SerializeField] public WaterBalanceStatusParameter WaterBalance { get; private set; }
 
     [field: Space(10)]
     [field: SerializeField] public MovementStatusParameter Energy { get; private set; }
 
     [field: Space(10)]
-    [field: SerializeField] public StatusParameter Heat { get; private set; }
+    [field: SerializeField] public BaseStatusParameter Heat { get; private set; }
 
     [field: Space(10)]
     [field: SerializeField] public ToxicityStatusParameter Toxicity { get; private set; }
@@ -52,12 +52,12 @@ public class PlayerParameters : ScriptableObject
 
 
 
-    private Dictionary<ParameterType, BaseStatusParameter> _statusParameterCache;
+    private Dictionary<ParameterType, StatusParameter> _statusParameterCache;
     public IEnumerable<IStatusParameter> AllParameters => _statusParameterCache.Values.AsEnumerable();
 
     public void Init(Inventory playerInventory)
     {
-        _statusParameterCache = new Dictionary<ParameterType, BaseStatusParameter>()
+        _statusParameterCache = new Dictionary<ParameterType, StatusParameter>()
         {
             { ParameterType.Health, Health},
             { ParameterType.Stamina, Stamina},

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "EquipHandStrategy", menuName = "Scriptable Objects/EquipHandStrategy")]
+[CreateAssetMenu(fileName = "EquipHandStrategy", menuName = "Use Item Strategy/EquipHandStrategy")]
 public class EquipHandStrategy : UseStrategy
 {
     public override void Execute(InventoryItem item)

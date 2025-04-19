@@ -9,32 +9,37 @@ using UnityEngine.UIElements;
 [CustomEditor(typeof(InventoryItem), true)]
 public class InventoryItemEditor : Editor
 {
-    [SerializeField] protected EquipHandStrategy _equipHandStrategy;
-    [SerializeField] protected UseOnSelfStrategy _useOnSelfStrategy;
-    [SerializeField] protected WearStrategy _wearStrategy;
+    [SerializeField] private EquipHandStrategy _equipHandStrategy;
+    [SerializeField] private UseOnSelfStrategy _useOnSelfStrategy;
+    [SerializeField] private WearStrategy _wearStrategy;
 
-    protected SerializedProperty _categoryProp;
-    protected SerializedProperty _useTypeProp;
-    protected SerializedProperty _useStrategyProp;
-    protected SerializedProperty _actionsProp;
-    protected SerializedProperty _nameProp;
-    protected SerializedProperty _descriptionProp;
-    protected SerializedProperty _iconProp;
-    protected SerializedProperty _objectItemProp;
-    protected SerializedProperty _isStackableProp;
-    protected SerializedProperty _measuredAsIntegerProp;
-    protected SerializedProperty _maxStackSizeProp;
-    protected SerializedProperty _weightProp;
-    protected SerializedProperty _unitMeasurementProp;
-    protected SerializedProperty _costOfUseProp;
-    protected SerializedProperty _degradeTypeProp;
-    protected SerializedProperty _degradationValueProp;
-    protected SerializedProperty _lifeTimeProp;
-    protected SerializedProperty _deconstructNeadProp;
-    protected SerializedProperty _repairNeadProp;
-    protected SerializedProperty _chargeNeadProp;
+    private SerializedProperty _categoryProp;
+    private SerializedProperty _useTypeProp;
+    private SerializedProperty _useStrategyProp;
+    private SerializedProperty _actionsProp;
+    private SerializedProperty _nameProp;
+    private SerializedProperty _descriptionProp;
+    private SerializedProperty _iconProp;
+    private SerializedProperty _objectItemProp;
+    private SerializedProperty _isStackableProp;
+    private SerializedProperty _measuredAsIntegerProp;
+    private SerializedProperty _maxStackSizeProp;
+    private SerializedProperty _weightProp;
+    private SerializedProperty _unitMeasurementProp;
+    private SerializedProperty _costOfUseProp;
+    private SerializedProperty _degradeTypeProp;
+    private SerializedProperty _degradationValueProp;
+    private SerializedProperty _lifeTimeProp;
+    private SerializedProperty _deconstructNeadProp;
+    private SerializedProperty _repairNeadProp;
+    private SerializedProperty _chargeNeadProp;
 
-    VisualElement root;
+    // For HeatingItem
+    private SerializedProperty _typeHeatingProp;
+    private SerializedProperty _maxTemperatureProp;
+    private SerializedProperty _chanceHeatingProp;
+
+    private VisualElement root;
 
     protected virtual void OnEnable()
     {
@@ -57,6 +62,13 @@ public class InventoryItemEditor : Editor
         _deconstructNeadProp = serializedObject.FindProperty("<DeconstructRecipe>k__BackingField");
         _repairNeadProp = serializedObject.FindProperty("<RepairRecipe>k__BackingField");
         _chargeNeadProp = serializedObject.FindProperty("<ChargeRecipe>k__BackingField");
+
+        if (target is HeatingItem)
+        {
+            _typeHeatingProp = serializedObject.FindProperty("<TypeHeating>k__BackingField");
+            _maxTemperatureProp = serializedObject.FindProperty("<MaxTemperature>k__BackingField");
+            _chanceHeatingProp = serializedObject.FindProperty("<ChanceHeating>k__BackingField");
+        }
     }
 
     public override VisualElement CreateInspectorGUI()
@@ -97,23 +109,60 @@ public class InventoryItemEditor : Editor
 
         DrawActionsAndValues();
 
-        var fieldIterator = serializedObject.GetIterator();
-        var last = typeof(InventoryItem).GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public).Last();
-
-        // Пропустить все поля базового класса
-        while (fieldIterator.NextVisible(true))
+        if (target is HeatingItem)
         {
-            if (fieldIterator.name == last.Name)
-                break;
+            DrawHeatingItemFields();
         }
-
-        // Отрисовать все поля дочернего класса
-        while (fieldIterator.NextVisible(false))
+        else
         {
-            root.Add(new PropertyField(fieldIterator));
-        }
+            var fieldIterator = serializedObject.GetIterator();
+            var last = typeof(InventoryItem).GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public).Last();
 
+            // Пропустить все поля базового класса
+            while (fieldIterator.NextVisible(true))
+            {
+                if (fieldIterator.name == last.Name)
+                    break;
+            }
+
+            // Отрисовать все поля дочернего класса
+            while (fieldIterator.NextVisible(false))
+            {
+                root.Add(new PropertyField(fieldIterator));
+            }
+        }
         return root;
+    }
+
+    private void DrawHeatingItemFields()
+    {
+        var typeHeatingField = new PropertyField(_typeHeatingProp);
+        root.Add(typeHeatingField);
+
+        var maxTemperatureField = new PropertyField(_maxTemperatureProp);
+        root.Add(maxTemperatureField);
+
+        var chanceHeatingField = new PropertyField(_chanceHeatingProp);
+        root.Add(chanceHeatingField);
+
+        typeHeatingField.RegisterValueChangeCallback(value =>
+        {
+            switch ((HeatingItem.HeatingType)_typeHeatingProp.enumValueIndex)
+            {
+                case HeatingItem.HeatingType.HeatingElement:
+                    maxTemperatureField.style.display = DisplayStyle.Flex;
+                    chanceHeatingField.style.display = DisplayStyle.Flex;
+                    break;
+                case HeatingItem.HeatingType.ThermalInsulationPaste:
+                    maxTemperatureField.style.display = DisplayStyle.None;
+                    chanceHeatingField.style.display = DisplayStyle.Flex;
+                    break;
+                default:
+                    maxTemperatureField.style.display = DisplayStyle.None;
+                    chanceHeatingField.style.display = DisplayStyle.None;
+                    break;
+            }
+        });
     }
 
     private void DrawUseStrategyProp()
@@ -208,8 +257,31 @@ public class InventoryItemEditor : Editor
         degradeTypeField.SetEnabled(isEnable);
         root.Add(degradeTypeField);
 
-        var degradeValueField = new PropertyField(_degradationValueProp);
-        //degradeValueField.style.left = 20;
+        Func<double, double> convert = value => 100.0 / (value * 60 * 24); // Преобразование времени жизни в скорость деградации и наоборот
+        (double min, double max) degradationRate = (convert(90), 100);
+        (double min, double max) lifeTime = (convert(degradationRate.max), convert(degradationRate.min));
+
+        var lifeTimeField = new DoubleField("Life Time [days]");
+        lifeTimeField.value = convert(_degradationValueProp.doubleValue);
+        lifeTimeField.AddToClassList("unity-base-field__aligned");
+        lifeTimeField.RegisterValueChangedCallback(value =>
+        {
+            lifeTimeField.value = Math.Clamp(value.newValue, lifeTime.min, lifeTime.max);
+            _degradationValueProp.doubleValue = convert(lifeTimeField.value);
+            serializedObject.ApplyModifiedProperties();
+        });
+
+        var degradeValueField = new DoubleField("Degradation Rate [unit/min]");
+        degradeValueField.value = _degradationValueProp.doubleValue;
+        degradeValueField.AddToClassList("unity-base-field__aligned");
+        degradeValueField.RegisterValueChangedCallback(value =>
+        {
+            degradeValueField.value = Math.Clamp(value.newValue, degradationRate.min, degradationRate.max);
+            _degradationValueProp.doubleValue = degradeValueField.value;
+            serializedObject.ApplyModifiedProperties();
+        });
+
+        root.Add(lifeTimeField);
         root.Add(degradeValueField);
 
         UpdateDegradationValueField((DegradationType)_degradeTypeProp.enumValueIndex);
@@ -220,15 +292,18 @@ public class InventoryItemEditor : Editor
             switch (type)
             {
                 case DegradationType.None:
+                    lifeTimeField.style.display = DisplayStyle.None;
                     degradeValueField.style.display = DisplayStyle.None;
                     break;
                 case DegradationType.Used:
-                    degradeValueField.label = "Degradation Used";
+                    lifeTimeField.style.display = DisplayStyle.None;
                     degradeValueField.style.display = DisplayStyle.Flex;
+                    degradeValueField.value = _degradationValueProp.doubleValue;
                     break;
                 case DegradationType.Rate:
-                    degradeValueField.label = "Degradation Rate";
-                    degradeValueField.style.display = DisplayStyle.Flex;
+                    lifeTimeField.style.display = DisplayStyle.Flex;
+                    degradeValueField.style.display = DisplayStyle.None;
+                    lifeTimeField.value = convert(_degradationValueProp.doubleValue);
                     break;
             }
         }
@@ -314,7 +389,6 @@ public class InventoryItemEditor : Editor
 
     private void DrawCostOfUseProp()
     {
-
         var field = new PropertyField(_costOfUseProp);
 
         UpdateCostOfUseFields(_measuredAsIntegerProp);
@@ -325,7 +399,7 @@ public class InventoryItemEditor : Editor
         void UpdateCostOfUseFields(SerializedProperty prop)
         {
             field.SetEnabled(!prop.boolValue);
-            if (prop.boolValue == true) 
+            if (prop.boolValue == true)
                 _costOfUseProp.floatValue = 1;
             serializedObject.ApplyModifiedProperties();
         }

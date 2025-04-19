@@ -1,4 +1,5 @@
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
@@ -19,10 +20,6 @@ public class WeatherFogSystem : MonoBehaviour
 
     public void ValidateReferences()
     {
-#if UNITY_EDITOR
-        UnityEditor.Undo.RecordObject(this, "Валидация тумана");
-#endif
-
         // Ищем ссылки на материалы тумана
         var pipeline = GraphicsSettings.currentRenderPipeline as UniversalRenderPipelineAsset;
 
@@ -42,8 +39,8 @@ public class WeatherFogSystem : MonoBehaviour
             _farFogMaterial = fogRendererFeatureFar.passMaterial;
 
         // Инициализация трансформа солнца в сцене:
-        DynamicLightingColor[] dynamicLightingColors = FindObjectsByType<DynamicLightingColor>(FindObjectsSortMode.None);
-        foreach (DynamicLightingColor dyn in dynamicLightingColors)
+        WeatherLightingColor[] dynamicLightingColors = FindObjectsByType<WeatherLightingColor>(FindObjectsSortMode.None);
+        foreach (WeatherLightingColor dyn in dynamicLightingColors)
         {
             if (dyn.isSun)
                 _sunTransform = dyn.transform;
@@ -88,6 +85,11 @@ public class WeatherFogSystem : MonoBehaviour
         isValidePropertys &= _farFogMaterial.HasProperty("_Sun_Direction");
 
         _isFogValide = isValidePropertys;
+
+#if UNITY_EDITOR
+        if (PrefabUtility.IsPartOfPrefabInstance(this))
+            PrefabUtility.RecordPrefabInstancePropertyModifications(this);
+#endif
     }
 
     /// <summary>

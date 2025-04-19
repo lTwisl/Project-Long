@@ -17,8 +17,8 @@ public class InventorySlot
         }
     }
 
-    [SerializeField, Range(0.001f, 100f)] private float _condition = 100f;
-    public float Condition
+    [SerializeField, Range(0.001f, 100f)] private double _condition = 100f;
+    public double Condition
     {
         get => _condition;
         set
@@ -29,7 +29,7 @@ public class InventorySlot
     }
 
     public event Action<float> OnCapacityChanged;
-    public event Action<float> OnConditionChanged;
+    public event Action<double> OnConditionChanged;
 
     // Äכÿ ןנוהלועמג מהוזהû
     public bool IsWearing { get; set; }
@@ -40,13 +40,13 @@ public class InventorySlot
     public bool IsFull => Item != null && Capacity >= Item.MaxCapacity;
 
 
-    public InventorySlot(InventoryItem item, float capacity, float condition)
+    public InventorySlot(InventoryItem item, float capacity, double condition)
     {
         SetItem(item, capacity, condition);
     }
 
 
-    public void SetItem(InventoryItem item, float capacity, float condition)
+    public void SetItem(InventoryItem item, float capacity, double condition)
     {
         if (item == null)
             return;

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using Zenject;
 
 [System.Serializable]
 public class Inventory
@@ -60,6 +59,13 @@ public class Inventory
 
     [field: SerializeField, DisableEdit] public float Weight { get; private set; }
 
+    private float _degradationScale = 1f;
+    public float DegradationScale
+    {
+        get => _degradationScale;
+        set => _degradationScale = Mathf.Max(0, value);
+    }
+
     public void Init()
     {
         Slots = new LinkedList<InventorySlot>(InitSlots);
@@ -70,7 +76,7 @@ public class Inventory
     /// <summary>
     /// Основной метод добавления предмета в инвентарь
     /// </summary>
-    public void AddItem(InventoryItem item, float quantity, float condition)
+    public void AddItem(InventoryItem item, float quantity, double condition)
     {
         if (!IsValidAdditionParameters(item, quantity, condition))
             return;
@@ -93,7 +99,7 @@ public class Inventory
     /// True - если предмет существует, количество и состояние положительные,
     /// а вес предмета корректен
     /// </returns>
-    private bool IsValidAdditionParameters(InventoryItem item, float quantity, float condition)
+    private bool IsValidAdditionParameters(InventoryItem item, float quantity, double condition)
     {
         return item != null
             && quantity > 0
@@ -105,7 +111,7 @@ public class Inventory
     /// Пытается добавить предмет в существующие подходящие слоты,
     /// создает новые слоты для остатка
     /// </summary>
-    private void TryAddToExistingSlots(InventoryItem item, float quantity, float condition)
+    private void TryAddToExistingSlots(InventoryItem item, float quantity, double condition)
     {
         float remainingQuantity = quantity;
         InventorySlot existingSlot = FindPartialSlot(item, condition);
@@ -130,7 +136,7 @@ public class Inventory
     /// - Такое же состояние
     /// - Не заполнен до максимума
     /// </returns>
-    private InventorySlot FindPartialSlot(InventoryItem item, float condition)
+    private InventorySlot FindPartialSlot(InventoryItem item, double condition)
     {
         return Slots.FirstOrDefault(slot =>
             slot.Item == item
@@ -158,7 +164,7 @@ public class Inventory
     /// 1. Полные слоты до максимальной вместимости
     /// 2. Один слот для остатка (если есть)
     /// </summary>
-    private void CreateNewSlotsWithRemaining(InventoryItem item, float quantity, float condition, float maxCapacity)
+    private void CreateNewSlotsWithRemaining(InventoryItem item, float quantity, double condition, float maxCapacity)
     {
         int fullSlotsCount = (int)(quantity / maxCapacity);
         float remainder = quantity % maxCapacity;
@@ -177,7 +183,7 @@ public class Inventory
     /// <summary>
     /// Создает новый слот и инициирует событие добавления предмета
     /// </summary>
-    private void CreateNewSlot(InventoryItem item, float quantity, float condition)
+    private void CreateNewSlot(InventoryItem item, float quantity, double condition)
     {
         InventorySlot newSlot = new InventorySlot(item, quantity, condition);
         Slots.AddLast(newSlot);
@@ -235,12 +241,11 @@ public class Inventory
                 InventoryItem item = slot.Item;
 
                 // Деградация предмета
-                if (item.DegradeType == DegradationType.Rate && (item is not ClothingItem))
+                if (item.DegradeType == DegradationType.Rate && ((item is not ClothingItem) || item is not HeatingItem))
                 {
-                    slot.Condition -= item.DegradationValue * deltaTime;
+                    slot.Condition -= item.DegradationValue * DegradationScale * deltaTime;
                     shouldRemove = slot.Condition <= 0;
                 }
-
             }
 
             if (shouldRemove)

@@ -1,3 +1,4 @@
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
@@ -11,9 +12,6 @@ public class WeatherPostProcessSystem : MonoBehaviour
 
     public void ValidateReferences()
     {
-#if UNITY_EDITOR
-        UnityEditor.Undo.RecordObject(this, "Валидация пост процессинга");
-#endif
         _volume = FindFirstObjectByType<Volume>();
 
         // Проверка ссылок на метериалы:
@@ -30,6 +28,11 @@ public class WeatherPostProcessSystem : MonoBehaviour
         //isValidePropertys &= _volume.profile.TryGet<Bloom>(out var bloom);
 
         _isPostProcessValide = isValidePropertys;
+
+#if UNITY_EDITOR
+        if (PrefabUtility.IsPartOfPrefabInstance(this))
+            PrefabUtility.RecordPrefabInstancePropertyModifications(this);
+#endif
     }
 
     public void UpdatePostProcessing(WeatherProfile currentProfile, WeatherProfile newProfile, float t)

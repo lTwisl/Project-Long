@@ -7,7 +7,8 @@ public class StaminaStatusParameter : MovementStatusParameter
     [SerializeField] private float _reload;
 
     private float _changeRateRatioByCapacity = 1;
-    public float ChangeRateRatioByCapacity {
+    public float ChangeRateRatioByCapacity 
+    {
         get => _changeRateRatioByCapacity;
         set => _changeRateRatioByCapacity = Mathf.Clamp01(value);
     }
@@ -30,7 +31,7 @@ public class StaminaStatusParameter : MovementStatusParameter
 
     public override void ChangeParameter(float deltaSeconds)
     {
-        float newChangeRate = ChangeRate * (ChangeRate > 0 ? ChangeRateRatioByCapacity : (3 - ChangeRateRatioByCapacity));
+        float newChangeRate = ChangeRate * (ChangeRate > 0 ? ChangeRateRatioByCapacity : (2 - ChangeRateRatioByCapacity));
         Current = Mathf.Clamp(Current + newChangeRate * deltaSeconds, 0f, Max + OffsetMax);
     }
 

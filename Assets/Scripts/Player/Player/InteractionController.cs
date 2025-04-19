@@ -18,6 +18,7 @@ public class InteractionController : MonoBehaviour
     private bool _isInteracting;
     private float _holdTimer;
 
+    [SerializeField] private float _distRaycast = 100f;
 
     public void Update()
     {
@@ -44,7 +45,12 @@ public class InteractionController : MonoBehaviour
 
     private void StartInteraction()
     {
-        if (!Physics.Raycast(_mainCamera.transform.position, _mainCamera.transform.forward, out RaycastHit hitInfo, 100f, _interactionLayer))
+#if UNITY_EDITOR
+        if (Physics.Raycast(_mainCamera.transform.position, _mainCamera.transform.forward, out RaycastHit hitInfo1, _distRaycast))
+            Debug.Log($"Попытка провзаимодействовать с {hitInfo1.transform.name}");
+#endif
+
+        if (!Physics.Raycast(_mainCamera.transform.position, _mainCamera.transform.forward, out RaycastHit hitInfo, _distRaycast, _interactionLayer))
             return;
 
         _currentInteractible = hitInfo.collider.GetComponentInParent<IInteractible>();
