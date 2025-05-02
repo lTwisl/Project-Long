@@ -11,7 +11,8 @@ public class WeatherLightingAngle : MonoBehaviour
     }
 
     private void UpdateLightAngle()
-    {        
+    {
+        //Debug.Log($"Изменили позицию солнца. Новый угол: {transform.eulerAngles}");
         transform.rotation = Quaternion.Euler(CalculateSunRotation(GameTime.Time), 0, 0);
     }
 
