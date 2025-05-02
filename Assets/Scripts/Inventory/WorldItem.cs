@@ -1,3 +1,4 @@
+using UnityEditor;
 using UnityEngine;
 
 public class WorldItem : MonoBehaviour, IInteractible
@@ -8,9 +9,35 @@ public class WorldItem : MonoBehaviour, IInteractible
 
     public virtual bool IsCanInteract => true;
 
+    [HideInInspector] public bool IsDirtItem = false;
+
+    private void OnEnable()
+    {
+        if (IsDirtItem) 
+            GameTime.OnMinuteChanged += UpdateConditionItem;
+    }
+
+    private void OnDisable()
+    {
+        if (IsDirtItem)
+            GameTime.OnMinuteChanged -= UpdateConditionItem;
+    }
+
     public virtual void Interact(Player player)
     {
         player.Inventory.AddItem(InventorySlot.Item, InventorySlot.Capacity, InventorySlot.Condition);
         Destroy(gameObject);
+    }
+
+    private void UpdateConditionItem()
+    {
+        if (IsDirtItem == false)
+            return;
+
+        if (InventorySlot?.Item == null)
+            return;
+
+        if (InventorySlot.Item.DegradeType == DegradationType.Rate)
+            InventorySlot.Condition -= InventorySlot.Item.DegradationValue;
     }
 }

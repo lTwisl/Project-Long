@@ -4,7 +4,9 @@ using EditorAttributes;
 public class Bush : Storage
 {
     [SerializeField] private GameObject[] _hideAfterPickup;
-    [SerializeField, Suffix("days")] private float _reload = 3;
+
+    [Suffix("days"), TimeConversion]
+    [SerializeField] private float _reload = 3;
 
     private float timer = 0;
 

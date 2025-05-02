@@ -86,8 +86,14 @@ public class PlayerStatusController : MonoBehaviour
             if (Mathf.Approximately(param.DecreasedHealthRate, 0))
                 continue;
 
-            param.OnReachZero += () => PlayerParameters.Health.ChangeRate += param.DecreasedHealthRate;
-            param.OnRecoverFromZero += () => PlayerParameters.Health.ChangeRate -= param.DecreasedHealthRate;
+            param.OnReachZero += () =>
+            {
+                PlayerParameters.Health.ChangeRate += param.DecreasedHealthRate;
+            };
+            param.OnRecoverFromZero += () =>
+            {
+                PlayerParameters.Health.ChangeRate -= param.DecreasedHealthRate;
+            };
         }
 
         PlayerParameters.Capacity.OnValueChanged += UpdateStaminaChangeRateRatioByCapacity;

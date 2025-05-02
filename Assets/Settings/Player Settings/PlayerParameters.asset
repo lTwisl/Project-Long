@@ -16,7 +16,8 @@ MonoBehaviour:
     _current: 100
     <Max>k__BackingField: 100
     <OffsetMax>k__BackingField: 0
-    <ChangeRate>k__BackingField: 10
+    <ChangeRate>k__BackingField: 0
+    RegenerationRate: 10
   <Stamina>k__BackingField:
     _current: 100000
     <Max>k__BackingField: 100000
@@ -34,7 +35,7 @@ MonoBehaviour:
     <ChangeRate>k__BackingField: 0
     <DecreasedHealthRate>k__BackingField: 0
   <FoodBalance>k__BackingField:
-    _current: 3450.0027
+    _current: 3367.2341
     <Max>k__BackingField: 3500
     <OffsetMax>k__BackingField: 0
     <ChangeRate>k__BackingField: -10
@@ -43,7 +44,7 @@ MonoBehaviour:
     <WalkChangeRate>k__BackingField: -20
     <SprintChangeRate>k__BackingField: -40
   <WaterBalance>k__BackingField:
-    _current: 3363.442
+    _current: 3017.3472
     <Max>k__BackingField: 3500
     <OffsetMax>k__BackingField: 0
     <ChangeRate>k__BackingField: -40
@@ -52,7 +53,7 @@ MonoBehaviour:
     <WalkChangeRate>k__BackingField: -60
     <SprintChangeRate>k__BackingField: -100
   <Energy>k__BackingField:
-    _current: 1360.4419
+    _current: 1174.4778
     <Max>k__BackingField: 1440
     <OffsetMax>k__BackingField: 0
     <ChangeRate>k__BackingField: -20
@@ -61,14 +62,13 @@ MonoBehaviour:
     <WalkChangeRate>k__BackingField: -40
     <SprintChangeRate>k__BackingField: -60
   <Heat>k__BackingField:
-    _current: 2482.3884
+    _current: 2406.822
     <Max>k__BackingField: 2500
     <OffsetMax>k__BackingField: 0
-    <ChangeRate>k__BackingField: -21.271103
+    <ChangeRate>k__BackingField: -15.484848
     <DecreasedHealthRate>k__BackingField: -10
   <Toxicity>k__BackingField:
-    _current: 3.772786
+    _current: 0
     <Max>k__BackingField: 10000
     <OffsetMax>k__BackingField: 0
     <ChangeRate>k__BackingField: 0
-    <DecreasedHealthRate>k__BackingField: -10

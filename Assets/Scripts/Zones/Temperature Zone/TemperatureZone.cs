@@ -1,4 +1,6 @@
+using EditorAttributes;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
@@ -15,10 +17,11 @@ public class TemperatureZone : MonoBehaviour
     private bool _isIn = false;
 
     [Header("Settings Grid Raycast")]
+    [SerializeField, DrawHandle(handleSpace: Space.Self)] private Vector3 _originRays = Vector3.zero;
     [SerializeField] private Vector2Int _gridSize = new Vector2Int(5, 5); // Количество лучей по осям X и Z
     [SerializeField] private Vector2 _spacing = new Vector2(1, 1); // Расстояние между лучами
     [SerializeField] private LayerMask _layerMask;
-    
+
     [SerializeField] private bool _drawRays = false;
 
     private Collider _playerCollider;
@@ -33,13 +36,8 @@ public class TemperatureZone : MonoBehaviour
         if (!other.CompareTag("Player"))
             return;
 
-        Debug.Log("Enter");
         _playerCollider = other;
-
         StartCoroutine(CheckHeating());
-
-        _isIn = true;
-        _world.InvokeOnEnterTemperatureZone(this);
     }
 
     private void OnTriggerExit(Collider other)
@@ -61,8 +59,9 @@ public class TemperatureZone : MonoBehaviour
     {
         while (_playerCollider)
         {
+            Vector3 startRays = transform.position + _originRays;
             // Основное направление луча
-            Vector3 baseDirection = _playerCollider.bounds.center - transform.position;
+            Vector3 baseDirection = _playerCollider.bounds.center - startRays;
 
             // Вычисляем перпендикулярные направления
             Vector3 rightOffset = Vector3.Cross(baseDirection.normalized, Vector3.up).normalized * _spacing.x;
@@ -74,23 +73,76 @@ public class TemperatureZone : MonoBehaviour
             bool newIsIn = false;
             int counterHits = 0;
 
-            for (int x = -halfWidth; x <= halfWidth; x++)
+            /*// От центральной строки в крайнии 
+            for (int _y = 0; _y <= halfHeight; ++_y)
             {
-                for (int y = -halfHeight; y <= halfHeight; y++)
+                foreach (int y in _y == 0 ? new int[] { _y } : new int[] { _y , -_y })
+                {
+                    for (int x = -halfWidth; x <= halfWidth; ++x)
+                    {
+                        yield return GameTime.YieldNull();
+
+                        if (_playerCollider == null)
+                            yield break;
+
+                        // Вычисляем смещение для текущего луча
+                        Vector3 positionOffset = rightOffset * x + upOffset * y;
+
+                        // Начальная и конечная точки луча
+                        Vector3 start = startRays + positionOffset;
+                        Vector3 end = start + baseDirection;
+
+                        Vector3 dir = end - startRays;
+
+
+                        if (!Physics.Raycast(startRays, dir.normalized, out RaycastHit hitInfo, dir.magnitude, _layerMask))
+                        {
+                            continue;
+                        }
+
+                        if (!hitInfo.collider.CompareTag("Player"))
+                        {
+                            if (_drawRays)
+                                Debug.DrawLine(startRays, end, Color.red);
+                            continue;
+                        }
+                        else
+                        {
+                            if (_drawRays)
+                                Debug.DrawLine(startRays, end, Color.green);
+                        }
+
+                        counterHits += 1;
+                        if (counterHits >= 3)
+                        {
+                            newIsIn = true;
+                            break;
+                        }
+
+                    }
+                }
+            }*/
+
+            for (int y = halfHeight; y >= -halfHeight; --y) // Сверху вниз
+            {
+                for (int x = -halfWidth; x <= halfWidth; ++x) // Слева направо 
                 {
                     yield return GameTime.YieldNull();
+
+                    if (_playerCollider == null)
+                        yield break;
 
                     // Вычисляем смещение для текущего луча
                     Vector3 positionOffset = rightOffset * x + upOffset * y;
 
                     // Начальная и конечная точки луча
-                    Vector3 start = transform.position + positionOffset;
+                    Vector3 start = startRays + positionOffset;
                     Vector3 end = start + baseDirection;
 
-                    Vector3 dir = end - transform.position;
+                    Vector3 dir = end - startRays;
 
 
-                    if (!Physics.Raycast(transform.position, dir.normalized, out RaycastHit hitInfo, dir.magnitude, _layerMask))
+                    if (!Physics.Raycast(startRays, dir.normalized, out RaycastHit hitInfo, dir.magnitude, _layerMask))
                     {
                         continue;
                     }
@@ -98,25 +150,25 @@ public class TemperatureZone : MonoBehaviour
                     if (!hitInfo.collider.CompareTag("Player"))
                     {
                         if (_drawRays)
-                            Debug.DrawLine(transform.position, end, Color.red);
+                            Debug.DrawLine(startRays, end, Color.red);
                         continue;
                     }
                     else
                     {
                         if (_drawRays)
-                            Debug.DrawLine(transform.position, end, Color.green);
+                            Debug.DrawLine(startRays, end, Color.green);
                     }
 
+                    counterHits += 1;
+                    if (counterHits >= 3)
+                    {
                         newIsIn = true;
-                    break;
+                        break;
+                    }
                 }
 
-                counterHits += 1;
-                if (counterHits >= 3)
-                {
-                    newIsIn = true;
+                if (newIsIn)
                     break;
-                }
             }
 
             if (_isIn && !newIsIn)
@@ -132,6 +184,8 @@ public class TemperatureZone : MonoBehaviour
                 Debug.Log("Enter");
             }
         }
+
+
     }
 
 

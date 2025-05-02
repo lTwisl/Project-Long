@@ -146,6 +146,7 @@ public class Player : MonoBehaviour
             }
 
             WorldItem item = Instantiate(slot.Item.ItemPrefab, pos, transform.rotation);
+            item.IsDirtItem = true;
             item.transform.up = up;
             item.InventorySlot = new InventorySlot(slot.Item, slot.Capacity, slot.Condition);
         }

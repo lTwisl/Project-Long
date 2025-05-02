@@ -25,7 +25,7 @@ public enum ParameterType
 [CreateAssetMenu(fileName = "PlayerParameters", menuName = "Scriptable Objects/PlayerParameters")]
 public class PlayerParameters : ScriptableObject
 {
-    [field: SerializeField] public StatusParameter Health { get; private set; }
+    [field: SerializeField] public HealthStatusParameter Health { get; private set; }
 
     [field: Space(10)]
     [field: SerializeField] public StaminaStatusParameter Stamina { get; private set; }

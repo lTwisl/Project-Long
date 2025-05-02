@@ -257,11 +257,11 @@ public class InventoryItemEditor : Editor
         degradeTypeField.SetEnabled(isEnable);
         root.Add(degradeTypeField);
 
-        Func<double, double> convert = value => 100.0 / (value * 60 * 24); // Преобразование времени жизни в скорость деградации и наоборот
+        Func<double, double> convert = value => 1.0 / (value * 60 * 24); // Преобразование времени жизни в скорость деградации и наоборот
         (double min, double max) degradationRate = (convert(90), 100);
         (double min, double max) lifeTime = (convert(degradationRate.max), convert(degradationRate.min));
 
-        var lifeTimeField = new DoubleField("Life Time [days]");
+        var lifeTimeField = new DoubleField("Life Time [days] (In Shalter)");
         lifeTimeField.value = convert(_degradationValueProp.doubleValue);
         lifeTimeField.AddToClassList("unity-base-field__aligned");
         lifeTimeField.RegisterValueChangedCallback(value =>
@@ -272,7 +272,7 @@ public class InventoryItemEditor : Editor
             serializedObject.ApplyModifiedProperties();
         });
 
-        var degradeValueField = new DoubleField("Condition Loss [%]");
+        var degradeValueField = new DoubleField("Condition Loss [%] (In Shalter)");
         degradeValueField.value = _degradationValueProp.doubleValue;
         degradeValueField.AddToClassList("unity-base-field__aligned");
         degradeValueField.RegisterValueChangedCallback(value =>

@@ -1,5 +1,5 @@
 ﻿[System.Serializable]
-public class ToxicityStatusParameter : BaseStatusParameter
+public class ToxicityStatusParameter : StatusParameter
 {
     public override void Reset()
     {

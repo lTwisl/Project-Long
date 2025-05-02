@@ -25,7 +25,7 @@ MonoBehaviour:
   <MeasuredAsInteger>k__BackingField: 1
   <MaxCapacity>k__BackingField: 1
   <UnitMeasurement>k__BackingField: 0
-  <CostOfUse>k__BackingField: 1
+  <CostOfUse>k__BackingField: 0
   <DegradeType>k__BackingField: 2
   <DegradationValue>k__BackingField: 0.00992063492063492
   <Actions>k__BackingField: 9
@@ -39,7 +39,7 @@ MonoBehaviour:
   <ChargeRecipe>k__BackingField: {fileID: 0}
   <ClothingType>k__BackingField: 8
   <TemperatureBonus>k__BackingField: 25
-  <WaterProtection>k__BackingField: 100
+  <WaterProtection>k__BackingField: 1
   <WindProtection>k__BackingField: 0
   <ToxicityProtection>k__BackingField: 0
   <PhysicProtection>k__BackingField: 0

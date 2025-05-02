@@ -17,7 +17,7 @@ public class Shelter : MonoBehaviour
 
     [Header("Параметры укрытия:")]
     [SerializeField, Range(-25, 25)] private float _temperature;
-    [SerializeField, Range(0, 100)] private float _wetness;
+    [SerializeField, Range(0, 1)] private float _wetness;
     [SerializeField, Range(0, 15)] private float _toxicity;
     public float Temperature
     {

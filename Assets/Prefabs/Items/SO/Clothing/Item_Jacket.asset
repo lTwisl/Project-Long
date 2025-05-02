@@ -41,12 +41,12 @@ MonoBehaviour:
   <ChargeRecipe>k__BackingField: {fileID: 0}
   <ClothingType>k__BackingField: 1
   <TemperatureBonus>k__BackingField: 8
-  <WaterProtection>k__BackingField: 60
-  <WindProtection>k__BackingField: 50
+  <WaterProtection>k__BackingField: 1
+  <WindProtection>k__BackingField: 1
   <ToxicityProtection>k__BackingField: 0
   <PhysicProtection>k__BackingField: 0
   <OffsetStamina>k__BackingField: 0
   <FrictionBonus>k__BackingField: 0
-  <DryingRate>k__BackingField: 0
   <WaterAbsorptionRatio>k__BackingField: 3
+  <DryingRate>k__BackingField: 0
   <GivesBonus>k__BackingField: []

@@ -10,7 +10,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1386583748212932445, guid: 465cdef9e6679f148bc8ec4299e8c3c6, type: 3}
       propertyPath: m_Name
-      value: Access_1_Prefab
+      value: Item_Access_1_Prefab
       objectReference: {fileID: 0}
     - target: {fileID: 3025601854375813779, guid: 465cdef9e6679f148bc8ec4299e8c3c6, type: 3}
       propertyPath: m_LocalScale.x

@@ -1,3 +1,4 @@
+using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
@@ -5,6 +6,7 @@ using Zenject;
 
 public class InteractionController : MonoBehaviour
 {
+    [SerializeField] private float _interactionDistance = 10f;
     [SerializeField] private float _holdInteractionTime = 2f;
     [SerializeField] private LayerMask _interactionLayer;
     [SerializeField] private Slider _slider;
@@ -17,8 +19,6 @@ public class InteractionController : MonoBehaviour
     private IInteractible _currentInteractible;
     private bool _isInteracting;
     private float _holdTimer;
-
-    [SerializeField] private float _distRaycast = 100f;
 
     public void Update()
     {
@@ -45,12 +45,9 @@ public class InteractionController : MonoBehaviour
 
     private void StartInteraction()
     {
-//#if UNITY_EDITOR
-//        if (Physics.Raycast(_mainCamera.transform.position, _mainCamera.transform.forward, out RaycastHit hitInfo1, _distRaycast))
-//            Debug.Log($"Попытка провзаимодействовать с {hitInfo1.transform.name}");
-//#endif
 
-        if (!Physics.Raycast(_mainCamera.transform.position, _mainCamera.transform.forward, out RaycastHit hitInfo, _distRaycast, _interactionLayer))
+
+        if (!Physics.Raycast(_mainCamera.transform.position, _mainCamera.transform.forward, out RaycastHit hitInfo, _interactionDistance, _interactionLayer))
             return;
 
         _currentInteractible = hitInfo.collider.GetComponentInParent<IInteractible>();
@@ -105,4 +102,29 @@ public class InteractionController : MonoBehaviour
 
         _slider.gameObject.SetActive(false);
     }
+
+#if UNITY_EDITOR
+    private void OnGUI()
+    {
+        if (Physics.Raycast(_mainCamera.transform.position, _mainCamera.transform.forward, out RaycastHit hitInfo, 100f))
+        {
+            Rect rect = new Rect(Screen.width - 200, 20, 200, 40);
+            GUI.Label(rect, $"Наблюдаемый объект: {hitInfo.transform.name}", new GUIStyle()
+            {
+                fontSize = 32,
+                alignment = TextAnchor.UpperRight,
+                normal = { textColor = Color.red }
+            });
+
+            Rect rect2 = new Rect(Screen.width - 200, 60, 200, 40);
+            if (hitInfo.transform.parent)
+                GUI.Label(rect2, $"Родитель: {hitInfo.transform.parent.name}", new GUIStyle()
+                {
+                    fontSize = 24,
+                    alignment = TextAnchor.UpperRight,
+                    normal = { textColor = Color.red }
+                });
+        }
+    }
+#endif
 }

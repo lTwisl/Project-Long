@@ -42,15 +42,18 @@ public class InventorySlotDrawer : PropertyDrawer
             y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
 
             if (Mathf.Approximately(capacityProp.floatValue, 0))
-                capacityProp.floatValue = 1;
+            {
+                if (itemProp.objectReferenceValue is InventoryItem item)
+                    capacityProp.floatValue = item.MaxCapacity;
+            }
 
             // Поле Condition
             Rect conditionRect = new Rect(position.x, y, position.width, EditorGUIUtility.singleLineHeight);
-            EditorGUI.Slider(conditionRect, conditionProp, 0.001f, 100f, "Condition");
+            EditorGUI.Slider(conditionRect, conditionProp, 0.001f, 1f, "Condition");
             y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
 
             if (Mathf.Approximately(conditionProp.floatValue, 0))
-                conditionProp.floatValue = 100;
+                conditionProp.floatValue = 1;
 
             // Weight
             Rect weightRect = new Rect(position.x, y, position.width, EditorGUIUtility.singleLineHeight);

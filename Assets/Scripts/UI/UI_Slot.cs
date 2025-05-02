@@ -51,7 +51,7 @@ public class UI_Slot : MonoBehaviour, IPointerDownHandler
         else
             _capacity.text = Slot.Capacity.ToString("0.##") + $" {Slot.Item.UnitMeasurement}";
 
-        _condition.text = Math.Ceiling(Slot.Condition).ToString() + " %";
+        _condition.text = Math.Ceiling(Slot.Condition * 100).ToString() + " %";
         _weight.text = (Slot.Capacity * Slot.Item.Weight).ToString("0.##") + $" Í„";
     }
 

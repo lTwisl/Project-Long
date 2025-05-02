@@ -14,9 +14,10 @@ public class World : MonoBehaviour
     [field: SerializeField, DisableField] public float TotalTemperature { get; private set; }
 
     [field: Header("Влажность")]
-    [field: SerializeField] public float Wetness { get; private set; }
+    [field: SerializeField, Range(0, 1)] public float Wetness { get; private set; }
     public float WeatherWetness => Weather.Wetness;
     [field: SerializeField, DisableField] public float ShelterWetness { get; private set; }
+    [field: SerializeField, DisableField] public float TotalWetness { get; private set; }
 
     [field: Header("Заражённость")]
     [field: SerializeField] public float Toxicity { get; private set; }
@@ -67,6 +68,7 @@ public class World : MonoBehaviour
     {
         CalculateTotalTemperature();
         CalculateTotalToxicity();
+        CalculateTotalWetness();
     }
 
     public void InvokeOnEnterShelter(Shelter shelterSystem)
@@ -80,8 +82,8 @@ public class World : MonoBehaviour
         ShelterWetness = shelterSystem.Wetness;
         ShelterToxicity = shelterSystem.Toxicity;
 
-        CalculateTotalTemperature();
-        CalculateTotalToxicity();
+        //CalculateTotalTemperature();
+        //CalculateTotalToxicity();
 
         PlayerEnteredLastShelter = shelterSystem;
         OnEnterShelter?.Invoke(shelterSystem);
@@ -103,8 +105,8 @@ public class World : MonoBehaviour
         ShelterWetness = 0;
         ShelterToxicity = 0;
 
-        CalculateTotalTemperature();
-        CalculateTotalToxicity();
+        //CalculateTotalTemperature();
+        //CalculateTotalToxicity();
 
         OnExitShelter?.Invoke(shelterSystem);
         PlayerEnteredLastShelter = null;
@@ -146,20 +148,43 @@ public class World : MonoBehaviour
 
     public float GetWindLocalIntensity()
     {
-        return Wind.GetWindLocalIntensity(_player.transform.position);
+        if (PlayerEnteredLastShelter)
+            return 0;
+        else
+            return Wind.GetWindLocalIntensity(_player.transform.position);
+
     }
 
     public Vector2 GetWindLocalVector()
     {
-        return Wind.GetWindLocalVector(_player.transform.position);
+        if (PlayerEnteredLastShelter)
+            return Vector2.zero;
+        else
+            return Wind.GetWindLocalVector(_player.transform.position);
     }
 
     private void CalculateTotalTemperature()
-        => TotalTemperature = Temperature + WeatherTemperature + ShelterTemperature + GetMaxExternalHeatsByPosiotion() + _player.ClothingSystem.TotalTemperatureBonus;
+    {
+        float WeatherOrShalter = PlayerEnteredLastShelter ? ShelterTemperature : WeatherTemperature;
+
+        TotalTemperature = Temperature + WeatherOrShalter + GetMaxExternalHeatsByPosiotion() + _player.ClothingSystem.TotalTemperatureBonus;
+    }
 
 
     public void CalculateTotalToxicity()
-        => TotalToxicity = (Toxicity + WeatherToxicity + ShelterToxicity + ZoneToxicity) * (1 - _player.ClothingSystem.TotalToxicityProtection / 100);
+    {
+        float WeatherOrShalter = PlayerEnteredLastShelter ? ShelterToxicity : WeatherToxicity;
+
+        TotalToxicity = (Toxicity + WeatherOrShalter + ZoneToxicity) * (1 - _player.ClothingSystem.TotalToxicityProtection / 100);
+    }
+
+
+    public void CalculateTotalWetness()
+    {
+        float WeatherOrShalter = PlayerEnteredLastShelter ? ShelterWetness : WeatherWetness;
+
+        TotalWetness = (Wetness + WeatherOrShalter) * (1 - _player.ClothingSystem.TotalToxicityProtection);
+    }
 
     /// <summary>
     /// Добавить внешний источник тепла и обновить максимальную температуру

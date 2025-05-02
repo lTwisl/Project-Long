@@ -71,6 +71,7 @@ MonoBehaviour:
   <Temperature>k__BackingField: 30
   <MinRadius>k__BackingField: 2.5
   <MaxRadius>k__BackingField: 6
+  _originRays: {x: 0, y: 0.5, z: 0}
   _gridSize: {x: 3, y: 3}
   _spacing: {x: 0.3, y: 0.6}
   _layerMask:

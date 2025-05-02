@@ -17,7 +17,7 @@ public class InventorySlot
         }
     }
 
-    [SerializeField, Range(0.001f, 100f)] private double _condition = 100f;
+    [SerializeField, Range(0.001f, 1)] private double _condition = 1f;
     public double Condition
     {
         get => _condition;
@@ -76,7 +76,7 @@ public class InventorySlot
     public float GetWeight()
     {
         if (Item is ClothingItem clothes)
-            return Capacity * Item.Weight * (1 + clothes.WaterAbsorptionRatio * Wet / 100);
+            return Capacity * Item.Weight * (1 + clothes.WaterAbsorptionRatio * Wet);
         return Capacity * Item.Weight;
     }
 }

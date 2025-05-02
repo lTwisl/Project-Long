@@ -15,30 +15,32 @@ public class BaseStatusParameter : StatusParameter
 
     public override void UpdateParameter(float deltaSeconds)
     {
-        float prevValue = Current;
-
         base.UpdateParameter(deltaSeconds);
 
-        if (Current <= 0)
+        if (Current > 0)
         {
-            TimeIsZero += TimeSpan.FromSeconds(deltaSeconds);
-
-            if (prevValue > 0)
-            {
-                TimeGeaterZero = TimeSpan.Zero;
-                IsZero = true;
-                OnReachZero?.Invoke();
-            }
-        }
-        else
-        {
-            TimeGeaterZero += TimeSpan.FromSeconds(deltaSeconds);
-
-            if (prevValue <= 0)
+            if (IsZero)
             {
                 TimeIsZero = TimeSpan.Zero;
                 IsZero = false;
                 OnRecoverFromZero?.Invoke();
+            }
+            else
+            {
+                TimeGeaterZero += TimeSpan.FromSeconds(deltaSeconds);
+            }
+        }
+        else
+        {
+            if (IsZero)
+            {
+                TimeIsZero += TimeSpan.FromSeconds(deltaSeconds);
+            }
+            else
+            {
+                TimeGeaterZero = TimeSpan.Zero;
+                IsZero = true;
+                OnReachZero?.Invoke();
             }
         }
     }
@@ -69,7 +71,7 @@ public class StatusParameter : IStatusParameter
         get => _current;
         set
         {
-            if (Mathf.Approximately(_current, value)) 
+            if (Mathf.Approximately(_current, value))
                 return;
             _current = Mathf.Clamp(value, 0f, Max + OffsetMax);
             OnValueChanged?.Invoke(_current);

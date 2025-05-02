@@ -103,9 +103,9 @@ public class ClothingSystem
                     continue;
 
                 if (clothingSlot.ClothesType == ClothesType.Accessories)
-                    slot.Condition -= slot.Item.DegradationValue * DegradationScale * deltaTime;
-                else
-                    slot.Condition -= slot.Item.DegradationValue * DegradationScale * (UpperClothes.Contains(slot) ? 2f : 1f) * deltaTime;
+                    continue;
+
+                slot.Condition -= slot.Item.DegradationValue * DegradationScale * (UpperClothes.Contains(slot) ? 2f : 1f) * deltaTime;
 
                 Debug.Log(-slot.Item.DegradationValue * DegradationScale * deltaTime);
 
@@ -123,13 +123,10 @@ public class ClothingSystem
 
         foreach (var clothingSlot in SlotCache.Values)
         {
-            /*if (clothingSlot.ClothesType == ClothesType.Accessories)
-                continue;*/
-
             bool updateLower = false;
             foreach (var slot in clothingSlot.Layers)
             {
-                if (slot == null)
+                if (slot == null || slot.Item == null)
                     continue;
 
                 if (!UpperClothes.Contains(slot) && !updateLower)
@@ -140,12 +137,12 @@ public class ClothingSystem
                 if (clothesItem.WaterAbsorptionRatio == 0)
                     continue;
 
-                float wetChange = _world.Weather.Wetness * (1f - clothesItem.WaterProtection * (float)slot.Condition / 10000f);
+                float wetChange = _world.TotalWetness * (1f - clothesItem.WaterProtection * (float)slot.Condition);
                 wetChange -= clothesItem.DryingRate * normTemp;
 
-                slot.Wet = Mathf.Clamp(slot.Wet + wetChange, 0f, 100f) * deltaTime;
+                slot.Wet = Mathf.Clamp(slot.Wet + wetChange, 0f, 1f) * deltaTime;
 
-                if (slot.Wet >= 100)
+                if (slot.Wet >= 1)
                     updateLower = true;
             }
         }
@@ -233,9 +230,9 @@ public class ClothingSystem
             {
                 if (slot.Item is ClothingItem item)
                 {
-                    float value = item.TemperatureBonus * (float)slot.Condition / 100;
-                    value *= (100 - slot.Wet * 1.5f) / 100;
-                    value += (1 - item.WindProtection * (float)slot.Condition / 10000) * _world.Wind.MaxWindTemperature * normForceWind;
+                    float value = item.TemperatureBonus * (float)slot.Condition;
+                    value *= (1 - slot.Wet * 1.5f);
+                    value += (1 - item.WindProtection * (float)slot.Condition) * _world.Wind.MaxWindTemperature * normForceWind;
 
                     TotalTemperatureBonus += value;
                 }
@@ -258,7 +255,7 @@ public class ClothingSystem
                 if (slot.Item is not ClothingItem item)
                     continue;
 
-                TotalFrictionBonus += item.FrictionBonus * (float)slot.Condition / 100f;
+                TotalFrictionBonus += item.FrictionBonus * (float)slot.Condition;
             }
         }
     }
@@ -273,7 +270,7 @@ public class ClothingSystem
                 if (slot.Item is not ClothingItem item)
                     continue;
 
-                TotalToxicityProtection += item.ToxicityProtection * (float)slot.Condition / 100f;
+                TotalToxicityProtection += item.ToxicityProtection * (float)slot.Condition;
             }
         }
     }

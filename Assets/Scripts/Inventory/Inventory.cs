@@ -140,7 +140,7 @@ public class Inventory
     {
         return Slots.FirstOrDefault(slot =>
             slot.Item == item
-            && slot.Condition == condition
+            && (int)(slot.Condition * 100) == (int)(condition * 100)
             && !slot.IsFull);
     }
 
@@ -247,6 +247,8 @@ public class Inventory
                     shouldRemove = slot.Condition <= 0;
                 }
             }
+
+            Debug.Log(slot.Condition);
 
             if (shouldRemove)
             {

@@ -68,6 +68,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5747252766235872785, guid: 465cdef9e6679f148bc8ec4299e8c3c6, type: 3}
+      propertyPath: m_Convex
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5747252766235872785, guid: 465cdef9e6679f148bc8ec4299e8c3c6, type: 3}
+      propertyPath: m_ProvidesContacts
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7342288148721660565, guid: 465cdef9e6679f148bc8ec4299e8c3c6, type: 3}
       propertyPath: InventorySlot.<Item>k__BackingField
       value: 

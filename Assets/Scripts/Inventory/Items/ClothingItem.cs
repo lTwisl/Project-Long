@@ -23,19 +23,19 @@ public class ClothingItem : InventoryItem
     [field: Min(0), Tooltip("Температурный бонус [град. Цельсия]")]
     [field: SerializeField] public float TemperatureBonus { get; private set; }
 
-    [field: Range(0, 100), Tooltip("Защита от влаги [%]")]
+    [field: Range(0, 1), Tooltip("Защита от влаги [%]")]
     [field: SerializeField] public float WaterProtection { get; private set; }
 
-    [field: Range(0, 100), Tooltip("Защита от ветра [%]")]
+    [field: Range(0, 1), Tooltip("Защита от ветра [%]")]
     [field: SerializeField] public float WindProtection { get; private set; }
 
-    [field: Range(0, 100), Tooltip("Защита от заражения [%]")]
+    [field: Range(0, 1), Tooltip("Защита от заражения [%]")]
     [field: SerializeField] public float ToxicityProtection { get; private set; }
 
-    [field: Range(0, 100), Tooltip("Защита от физического урона [%]")]
+    [field: Range(0, 1), Tooltip("Защита от физического урона [%]")]
     [field: SerializeField] public float PhysicProtection { get; private set; }
 
-    [field: Range(-100, 100), Tooltip("Добавочное значение к максимальному значению выносливости [%]")]
+    [field: Range(-1, 1), Tooltip("Добавочное значение к максимальному значению выносливости [%]")]
     [field: SerializeField] public float OffsetStamina { get; private set; }
 
     [field: Range(0f, 1f), Tooltip("Бонус к трению с поверхностью [ед]")]
