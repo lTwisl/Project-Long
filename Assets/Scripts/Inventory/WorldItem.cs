@@ -1,4 +1,3 @@
-using UnityEditor;
 using UnityEngine;
 
 public class WorldItem : MonoBehaviour, IInteractible
@@ -13,7 +12,7 @@ public class WorldItem : MonoBehaviour, IInteractible
 
     private void OnEnable()
     {
-        if (IsDirtItem) 
+        if (IsDirtItem)
             GameTime.OnMinuteChanged += UpdateConditionItem;
     }
 
@@ -38,6 +37,17 @@ public class WorldItem : MonoBehaviour, IInteractible
             return;
 
         if (InventorySlot.Item.DegradeType == DegradationType.Rate)
-            InventorySlot.Condition -= InventorySlot.Item.DegradationValue;
+            InventorySlot.Condition -= InventorySlot.Item.DegradationValue * 3;
+    }
+
+    public static WorldItem PlacementInWorld(InventorySlot slot, Vector3 position, Quaternion rotation)
+    {
+        WorldItem worldItem = Instantiate(slot.Item.ItemPrefab, position, rotation);
+        worldItem.InventorySlot = new(slot.Item, slot.Capacity, slot.Condition);
+        worldItem.IsDirtItem = true;
+
+        GameTime.OnMinuteChanged += worldItem.UpdateConditionItem;
+
+        return worldItem;
     }
 }

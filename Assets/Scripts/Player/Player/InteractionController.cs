@@ -1,4 +1,3 @@
-using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
@@ -45,8 +44,6 @@ public class InteractionController : MonoBehaviour
 
     private void StartInteraction()
     {
-
-
         if (!Physics.Raycast(_mainCamera.transform.position, _mainCamera.transform.forward, out RaycastHit hitInfo, _interactionDistance, _interactionLayer))
             return;
 

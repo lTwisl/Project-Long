@@ -107,7 +107,7 @@ public class ClothingSystem
 
                 slot.Condition -= slot.Item.DegradationValue * DegradationScale * (UpperClothes.Contains(slot) ? 2f : 1f) * deltaTime;
 
-                Debug.Log(-slot.Item.DegradationValue * DegradationScale * deltaTime);
+                //Debug.Log(-slot.Item.DegradationValue * DegradationScale * deltaTime);
 
                 if (slot.Condition <= 0)
                     slot.IsWearing = false;
@@ -119,7 +119,7 @@ public class ClothingSystem
     // Намокание одежды
     private void GettingWet(float deltaTime)
     {
-        float normTemp = Utility.MapRange(_world.Weather.Temperature, 10, 50, 0, 1, true);
+        float normTemp = Utility.MapRange(_world.TotalTemperature, 10, 50, 0, 1, true);
 
         foreach (var clothingSlot in SlotCache.Values)
         {

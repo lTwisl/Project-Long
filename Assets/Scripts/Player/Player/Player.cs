@@ -135,20 +135,21 @@ public class Player : MonoBehaviour
         if (!Inventory.Slots.Contains(slot))
             return;
 
-        if (slot.Item.ItemPrefab != null)
-        {
-            Vector3 pos = transform.position;
-            Vector3 up = transform.up;
-            if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hitInfo))
-            {
-                pos = hitInfo.point;
-                up = hitInfo.normal;
-            }
 
-            WorldItem item = Instantiate(slot.Item.ItemPrefab, pos, transform.rotation);
-            item.IsDirtItem = true;
-            item.transform.up = up;
-            item.InventorySlot = new InventorySlot(slot.Item, slot.Capacity, slot.Condition);
+        Vector3 origin = transform.position + Vector3.up * 1.8f;
+        for (float angle = 0f; angle < 360f; angle += 5f)
+        {
+            Vector3 direction = Quaternion.Euler(0f, angle, 0f) * transform.forward;
+            Ray ray = new(origin, direction);
+            if (Physics.SphereCast(ray, 0.2f, 1.5f))
+                continue;
+
+            if (slot.Item.ItemPrefab != null)
+            {
+                Vector3 pos = origin + direction * 1.5f;
+                WorldItem.PlacementInWorld(slot, pos, transform.rotation);
+            }
+            break;
         }
 
         if (slot.Item is ClothingItem clothes && slot.IsWearing)

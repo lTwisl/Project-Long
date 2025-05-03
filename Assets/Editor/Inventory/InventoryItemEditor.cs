@@ -417,7 +417,9 @@ public class InventoryItemEditor : Editor
         void UpdateCostOfUseFields(SerializedProperty prop)
         {
             field.SetEnabled(!prop.boolValue);
-            if (prop.boolValue == true)
+            if (target is ClothingItem)
+                _costOfUseProp.floatValue = 0;
+            else if (prop.boolValue == true)
                 _costOfUseProp.floatValue = 1;
             serializedObject.ApplyModifiedProperties();
         }

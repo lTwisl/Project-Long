@@ -248,8 +248,6 @@ public class Inventory
                 }
             }
 
-            Debug.Log(slot.Condition);
-
             if (shouldRemove)
             {
                 RemoveItem(slot);
