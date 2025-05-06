@@ -54,6 +54,11 @@ public class ShelterPassage : MonoBehaviour
         }
     }
 
+    private void SetObjectName()
+    {
+        gameObject.name = _passageID;
+    }
+
 #if UNITY_EDITOR
     public void OnInitialize()
     {
@@ -75,11 +80,6 @@ public class ShelterPassage : MonoBehaviour
             _collider.size = new(1f, 2.1f, 0.25f);
             _collider.center = new(0, _collider.size.y / 2, 0);
         }
-    }
-
-    private void SetObjectName()
-    {
-        gameObject.name = _passageID;
     }
 
     private void OnDrawGizmos()
@@ -123,7 +123,7 @@ public class ShelterPassage : MonoBehaviour
             direction = -transform.forward;
 
         // Управление цветом отрисовки дверей
-        var color = _passageType == PassageType.Entry ? new Color(1f, 0.15f, 0f, 1) : Color.blue;
+        var color = _passageType == PassageType.Entry ? new Color(0.15f, 0.05f, 0, 1) : new Color(0f, 0.05f, 0.15f, 1);
 
         // Отрисовка направления входа/выхода
         Gizmos.color = color;
@@ -141,7 +141,7 @@ public class ShelterPassage : MonoBehaviour
         UnityEditor.Handles.Label
         (
             transform.position + Vector3.up * 0.75f,
-            $"{_passageType}\nID: {_passageID}",
+            $"⬇{_passageID}",
             _guiStyle
         );
 

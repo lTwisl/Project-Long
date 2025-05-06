@@ -1,6 +1,7 @@
-using EditorAttributes;
+п»їusing EditorAttributes;
 using System;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using Zenject;
@@ -15,7 +16,7 @@ public class Shelter : MonoBehaviour
 {
     [Inject] private World _world;
 
-    [Header("Параметры укрытия:")]
+    [Header("РџР°СЂР°РјРµС‚СЂС‹ СѓРєСЂС‹С‚РёСЏ:")]
     [SerializeField, Range(-25, 25)] private float _temperature;
     [SerializeField, Range(0, 1)] private float _wetness;
     [SerializeField, Range(0, 15)] private float _toxicity;
@@ -47,10 +48,10 @@ public class Shelter : MonoBehaviour
         }
     }
 
-    [Header("Параметры визуализации:")]
+    [Header("РџР°СЂР°РјРµС‚СЂС‹ РІРёР·СѓР°Р»РёР·Р°С†РёРё:")]
     public bool ShowInfo = true;
 
-    [Header("Проходы:")]
+    [Header("РџСЂРѕС…РѕРґС‹:")]
     [SerializeField] private PassageType _passagesType;
     [SerializeField] private List<ShelterPassage> _passages = new();
     public int GetPassagesCount => _passages.Count;
@@ -58,7 +59,7 @@ public class Shelter : MonoBehaviour
 
     public void PassageExit(PassageType type)
     {
-        // Если вышли из входа, значит вошли внутрь убежища
+        // Р•СЃР»Рё РІС‹С€Р»Рё РёР· РІС…РѕРґР°, Р·РЅР°С‡РёС‚ РІРѕС€Р»Рё РІРЅСѓС‚СЂСЊ СѓР±РµР¶РёС‰Р°
         if (type == PassageType.Entry)
         {
             _world.InvokeOnEnterShelter(this);
@@ -66,7 +67,7 @@ public class Shelter : MonoBehaviour
             return;
         }
 
-        // Если вышли из выхода, значит вышли из убежища
+        // Р•СЃР»Рё РІС‹С€Р»Рё РёР· РІС‹С…РѕРґР°, Р·РЅР°С‡РёС‚ РІС‹С€Р»Рё РёР· СѓР±РµР¶РёС‰Р°
         if (type == PassageType.Exit)
         {
             _world.InvokeOnExitShelter(this);
@@ -77,15 +78,16 @@ public class Shelter : MonoBehaviour
 
     private void SetPassagesType(PassageType type)
     {
-        foreach (var passage in _passages)
+        for (int i = 0; i < _passages.Count; i++)
         {
-            if (!IsPassageValid(passage))
+            if (!IsPassageValid(_passages[i]))
             {
-                Debug.LogWarning($"У <color=orange>{name}</color>. Сломалась дверка! Проверь!");
+                Debug.LogWarning($"РЈ <color=orange>{name}</color>. РЎР»РѕРјР°Р»Р°СЃСЊ РґРІРµСЂРєР°! РџСЂРѕРІРµСЂСЊ!");
                 continue;
             }
 
-            passage.PassageType = type;
+            _passages[i].PassageType = type;
+            _passages[i].PassageID = $"[{_passagesType}] Passage_{i + 1}";
         }
     }
 
@@ -104,19 +106,19 @@ public class Shelter : MonoBehaviour
         SetPassagesType(_passagesType);
     }
 
-    [Button("Найти все дочерние Passages")]
+    [Button("РќР°Р№С‚Рё РІСЃРµ РґРѕС‡РµСЂРЅРёРµ Passages")]
     public void FindAndConfigurePassages()
     {
         UnityEditor.Undo.RecordObject(this, "Find And Configure Passages");
 
-        // Найти все проходы в иерархии
+        // РќР°Р№С‚Рё РІСЃРµ РїСЂРѕС…РѕРґС‹ РІ РёРµСЂР°СЂС…РёРё
         _passages.Clear();
         GetComponentsInChildren<ShelterPassage>(true, _passages);
 
-        // Отсекаем невалидные
+        // РћС‚СЃРµРєР°РµРј РЅРµРІР°Р»РёРґРЅС‹Рµ
         _passages.RemoveAll(e => e == null || e.transform.parent != transform);
 
-        // Конфигурируем все найденные и добавленные проходы
+        // РљРѕРЅС„РёРіСѓСЂРёСЂСѓРµРј РІСЃРµ РЅР°Р№РґРµРЅРЅС‹Рµ Рё РґРѕР±Р°РІР»РµРЅРЅС‹Рµ РїСЂРѕС…РѕРґС‹
         foreach (ShelterPassage passage in _passages)
         {
             passage.ParentShelter = this;
@@ -124,7 +126,7 @@ public class Shelter : MonoBehaviour
     }
 
 
-    [Button("Создать новый проход", buttonHeight: 30)]
+    [Button("РЎРѕР·РґР°С‚СЊ РЅРѕРІС‹Р№ РїСЂРѕС…РѕРґ", buttonHeight: 30)]
     private void CreateNewPassage()
     {
         UnityEditor.Undo.RegisterCreatedObjectUndo(this, "Create New Passage");
@@ -142,9 +144,9 @@ public class Shelter : MonoBehaviour
         newPassage.ParentShelter = this;
         newPassage.OnInitialize();
 
-        // Добавляем в список проходов
+        // Р”РѕР±Р°РІР»СЏРµРј РІ СЃРїРёСЃРѕРє РїСЂРѕС…РѕРґРѕРІ
         AddPassage(newPassage);
-        
+
         EditorSceneManager.MarkSceneDirty(gameObject.scene);
     }
 
@@ -158,29 +160,31 @@ public class Shelter : MonoBehaviour
     {
         if (!ShowInfo) return;
 
-        // Проходы
+        Color color = new(1f, 0.4f, 0, 1);
+
+        // 1. Р РёСЃСѓРµРј РїСЂРѕС…РѕРґС‹
         foreach (var passage in _passages)
         {
             if (!IsPassageValid(passage)) continue;
 
-            Gizmos.color = Color.black;
-            // Рисуем линию от убежища к проходу
+            Gizmos.color = color;
+            // Р РёСЃСѓРµРј Р»РёРЅРёСЋ РѕС‚ СѓР±РµР¶РёС‰Р° Рє РїСЂРѕС…РѕРґСѓ
             Gizmos.DrawLine(transform.position, passage.transform.position);
 
-            // Рисуем проход
+            // Р РёСЃСѓРµРј РїСЂРѕС…РѕРґ
             passage.DrawEntranceGizmo();
         }
 
-        var style = new GUIStyle()
+        // 2. РўРµРєСЃС‚РѕРІР°СЏ РёРЅС„РѕСЂРјР°С†РёСЏ
+        GUIStyle textStyle = new GUIStyle
         {
-            normal = { textColor = Color.black },
+            normal = { textColor = color },
             alignment = TextAnchor.MiddleCenter,
-            fontSize = 20,
-            fontStyle = FontStyle.Bold
+            fontStyle = FontStyle.Bold,
+            fontSize = 18,
+            richText = true
         };
-
-        // Подпись укрытия
-        UnityEditor.Handles.Label(transform.position + transform.up * -0.5f, $"{gameObject.name}\n({_temperature}°C; {_wetness}%; {_toxicity}ед)", style);
+        Handles.Label(transform.position + Vector3.up * 1f, $"<b>рџЏ пёЋ {gameObject.name}</b>\n" + $"<size=16>({_temperature}В°C; {_wetness}%; {_toxicity}РµРґ)</size>", textStyle);
     }
 #endif
 }
