@@ -140,7 +140,7 @@ MonoBehaviour:
     m_RotationOrder: 4
   <SlidingChangeRate>k__BackingField: 1
   <Gravity>k__BackingField: -15
-  <GroundedOffset>k__BackingField: 0.05
+  <GroundedOffset>k__BackingField: 0.01
   <GroundedRadius>k__BackingField: 0.5
   <GroundLayers>k__BackingField:
     serializedVersion: 2

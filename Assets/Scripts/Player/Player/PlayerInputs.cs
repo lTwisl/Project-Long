@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 
+[RequireComponent(typeof(PlayerInput))]
 public class PlayerInputs : MonoBehaviour
 {
     [Header("Character Input Values")]

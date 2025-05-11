@@ -167,7 +167,7 @@ public class World : MonoBehaviour
     {
         float WeatherOrShalter = PlayerEnteredLastShelter ? ShelterTemperature : WeatherTemperature;
 
-        TotalTemperature = Temperature + WeatherOrShalter + GetMaxExternalHeatsByPosiotion() + _player.ClothingSystem.TotalTemperatureBonus;
+        TotalTemperature = Temperature + WeatherOrShalter + GetMaxExternalHeatsByPosiotion();
     }
 
 
@@ -175,7 +175,7 @@ public class World : MonoBehaviour
     {
         float WeatherOrShalter = PlayerEnteredLastShelter ? ShelterToxicity : WeatherToxicity;
 
-        TotalToxicity = (Toxicity + WeatherOrShalter + ZoneToxicity) * (1 - _player.ClothingSystem.TotalToxicityProtection / 100);
+        TotalToxicity = Toxicity + WeatherOrShalter + ZoneToxicity;
     }
 
 
@@ -183,7 +183,7 @@ public class World : MonoBehaviour
     {
         float WeatherOrShalter = PlayerEnteredLastShelter ? ShelterWetness : WeatherWetness;
 
-        TotalWetness = (Wetness + WeatherOrShalter) * (1 - _player.ClothingSystem.TotalToxicityProtection);
+        TotalWetness = Wetness + WeatherOrShalter;
     }
 
     /// <summary>

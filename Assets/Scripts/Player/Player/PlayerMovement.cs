@@ -185,6 +185,7 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    Vector3 prev = Vector3.zero;
     private void Move()
     {
         float targetSpeed = CalculationTargetSpeed();
@@ -230,16 +231,25 @@ public class PlayerMovement : MonoBehaviour
 
         // Целевая скорость
         float slidingSpeedByFriction = _moveConfig.SlidingSpeedCurve.Evaluate(materialFriction) * _moveConfig.SlidingSpeed;
-        Vector3 targetVelocity = inputDirection * targetSpeed + _slidingGradient * slidingSpeedByFriction + new Vector3(0.0f, _grounded ? 0.0f : _verticalVelocity, 0.0f);
+        Vector3 targetVelocity = inputDirection * targetSpeed + _slidingGradient * slidingSpeedByFriction;
 
         // Интерполяция скорости от текущей к целевой
         float speedChangeRateByFriction = _moveConfig.SpeedChangeRateCurve.Evaluate(materialFriction) * _moveConfig.SpeedChangeRate;
         //float speedChangeRateByFriction = materialFriction * SpeedChangeRate; // Скосрось интерполяции скорости в зависимости от физического материала повепхности
-        Vector3 currentVelocity = Vector3.ProjectOnPlane(_controller.velocity, _groundInfo.normal); // Исправляет баг с подскоком на наклонных поверхностях
-        currentVelocity = Vector3.Lerp(currentVelocity, targetVelocity, Time.deltaTime * speedChangeRateByFriction);
+        //Vector3 currentVelocity = Vector3.ProjectOnPlane(prev, _groundInfo.normal); // Исправляет баг с подскоком на наклонных поверхностях
+        Vector3 currentVelocity = Vector3.Lerp(prev, targetVelocity, Time.deltaTime * speedChangeRateByFriction);
+
+        prev = currentVelocity;
+
+
+        currentVelocity += new Vector3(0.0f, _grounded ? 0.0f : _verticalVelocity, 0.0f);
+        currentVelocity = Vector3.ProjectOnPlane(currentVelocity, _groundInfo.normal);
 
         // Перемещение 
+        Vector3 prevPos = transform.position;
         _controller.Move(currentVelocity * Time.deltaTime);
+        Debug.DrawLine(prevPos, transform.position, Color.blue, 10f);
+
     }
 
     private float CalculationTargetSpeed()
