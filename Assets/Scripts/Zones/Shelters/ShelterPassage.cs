@@ -62,9 +62,7 @@ public class ShelterPassage : MonoBehaviour
 #if UNITY_EDITOR
     public void OnInitialize()
     {
-#if UNITY_EDITOR
         UnityEditor.Undo.RecordObject(this, "Initialize Passage");
-#endif
         GetCollider();
         SetObjectName();
     }
@@ -141,7 +139,7 @@ public class ShelterPassage : MonoBehaviour
         UnityEditor.Handles.Label
         (
             transform.position + Vector3.up * 0.75f,
-            $"⬇{_passageID}",
+            $"⬇\n{_passageID}",
             _guiStyle
         );
 

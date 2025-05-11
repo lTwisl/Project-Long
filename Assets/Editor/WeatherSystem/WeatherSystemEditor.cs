@@ -41,7 +41,7 @@ public class WeatherSystemEditor : Editor
             text = "Проверить модули",
             style =
             {
-                backgroundColor = Color.green,
+                backgroundColor = new Color(0.3f, 0.7f, 0.4f),
                 color = Color.white,
                 flexGrow = 1,
                 marginLeft = 5,
@@ -52,10 +52,10 @@ public class WeatherSystemEditor : Editor
 
         var buttonCheckModules = new Button(() => ((WeatherSystem)target).SetSceneWeatherInEditor())
         {
-            text = "Настроить сцену",
+            text = "Настроить погоду в сцене (Editor)",
             style =
             {
-                backgroundColor = Color.blue,
+                backgroundColor = new Color(0.25f, 0.5f, 0.8f),
                 color = Color.white,
                 flexGrow = 1,
                 marginLeft = 5,
@@ -82,7 +82,7 @@ public class WeatherSystemEditor : Editor
             text = "Остановить переход",
             style =
             {
-                backgroundColor = new Color(1f, 0.4f, 0.4f),
+                backgroundColor = new Color(0.8f, 0.3f, 0.3f),
                 color = Color.white,
                 unityFontStyleAndWeight = FontStyle.Bold
             }
