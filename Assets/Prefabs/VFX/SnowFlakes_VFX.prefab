@@ -48,7 +48,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _isControllerValide: 0
-  _vfx: {fileID: 8515436157885312802}
+  _destroyVFXInstantly: 0
+  <VFXGraph>k__BackingField: {fileID: 8515436157885312802}
 --- !u!2083052967 &8515436157885312802
 VisualEffect:
   m_ObjectHideFlags: 0
@@ -158,7 +159,7 @@ VisualEffect:
       - m_Value: {x: 45, y: 1, z: 45}
         m_Name: Spawn Area_size
         m_Overridden: 1
-      - m_Value: {x: 5.3244095, y: 0.00000011920929, z: 11.465233}
+      - m_Value: {x: 0, y: 0, z: 0}
         m_Name: sdfPosition
         m_Overridden: 1
       - m_Value: {x: 80, y: 80, z: 80}

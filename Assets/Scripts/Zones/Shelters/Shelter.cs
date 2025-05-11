@@ -48,9 +48,6 @@ public class Shelter : MonoBehaviour
         }
     }
 
-    [Header("Параметры визуализации:")]
-    public bool ShowInfo = true;
-
     [Header("Проходы:")]
     [SerializeField] private PassageType _passagesType;
     [SerializeField] private List<ShelterPassage> _passages = new();
@@ -100,6 +97,10 @@ public class Shelter : MonoBehaviour
 
 
 #if UNITY_EDITOR
+
+    [Header("Параметры визуализации:")]
+    public bool ShowInfo = true;
+
     private void OnValidate()
     {
         _passages.RemoveAll(passage => passage == null || passage.transform.parent != transform || passage.ParentShelter != this);
@@ -184,7 +185,7 @@ public class Shelter : MonoBehaviour
             fontSize = 18,
             richText = true
         };
-        Handles.Label(transform.position + Vector3.up * 1f, $"<b>🏠︎ {gameObject.name}</b>\n" + $"<size=16>({_temperature}°C; {_wetness}%; {_toxicity}ед)</size>", textStyle);
+        Handles.Label(transform.position + Vector3.up * 1f, $"<b>🏠︎\n{gameObject.name}</b>\n" + $"<size=16>({_temperature}°C; {_wetness}%; {_toxicity}ед)</size>", textStyle);
     }
 #endif
 }

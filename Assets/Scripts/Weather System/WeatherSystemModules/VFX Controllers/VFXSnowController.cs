@@ -11,7 +11,7 @@ public class VFXSnowController : VFXController
 
     public override void ValidateReferences()
     {
-        _isControllerValide = _vfx != null && _windSystem != null;
+        _isControllerValide = VFXGraph != null && _windSystem != null;
 
         if (!_isControllerValide) Debug.LogWarning("<color=orange>Не найдены референсы скрипта VFX Controller</color>", this);
     }

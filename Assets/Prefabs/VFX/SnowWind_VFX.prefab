@@ -48,7 +48,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _isControllerValide: 0
-  _vfx: {fileID: 435673994064610687}
+  _destroyVFXInstantly: 0
+  <VFXGraph>k__BackingField: {fileID: 435673994064610687}
 --- !u!2083052967 &435673994064610687
 VisualEffect:
   m_ObjectHideFlags: 0

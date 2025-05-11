@@ -105,7 +105,7 @@ public class ToxicityZone : MonoBehaviour
             fontSize = 18,
             richText = true
         };
-        Handles.Label(transform.position + Vector3.up * 1f, $"<b>☣ {_zoneID}</b>\n" + $"<size=14>{_currentType} | Зараженность: {Toxicity:F1} ед.</size>", textStyle);
+        Handles.Label(transform.position + Vector3.up * 1f, $"<b>☣\n{_zoneID}</b>\n" + $"<size=14>{_currentType} | Зараженность: {Toxicity:F1} ед.</size>", textStyle);
     }
 
 

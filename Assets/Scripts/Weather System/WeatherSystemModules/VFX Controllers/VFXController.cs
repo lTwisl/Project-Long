@@ -1,13 +1,15 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.VFX;
 
 public class VFXController : MonoBehaviour
 {
     // Общие переменные
-    [DisableEdit, SerializeField] protected bool _isControllerValide;
+    [SerializeField, DisableEdit] protected bool _isControllerValide;
+    [SerializeField] protected bool _destroyVFXInstantly;
 
     // Общие ссылки
-    public VisualEffect _vfx;
+    [field: SerializeField] public VisualEffect VFXGraph { get; private set; }
 
     /// <summary>
     /// Метод проверки валидности ссылок
@@ -19,7 +21,28 @@ public class VFXController : MonoBehaviour
 
     public void DestroyVFX()
     {
+        if (_destroyVFXInstantly)
+            Destroy(gameObject);
+        else
+            StartCoroutine(WaitDestroyVFX());
+    }
+
+    private IEnumerator WaitDestroyVFX()
+    {
+        // Если эффекта уже нет, удаляем сразу
+        if (VFXGraph == null)
+        {
+            Destroy(gameObject);
+            yield return null;
+        }
+        // Ждем пока все частицы умрут
+        while (VFXGraph.aliveParticleCount > 0)
+        {
+            yield return null;
+        }
+        // Уничтожаем обьект
         Destroy(gameObject);
+        yield return null;
     }
 
     /// <summary>
@@ -33,37 +56,37 @@ public class VFXController : MonoBehaviour
     #region ПРИСВОЕНИЕ ПАРАМЕТРОВ VFX
     public void SetVFXParameter(string nameProperty, float valueProperty)
     {
-        _vfx.SetFloat(nameProperty, valueProperty);
+        VFXGraph.SetFloat(nameProperty, valueProperty);
     }
 
     public void SetVFXParameter(string nameProperty, Vector2 valueProperty)
     {
-        _vfx.SetVector2(nameProperty, valueProperty);
+        VFXGraph.SetVector2(nameProperty, valueProperty);
     }
 
     public void SetVFXParameter(string nameProperty, Vector3 valueProperty)
     {
-        _vfx.SetVector3(nameProperty, valueProperty);
+        VFXGraph.SetVector3(nameProperty, valueProperty);
     }
 
     public void SetVFXParameter(string nameProperty, Vector4 valueProperty)
     {
-        _vfx.SetVector4(nameProperty, valueProperty);
+        VFXGraph.SetVector4(nameProperty, valueProperty);
     }
 
     public void SetVFXParameter(string nameProperty, bool valueProperty)
     {
-        _vfx.SetBool(nameProperty, valueProperty);
+        VFXGraph.SetBool(nameProperty, valueProperty);
     }
 
     public void SetVFXParameter(string nameProperty, int valueProperty)
     {
-        _vfx.SetInt(nameProperty, valueProperty);
+        VFXGraph.SetInt(nameProperty, valueProperty);
     }
 
     public void SetVFXParameter(string nameProperty, Texture2D valueProperty)
     {
-        _vfx.SetTexture(nameProperty, valueProperty);
+        VFXGraph.SetTexture(nameProperty, valueProperty);
     }
     #endregion
 }
