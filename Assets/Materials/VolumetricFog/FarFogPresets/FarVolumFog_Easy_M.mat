@@ -27,6 +27,7 @@ Material:
     m_Floats:
     - _Distance: 0.001
     - _Height: 500
+    - _Min_Intensity_Fog: 0.01
     - _Transparency: 1
     m_Colors: []
   m_BuildTextureStacks: []

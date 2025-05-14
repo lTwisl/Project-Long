@@ -28,7 +28,7 @@ Material:
     - _Distance: 0.001
     - _Height: 500
     - _Impact_Light: 0.4
-    - _Min_Intensity_Fog: 0
+    - _Min_Intensity_Fog: 0.01
     - _Softness_Height: 0.001
     - _Transparency: 1
     m_Colors:

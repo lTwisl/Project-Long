@@ -5,7 +5,7 @@ using Zenject;
 using static UnityEngine.EventSystems.EventTrigger;
 
 [RequireComponent(typeof(Collider))]
-public class ToxicityZone : MonoBehaviour
+public class ToxicityZone : MonoBehaviour, IShowable
 {
     [Inject] private World _world;
 
@@ -22,6 +22,8 @@ public class ToxicityZone : MonoBehaviour
 
     public string ZoneID => _zoneID;
     public ZoneType CurrentType => _currentType;
+
+    public bool ShowScriptInfo { get; set; }
 
 
     private void OnTriggerEnter(Collider other)
@@ -41,8 +43,6 @@ public class ToxicityZone : MonoBehaviour
     }
 
 #if UNITY_EDITOR
-    public bool ShowInfo;
-
     private void OnValidate()
     {
         ChangeNaming();
@@ -65,7 +65,7 @@ public class ToxicityZone : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        if (!ShowInfo || _collider == null) return;
+        if (!ShowScriptInfo || _collider == null) return;
 
         // 1. Цвета для разных типов зон
         Color textColor = _currentType == ZoneType.Rate ?
