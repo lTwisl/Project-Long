@@ -273,7 +273,7 @@ public class WeatherSystem : MonoBehaviour
     private void OnDestroy()
     {
         StopAllCoroutines();
-        SetNewWeatherImmediately(CurrentWeatherProfile);
+        SetNewWeatherImmediately(WeatherProfiles[0]);
     }
 
 #if UNITY_EDITOR
