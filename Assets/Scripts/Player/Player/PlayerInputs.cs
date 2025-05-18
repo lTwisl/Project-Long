@@ -18,6 +18,8 @@ public class PlayerInputs : MonoBehaviour
 
     public bool isEnableUiPlayer = false;
 
+    public event Action<bool> Jump;
+
     public void OnMove(InputValue value)
     {
         MoveInput(value.Get<Vector2>());
@@ -37,6 +39,16 @@ public class PlayerInputs : MonoBehaviour
     public void OnCrouch(InputValue value)
     {
         CrouchInput(value.isPressed);
+    }
+
+    public void OnJump(InputValue value)
+    {
+        JumpInput(value.isPressed);
+    }
+
+    private void JumpInput(bool isPressed)
+    {
+        Jump?.Invoke(isPressed);
     }
 
     public void OnInteract(InputValue value)

@@ -68,7 +68,7 @@ public class ClothingItem : InventoryItem
         return base.ToString() + $"Temperature: {TemperatureBonus} | " +
             $"Water: {WaterProtection}\n" +
             $"Wind: {WindProtection} | " +
-            $"Friction: {FrictionBonus}\n" +
+            $"_friction: {FrictionBonus}\n" +
             $"Toxisity: {ToxicityProtection}\n";
     }
 
