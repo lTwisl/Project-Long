@@ -13,6 +13,9 @@ namespace FirstPersonMovement
         public event Action OnJump = delegate { };
         public event Action OnLand = delegate { };
 
+        public bool Use;
+        public Vector3 Input;
+
         [Header("Movement")]
         [SerializeField] private float _walkSpeed = 4f;
         [SerializeField] private float _runSpeed = 6f;
@@ -27,7 +30,7 @@ namespace FirstPersonMovement
         [Header("Jump")]
         [SerializeField] private float _jumpForce = 5f;
         [SerializeField] private float _jumpCooldown = 0.25f;
-        [SerializeField] private float _airMultiplier = 0f;
+        [SerializeField] private float _airAcceleration = 0f;
         [SerializeField, DisableField] private bool _readyToJump = true;
 
         [Header("Crouch")]
@@ -37,7 +40,7 @@ namespace FirstPersonMovement
 
         [Header("Slide")]
         [SerializeField] private float _maxSlideSpeed = 20;
-        [SerializeField, DisableField] private bool _isSliding;
+        [SerializeField] private float _freeSlideAngle = 55;
 
         private float _currentSpeed;
 
@@ -45,11 +48,11 @@ namespace FirstPersonMovement
         private float _initCenterHeight;
 
         // Ground info
+        [Header("Debug info")]
+        [SerializeField, DisableField] private float _friction;
+        [SerializeField, DisableField] private float _slopeLimit;
+        [SerializeField, DisableField] private float _groundAngle;
         private RaycastHit _groundHit;
-        private float _friction;
-        private float _slopeLimit;
-        private float _groundAngle;
-
 
         private Rigidbody _rb;
         private CapsuleCollider _col;
@@ -57,6 +60,8 @@ namespace FirstPersonMovement
 
         private StateMachine _stateMachine;
         private CountdownTimer _jumpTimer;
+
+        Vector3 moveDirection;
 
         private void Awake()
         {
@@ -91,27 +96,57 @@ namespace FirstPersonMovement
 
         private void Update()
         {
-            UpdateGroundInfo();
-
             _stateMachine.Update();
 
-            _currentSpeed = _isCrouching ? _crouchSpeed : (_inputs.sprint ? _runSpeed : _walkSpeed);
+            UpdateGroundInfo();
 
             HandleCrouch();
+
+            _currentSpeed = GetCurrentSpeed();
 
             ClampSpeedAndSetLinearDamping();
         }
 
+        private float GetCurrentSpeed()
+        {
+            if (_stateMachine.CurrentState is CrouchingState)
+                return _crouchSpeed;
+            else if (_isGrounded && _inputs.sprint)
+                return _runSpeed;
+            else
+                return _walkSpeed;
+        }
+
         private void UpdateGroundInfo()
         {
-            _isGrounded = Physics.Raycast(_col.bounds.center, Vector3.down, out _groundHit, _col.bounds.extents.y + _groundOffset, _whatIsGround);
+            _isGrounded = Physics.Raycast(_col.bounds.center, Vector3.down, out _groundHit,
+                _col.bounds.extents.y + _groundOffset, _whatIsGround, QueryTriggerInteraction.Ignore);
 
             if (!_isGrounded)
-                _isGrounded = Physics.SphereCast(_col.bounds.center, _col.radius, Vector3.down, out _groundHit, _col.bounds.extents.y - _col.radius + _groundOffset, _whatIsGround);
+                _isGrounded = Physics.SphereCast(_col.bounds.center, _col.radius, Vector3.down, out _groundHit,
+                    _col.bounds.extents.y - _col.radius + _groundOffset, _whatIsGround, QueryTriggerInteraction.Ignore);
 
-            _friction = _isGrounded ? Mathf.Min(_col.material.dynamicFriction, _groundHit.collider.material.dynamicFriction) : 0f;
+            _friction = GetFriction();
             _slopeLimit = Mathf.Atan(_friction) * Mathf.Rad2Deg;
             _groundAngle = _isGrounded ? Vector3.Angle(Vector3.up, _groundHit.normal) : 0f;
+        }
+
+        private float GetFriction()
+        {
+            if (!_isGrounded)
+                return 0f;
+
+            var m1 = _groundHit.collider.material.frictionCombine;
+            var m2 = _col.material.frictionCombine;
+
+            if (m1 == PhysicsMaterialCombine.Maximum || m2 == PhysicsMaterialCombine.Maximum)
+                return Mathf.Max(_col.material.dynamicFriction, _groundHit.collider.material.dynamicFriction);
+            else if (m1 == PhysicsMaterialCombine.Multiply || m2 == PhysicsMaterialCombine.Multiply)
+                return _col.material.dynamicFriction * _groundHit.collider.material.dynamicFriction;
+            else if (m1 == PhysicsMaterialCombine.Minimum || m2 == PhysicsMaterialCombine.Minimum)
+                return Mathf.Min(_col.material.dynamicFriction, _groundHit.collider.material.dynamicFriction);
+            else
+                return (_col.material.dynamicFriction + _groundHit.collider.material.dynamicFriction) / 2f;
         }
 
         private void OnDestroy()
@@ -122,20 +157,42 @@ namespace FirstPersonMovement
 
         private void Mover()
         {
-            Vector3 moveDirection = transform.forward * _inputs.move.y + transform.right * _inputs.move.x;
+            moveDirection = transform.forward * _inputs.move.y + transform.right * _inputs.move.x;
+            if (Use)
+                moveDirection = Input;
             moveDirection.Normalize();
-            moveDirection = Vector3.ProjectOnPlane(moveDirection, _groundHit.normal);
 
             if (!_isGrounded)
             {
-                _rb.AddForce(moveDirection * (_moveAcceleration * _airMultiplier), ForceMode.Acceleration);
+                _rb.AddForce(moveDirection * _airAcceleration, ForceMode.Acceleration);
                 return;
             }
 
+            moveDirection = Vector3.ProjectOnPlane(moveDirection, _groundHit.normal) * _friction;
+
             if (_stateMachine.CurrentState is SlidingState)
-                _rb.AddForce(moveDirection * (_moveAcceleration * Mathf.Pow(Mathf.Cos(_groundAngle * Mathf.Deg2Rad), 2)), ForceMode.Acceleration);
-            else
-                _rb.AddForce(moveDirection * _moveAcceleration, ForceMode.Acceleration);
+            {
+                Vector3 slidingDir = Vector3.ProjectOnPlane(Vector3.down, _groundHit.normal).normalized;
+
+                float dot = Vector3.Dot(moveDirection.normalized, slidingDir);
+                if (dot < 0)
+                {
+                    if (_groundAngle > _freeSlideAngle)
+                    {
+                        Vector3 rigth = Vector3.Cross(new Vector3(slidingDir.x, 0f, slidingDir.z).normalized, Vector3.up);
+                        moveDirection = Vector3.Project(moveDirection, rigth);
+                    }
+                    else
+                    {
+                        Vector3 d = Utility.ExtractDotVector(moveDirection, slidingDir);
+                        moveDirection -= d;
+                        d *= Mathf.Pow(Mathf.Cos(_groundAngle * Mathf.Deg2Rad), 2);
+                        moveDirection += d;
+                    }
+                }
+            }
+
+            _rb.AddForce(moveDirection * _moveAcceleration, ForceMode.Acceleration);
         }
 
 
@@ -197,7 +254,7 @@ namespace FirstPersonMovement
 
         private void Jump()
         {
-            if (_readyToJump && _isGrounded && _stateMachine.CurrentState is not CrouchingState)
+            if (_readyToJump && _isGrounded && _stateMachine.CurrentState is not CrouchingState && _groundAngle < _freeSlideAngle)
             {
                 _rb.linearDamping = 0f;
                 _readyToJump = false;
