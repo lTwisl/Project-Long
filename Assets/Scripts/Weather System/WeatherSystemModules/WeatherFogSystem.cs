@@ -4,11 +4,11 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
-public class WeatherFogSystem : MonoBehaviour
+public class WeatherFogSystem : MonoBehaviour, IWeatherSystem
 {
-    [DisableEdit, SerializeField] private bool _isFogValide = false;
+    [field: SerializeField, DisableEdit] public bool IsSystemValid { get; set; }
 
-    [Header("Названия Render Feature тумана:")]
+    [Header("Названия Render Features тумана:")]
     [SerializeField] private string _nearFogFeatureName = "FullScreenVolumetricFogNear";
     [SerializeField] private string _farFogFeatureName = "FullScreenVolumetricFogFar";
 
@@ -18,14 +18,14 @@ public class WeatherFogSystem : MonoBehaviour
     [Space(10)]
     [DisableEdit, SerializeField] private Transform _sunTransform;
 
-    public void ValidateReferences()
+    public void ValidateSystem()
     {
-        // Ищем ссылки на материалы тумана
+        // Ищем ссылки на материалы тумана:
         var pipeline = GraphicsSettings.currentRenderPipeline as UniversalRenderPipelineAsset;
 
         if (pipeline == null)
         {
-            _isFogValide = false;
+            IsSystemValid = false;
             return;
         }
         var renderData = pipeline.rendererDataList[0] as UniversalRendererData;
@@ -49,7 +49,7 @@ public class WeatherFogSystem : MonoBehaviour
         // Проверка ссылок на метериалы:
         if (_nearFogMaterial == null || _farFogMaterial == null)
         {
-            _isFogValide = false;
+            IsSystemValid = false;
             return;
         }
 
@@ -84,7 +84,7 @@ public class WeatherFogSystem : MonoBehaviour
         isValidePropertys &= _farFogMaterial.HasProperty("_Transparency");
         isValidePropertys &= _farFogMaterial.HasProperty("_Sun_Direction");
 
-        _isFogValide = isValidePropertys;
+        IsSystemValid = isValidePropertys;
 
 #if UNITY_EDITOR
         if (PrefabUtility.IsPartOfPrefabInstance(this))
@@ -92,18 +92,15 @@ public class WeatherFogSystem : MonoBehaviour
 #endif
     }
 
-    /// <summary>
-    /// Обновить параметры обьемного тумана
-    /// </summary>
-    public void UpdateFog(WeatherProfile currentProfile, WeatherProfile newProfile, float t)
+    public void UpdateSystem(WeatherProfile currentProfile, WeatherProfile newProfile, float t)
     {
-        if (!_isFogValide)
+        if (!IsSystemValid)
         {
             Debug.Log("<color=orange>Модуль тумана в сцене неисправен, либо отстутствует. Погода не будет менять туман!</color>");
             return;
         }
 
-        //// Classic Fog
+        //// Near Fog
         // Color
         _nearFogMaterial.SetColor("_Color_Fog", Color.Lerp(currentProfile.nearVolumFogMat.GetColor("_Color_Fog"), newProfile.nearVolumFogMat.GetColor("_Color_Fog"), t));
         _nearFogMaterial.SetFloat("_Impact_Light", Mathf.Lerp(currentProfile.nearVolumFogMat.GetFloat("_Impact_Light"), newProfile.nearVolumFogMat.GetFloat("_Impact_Light"), t));
@@ -134,7 +131,7 @@ public class WeatherFogSystem : MonoBehaviour
 
     private void Awake()
     {
-        ValidateReferences();
+        ValidateSystem();
     }
 
     private void Update()
@@ -144,7 +141,7 @@ public class WeatherFogSystem : MonoBehaviour
 
     public void UpdateSunDirection()
     {
-        if (_sunTransform == null || !_isFogValide) return;
+        if (_sunTransform == null || !IsSystemValid) return;
 
         _nearFogMaterial.SetVector("_Sun_Direction", _sunTransform.transform.forward);
         _farFogMaterial.SetVector("_Sun_Direction", _sunTransform.transform.forward);
@@ -153,7 +150,7 @@ public class WeatherFogSystem : MonoBehaviour
 #if UNITY_EDITOR
     private void OnValidate()
     {
-        ValidateReferences();
+        ValidateSystem();
     }
 #endif
 }

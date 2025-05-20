@@ -1,16 +1,16 @@
 using UnityEditor;
 using UnityEngine;
 
-public class WeatherSkyboxSystem : MonoBehaviour
+public class WeatherSkyboxSystem : MonoBehaviour, IWeatherSystem
 {
-    [DisableEdit, SerializeField] private bool _isSkyboxValide = false;
+    [field: SerializeField, DisableEdit] public bool IsSystemValid { get; set; }
 
     [Header("Материал скайбокса:")]
-    [DisableEdit, SerializeField] private Material _skyboxMaterial;
+    [SerializeField, DisableEdit] private Material _skyboxMaterial;
     [Space(10)]
-    [DisableEdit, SerializeField] private Transform _sunTransform;
+    [SerializeField, DisableEdit] private Transform _sunTransform;
 
-    public void ValidateReferences()
+    public void ValidateSystem()
     {
         _skyboxMaterial = RenderSettings.skybox;
 
@@ -23,7 +23,7 @@ public class WeatherSkyboxSystem : MonoBehaviour
         // Проверка ссылок на метериалы:
         if (_skyboxMaterial == null)
         {
-            _isSkyboxValide = false;
+            IsSystemValid = false;
             return;
         }
 
@@ -54,7 +54,7 @@ public class WeatherSkyboxSystem : MonoBehaviour
         isValidePropertys &= _skyboxMaterial.HasProperty("_Moon_Color");
         isValidePropertys &= _skyboxMaterial.HasProperty("_Sun_Direction");
 
-        _isSkyboxValide = isValidePropertys;
+        IsSystemValid = isValidePropertys;
 
 #if UNITY_EDITOR
         if (PrefabUtility.IsPartOfPrefabInstance(this))
@@ -65,12 +65,9 @@ public class WeatherSkyboxSystem : MonoBehaviour
     /// <summary>
     /// Обновить параметры скайбокса
     /// </summary>
-    /// <param name="currentProfile"></param>
-    /// <param name="newProfile"></param>
-    /// <param name="t"></param>
-    public void UpdateSkybox(WeatherProfile currentProfile, WeatherProfile newProfile, float t)
+    public void UpdateSystem(WeatherProfile currentProfile, WeatherProfile newProfile, float t)
     {
-        if (!_isSkyboxValide)
+        if (!IsSystemValid)
         {
             Debug.Log("<color=orange>Модуль скайбокса в сцене неисправен, либо отстутствует. Погода не будет менять скайбокс!</color>");
             return;
@@ -102,7 +99,7 @@ public class WeatherSkyboxSystem : MonoBehaviour
 
     private void Awake()
     {
-        ValidateReferences();
+        ValidateSystem();
     }
 
     void Update()
@@ -112,7 +109,7 @@ public class WeatherSkyboxSystem : MonoBehaviour
 
     public void UpdateSunDirection()
     {
-        if (_sunTransform == null || !_isSkyboxValide) return;
+        if (_sunTransform == null || !IsSystemValid) return;
 
         _skyboxMaterial.SetVector("_Sun_Direction", _sunTransform.transform.forward);
     }
@@ -120,7 +117,7 @@ public class WeatherSkyboxSystem : MonoBehaviour
 #if UNITY_EDITOR
     private void OnValidate()
     {
-        ValidateReferences();
+        ValidateSystem();
     }
 #endif
 }

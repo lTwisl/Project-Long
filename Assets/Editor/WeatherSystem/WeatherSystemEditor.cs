@@ -124,7 +124,7 @@ public class WeatherSystemEditor : Editor
 
     private float GetTransitionProgress(WeatherSystem weatherSystem)
     {
-        if (!weatherSystem.CheckHasTransition()) return 0;
+        if (!weatherSystem.IsWeatherOnTransitionState) return 0;
 
         TimeSpan passed = GameTime.GetPassedTime(weatherSystem.TimeEndCurrentWeather);
         return Mathf.Clamp01((float)(passed.TotalSeconds / weatherSystem.TransitionDuration.TotalSeconds));

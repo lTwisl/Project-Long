@@ -49,28 +49,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92df9d1163366944f8537e5cbf2789e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _useAutoChange: 1
-  <WeatherProfiles>k__BackingField:
+  <UseAutoTransition>k__BackingField: 1
+  <AvailableWeatherProfiles>k__BackingField:
   - {fileID: 11400000, guid: 62b6db9f95725c349b09f93c1854c909, type: 2}
   - {fileID: 11400000, guid: 05059311190a3f847b37c6959c77c5bb, type: 2}
   <CurrentWeatherProfile>k__BackingField: {fileID: 11400000, guid: 62b6db9f95725c349b09f93c1854c909, type: 2}
-  <NewWeatherProfile>k__BackingField: {fileID: 11400000, guid: 05059311190a3f847b37c6959c77c5bb, type: 2}
-  <Temperature>k__BackingField: -10
-  <Wetness>k__BackingField: 18
-  <Toxicity>k__BackingField: 0
-  _isLightingSystemsValide: 1
+  <NewWeatherProfile>k__BackingField: {fileID: 0}
+  <Temperature>k__BackingField: 0
+  <Wetness>k__BackingField: 0.2
+  <Toxicity>k__BackingField: 0.5
   <SunLight>k__BackingField: {fileID: 0}
   <MoonLight>k__BackingField: {fileID: 0}
-  _isWindSystemValide: 1
-  <WindSystem>k__BackingField: {fileID: 0}
-  _isFogSystemValide: 1
-  <WeatherFogSystem>k__BackingField: {fileID: 0}
-  _isSkyboxSystemValide: 1
-  <WeatherSkyboxSystem>k__BackingField: {fileID: 0}
-  _isPostProcessSystemValide: 1
-  <WeatherPostProcessSystem>k__BackingField: {fileID: 0}
-  _isVFXValide: 1
+  _isLightingSystemsValid: 1
+  <WeatherWindSystem>k__BackingField: {fileID: 6733437681237491628}
+  _isWindSystemValid: 1
+  <WeatherFogSystem>k__BackingField: {fileID: 3411355947148336652}
+  _isFogSystemValid: 1
+  <WeatherSkyboxSystem>k__BackingField: {fileID: 7197166586690042323}
+  _isSkyboxSystemValid: 1
+  <WeatherPostProcessSystem>k__BackingField: {fileID: 7528676310365337471}
+  _isPostProcessSystemValid: 1
   <WeatherVFXSystem>k__BackingField: {fileID: 7611072829369350415}
+  _isVfxSystemValid: 1
 --- !u!1 &5253470689031542207
 GameObject:
   m_ObjectHideFlags: 0
@@ -286,7 +286,7 @@ Transform:
   m_GameObject: {fileID: 9014236117871535397}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -78.3, y: 0, z: 7.8}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -307,10 +307,10 @@ MonoBehaviour:
   <MaxWindTemperature>k__BackingField: -1
   _windGloabalDirection: {x: 0, y: 0}
   <CurrentSpeed>k__BackingField: 0
-  _minWindSpeed: 2
-  _maxWindSpeed: 15
+  _minWindSpeed: 1
+  _maxWindSpeed: 1
   _intensityChangeSpeed: 1
-  _directionChangeSharpness: 0.3
+  _directionChangeSharpness: 0.05
   _intensityChangeDirection: 1
   _tilingNoiseWindSpeed: 0.005
   _influenceNoiseWindSpeed: 1
