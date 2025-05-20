@@ -1697,6 +1697,7 @@ MonoBehaviour:
   _readyToJump: 1
   _crouchSpeed: 2
   _crouchHeight: 1.2
+  _speedTransitionCrouch: 1
   _isCrouching: 0
   _maxSlideSpeed: 20
   _freeSlideAngle: 29
@@ -4381,6 +4382,7 @@ MonoBehaviour:
   _readyToJump: 1
   _crouchSpeed: 2
   _crouchHeight: 1.2
+  _speedTransitionCrouch: 1
   _isCrouching: 0
   _maxSlideSpeed: 20
   _freeSlideAngle: 29
@@ -5341,6 +5343,7 @@ MonoBehaviour:
   _readyToJump: 1
   _crouchSpeed: 2
   _crouchHeight: 1.2
+  _speedTransitionCrouch: 1
   _isCrouching: 0
   _maxSlideSpeed: 20
   _freeSlideAngle: 29
@@ -6688,6 +6691,7 @@ MonoBehaviour:
   _readyToJump: 1
   _crouchSpeed: 2
   _crouchHeight: 1.2
+  _speedTransitionCrouch: 1
   _isCrouching: 0
   _maxSlideSpeed: 20
   _freeSlideAngle: 29
@@ -7126,6 +7130,7 @@ MonoBehaviour:
   _readyToJump: 1
   _crouchSpeed: 2
   _crouchHeight: 1.2
+  _speedTransitionCrouch: 1
   _isCrouching: 0
   _maxSlideSpeed: 20
   _freeSlideAngle: 29
@@ -7813,6 +7818,7 @@ MonoBehaviour:
   _readyToJump: 1
   _crouchSpeed: 2
   _crouchHeight: 1.2
+  _speedTransitionCrouch: 1
   _isCrouching: 0
   _maxSlideSpeed: 20
   _freeSlideAngle: 29
@@ -8730,6 +8736,7 @@ MonoBehaviour:
   _readyToJump: 1
   _crouchSpeed: 2
   _crouchHeight: 1.2
+  _speedTransitionCrouch: 1
   _isCrouching: 0
   _maxSlideSpeed: 20
   _freeSlideAngle: 29
@@ -9434,6 +9441,7 @@ MonoBehaviour:
   _readyToJump: 1
   _crouchSpeed: 2
   _crouchHeight: 1.2
+  _speedTransitionCrouch: 1
   _isCrouching: 0
   _maxSlideSpeed: 20
   _freeSlideAngle: 29
@@ -9578,7 +9586,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 727989308}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: CaneraRoot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9701,6 +9709,7 @@ MonoBehaviour:
   _readyToJump: 1
   _crouchSpeed: 2
   _crouchHeight: 1.2
+  _speedTransitionCrouch: 1
   _isCrouching: 0
   _maxSlideSpeed: 20
   _freeSlideAngle: 29
@@ -10412,7 +10421,7 @@ Transform:
   m_GameObject: {fileID: 780344603}
   serializedVersion: 2
   m_LocalRotation: {x: 1.11022296e-17, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 10.484, y: 0.452, z: 13.162}
+  m_LocalPosition: {x: 10.484, y: 1.984, z: 13.162}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -10556,6 +10565,7 @@ MonoBehaviour:
   _readyToJump: 1
   _crouchSpeed: 2
   _crouchHeight: 1.2
+  _speedTransitionCrouch: 1
   _isCrouching: 0
   _maxSlideSpeed: 20
   _freeSlideAngle: 29
@@ -12319,7 +12329,7 @@ GameObject:
   - component: {fileID: 920177426}
   - component: {fileID: 920177428}
   - component: {fileID: 920177427}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Sphere
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -13757,6 +13767,7 @@ MonoBehaviour:
   _readyToJump: 1
   _crouchSpeed: 2
   _crouchHeight: 1.2
+  _speedTransitionCrouch: 1
   _isCrouching: 0
   _maxSlideSpeed: 20
   _freeSlideAngle: 29
@@ -14919,7 +14930,7 @@ GameObject:
   - component: {fileID: 1064263027}
   - component: {fileID: 1064263033}
   - component: {fileID: 1064263035}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -15101,6 +15112,7 @@ MonoBehaviour:
   _readyToJump: 1
   _crouchSpeed: 2
   _crouchHeight: 1.2
+  _speedTransitionCrouch: 1
   _isCrouching: 0
   _maxSlideSpeed: 20
   _freeSlideAngle: 55
@@ -15726,6 +15738,7 @@ MonoBehaviour:
   _readyToJump: 1
   _crouchSpeed: 2
   _crouchHeight: 1.2
+  _speedTransitionCrouch: 1
   _isCrouching: 0
   _maxSlideSpeed: 20
   _freeSlideAngle: 29
@@ -16038,6 +16051,7 @@ MonoBehaviour:
   _readyToJump: 1
   _crouchSpeed: 2
   _crouchHeight: 1.2
+  _speedTransitionCrouch: 1
   _isCrouching: 0
   _maxSlideSpeed: 20
   _freeSlideAngle: 29
@@ -16675,6 +16689,7 @@ MonoBehaviour:
   _readyToJump: 1
   _crouchSpeed: 2
   _crouchHeight: 1.2
+  _speedTransitionCrouch: 1
   _isCrouching: 0
   _maxSlideSpeed: 20
   _freeSlideAngle: 29
@@ -16879,6 +16894,7 @@ MonoBehaviour:
   _readyToJump: 1
   _crouchSpeed: 2
   _crouchHeight: 1.2
+  _speedTransitionCrouch: 1
   _isCrouching: 0
   _maxSlideSpeed: 20
   _freeSlideAngle: 29
@@ -17083,6 +17099,7 @@ MonoBehaviour:
   _readyToJump: 1
   _crouchSpeed: 2
   _crouchHeight: 1.2
+  _speedTransitionCrouch: 1
   _isCrouching: 0
   _maxSlideSpeed: 20
   _freeSlideAngle: 29
@@ -20974,6 +20991,7 @@ MonoBehaviour:
   _readyToJump: 1
   _crouchSpeed: 2
   _crouchHeight: 1.2
+  _speedTransitionCrouch: 1
   _isCrouching: 0
   _maxSlideSpeed: 20
   _freeSlideAngle: 29
@@ -23110,6 +23128,7 @@ MonoBehaviour:
   _readyToJump: 1
   _crouchSpeed: 2
   _crouchHeight: 1.2
+  _speedTransitionCrouch: 1
   _isCrouching: 0
   _maxSlideSpeed: 20
   _freeSlideAngle: 29
@@ -24273,6 +24292,7 @@ MonoBehaviour:
   _readyToJump: 1
   _crouchSpeed: 2
   _crouchHeight: 1.2
+  _speedTransitionCrouch: 1
   _isCrouching: 0
   _maxSlideSpeed: 20
   _freeSlideAngle: 29
@@ -25489,6 +25509,7 @@ MonoBehaviour:
   _readyToJump: 1
   _crouchSpeed: 2
   _crouchHeight: 1.2
+  _speedTransitionCrouch: 1
   _isCrouching: 0
   _maxSlideSpeed: 20
   _freeSlideAngle: 29
@@ -26199,6 +26220,7 @@ MonoBehaviour:
   _readyToJump: 1
   _crouchSpeed: 2
   _crouchHeight: 1.2
+  _speedTransitionCrouch: 1
   _isCrouching: 0
   _maxSlideSpeed: 20
   _freeSlideAngle: 29

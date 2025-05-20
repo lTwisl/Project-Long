@@ -9,15 +9,19 @@ public class CameraController : MonoBehaviour
     [SerializeField] private float _bottomClamp = -89.0f;
     [SerializeField] private float _rotationSpeed = 1.0f;
 
+    private Vector3 _initCameraPos;
     private float _cinemachineTargetPitch;
     private float _rotationVelocity;
     private const float _threshold = 0.01f;
 
     private PlayerInputs _input;
 
+
     private void Awake()
     {
         _input = GetComponent<PlayerInputs>();
+
+        _initCameraPos = _cinemachineCameraTarget.transform.localPosition;
     }
 
     private void LateUpdate()
@@ -38,6 +42,11 @@ public class CameraController : MonoBehaviour
         _cinemachineCameraTarget.transform.localRotation = Quaternion.Euler(_cinemachineTargetPitch, 0.0f, 0.0f);
 
         transform.Rotate(Vector3.up * _rotationVelocity);
+    }
+
+    public void SetCameraOffset(Vector3 offset)
+    {
+        _cinemachineCameraTarget.transform.localPosition = _initCameraPos + offset;
     }
 }
 

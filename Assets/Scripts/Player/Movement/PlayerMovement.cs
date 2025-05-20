@@ -36,6 +36,7 @@ namespace FirstPersonMovement
         [Header("Crouch")]
         [SerializeField] private float _crouchSpeed = 2f;
         [SerializeField] private float _crouchHeight = 1.2f;
+        [SerializeField] private float _speedTransitionCrouch = 1f;
         [SerializeField, DisableField] private bool _isCrouching;
 
         [Header("Slide")]
@@ -57,6 +58,7 @@ namespace FirstPersonMovement
         private Rigidbody _rb;
         private CapsuleCollider _col;
         private PlayerInputs _inputs;
+        private CameraController _cameraController;
 
         private StateMachine _stateMachine;
         private CountdownTimer _jumpTimer;
@@ -76,6 +78,8 @@ namespace FirstPersonMovement
                 if (isPressed)
                     Jump();
             };
+
+            TryGetComponent(out _cameraController);
 
             _jumpTimer = new CountdownTimer(_jumpCooldown);
             _jumpTimer.OnTimerStop += ResetJump;
@@ -100,9 +104,9 @@ namespace FirstPersonMovement
 
             UpdateGroundInfo();
 
-            HandleCrouch();
-
             _currentSpeed = GetCurrentSpeed();
+
+            UpdateCrouch();
 
             ClampSpeedAndSetLinearDamping();
         }
@@ -195,21 +199,27 @@ namespace FirstPersonMovement
             _rb.AddForce(moveDirection * _moveAcceleration, ForceMode.Acceleration);
         }
 
-
-        private void HandleCrouch()
+        private void UpdateCrouch()
         {
             if (_stateMachine.CurrentState is CrouchingState)
             {
-                _col.center = new Vector3(0f, _initCenterHeight - (_initHeight - _crouchHeight) / 2, 0f);
-                _col.height = _crouchHeight;
+                if (_col.height != _crouchHeight)
+                {
+                    _col.height = Mathf.MoveTowards(_col.height, _crouchHeight, Time.deltaTime * _speedTransitionCrouch);
+                }
             }
-            else
+            else if (_col.height != _initHeight && 
+                !Physics.CheckSphere(transform.position + new Vector3(0f, _initHeight - _col.radius + 0.1f, 0f), _col.radius, _whatIsGround))
             {
-                _col.center = new Vector3(_col.center.x, _initCenterHeight, _col.center.z);
-                _col.height = _initHeight;
+                _col.height = Mathf.MoveTowards(_col.height, _initHeight, Time.deltaTime * _speedTransitionCrouch);
+            }
+
+            if (_col.height != _initHeight || _col.height != _crouchHeight)
+            {
+                _col.center = new Vector3(0f, _initCenterHeight - (_initHeight - _col.height) / 2, 0f);
+                _cameraController?.SetCameraOffset(new Vector3(0f, -_initHeight + _col.height, 0f));
             }
         }
-
 
         private void ClampSpeedAndSetLinearDamping()
         {
