@@ -20,7 +20,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: LightBlue_M
+  m_Name: Brown_M
   m_Shader: {fileID: 4800000, guid: 933532a4fcc9baf4fa0491de14d08ed7, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -129,9 +129,9 @@ Material:
     - _XRMotionVectorsPass: 1
     - _ZWrite: 1
     m_Colors:
-    - _BaseColor: {r: 0.55, g: 0.8499999, b: 1, a: 1}
-    - _Color: {r: 0.54999995, g: 0.8499999, b: 1, a: 1}
-    - _EmissionColor: {r: 0.4732187, g: 0.7313379, b: 0.86039764, a: 1}
+    - _BaseColor: {r: 0.3660378, g: 0.20677312, b: 0.19545035, a: 1}
+    - _Color: {r: 0.36603776, g: 0.20677307, b: 0.1954503, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
