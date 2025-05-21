@@ -26,8 +26,8 @@ public class WeatherProfile : ScriptableObject
 
     [Header("Параметры влияния на персонажа:")]
     [Range(-25f, 25f)] public float temperature;
-    [Range(0f, 25f)] public float wetness;
-    [Range(0f, 25f)] public float toxicity;
+    [Range(0f, 1f)] public float wetness;
+    [Range(0f, 250f)] public float toxicity;
 
     [Header("Параметры освещения:")]
     [Range(0f, 5f)] public float maxIntensitySun;

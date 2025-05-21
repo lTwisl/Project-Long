@@ -30,32 +30,32 @@ public class WeatherSystem : MonoBehaviour
     [field: Header("Системы освещения сцены:")]
     [field: SerializeField] public WeatherLightingColor SunLight { get; private set; }
     [field: SerializeField] public WeatherLightingColor MoonLight { get; private set; }
-    [SerializeField, DisableEdit] private bool _isLightingSystemsValid = false;
+    [field: SerializeField, DisableEdit] public bool IsLightingSystemsValid { get; private set; }
 
 
     [field: Header("Система ветра:")]
     [field: SerializeField] public WeatherWindSystem WeatherWindSystem { get; private set; }
-    [SerializeField, DisableEdit] private bool _isWindSystemValid = false;
+    [field: SerializeField, DisableEdit] public bool IsWindSystemValid { get; private set; }
 
 
     [field: Header("Система объемного тумана:")]
     [field: SerializeField] public WeatherFogSystem WeatherFogSystem { get; private set; }
-    [SerializeField, DisableEdit] private bool _isFogSystemValid = false;
+    [field: SerializeField, DisableEdit] public bool IsFogSystemValid { get; private set; }
 
 
     [field: Header("Система скайбокса:")]
     [field: SerializeField] public WeatherSkyboxSystem WeatherSkyboxSystem { get; private set; }
-    [SerializeField, DisableEdit] private bool _isSkyboxSystemValid = false;
+    [field: SerializeField, DisableEdit] public bool IsSkyboxSystemValid { get; private set; }
 
 
     [field: Header("Система пост процессинга:")]
     [field: SerializeField] public WeatherPostProcessSystem WeatherPostProcessSystem { get; private set; }
-    [SerializeField, DisableEdit] private bool _isPostProcessSystemValid = false;
+    [field: SerializeField, DisableEdit] public bool IsPostProcessSystemValid { get; private set; }
 
 
     [field: Header("Система визуальных эффектов:")]
     [field: SerializeField] public WeatherVFXSystem WeatherVFXSystem { get; private set; }
-    [SerializeField, DisableEdit] public bool _isVfxSystemValid = false;
+    [field: SerializeField, DisableEdit] public bool IsVfxSystemValid { get; private set; }
 
     public TimeSpan TimeStartCurrentWeather { get; private set; }
     public TimeSpan TimeEndCurrentWeather { get; private set; }
@@ -80,12 +80,12 @@ public class WeatherSystem : MonoBehaviour
     /// </summary>
     public void ValidateReferences()
     {
-        _isLightingSystemsValid = SunLight != null && MoonLight != null;
-        _isWindSystemValid = WeatherWindSystem != null;
-        _isFogSystemValid = WeatherFogSystem != null;
-        _isSkyboxSystemValid = WeatherSkyboxSystem != null;
-        _isPostProcessSystemValid = WeatherPostProcessSystem != null;
-        _isVfxSystemValid = WeatherVFXSystem != null;
+        IsLightingSystemsValid = SunLight != null && MoonLight != null;
+        IsWindSystemValid = WeatherWindSystem != null;
+        IsFogSystemValid = WeatherFogSystem != null;
+        IsSkyboxSystemValid = WeatherSkyboxSystem != null;
+        IsPostProcessSystemValid = WeatherPostProcessSystem != null;
+        IsVfxSystemValid = WeatherVFXSystem != null;
 
         // Выводы для отладки:
         //if (!_isProfilesValide) Debug.LogWarning("<color=orange>В сцене не инициализированы профили погоды</color>", this);
@@ -256,16 +256,16 @@ public class WeatherSystem : MonoBehaviour
     private void UpdateWeatherParameters(WeatherProfile currentProfile, WeatherProfile newProfile, float t)
     {
         UpdateWeatherIndicators(currentProfile, newProfile, t);
-        if (_isLightingSystemsValid)
+        if (IsLightingSystemsValid)
         {
             SunLight.UpdateLighting(currentProfile, newProfile, t);
             MoonLight.UpdateLighting(currentProfile, newProfile, t);
         }
-        if (_isWindSystemValid) WeatherWindSystem.UpdateSystem(currentProfile, newProfile, t);
-        if (_isFogSystemValid) WeatherFogSystem.UpdateSystem(currentProfile, newProfile, t);
-        if (_isSkyboxSystemValid) WeatherSkyboxSystem.UpdateSystem(currentProfile, newProfile, t);
-        if (_isPostProcessSystemValid) WeatherPostProcessSystem.UpdateSystem(currentProfile, newProfile, t);
-        if (_isVfxSystemValid) WeatherVFXSystem.UpdateSystem(currentProfile, newProfile, t);
+        if (IsWindSystemValid) WeatherWindSystem.UpdateSystem(currentProfile, newProfile, t);
+        if (IsFogSystemValid) WeatherFogSystem.UpdateSystem(currentProfile, newProfile, t);
+        if (IsSkyboxSystemValid) WeatherSkyboxSystem.UpdateSystem(currentProfile, newProfile, t);
+        if (IsPostProcessSystemValid) WeatherPostProcessSystem.UpdateSystem(currentProfile, newProfile, t);
+        if (IsVfxSystemValid) WeatherVFXSystem.UpdateSystem(currentProfile, newProfile, t);
     }
 
     private void UpdateWeatherIndicators(WeatherProfile currentProfile, WeatherProfile newProfile, float t)
@@ -286,7 +286,8 @@ public class WeatherSystem : MonoBehaviour
 #if UNITY_EDITOR
     private void OnValidate()
     {
-        if (!_isFogSystemValid || !_isLightingSystemsValid || !_isPostProcessSystemValid || !_isSkyboxSystemValid || !_isWindSystemValid || !_isVfxSystemValid)
+        ValidateReferences();
+        if (!IsFogSystemValid || !IsLightingSystemsValid || !IsPostProcessSystemValid || !IsSkyboxSystemValid || !IsWindSystemValid || !IsVfxSystemValid)
             FindReferences();
     }
 

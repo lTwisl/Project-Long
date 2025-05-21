@@ -17,8 +17,8 @@ MonoBehaviour:
   minLifetimeHours: 2
   maxLifetimeHours: 2
   temperature: 0
-  wetness: 0.2
-  toxicity: 0.5
+  wetness: 0
+  toxicity: 0
   maxIntensitySun: 2
   temperatureSun: 8000
   colorZenithSun: {r: 1, g: 1, b: 1, a: 1}
