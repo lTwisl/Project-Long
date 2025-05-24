@@ -28,7 +28,7 @@ public class World : MonoBehaviour
 
 
     public WeatherSystem Weather { get; private set; }
-    public WeatherWindSystem Wind => Weather.WindSystem;
+    public WeatherWindSystem Wind => Weather?.WindSystem;
 
 
     public Shelter PlayerEnteredLastShelter { get; private set; }
@@ -46,7 +46,6 @@ public class World : MonoBehaviour
 
     private List<TemperatureZone> _externalHeats = new List<TemperatureZone>();
     private float _currentMaxExternalTemp;
-
 
     private void Awake()
     {

@@ -1,14 +1,18 @@
-﻿using System;
+﻿using EditorAttributes;
+using StatsModifiers;
+using System;
 using UnityEngine;
 
 
 [Serializable]
-public class BaseStatusParameter : StatusParameter
+public class BasePlayerParameter : PlayerParameter
 {
     public bool IsZero { get; private set; }
     public TimeSpan TimeIsZero { get; private set; }
     public TimeSpan TimeGeaterZero { get; private set; }
-    [field: SerializeField] public float DecreasedHealthRate { get; private set; }
+
+    public StatModifier DecreasedHealthModifier { get; private set; }
+    [field: SerializeField, Space(5)] public float DecreasedHealthRate { get; private set; }
 
     public event Action OnReachZero;
     public event Action OnRecoverFromZero;
@@ -45,9 +49,12 @@ public class BaseStatusParameter : StatusParameter
         }
     }
 
-    public override void Reset()
+    public override void Initialize()
     {
-        base.Reset();
+        base.Initialize();
+
+        DecreasedHealthModifier = new(0, new ParameterTypeCondition(ValueType.ChangeRate), value => value += DecreasedHealthRate);
+
         IsZero = false;
         TimeIsZero = TimeSpan.Zero;
         TimeGeaterZero = TimeSpan.Zero;
@@ -61,11 +68,15 @@ public class BaseStatusParameter : StatusParameter
     }
 }
 
+
+
 [Serializable]
-public class StatusParameter : IStatusParameter
+public class PlayerParameter : IPlayerParameter
 {
+    public event Action<float> OnValueChanged;
+
     [Tooltip("Текущее значение")]
-    [SerializeField, DisableEdit] private float _current;
+    [SerializeField, DisableField] private float _current;
     public float Current
     {
         get => _current;
@@ -73,37 +84,56 @@ public class StatusParameter : IStatusParameter
         {
             if (Mathf.Approximately(_current, value))
                 return;
-            _current = Mathf.Clamp(value, 0f, Max + OffsetMax);
+
+            if (ClampCurrentValue)
+                _current = Mathf.Clamp(value, 0f, Max);
+            else
+                _current = value;
+
             OnValueChanged?.Invoke(_current);
         }
     }
 
-    [field: Tooltip("Максимальное значение")]
-    [field: SerializeField] public float Max { get; set; }
+    protected virtual bool ClampCurrentValue => true;
 
-    [field: Tooltip("Смещение максимального значение")]
-    [field: SerializeField, DisableEdit] public float OffsetMax { get; set; }
+    [field: Tooltip("Максимальное значение"), Space(5)]
+    [field: SerializeField] public float BaseMax { get; protected set; }
+    [field: SerializeField, DisableField] public virtual float Max { get; private set; }
 
-    [field: Tooltip("Скорость изменения [ед/м]"), DisableEdit]
-    [field: SerializeField] public float ChangeRate { get; set; }
+    [field: Tooltip("Скорость изменения [ед/м]"), DisableField, Space(5)]
+    [field: SerializeField] public float BaseChangeRate { get; set; }
+    [field: SerializeField, DisableField] public virtual float ChangeRate { get; private set; }
 
-    public event Action<float> OnValueChanged;
+    public float OffsetMax { get; set; }
 
-    public virtual void Reset()
+    public StatsMediator Mediator { get; } = new();
+
+
+    private float Request(ValueType valueType, float value)
+    {
+        var q = new Query(new ParameterTypeCondition(valueType), value);
+        Mediator.PerformQuery(this, q);
+        return q.Value;
+    }
+
+    public virtual void Initialize()
     {
         OffsetMax = 0;
         Current = Max;
-        ChangeRate = 0.0f;
+        BaseChangeRate = 0.0f;
     }
 
     public virtual void UpdateParameter(float deltaSeconds)
     {
         ChangeParameter(deltaSeconds);
+
+        Max = Request(ValueType.Max, BaseMax);
+        ChangeRate = Request(ValueType.ChangeRate, BaseChangeRate);
     }
 
     public virtual void ChangeParameter(float deltaSeconds)
     {
-        Current = Mathf.Clamp(Current + ChangeRate * deltaSeconds, 0f, Max + OffsetMax);
+        Current = Current + ChangeRate * deltaSeconds;
     }
 
     public virtual void UnsubscribeAll()
@@ -112,16 +142,18 @@ public class StatusParameter : IStatusParameter
     }
 }
 
-public interface IStatusParameter
+public interface IPlayerParameter
 {
     public float Current { get; }
     public float Max { get; }
     public float OffsetMax { get; }
-    public float ChangeRate { get; }
+    public float BaseChangeRate { get; }
 
     public event Action<float> OnValueChanged;
 
+    public StatsMediator Mediator { get; }
+
     public void UpdateParameter(float deltaSeconds);
 
-    public void Reset();
+    public void Initialize();
 }

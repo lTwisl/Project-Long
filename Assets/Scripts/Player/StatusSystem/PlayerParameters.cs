@@ -25,39 +25,36 @@ public enum ParameterType
 [CreateAssetMenu(fileName = "PlayerParameters", menuName = "Scriptable Objects/PlayerParameters")]
 public class PlayerParameters : ScriptableObject
 {
-    [field: SerializeField] public HealthStatusParameter Health { get; private set; }
+    [field: SerializeField] public HealthParameter Health { get; private set; }
 
     [field: Space(10)]
-    [field: SerializeField] public StaminaStatusParameter Stamina { get; private set; }
+    [field: SerializeField] public StaminaParameter Stamina { get; private set; }
 
     [field: Space(10)]
-    [field: SerializeField] public CapacityStatusParameter Capacity { get; private set; }
+    [field: SerializeField] public CapacityParameter Capacity { get; private set; }
 
-    [field: Header("StatusParameters")]
-    [field: SerializeField] public FoodBalanceStatusParameter FoodBalance { get; private set; }
-
-    [field: Space(10)]
-    [field: SerializeField] public WaterBalanceStatusParameter WaterBalance { get; private set; }
+    [field: Header("<size=16>StatusParameters</size>")]
+    [field: SerializeField] public FoodBalanceParameter FoodBalance { get; private set; }
 
     [field: Space(10)]
-    [field: SerializeField] public MovementStatusParameter Energy { get; private set; }
+    [field: SerializeField] public WaterBalanceParameter WaterBalance { get; private set; }
 
     [field: Space(10)]
-    [field: SerializeField] public BaseStatusParameter Heat { get; private set; }
+    [field: SerializeField] public MovementParameter Energy { get; private set; }
 
     [field: Space(10)]
-    [field: SerializeField] public ToxicityStatusParameter Toxicity { get; private set; }
+    [field: SerializeField] public BasePlayerParameter Heat { get; private set; }
+
+    [field: Space(10)]
+    [field: SerializeField] public ToxicityParameter Toxicity { get; private set; }
 
 
+    private Dictionary<ParameterType, PlayerParameter> _statusParameterCache;
+    public IEnumerable<IPlayerParameter> AllParameters => _statusParameterCache.Values.AsEnumerable();
 
-
-
-    private Dictionary<ParameterType, StatusParameter> _statusParameterCache;
-    public IEnumerable<IStatusParameter> AllParameters => _statusParameterCache.Values.AsEnumerable();
-
-    public void Init(Inventory playerInventory)
+    public void Initialize(Inventory playerInventory)
     {
-        _statusParameterCache = new Dictionary<ParameterType, StatusParameter>()
+        _statusParameterCache = new Dictionary<ParameterType, PlayerParameter>()
         {
             { ParameterType.Health, Health},
             { ParameterType.Stamina, Stamina},
@@ -68,20 +65,13 @@ public class PlayerParameters : ScriptableObject
             { ParameterType.Toxicity, Toxicity},
             { ParameterType.Capacity, Capacity},
         };
+
+        foreach (var parameter in AllParameters)
+            parameter.Initialize();
     }
 
     public void ModifyParameter(ParameterType parameter, float value)
     {
         _statusParameterCache[parameter].Current += value;
-    }
-
-
-    [ContextMenu("AllReset")]
-    public void AllReset()
-    {
-        foreach (var parameter in AllParameters)
-        {
-            parameter.Reset();
-        }
     }
 }

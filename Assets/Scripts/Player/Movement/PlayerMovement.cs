@@ -3,6 +3,7 @@ using FiniteStateMachine;
 using ImprovedTimers;
 using System;
 using UnityEngine;
+using Zenject;
 
 
 namespace FirstPersonMovement
@@ -12,6 +13,12 @@ namespace FirstPersonMovement
     {
         public event Action OnJump = delegate { };
         public event Action OnLand = delegate { };
+        public event Action<IState> OnChangedState = delegate { };
+
+        public float WalkSpeed => Request(MoveMode.Walk, _walkSpeed);
+        public float RunSpeed => Request(MoveMode.Run, _runSpeed);
+        public float CrouchSpeed => Request(MoveMode.Crouch, _crouchSpeed);
+
 
         public bool Use;
         public Vector3 Input;
@@ -31,19 +38,28 @@ namespace FirstPersonMovement
         [SerializeField] private float _jumpForce = 5f;
         [SerializeField] private float _jumpCooldown = 0.25f;
         [SerializeField] private float _airAcceleration = 0f;
-        [SerializeField, DisableField] private bool _readyToJump = true;
+
 
         [Header("Crouch")]
         [SerializeField] private float _crouchSpeed = 2f;
         [SerializeField] private float _crouchHeight = 1.2f;
         [SerializeField] private float _speedTransitionCrouch = 1f;
-        [SerializeField, DisableField] private bool _isCrouching;
 
         [Header("Slide")]
         [SerializeField] private float _maxSlideSpeed = 20;
         [SerializeField] private float _freeSlideAngle = 55;
 
-        private float _currentSpeed;
+        [Header("Wind")]
+        [SerializeField] private bool _useWind = true;
+        [ShowField(nameof(_useWind)), Range(0f, 1f)]
+        [SerializeField] private float _effectWindOnMaxSpeed = 0.5f;
+
+        [Inject] private World _world;
+
+        private bool _readyToJump = true;
+
+        public float CurrentMaxSpeed { get; private set; }
+        public IState CurrentState => _stateMachine.CurrentState;
 
         private float _initHeight;
         private float _initCenterHeight;
@@ -57,13 +73,18 @@ namespace FirstPersonMovement
 
         private Rigidbody _rb;
         private CapsuleCollider _col;
-        private PlayerInputs _inputs;
+        private InputReader _inputs;
         private CameraController _cameraController;
 
         private StateMachine _stateMachine;
         private CountdownTimer _jumpTimer;
 
+        public StatsModifiers.StatsMediator SpeedMediator { get; private set; } = new();
+
         Vector3 moveDirection;
+
+        [HideInInspector] public bool CanWalk = true;
+        [HideInInspector] public bool CanRun = true;
 
         private void Awake()
         {
@@ -72,7 +93,7 @@ namespace FirstPersonMovement
 
             _col = GetComponent<CapsuleCollider>();
 
-            _inputs = GetComponent<PlayerInputs>();
+            _inputs = GetComponent<InputReader>();
             _inputs.Jump += isPressed =>
             {
                 if (isPressed)
@@ -100,25 +121,56 @@ namespace FirstPersonMovement
 
         private void Update()
         {
+            SpeedMediator.UpdateModifiers(Time.deltaTime);
+            
+
             _stateMachine.Update();
 
             UpdateGroundInfo();
 
-            _currentSpeed = GetCurrentSpeed();
+            CurrentMaxSpeed = GetMaxCurrentSpeed();
 
             UpdateCrouch();
 
             ClampSpeedAndSetLinearDamping();
         }
 
-        private float GetCurrentSpeed()
+        private float GetMaxCurrentSpeed()
         {
-            if (_stateMachine.CurrentState is CrouchingState)
-                return _crouchSpeed;
-            else if (_isGrounded && _inputs.sprint)
-                return _runSpeed;
+            float maxSpeed = CurrentMaxSpeed;
+
+            if (_stateMachine.CurrentState is IdelState state)
+            {
+                if (_stateMachine.CurrentState is WalkState)
+                    maxSpeed = WalkSpeed;
+                else if (_stateMachine.CurrentState is RunState)
+                    maxSpeed = RunSpeed;
+            }
+
+            if (_useWind)
+            {
+                Vector2 wind = _world.GetWindLocalVector();
+                float dot = Vector3.Dot(
+                    new Vector3(_rb.linearVelocity.x, 0f, _rb.linearVelocity.z).normalized,
+                    new Vector3(wind.x, 0f, wind.y).normalized
+                    );
+
+                float scale = dot * wind.magnitude / WeatherWindSystem.MaxSize;
+                maxSpeed *= Utility.MapRange(scale, -1, 1, 1 - _effectWindOnMaxSpeed, 1 + _effectWindOnMaxSpeed);
+            }
+
+
+            if (CurrentMaxSpeed != maxSpeed && maxSpeed < CurrentMaxSpeed)
+                return Mathf.MoveTowards(CurrentMaxSpeed, maxSpeed, Time.deltaTime * 10f);
             else
-                return _walkSpeed;
+                return maxSpeed;
+        }
+
+        protected float Request(MoveMode moveMode, float value)
+        {
+            var q = new StatsModifiers.Query(new MaxSpeedCondition(moveMode), value);
+            SpeedMediator.PerformQuery(this, q);
+            return q.Value;
         }
 
         private void UpdateGroundInfo()
@@ -130,32 +182,29 @@ namespace FirstPersonMovement
                 _isGrounded = Physics.SphereCast(_col.bounds.center, _col.radius, Vector3.down, out _groundHit,
                     _col.bounds.extents.y - _col.radius + _groundOffset, _whatIsGround, QueryTriggerInteraction.Ignore);
 
-            _friction = GetFriction();
+            _friction = _isGrounded ? GetFriction(_groundHit.collider.material) : 0f;
             _slopeLimit = Mathf.Atan(_friction) * Mathf.Rad2Deg;
             _groundAngle = _isGrounded ? Vector3.Angle(Vector3.up, _groundHit.normal) : 0f;
         }
 
-        private float GetFriction()
+        private float GetFriction(PhysicsMaterial other)
         {
-            if (!_isGrounded)
-                return 0f;
-
-            var m1 = _groundHit.collider.material.frictionCombine;
+            var m1 = other.frictionCombine;
             var m2 = _col.material.frictionCombine;
 
             if (m1 == PhysicsMaterialCombine.Maximum || m2 == PhysicsMaterialCombine.Maximum)
-                return Mathf.Max(_col.material.dynamicFriction, _groundHit.collider.material.dynamicFriction);
+                return Mathf.Max(_col.material.dynamicFriction, other.dynamicFriction);
             else if (m1 == PhysicsMaterialCombine.Multiply || m2 == PhysicsMaterialCombine.Multiply)
-                return _col.material.dynamicFriction * _groundHit.collider.material.dynamicFriction;
+                return _col.material.dynamicFriction * other.dynamicFriction;
             else if (m1 == PhysicsMaterialCombine.Minimum || m2 == PhysicsMaterialCombine.Minimum)
-                return Mathf.Min(_col.material.dynamicFriction, _groundHit.collider.material.dynamicFriction);
+                return Mathf.Min(_col.material.dynamicFriction, other.dynamicFriction);
             else
-                return (_col.material.dynamicFriction + _groundHit.collider.material.dynamicFriction) / 2f;
+                return (_col.material.dynamicFriction + other.dynamicFriction) / 2f;
         }
 
         private void OnDestroy()
         {
-            _jumpTimer.Dispose();
+            _jumpTimer?.Dispose();
         }
 
 
@@ -196,7 +245,8 @@ namespace FirstPersonMovement
                 }
             }
 
-            _rb.AddForce(moveDirection * _moveAcceleration, ForceMode.Acceleration);
+            if (CurrentMaxSpeed != 0)
+                _rb.AddForce(moveDirection * _moveAcceleration, ForceMode.Acceleration);
         }
 
         private void UpdateCrouch()
@@ -208,7 +258,7 @@ namespace FirstPersonMovement
                     _col.height = Mathf.MoveTowards(_col.height, _crouchHeight, Time.deltaTime * _speedTransitionCrouch);
                 }
             }
-            else if (_col.height != _initHeight && 
+            else if (_col.height != _initHeight &&
                 !Physics.CheckSphere(transform.position + new Vector3(0f, _initHeight - _col.radius + 0.1f, 0f), _col.radius, _whatIsGround))
             {
                 _col.height = Mathf.MoveTowards(_col.height, _initHeight, Time.deltaTime * _speedTransitionCrouch);
@@ -230,7 +280,7 @@ namespace FirstPersonMovement
                 Vector3 vertVel = new Vector3(0f, _rb.linearVelocity.y, 0f);
                 Vector3 horVel = new Vector3(_rb.linearVelocity.x, 0f, _rb.linearVelocity.z);
 
-                _rb.linearVelocity = Vector3.ClampMagnitude(horVel, _currentSpeed) + vertVel;
+                _rb.linearVelocity = Vector3.ClampMagnitude(horVel, CurrentMaxSpeed) + vertVel;
                 return;
             }
 
@@ -240,7 +290,7 @@ namespace FirstPersonMovement
             if (_stateMachine.CurrentState is not SlidingState)
             {
                 _rb.linearDamping = _groundDamping * Mathf.Pow(_friction, 2);
-                _rb.linearVelocity = Vector3.ClampMagnitude(_rb.linearVelocity, _currentSpeed);
+                _rb.linearVelocity = Vector3.ClampMagnitude(_rb.linearVelocity, CurrentMaxSpeed);
             }
             else if (_stateMachine.CurrentState is DownSlidingState)
             {
@@ -249,7 +299,7 @@ namespace FirstPersonMovement
                 Vector3 slidingDir = Vector3.ProjectOnPlane(Vector3.down, _groundHit.normal).normalized;
                 Vector3 slidingVel = Utility.ExtractDotVector(_rb.linearVelocity, slidingDir);
 
-                Vector3 lateralVel = Vector3.ClampMagnitude(_rb.linearVelocity - slidingVel, _currentSpeed);
+                Vector3 lateralVel = Vector3.ClampMagnitude(_rb.linearVelocity - slidingVel, CurrentMaxSpeed);
                 slidingVel = Vector3.ClampMagnitude(slidingVel, _maxSlideSpeed);
 
                 _rb.linearVelocity = slidingVel + lateralVel;
@@ -257,7 +307,7 @@ namespace FirstPersonMovement
             else if (_stateMachine.CurrentState is UpSlidingState)
             {
                 _rb.linearDamping = _groundDamping * Mathf.Pow(_friction, 2);
-                _rb.linearVelocity = Vector3.ClampMagnitude(_rb.linearVelocity, _currentSpeed * Mathf.Cos(_groundAngle * Mathf.Deg2Rad));
+                _rb.linearVelocity = Vector3.ClampMagnitude(_rb.linearVelocity, CurrentMaxSpeed * Mathf.Cos(_groundAngle * Mathf.Deg2Rad));
             }
         }
 
@@ -286,31 +336,59 @@ namespace FirstPersonMovement
             _stateMachine = new StateMachine();
             //_stateMachine.printLog = true;
 
-            var grounded = new GroundedState(this);
+            _stateMachine.OnChangedState += state => OnChangedState.Invoke(state);
+
+
+            var idel = new IdelState(this);
+            var walk = new WalkState(this);
+            var run = new RunState(this);
+            var crouch = new CrouchingState(this);
             var upSlide = new UpSlidingState(this);
             var downSlide = new DownSlidingState(this);
             var jump = new JumpingState(this);
             var fall = new FallingState(this);
-            var crouch = new CrouchingState(this);
 
-            _stateMachine.AddAnyTransition(grounded, new FuncPredicate(() => _isGrounded && _slopeLimit > _groundAngle && !_inputs.crouch));
-            _stateMachine.AddAnyTransition(upSlide, new FuncPredicate(() => _isGrounded && _slopeLimit < _groundAngle && _rb.linearVelocity.y > 0f));
-            _stateMachine.AddAnyTransition(downSlide, new FuncPredicate(() => _isGrounded && _slopeLimit < _groundAngle && _rb.linearVelocity.y < 0f));
-            _stateMachine.AddAnyTransition(jump, new FuncPredicate(() => !_isGrounded && _rb.linearVelocity.y > 0f));
-            _stateMachine.AddAnyTransition(fall, new FuncPredicate(() => !_isGrounded && _rb.linearVelocity.y < 0f));
+            _stateMachine.AddAnyTransition(idel, new FuncPredicate(() => _isGrounded && _slopeLimit > _groundAngle && !_inputs.crouch && _inputs.move == Vector2.zero));
+            _stateMachine.AddAnyTransition(walk, new FuncPredicate(() => _isGrounded && _slopeLimit > _groundAngle && !_inputs.crouch && !_inputs.sprint && CanWalk));
+            _stateMachine.AddAnyTransition(run, new FuncPredicate(() => _isGrounded && _slopeLimit > _groundAngle && !_inputs.crouch && _inputs.sprint && CanRun));
             _stateMachine.AddAnyTransition(crouch, new FuncPredicate(() => _isGrounded && _slopeLimit > _groundAngle && _inputs.crouch));
 
+            _stateMachine.AddAnyTransition(upSlide, new FuncPredicate(() => _isGrounded && _slopeLimit < _groundAngle && _rb.linearVelocity.y > 0f));
+            _stateMachine.AddAnyTransition(downSlide, new FuncPredicate(() => _isGrounded && _slopeLimit < _groundAngle && _rb.linearVelocity.y < 0f));
+
+            _stateMachine.AddAnyTransition(jump, new FuncPredicate(() => !_isGrounded && _rb.linearVelocity.y > 0f));
+            _stateMachine.AddAnyTransition(fall, new FuncPredicate(() => !_isGrounded && _rb.linearVelocity.y < 0f));
+
             _stateMachine.SetState(fall);
+        }
+
+        private void OnCollisionEnter(Collision collision)
+        {
+            if (collision.collider != null && collision.collider != _groundHit.collider)
+                Debug.Log($"Contact with {collision.gameObject.name}, friction = {GetFriction(collision.collider.material)}");
         }
 
 #if UNITY_EDITOR
         private void OnGUI()
         {
-            GUILayout.TextArea($"Speed: {_rb.linearVelocity.magnitude}");
+            Rect rect = new Rect(5, Screen.height - 50, 170, 40);
+            GUI.color = new Color(0.2f, 0.2f, 0.2f, 0.8f);
+            GUI.Box(rect, $"<size=30><color=white>Speed: {_rb.linearVelocity.magnitude:f2}</color></size>");
+            GUI.color = Color.white;
         }
+
+        private void OnValidate()
+        {
+            if (_col == null)
+                _col = GetComponent<CapsuleCollider>();
+
+            _crouchHeight = Mathf.Max(_crouchHeight, _col.radius * 2);
+        }
+
+
 #endif
 
-        private class State : IState
+        public class State : IState
         {
             protected readonly PlayerMovement _movement;
 
@@ -328,35 +406,56 @@ namespace FirstPersonMovement
             public virtual void Update() { }
         }
 
-        private class GroundedState : State
+        public class IdelState : State
         {
-            public GroundedState(PlayerMovement movement) : base(movement)
+            public IdelState(PlayerMovement movement) : base(movement)
             {
             }
         }
 
-        private abstract class SlidingState : State
+        public class WalkState : IdelState
+        {
+            public WalkState(PlayerMovement movement) : base(movement)
+            {
+            }
+        }
+
+        public class RunState : IdelState
+        {
+            public RunState(PlayerMovement movement) : base(movement)
+            {
+            }
+        }
+
+        public class CrouchingState : IdelState
+        {
+            public CrouchingState(PlayerMovement movement) : base(movement)
+            {
+            }
+        }
+
+        public abstract class SlidingState : State
         {
             protected SlidingState(PlayerMovement movement) : base(movement)
             {
             }
         }
 
-        private class UpSlidingState : SlidingState
+        public class UpSlidingState : SlidingState
         {
             public UpSlidingState(PlayerMovement movement) : base(movement)
             {
             }
         }
 
-        private class DownSlidingState : SlidingState
+        public class DownSlidingState : SlidingState
         {
             public DownSlidingState(PlayerMovement movement) : base(movement)
             {
             }
         }
 
-        private class JumpingState : State
+        public class JumpingState : State
         {
             public JumpingState(PlayerMovement movement) : base(movement)
             {
@@ -368,7 +467,7 @@ namespace FirstPersonMovement
             }
         }
 
-        private class FallingState : State
+        public class FallingState : State
         {
             public FallingState(PlayerMovement movement) : base(movement)
             {
@@ -380,15 +479,6 @@ namespace FirstPersonMovement
             }
         }
 
-        private class CrouchingState : State
-        {
-            public CrouchingState(PlayerMovement movement) : base(movement)
-            {
-            }
-        }
     }
-
-
-
 
 }

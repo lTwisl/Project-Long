@@ -7,6 +7,8 @@ namespace FiniteStateMachine
     public class StateMachine
     {
         public IState CurrentState => _current.State;
+        public event Action<IState> OnChangedState;
+
 
         private StateNode _current;
         private Dictionary<Type, StateNode> _nodes = new();
@@ -33,6 +35,8 @@ namespace FiniteStateMachine
             _current = _nodes[state.GetType()];
             _current.State?.OnEnter();
 
+            OnChangedState?.Invoke(state);
+
             if (printLog)
                 Debug.Log($"New state: {_current.State.GetType().Name}");
         }
@@ -48,6 +52,8 @@ namespace FiniteStateMachine
             previousState?.OnExit();
             nextState?.OnEnter();
             _current = _nodes[state.GetType()];
+
+            OnChangedState?.Invoke(state);
 
             if (printLog)
                 Debug.Log($"New state: {_current.State.GetType().Name}");

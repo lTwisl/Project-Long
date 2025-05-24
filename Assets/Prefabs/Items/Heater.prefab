@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3468173416163709167}
   - component: {fileID: -642189765237462947}
   - component: {fileID: 4832235943717582429}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Heater
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -76,7 +76,7 @@ MonoBehaviour:
   _spacing: {x: 0.3, y: 0.6}
   _layerMask:
     serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 129
   _drawRays: 1
 --- !u!1 &5068338230764760499
 GameObject:
@@ -90,7 +90,7 @@ GameObject:
   - component: {fileID: 6640700038532520207}
   - component: {fileID: 7098149829739824280}
   - component: {fileID: 2555124395228059818}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Main
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -197,7 +197,7 @@ GameObject:
   - component: {fileID: 6254207710708490153}
   - component: {fileID: 6145596731820716244}
   - component: {fileID: 2012326877615433882}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Spiral
   m_TagString: Untagged
   m_Icon: {fileID: 0}

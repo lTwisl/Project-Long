@@ -14,12 +14,12 @@ public class CameraController : MonoBehaviour
     private float _rotationVelocity;
     private const float _threshold = 0.01f;
 
-    private PlayerInputs _input;
+    private InputReader _input;
 
 
     private void Awake()
     {
-        _input = GetComponent<PlayerInputs>();
+        _input = GetComponent<InputReader>();
 
         _initCameraPos = _cinemachineCameraTarget.transform.localPosition;
     }

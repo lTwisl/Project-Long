@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 
 
 [RequireComponent(typeof(PlayerInput))]
-public class PlayerInputs : MonoBehaviour
+public class InputReader : MonoBehaviour
 {
     [Header("Character Input Values")]
     public Vector2 move;
