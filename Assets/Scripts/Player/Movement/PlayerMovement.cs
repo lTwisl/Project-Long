@@ -19,7 +19,6 @@ namespace FirstPersonMovement
         public float RunSpeed => Request(MoveMode.Run, _runSpeed);
         public float CrouchSpeed => Request(MoveMode.Crouch, _crouchSpeed);
 
-
         public bool Use;
         public Vector3 Input;
 
@@ -73,7 +72,7 @@ namespace FirstPersonMovement
 
         private Rigidbody _rb;
         private CapsuleCollider _col;
-        private InputReader _inputs;
+        private InputReader _input;
         private CameraController _cameraController;
 
         private StateMachine _stateMachine;
@@ -85,6 +84,7 @@ namespace FirstPersonMovement
 
         [HideInInspector] public bool CanWalk = true;
         [HideInInspector] public bool CanRun = true;
+        [HideInInspector] public bool CanJump = true;
 
         private void Awake()
         {
@@ -93,8 +93,8 @@ namespace FirstPersonMovement
 
             _col = GetComponent<CapsuleCollider>();
 
-            _inputs = GetComponent<InputReader>();
-            _inputs.Jump += isPressed =>
+            _input = GetComponent<InputReader>();
+            _input.Jump += isPressed =>
             {
                 if (isPressed)
                     Jump();
@@ -122,7 +122,7 @@ namespace FirstPersonMovement
         private void Update()
         {
             SpeedMediator.UpdateModifiers(Time.deltaTime);
-            
+
 
             _stateMachine.Update();
 
@@ -139,13 +139,12 @@ namespace FirstPersonMovement
         {
             float maxSpeed = CurrentMaxSpeed;
 
-            if (_stateMachine.CurrentState is IdelState state)
-            {
-                if (_stateMachine.CurrentState is WalkState)
-                    maxSpeed = WalkSpeed;
-                else if (_stateMachine.CurrentState is RunState)
-                    maxSpeed = RunSpeed;
-            }
+            if (_stateMachine.CurrentState is WalkState)
+                maxSpeed = WalkSpeed;
+            else if (_stateMachine.CurrentState is RunState)
+                maxSpeed = RunSpeed;
+            else if (_stateMachine.CurrentState is CrouchingState)
+                maxSpeed = CrouchSpeed;
 
             if (_useWind)
             {
@@ -158,7 +157,6 @@ namespace FirstPersonMovement
                 float scale = dot * wind.magnitude / WeatherWindSystem.MaxSize;
                 maxSpeed *= Utility.MapRange(scale, -1, 1, 1 - _effectWindOnMaxSpeed, 1 + _effectWindOnMaxSpeed);
             }
-
 
             if (CurrentMaxSpeed != maxSpeed && maxSpeed < CurrentMaxSpeed)
                 return Mathf.MoveTowards(CurrentMaxSpeed, maxSpeed, Time.deltaTime * 10f);
@@ -202,6 +200,7 @@ namespace FirstPersonMovement
                 return (_col.material.dynamicFriction + other.dynamicFriction) / 2f;
         }
 
+
         private void OnDestroy()
         {
             _jumpTimer?.Dispose();
@@ -210,7 +209,7 @@ namespace FirstPersonMovement
 
         private void Mover()
         {
-            moveDirection = transform.forward * _inputs.move.y + transform.right * _inputs.move.x;
+            moveDirection = transform.forward * _input.Move.y + transform.right * _input.Move.x;
             if (Use)
                 moveDirection = Input;
             moveDirection.Normalize();
@@ -314,7 +313,7 @@ namespace FirstPersonMovement
 
         private void Jump()
         {
-            if (_readyToJump && _isGrounded && _stateMachine.CurrentState is not CrouchingState && _groundAngle < _freeSlideAngle)
+            if (_readyToJump && _isGrounded && _stateMachine.CurrentState is not CrouchingState && _groundAngle < _freeSlideAngle && CanJump)
             {
                 _rb.linearDamping = 0f;
                 _readyToJump = false;
@@ -348,15 +347,15 @@ namespace FirstPersonMovement
             var jump = new JumpingState(this);
             var fall = new FallingState(this);
 
-            _stateMachine.AddAnyTransition(idel, new FuncPredicate(() => _isGrounded && _slopeLimit > _groundAngle && !_inputs.crouch && _inputs.move == Vector2.zero));
-            _stateMachine.AddAnyTransition(walk, new FuncPredicate(() => _isGrounded && _slopeLimit > _groundAngle && !_inputs.crouch && !_inputs.sprint && CanWalk));
-            _stateMachine.AddAnyTransition(run, new FuncPredicate(() => _isGrounded && _slopeLimit > _groundAngle && !_inputs.crouch && _inputs.sprint && CanRun));
-            _stateMachine.AddAnyTransition(crouch, new FuncPredicate(() => _isGrounded && _slopeLimit > _groundAngle && _inputs.crouch));
+            _stateMachine.AddAnyTransition(idel, new FuncPredicate(() => _isGrounded && _slopeLimit > _groundAngle && !_input.IsCrouching && _input.Move == Vector2.zero));
+            _stateMachine.AddAnyTransition(walk, new FuncPredicate(() => _isGrounded && _slopeLimit > _groundAngle && !_input.IsCrouching && CanWalk && (!_input.IsRunning || !CanRun)));
+            _stateMachine.AddAnyTransition(run, new FuncPredicate(() => _isGrounded && _slopeLimit > _groundAngle && !_input.IsCrouching && _input.IsRunning && CanRun));
+            _stateMachine.AddAnyTransition(crouch, new FuncPredicate(() => _isGrounded && _slopeLimit > _groundAngle && _input.IsCrouching));
 
             _stateMachine.AddAnyTransition(upSlide, new FuncPredicate(() => _isGrounded && _slopeLimit < _groundAngle && _rb.linearVelocity.y > 0f));
             _stateMachine.AddAnyTransition(downSlide, new FuncPredicate(() => _isGrounded && _slopeLimit < _groundAngle && _rb.linearVelocity.y < 0f));
 
-            _stateMachine.AddAnyTransition(jump, new FuncPredicate(() => !_isGrounded && _rb.linearVelocity.y > 0f));
+            _stateMachine.AddAnyTransition(jump, new FuncPredicate(() => !_isGrounded && _rb.linearVelocity.y > 0f && CanJump));
             _stateMachine.AddAnyTransition(fall, new FuncPredicate(() => !_isGrounded && _rb.linearVelocity.y < 0f));
 
             _stateMachine.SetState(fall);
@@ -413,21 +412,21 @@ namespace FirstPersonMovement
             }
         }
 
-        public class WalkState : IdelState
+        public class WalkState : State
         {
             public WalkState(PlayerMovement movement) : base(movement)
             {
             }
         }
 
-        public class RunState : IdelState
+        public class RunState : State
         {
             public RunState(PlayerMovement movement) : base(movement)
             {
             }
         }
 
-        public class CrouchingState : IdelState
+        public class CrouchingState : State
         {
             public CrouchingState(PlayerMovement movement) : base(movement)
             {

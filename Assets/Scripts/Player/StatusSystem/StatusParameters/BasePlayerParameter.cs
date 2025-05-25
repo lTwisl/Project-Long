@@ -19,7 +19,6 @@ public class BasePlayerParameter : PlayerParameter
 
     public override void UpdateParameter(float deltaSeconds)
     {
-        base.UpdateParameter(deltaSeconds);
 
         if (Current > 0)
         {
@@ -47,6 +46,8 @@ public class BasePlayerParameter : PlayerParameter
                 OnReachZero?.Invoke();
             }
         }
+
+        base.UpdateParameter(deltaSeconds);
     }
 
     public override void Initialize()

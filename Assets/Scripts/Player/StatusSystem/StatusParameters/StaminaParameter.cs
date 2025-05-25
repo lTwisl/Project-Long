@@ -15,6 +15,12 @@ public class StaminaParameter : MovementParameter
 
     public override void UpdateParameter(float deltaTime)
     {
+        if (Current <= 0 && _timer < 0)
+        {
+            _timer = _reload;
+            base.UpdateParameter(deltaTime);
+        }
+
         if (_timer >= 0)
         {
             _timer -= deltaTime;
@@ -22,9 +28,6 @@ public class StaminaParameter : MovementParameter
         }
 
         base.UpdateParameter(deltaTime);
-
-        if (Current <= 0)
-            _timer = _reload;
     }
 
     public override void SetChangeRateByMoveMode(IState state)

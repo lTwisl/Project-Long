@@ -14,9 +14,16 @@ public class CapacityParameter : BasePlayerParameter
         { WeightRange.UltimateImmovable, 60},
     };
 
+    public override void Initialize()
+    {
+        Current = 0;
+        BaseMax = _rangeLoadCapacity.Values.Max();
+        OffsetMax = 0;
+    }
+
     public float GetRangeLoadCapacity(WeightRange weightRange) => _rangeLoadCapacity[weightRange] + (Max - BaseMax);
     public bool IsCanWalk() => Current < GetRangeLoadCapacity(WeightRange.UltimateImmovable);
-    public bool IsCanSprint() => Current < GetRangeLoadCapacity(WeightRange.Ultimate);
+    public bool IsCanRun() => Current < GetRangeLoadCapacity(WeightRange.Ultimate);
 
     public WeightRange GetCurrentWeightRange()
     {
@@ -32,10 +39,4 @@ public class CapacityParameter : BasePlayerParameter
         return WeightRange.UltimateImmovable;
     }
 
-    public override void Initialize()
-    {
-        Current = 0;
-        BaseMax = _rangeLoadCapacity.Values.Max();
-        OffsetMax = 0;
-    }
 }

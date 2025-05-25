@@ -1,6 +1,7 @@
 using FirstPersonMovement;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Windows;
 using Zenject;
 
 [SelectionBase]
@@ -44,6 +45,7 @@ public class Player : MonoBehaviour
         UnsubscribeFromEvents();
     }
 
+
     private void InitializeComponents()
     {
         _input = GetComponent<InputReader>();
@@ -58,7 +60,7 @@ public class Player : MonoBehaviour
 
     private void SubscribeToEvents()
     {
-        _input.OnChangeVisibilityUiPlayer += SetVisibilityUiPlayer;
+        _input.OnChangedVisibilityUiPlayer += SetVisibilityUiPlayer;
         ClothingSystem.OnEquip += UpdateClothesStaminaOffsetMax;
         ClothingSystem.OnUnequip += UpdateClothesStaminaOffsetMax;
         GameTime.OnMinuteChanged += HandleMinuteChange;
@@ -72,7 +74,7 @@ public class Player : MonoBehaviour
 
     private void UnsubscribeFromEvents()
     {
-        _input.OnChangeVisibilityUiPlayer -= SetVisibilityUiPlayer;
+        _input.OnChangedVisibilityUiPlayer -= SetVisibilityUiPlayer;
         ClothingSystem.OnEquip -= UpdateClothesStaminaOffsetMax;
         ClothingSystem.OnUnequip -= UpdateClothesStaminaOffsetMax;
         GameTime.OnMinuteChanged -= HandleMinuteChange;
@@ -186,8 +188,21 @@ public class Player : MonoBehaviour
 
         _parameters.Capacity.OnValueChanged += _ =>
         {
-            _playerMovement.CanRun = _parameters.Capacity.IsCanSprint();
-            _playerMovement.CanWalk = _parameters.Capacity.IsCanWalk();
+            _playerMovement.CanRun &= _parameters.Capacity.IsCanRun();
+            _playerMovement.CanWalk &= _parameters.Capacity.IsCanWalk();
+            _playerMovement.CanJump &= _parameters.Capacity.IsCanRun();
+        };
+
+        _parameters.Stamina.OnReachZero += () =>
+        {
+            _playerMovement.CanRun = false;
+            _playerMovement.CanJump = false;
+        };
+
+        _parameters.Stamina.OnRecoverFromZero += () =>
+        {
+            _playerMovement.CanRun = _parameters.Capacity.IsCanRun();
+            _playerMovement.CanJump = _parameters.Capacity.IsCanRun();
         };
     }
 

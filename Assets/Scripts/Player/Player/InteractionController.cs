@@ -27,7 +27,7 @@ public class InteractionController : MonoBehaviour
 
     public void Update()
     {
-        if (_inputs.isInteract)
+        if (_inputs.IsInteracting)
         {
             if (!_isInteracting)
                 StartInteraction();
