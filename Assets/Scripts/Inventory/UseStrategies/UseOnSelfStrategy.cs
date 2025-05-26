@@ -15,7 +15,7 @@ public class UseOnSelfStrategy : UseStrategy
                     continue;
                 }
 
-                _player.GetComponent<PlayerStatusController>().ModifyParameter(parameter.ParameterType, parameter.Value);
+                _player.GetComponent<PlayerStatusManager>().AdjustParameter(parameter.ParameterType, parameter.Value);
             }
 
             Debug.Log($"Use item (ConsumablesItem) {consumables.Name} on self");
@@ -32,7 +32,7 @@ public class UseOnSelfStrategy : UseStrategy
                     continue;
                 }
 
-                _player.GetComponent<PlayerStatusController>().ModifyParameter(parameter.ParameterType, parameter.Value);
+                _player.GetComponent<PlayerStatusManager>().AdjustParameter(parameter.ParameterType, parameter.Value);
             }
 
             Debug.Log($"Use item (MedicineItem) {item.Name} on self");

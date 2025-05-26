@@ -63,6 +63,6 @@ public class UI_Clothing : MonoBehaviour
             }
         }
 
-        _text.text = $"Temperature = {p1} | Water = {p2} | Wind = {p3} | Friction = {p4} | Toxisity = {p4}";
+        _text.text = $"Temperature = {p1} | Water = {p2} | Wind = {p3} | _friction = {p4} | Toxisity = {p4}";
     }
 }

@@ -12,16 +12,22 @@ public class InteractionController : MonoBehaviour
 
     [Inject] private Player _player;
 
-    private PlayerInputs _inputs => _player.PlayerInputs;
-    private Camera _mainCamera => _player.MainCamera;
+    private InputReader _inputs;
+    private Camera _mainCamera;
 
     private IInteractible _currentInteractible;
     private bool _isInteracting;
     private float _holdTimer;
 
+    private void Awake()
+    {
+        _inputs = GetComponent<InputReader>();
+        _mainCamera = Camera.main;
+    }
+
     public void Update()
     {
-        if (_inputs.isInteract)
+        if (_inputs.IsInteracting)
         {
             if (!_isInteracting)
                 StartInteraction();
