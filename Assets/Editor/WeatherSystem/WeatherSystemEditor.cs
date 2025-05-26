@@ -1,132 +1,183 @@
-﻿using System;
-using UnityEditor;
-using UnityEditor.UIElements;
+﻿using UnityEditor;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 [CustomEditor(typeof(WeatherSystem))]
 public class WeatherSystemEditor : Editor
 {
-    private const float SPACING = 15f;
+    private bool showWeatherState = true;
+    private bool showTransitionControls = true;
+    private bool showSystemStatus = true;
+    private bool showWeatherParameters = true;
 
-    public override VisualElement CreateInspectorGUI()
+    public override void OnInspectorGUI()
     {
-        var container = new VisualElement();
+        // Получаем ссылку на целевой объект
+        WeatherSystem weatherSystem = (WeatherSystem)target;
 
-        // Основной инспектор по умолчанию
-        InspectorElement.FillDefaultInspector(container, serializedObject, this);
+        // Обновляем объект перед редактированием
+        serializedObject.Update();
 
-        // Кастомные элементы управления
-        CreateValidationControls(container);
-        CreateTransitionControls(container);
-        CreateTimeInfoSection(container);
+        // Разделы кастомного интерфейса
+        showWeatherState = EditorGUILayout.BeginFoldoutHeaderGroup(showWeatherState, "📊 Параметры погодных условий");
+        if (showWeatherState)
+        {
+            DrawWeatherState(weatherSystem);
+        }
+        EditorGUILayout.EndFoldoutHeaderGroup();
 
-        return container;
+        EditorGUILayout.Space();
+        showTransitionControls = EditorGUILayout.BeginFoldoutHeaderGroup(showTransitionControls, "🔄 Управление переходом");
+        if (showTransitionControls)
+        {
+            DrawTransitionControls(weatherSystem);
+        }
+        EditorGUILayout.EndFoldoutHeaderGroup();
+
+        EditorGUILayout.Space();
+        showSystemStatus = EditorGUILayout.BeginFoldoutHeaderGroup(showSystemStatus, "✓ Статус систем");
+        if (showSystemStatus)
+        {
+            DrawSystemStatus(weatherSystem);
+        }
+        EditorGUILayout.EndFoldoutHeaderGroup();
+
+        EditorGUILayout.Space();
+        showWeatherParameters = EditorGUILayout.BeginFoldoutHeaderGroup(showWeatherParameters, "🌡️ Погодные параметры");
+        if (showWeatherParameters)
+        {
+            DrawWeatherParameters(weatherSystem);
+        }
+        EditorGUILayout.EndFoldoutHeaderGroup();
+        EditorGUILayout.Space(15);
+
+        // Сохраняем изменения
+        serializedObject.ApplyModifiedProperties();
+
+        // Основные параметры через стандартный инспектор
+        DrawDefaultInspector();
     }
 
-    private void CreateValidationControls(VisualElement container)
+    private void DrawWeatherState(WeatherSystem weatherSystem)
     {
-        var horizontalBox = new VisualElement
-        {
-            style =
-            {
-                flexDirection = FlexDirection.Row,
-                justifyContent = Justify.SpaceBetween,
-                marginTop = SPACING
-            }
-        };
+        EditorGUI.indentLevel++;
 
-        var buttonValidateRefs = new Button(() => ((WeatherSystem)target).ValidateReferences())
+        // Текущий профиль
+        EditorGUILayout.LabelField("Текущая погода:", weatherSystem.CurrentWeatherProfile?.weatherIdentifier.ToString() ?? "Погода не установлена");
+        EditorGUILayout.LabelField("Следующая погода:", weatherSystem.NewWeatherProfile?.weatherIdentifier.ToString() ?? "Погода не предсказана");
+        
+        // Состояние перехода
+        EditorGUILayout.LabelField("Состояние перехода:", weatherSystem.IsWeatherOnTransitionState ? "В процессе" : "Не начался", weatherSystem.IsWeatherOnTransitionState ? EditorStyles.boldLabel : EditorStyles.label);
+        
+        // Прогресс-бар перехода
+        if (weatherSystem.IsWeatherOnTransitionState)
         {
-            text = "Проверить модули",
-            style =
-            {
-                backgroundColor = new Color(0.3f, 0.7f, 0.4f),
-                color = Color.white,
-                flexGrow = 1,
-                marginLeft = 5,
-                marginRight = 5
-            }
-        };
-        horizontalBox.Add(buttonValidateRefs);
+            float progress = (float)(GameTime.GetPassedTime(weatherSystem.TimeEndCurrentWeather).TotalSeconds / weatherSystem.TransitionDuration.TotalSeconds);
+            EditorGUI.ProgressBar(EditorGUILayout.GetControlRect(false, 20), Mathf.Clamp01(progress), $"Прогресс перехода: {Mathf.Round(progress * 100)}%");
+        }
+        EditorGUILayout.Space();
 
-        var buttonCheckModules = new Button(() => ((WeatherSystem)target).SetSceneWeatherInEditor())
-        {
-            text = "Настроить погоду в сцене (Editor)",
-            style =
-            {
-                backgroundColor = new Color(0.25f, 0.5f, 0.8f),
-                color = Color.white,
-                flexGrow = 1,
-                marginLeft = 5,
-                marginRight = 5
-            }
-        };
-        horizontalBox.Add(buttonCheckModules);
+        // Временные рамки
+        EditorGUILayout.LabelField("Погода началась в:", GameTime.GetFormattedTime(weatherSystem.TimeStartCurrentWeather));
+        EditorGUILayout.LabelField("Погода начнет меняться в:", GameTime.GetFormattedTime(weatherSystem.TimeEndCurrentWeather));
+        EditorGUILayout.LabelField("Длительность перехода:", GameTime.GetFormattedTime(weatherSystem.TransitionDuration));
+        EditorGUILayout.LabelField("Переход закончится в:", GameTime.GetFormattedTime(weatherSystem.TimeEndCurrentWeather + weatherSystem.TransitionDuration));
 
-        container.Add(horizontalBox);
+        EditorGUI.indentLevel--;
     }
 
-    private void CreateTransitionControls(VisualElement container)
+    private void DrawTransitionControls(WeatherSystem weatherSystem)
     {
-        var transitionSection = new VisualElement { style = { marginTop = SPACING } };
+        EditorGUI.indentLevel++;
 
-        var progressBar = new ProgressBar
+        // Кнопки управления переходом
+        if (GUILayout.Button("Установить погоду в редакторе (CurrentProfile)"))
         {
-            title = "Прогресс перехода",
-            style = { height = 20, marginTop = 5 }
-        };
+            Undo.RecordObject(weatherSystem, "Установка погоды в сцене");
+            weatherSystem.SetSceneWeatherInEditor();
+        }
 
-        var stopButton = new Button(() => ((WeatherSystem)target).StopWeatherTransition())
+        if (GUILayout.Button("Установить погоду мгновенно в игре (CurrentProfile)"))
         {
-            text = "Остановить переход",
-            style =
-            {
-                backgroundColor = new Color(0.8f, 0.3f, 0.3f),
-                color = Color.white,
-                unityFontStyleAndWeight = FontStyle.Bold
-            }
-        };
+            Undo.RecordObject(weatherSystem, "Установка погоды в сцене");
+            weatherSystem.SetNewWeatherImmediately(weatherSystem.CurrentWeatherProfile);
+        }
 
-        // Обновление прогресса в реальном времени
-        progressBar.schedule.Execute(() =>
+        if (GUILayout.Button("Остановить переход погоды"))
         {
-            progressBar.value = GetTransitionProgress((WeatherSystem)target) * 100;
-        }).Every(100);
+            Undo.RecordObject(weatherSystem, "Остановить переход погоды");
+            weatherSystem.StopWeatherTransition();
+        }
 
-        transitionSection.Add(new Label("Контроль перехода:") { style = { unityFontStyleAndWeight = FontStyle.Bold } });
-        transitionSection.Add(stopButton);
-        transitionSection.Add(progressBar);
-
-        container.Add(transitionSection);
+        EditorGUI.indentLevel--;
     }
 
-    private void CreateTimeInfoSection(VisualElement container)
+    private void DrawSystemStatus(WeatherSystem weatherSystem)
     {
-        var timeSection = new VisualElement { style = { marginTop = SPACING } };
-        var system = (WeatherSystem)target;
+        EditorGUI.indentLevel++;
 
-        CreateReadOnlyField("Начало текущей погоды:", GameTime.GetFormattedTime(system.TimeStartCurrentWeather), timeSection);
-        CreateReadOnlyField("Конец текущей погоды:", GameTime.GetFormattedTime(system.TimeEndCurrentWeather), timeSection);
-        CreateReadOnlyField("Время перехода:", system.TransitionDuration.ToString(), timeSection);
+        DrawSystemStatusItem("Освещение", weatherSystem.IsLightingSystemsValid);
+        DrawSystemStatusItem("Ветер", weatherSystem.IsWindSystemValid);
+        DrawSystemStatusItem("Туман", weatherSystem.IsFogSystemValid);
+        DrawSystemStatusItem("Скайбокс", weatherSystem.IsSkyboxSystemValid);
+        DrawSystemStatusItem("Постпроцессинг", weatherSystem.IsPostProcessSystemValid);
+        DrawSystemStatusItem("VFX", weatherSystem.IsVfxSystemValid);
 
-        container.Add(new Label("Временная информация:") { style = { unityFontStyleAndWeight = FontStyle.Bold } });
-        container.Add(timeSection);
+        if (GUILayout.Button("Проверить системы"))
+        {
+            weatherSystem.ValidateReferences();
+        }
+
+        EditorGUI.indentLevel--;
     }
 
-    private void CreateReadOnlyField(string label, string value, VisualElement parent)
+    private void DrawSystemStatusItem(string systemName, bool isValid)
     {
-        var field = new TextField(label) { value = value };
-        field.SetEnabled(false);
-        field.style.marginTop = 5;
-        parent.Add(field);
+        EditorGUILayout.BeginHorizontal();
+        GUI.backgroundColor = isValid ? Color.green : Color.red;
+        GUILayout.Button(isValid ? "✓" : "✗", GUILayout.Width(20), GUILayout.Height(20));
+        GUI.backgroundColor = Color.white;
+        EditorGUILayout.LabelField(systemName);
+        EditorGUILayout.EndHorizontal();
     }
 
-    private float GetTransitionProgress(WeatherSystem weatherSystem)
+    private void DrawWeatherParameters(WeatherSystem weatherSystem)
     {
-        if (!weatherSystem.CheckHasTransition()) return 0;
+        EditorGUI.indentLevel++;
 
-        TimeSpan passed = GameTime.GetPassedTime(weatherSystem.TimeEndCurrentWeather);
-        return Mathf.Clamp01((float)(passed.TotalSeconds / weatherSystem.TransitionDuration.TotalSeconds));
+        DrawParameterWithArrow(weatherSystem.Temperature, -25, 25, "Температура", "°C", Color.blue, new Color(1f, 0.64f, 0f));
+
+        DrawParameterWithArrow(weatherSystem.Wetness, 0, 1, "Влажность", "%", Color.white, new Color(0f, 0.7f, 1f));
+
+        DrawParameterWithArrow(weatherSystem.Toxicity, 0, 250, "Токсичность", "ед.", new Color(0.75f, 0.75f, 0.62f, 0.85f), new Color(0.75f, 0.46f, 0.75f, 0.85f));
+
+        EditorGUI.indentLevel--;
+    }
+
+    private void DrawParameterWithArrow(float value, float minValue, float maxValue,
+        string label, string unit, Color colorStart, Color colorEnd)
+    {
+        EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+        EditorGUILayout.BeginHorizontal();
+
+        // Название параметра
+        EditorGUILayout.LabelField(label + ":", GUILayout.Width(100));
+
+        // Значение справа
+        GUILayout.FlexibleSpace();
+        EditorGUILayout.LabelField($"{value:F1}{unit}", GUILayout.Width(75));
+        EditorGUILayout.EndHorizontal();
+
+        // Градиентная полоска
+        Rect rect = GUILayoutUtility.GetRect(1f, 20f);
+        float t = Mathf.InverseLerp(minValue, maxValue, value);
+        EditorGUI.DrawRect(rect, Color.Lerp(colorStart, colorEnd, t));
+
+        // Стрелочка/индикатор
+        float arrowPos = Mathf.Clamp(t, 0.01f, 0.99f); // чтобы не выходило за границы
+        Rect arrowRect = new Rect(rect.x + rect.width * arrowPos - 5, rect.y - 5, 10, 10);
+        EditorGUI.DrawRect(arrowRect, new Color(0, 0, 0, 0.7f));
+        EditorGUI.DrawRect(new Rect(arrowRect.x + 2, arrowRect.y + 2, 6, 6), Color.white);
+
+        EditorGUILayout.EndVertical();
     }
 }

@@ -28,11 +28,11 @@ Material:
     - _Distance: 0.002
     - _Height: 50
     - _Impact_Light: 0.4
-    - _Min_Intensity_Fog: 0
+    - _Min_Intensity_Fog: 0.01
     - _Softness_Height: 0.01
     - _Transparency: 1
     m_Colors:
     - _Color_Fog: {r: 1.4, g: 1.7, b: 2, a: 0.7490196}
-    - _Sun_Direction: {r: 0, g: -0.97852373, b: 0.20613408, a: 0}
+    - _Sun_Direction: {r: 0, g: -0.9999906, b: 0.004313767, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

@@ -28,7 +28,7 @@ public class World : MonoBehaviour
 
 
     public WeatherSystem Weather { get; private set; }
-    public WeatherWindSystem Wind => Weather?.WindSystem;
+    public WeatherWindSystem Wind => Weather.WeatherWindSystem;
 
 
     public Shelter PlayerEnteredLastShelter { get; private set; }
@@ -46,6 +46,7 @@ public class World : MonoBehaviour
 
     private List<TemperatureZone> _externalHeats = new List<TemperatureZone>();
     private float _currentMaxExternalTemp;
+
 
     private void Awake()
     {
@@ -166,7 +167,7 @@ public class World : MonoBehaviour
     {
         float WeatherOrShalter = PlayerEnteredLastShelter ? ShelterTemperature : WeatherTemperature;
 
-        TotalTemperature = Temperature + WeatherOrShalter + GetMaxExternalHeatsByPosiotion();
+        TotalTemperature = Temperature + WeatherOrShalter + GetMaxExternalHeatsByPosiotion() + _player.ClothingSystem.TotalTemperatureBonus;
     }
 
 
@@ -174,7 +175,7 @@ public class World : MonoBehaviour
     {
         float WeatherOrShalter = PlayerEnteredLastShelter ? ShelterToxicity : WeatherToxicity;
 
-        TotalToxicity = Toxicity + WeatherOrShalter + ZoneToxicity;
+        TotalToxicity = (Toxicity + WeatherOrShalter + ZoneToxicity) * (1 - _player.ClothingSystem.TotalToxicityProtection / 100);
     }
 
 
@@ -182,7 +183,7 @@ public class World : MonoBehaviour
     {
         float WeatherOrShalter = PlayerEnteredLastShelter ? ShelterWetness : WeatherWetness;
 
-        TotalWetness = Wetness + WeatherOrShalter;
+        TotalWetness = (Wetness + WeatherOrShalter) * (1 - _player.ClothingSystem.TotalToxicityProtection);
     }
 
     /// <summary>

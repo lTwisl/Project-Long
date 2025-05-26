@@ -6,62 +6,69 @@ using UnityEngine;
 
 public class WeatherSystem : MonoBehaviour
 {
+    #region ПЕРЕМЕННЫЕ КЛАССА
     public event Action<WeatherProfile> OnWeatherTransitionStarted;
-    public event Action<WeatherProfile> OnWeatherTransitionCompleted;
+    public event Action<WeatherProfile> OnWeatherTransitionFinished;
 
-    [SerializeField] private bool _useAutoChange = true;
+    [field: SerializeField] public bool UseAutoTransition { get; private set; } = true;
 
-    [field: Header("Список Weather Profiles:")]
-    [field: SerializeField] public List<WeatherProfile> WeatherProfiles { get; private set; }
+    [field: Header("Все погодные профили:")]
+    [field: SerializeField] public List<WeatherProfile> AvailableWeatherProfiles { get; private set; }
 
 
-    [field: Header("Используемые Weather Profiles:")]
+    [field: Header("Текущие погодные профили:")]
     [field: SerializeField] public WeatherProfile CurrentWeatherProfile { get; private set; }
-    [field: SerializeField] public WeatherProfile NewWeatherProfile { get; private set; }
+    [field: SerializeField, DisableEdit] public WeatherProfile NewWeatherProfile { get; private set; }
 
 
     [field: Header("Параметры текущей погоды:")]
-    [field: DisableEdit, SerializeField] public float Temperature { get; private set; }
-    [field: DisableEdit, SerializeField] public float Wetness { get; private set; }
-    [field: DisableEdit, SerializeField] public float Toxicity { get; private set; }
+    [field: SerializeField, DisableEdit] public float Temperature { get; private set; }
+    [field: SerializeField, DisableEdit] public float Wetness { get; private set; }
+    [field: SerializeField, DisableEdit] public float Toxicity { get; private set; }
 
 
-    [field: Header("Освещение сцены:")]
-    [DisableEdit, SerializeField] private bool _isLightingSystemsValide = false;
+    [field: Header("Системы освещения сцены:")]
     [field: SerializeField] public WeatherLightingColor SunLight { get; private set; }
     [field: SerializeField] public WeatherLightingColor MoonLight { get; private set; }
+    [field: SerializeField, DisableEdit] public bool IsLightingSystemsValid { get; private set; }
 
 
     [field: Header("Система ветра:")]
-    [DisableEdit, SerializeField] private bool _isWindSystemValide = false;
-    [field: SerializeField] public WeatherWindSystem WindSystem { get; private set; }
+    [field: SerializeField] public WeatherWindSystem WeatherWindSystem { get; private set; }
+    [field: SerializeField, DisableEdit] public bool IsWindSystemValid { get; private set; }
 
 
-    [field: Header("Объемный туман:")]
-    [DisableEdit, SerializeField] private bool _isFogSystemValide = false;
+    [field: Header("Система объемного тумана:")]
     [field: SerializeField] public WeatherFogSystem WeatherFogSystem { get; private set; }
+    [field: SerializeField, DisableEdit] public bool IsFogSystemValid { get; private set; }
 
 
-    [field: Header("Скайбокс:")]
-    [DisableEdit, SerializeField] private bool _isSkyboxSystemValide = false;
+    [field: Header("Система скайбокса:")]
     [field: SerializeField] public WeatherSkyboxSystem WeatherSkyboxSystem { get; private set; }
+    [field: SerializeField, DisableEdit] public bool IsSkyboxSystemValid { get; private set; }
 
 
-    [field: Header("Пост процессинг:")]
-    [DisableEdit, SerializeField] private bool _isPostProcessSystemValide = false;
+    [field: Header("Система пост процессинга:")]
     [field: SerializeField] public WeatherPostProcessSystem WeatherPostProcessSystem { get; private set; }
+    [field: SerializeField, DisableEdit] public bool IsPostProcessSystemValid { get; private set; }
 
 
-    [field: Header("Визуальные эффекты:")]
-    [DisableEdit, SerializeField] public bool _isVFXValide = false;
+    [field: Header("Система визуальных эффектов:")]
     [field: SerializeField] public WeatherVFXSystem WeatherVFXSystem { get; private set; }
+    [field: SerializeField, DisableEdit] public bool IsVfxSystemValid { get; private set; }
 
     public TimeSpan TimeStartCurrentWeather { get; private set; }
     public TimeSpan TimeEndCurrentWeather { get; private set; }
-    public TimeSpan TransitionDuration { get; private set; } = new TimeSpan(0, 1, 0, 0);
+    public TimeSpan TransitionDuration { get; private set; } = new TimeSpan(0, 1, 0, 0); // Время перехода между сменяемыми погодными условиями
 
-    private Process waitNextTransition;
+    private Process _waitNextTransition;
     private Coroutine _transitionCoroutine;
+    #endregion
+
+    /// <summary>
+    /// Находится ли система погодных условий в переходном состоянии?
+    /// </summary>
+    public bool IsWeatherOnTransitionState => _transitionCoroutine != null;
 
     private void Awake()
     {
@@ -69,16 +76,16 @@ public class WeatherSystem : MonoBehaviour
     }
 
     /// <summary>
-    /// Проверка модулей погоды и условий для смены
+    /// Проверка модулей системы погодных условий
     /// </summary>
     public void ValidateReferences()
     {
-        _isLightingSystemsValide = SunLight != null && MoonLight != null;
-        _isWindSystemValide = WindSystem != null;
-        _isFogSystemValide = WeatherFogSystem != null;
-        _isSkyboxSystemValide = WeatherSkyboxSystem != null;
-        _isPostProcessSystemValide = WeatherPostProcessSystem != null;
-        _isVFXValide = WeatherVFXSystem != null;
+        IsLightingSystemsValid = SunLight != null && MoonLight != null;
+        IsWindSystemValid = WeatherWindSystem != null;
+        IsFogSystemValid = WeatherFogSystem != null;
+        IsSkyboxSystemValid = WeatherSkyboxSystem != null;
+        IsPostProcessSystemValid = WeatherPostProcessSystem != null;
+        IsVfxSystemValid = WeatherVFXSystem != null;
 
         // Выводы для отладки:
         //if (!_isProfilesValide) Debug.LogWarning("<color=orange>В сцене не инициализированы профили погоды</color>", this);
@@ -92,7 +99,8 @@ public class WeatherSystem : MonoBehaviour
 
     private void Start()
     {
-        SetNewWeatherImmediately(CurrentWeatherProfile); // Warning! Временное решение, ждем сохранения
+        // Warning!!! Временное решение, ждем сохранения. Стартовая конфигурация сцены при запуске
+        SetNewWeatherImmediately(CurrentWeatherProfile);
     }
 
     /// <summary>
@@ -102,17 +110,16 @@ public class WeatherSystem : MonoBehaviour
     {
         if (weatherProfile == null)
         {
-            Debug.LogError("Попытка установить null профиль погоды!");
+            Debug.LogError("<color=red>Попытка установить null профиль погоды!</color>");
             return;
         }
 
-        if (CurrentWeatherProfile == null)
-            CurrentWeatherProfile = weatherProfile;
+        if (CurrentWeatherProfile == null) CurrentWeatherProfile = weatherProfile;
         NewWeatherProfile = weatherProfile;
 
         StopWeatherTransition();
         OnWeatherTransitionStarted?.Invoke(NewWeatherProfile);
-        WeatherVFXSystem.SpawnVFX(NewWeatherProfile, FindAnyObjectByType<Player>().transform);
+        SetupVFXSystem();
         UpdateWeatherParameters(CurrentWeatherProfile, NewWeatherProfile, 1f);
 
         // Обновляем профили
@@ -120,7 +127,7 @@ public class WeatherSystem : MonoBehaviour
 
         // Обновляем временные рамки
         CalculateTimeWeather();
-        OnWeatherTransitionCompleted?.Invoke(CurrentWeatherProfile);
+        OnWeatherTransitionFinished?.Invoke(CurrentWeatherProfile);
     }
 
     /// <summary>
@@ -134,8 +141,7 @@ public class WeatherSystem : MonoBehaviour
             return;
         }
 
-        if (CurrentWeatherProfile == null)
-            CurrentWeatherProfile = weatherProfile;
+        if (CurrentWeatherProfile == null) CurrentWeatherProfile = weatherProfile;
         NewWeatherProfile = weatherProfile;
 
         StopWeatherTransition();
@@ -147,22 +153,10 @@ public class WeatherSystem : MonoBehaviour
     /// </summary>
     public void StopWeatherTransition()
     {
-        if (_transitionCoroutine != null)
-        {
-            StopCoroutine(_transitionCoroutine);
-            _transitionCoroutine = null;
-        }
-    }
+        if (_transitionCoroutine == null) return;
 
-    /// <summary>
-    /// Есть ли в текущий момент переход погодных условий?
-    /// </summary>
-    public bool CheckHasTransition()
-    {
-        if (_transitionCoroutine != null)
-            return true;
-        else
-            return false;
+        StopCoroutine(_transitionCoroutine);
+        _transitionCoroutine = null;
     }
 
     private IEnumerator WeatherTransitionCoroutine()
@@ -172,8 +166,8 @@ public class WeatherSystem : MonoBehaviour
         //Debug.Log($"<color=yellow>Началась смена погоды! Меняем: {CurrentWeatherProfile.weatherIdentifier} на {NewWeatherProfile.weatherIdentifier}. Время начала: {WorldTime.Instance.GetFormattedTime(startTime)}</color>");
 
         // Процесс перехода
+        SetupVFXSystem();
         float t = 0f;
-        WeatherVFXSystem.SpawnVFX(NewWeatherProfile, FindAnyObjectByType<Player>().transform);
         while (t < 1f)
         {
             TimeSpan passedTime = GameTime.GetPassedTime(startTime);
@@ -189,7 +183,18 @@ public class WeatherSystem : MonoBehaviour
         CalculateTimeWeather();
 
         _transitionCoroutine = null;
-        OnWeatherTransitionCompleted?.Invoke(CurrentWeatherProfile);
+        OnWeatherTransitionFinished?.Invoke(CurrentWeatherProfile);
+    }
+
+    /// <summary>
+    /// Погодготовить систему визуальных эффектов
+    /// </summary>
+    private void SetupVFXSystem()
+    {
+        Transform VFXTargetTransform = FindAnyObjectByType<Player>().transform;
+        if (VFXTargetTransform == null) VFXTargetTransform = WeatherVFXSystem.transform;
+
+        WeatherVFXSystem.SpawnVFX(NewWeatherProfile, VFXTargetTransform);
     }
 
     /// <summary>
@@ -198,7 +203,7 @@ public class WeatherSystem : MonoBehaviour
     private void CalculateWeatherProfiles()
     {
         CurrentWeatherProfile = NewWeatherProfile;
-        //Debug.Log($"<color=green>Закончилась смена погоды! Сейчас на улице: {CurrentWeatherProfile.weatherIdentifier}. Текущее время: {WorldTime.Instance.GetFormattedTime(WorldTime.Instance.CurrentTime)}</color>");
+        //Debug.Log($"<color=green>Закончилась смена погоды! Сейчас на улице: {CurrentWeatherProfile.weatherIdentifier}. Текущее время: {GameTime.GetFormattedTime(GameTime.Time)}</color>");
 
         List<WeatherProfile> availableTransitions = GetAvailableTransitions();
         if (availableTransitions.Count > 0)
@@ -221,9 +226,10 @@ public class WeatherSystem : MonoBehaviour
         List<WeatherProfile> availableProfiles = new();
 
         // Проходим по всем профилям погод сцены, ищем доступные для перехода
-        foreach (WeatherProfile profile in WeatherProfiles)
-            if (CurrentWeatherProfile.weatherTransitions.HasFlag((WeatherTransitions)profile.weatherIdentifier))
+        foreach (WeatherProfile profile in AvailableWeatherProfiles)
+            if (profile != null && CurrentWeatherProfile.weatherTransitions.HasFlag((WeatherTransitions)profile.weatherIdentifier))
                 availableProfiles.Add(profile);
+
         return availableProfiles;
     }
 
@@ -235,35 +241,34 @@ public class WeatherSystem : MonoBehaviour
         TimeStartCurrentWeather = GameTime.Time;
         int lifetimeHours = UnityEngine.Random.Range(CurrentWeatherProfile.minLifetimeHours, CurrentWeatherProfile.maxLifetimeHours + 1);
         TimeEndCurrentWeather = TimeStartCurrentWeather + TimeSpan.FromHours(lifetimeHours);
-        //Debug.Log($"<color=lightblue>Текущая погода закончится в: {WorldTime.Instance.GetFormattedTime(TimeEndCurrentWeather)}, после начнется переход на предсказанную погоду</color>");
+        //Debug.Log($"<color=lightblue>Текущая погода закончится в: {GameTime.GetFormattedTime(TimeEndCurrentWeather)}, после начнется переход на предсказанную погоду</color>");
 
-        // Запускаем процесс ожидания перехода погодных условий
-        if (_useAutoChange)
+        // Запускаем процесс ожидания наступления времени следующего погодного перехода
+        if (UseAutoTransition)
         {
-            waitNextTransition = new Process(TimeEndCurrentWeather - TimeStartCurrentWeather,
+            _waitNextTransition = new Process(TimeEndCurrentWeather - TimeStartCurrentWeather,
                 () => SetNewWeatherWithTransition(NewWeatherProfile),
                 _ => Debug.Log("<color=red>Ожидание перехода погоды прервано</color>"));
-            waitNextTransition.Play();
+            _waitNextTransition.Play();
         }
     }
 
     private void UpdateWeatherParameters(WeatherProfile currentProfile, WeatherProfile newProfile, float t)
     {
-        ValidateReferences();
-        UpdatePlayerInfluencePrameters(currentProfile, newProfile, t);
-        if (_isLightingSystemsValide)
+        UpdateWeatherIndicators(currentProfile, newProfile, t);
+        if (IsLightingSystemsValid)
         {
             SunLight.UpdateLighting(currentProfile, newProfile, t);
             MoonLight.UpdateLighting(currentProfile, newProfile, t);
         }
-        if (_isWindSystemValide) WindSystem.UpdateWind(currentProfile, newProfile, t);
-        if (_isFogSystemValide) WeatherFogSystem.UpdateFog(currentProfile, newProfile, t);
-        if (_isSkyboxSystemValide) WeatherSkyboxSystem.UpdateSkybox(currentProfile, newProfile, t);
-        if (_isPostProcessSystemValide) WeatherPostProcessSystem.UpdatePostProcessing(currentProfile, newProfile, t);
-        if (_isVFXValide) WeatherVFXSystem.UpdateVFX(t);
+        if (IsWindSystemValid) WeatherWindSystem.UpdateSystem(currentProfile, newProfile, t);
+        if (IsFogSystemValid) WeatherFogSystem.UpdateSystem(currentProfile, newProfile, t);
+        if (IsSkyboxSystemValid) WeatherSkyboxSystem.UpdateSystem(currentProfile, newProfile, t);
+        if (IsPostProcessSystemValid) WeatherPostProcessSystem.UpdateSystem(currentProfile, newProfile, t);
+        if (IsVfxSystemValid) WeatherVFXSystem.UpdateSystem(currentProfile, newProfile, t);
     }
 
-    private void UpdatePlayerInfluencePrameters(WeatherProfile currentProfile, WeatherProfile newProfile, float t)
+    private void UpdateWeatherIndicators(WeatherProfile currentProfile, WeatherProfile newProfile, float t)
     {
         Temperature = Mathf.Lerp(currentProfile.temperature, newProfile.temperature, t);
         Wetness = Mathf.Lerp(currentProfile.wetness, newProfile.wetness, t);
@@ -272,14 +277,17 @@ public class WeatherSystem : MonoBehaviour
 
     private void OnDestroy()
     {
-        StopAllCoroutines();
-        SetNewWeatherImmediately(CurrentWeatherProfile);
+#if UNITY_EDITOR
+        // Сбрасываем погодные условия для редактора
+        SetNewWeatherImmediately(AvailableWeatherProfiles[0]);
+#endif
     }
 
 #if UNITY_EDITOR
     private void OnValidate()
     {
-        if (!_isFogSystemValide || !_isLightingSystemsValide || !_isPostProcessSystemValide || !_isSkyboxSystemValide || !_isWindSystemValide)
+        ValidateReferences();
+        if (!IsFogSystemValid || !IsLightingSystemsValid || !IsPostProcessSystemValid || !IsSkyboxSystemValid || !IsWindSystemValid || !IsVfxSystemValid)
             FindReferences();
     }
 
@@ -293,19 +301,15 @@ public class WeatherSystem : MonoBehaviour
         }
 
         // Поиск главных модулей в сцене
+        WeatherLightingColor[] dynamicLightingColor = FindObjectsByType<WeatherLightingColor>(FindObjectsSortMode.None);
+        foreach (var dyn in dynamicLightingColor)
+            (SunLight, MoonLight) = dyn.isSun ? (dyn, MoonLight) : (SunLight, dyn);
+
         WeatherFogSystem = FindFirstObjectByType<WeatherFogSystem>();
         WeatherSkyboxSystem = FindFirstObjectByType<WeatherSkyboxSystem>();
-        WindSystem = FindFirstObjectByType<WeatherWindSystem>();
+        WeatherWindSystem = FindFirstObjectByType<WeatherWindSystem>();
         WeatherPostProcessSystem = FindFirstObjectByType<WeatherPostProcessSystem>();
-
-        var dynamicLightingColor = FindObjectsByType<WeatherLightingColor>(FindObjectsSortMode.None);
-        foreach (var dyn in dynamicLightingColor)
-        {
-            if (dyn.isSun)
-                SunLight = dyn;
-            else
-                MoonLight = dyn;
-        }
+        WeatherVFXSystem = FindFirstObjectByType<WeatherVFXSystem>();
 
         ValidateReferences();
         if (PrefabUtility.IsPartOfPrefabInstance(this))
@@ -314,11 +318,11 @@ public class WeatherSystem : MonoBehaviour
 
     public void SetSceneWeatherInEditor()
     {
-        Undo.RecordObject(this, "Выставлена погода по пресету в редакторе");
+        Undo.RecordObject(this, "Вручную выставлена погода в редакторе");
 
         if (CurrentWeatherProfile == null)
         {
-            Debug.LogWarning("<color=orange>Попытка установить null профиль погоды! Установи сменяемый профиль в переменной currentProfile</color>");
+            Debug.LogError("<color=red>Попытка установить null профиль погоды! Установи сменяемый профиль в переменной CurrentWeatherProfile</color>");
             return;
         }
 

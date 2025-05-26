@@ -12,7 +12,7 @@ public enum PassageType
     Exit
 }
 
-public class Shelter : MonoBehaviour
+public class Shelter : MonoBehaviour, IShowable
 {
     [Inject] private World _world;
 
@@ -53,6 +53,7 @@ public class Shelter : MonoBehaviour
     [SerializeField] private List<ShelterPassage> _passages = new();
     public int GetPassagesCount => _passages.Count;
 
+    public bool ShowScriptInfo { get; set; }
 
     public void PassageExit(PassageType type)
     {
@@ -97,10 +98,6 @@ public class Shelter : MonoBehaviour
 
 
 #if UNITY_EDITOR
-
-    [Header("Параметры визуализации:")]
-    public bool ShowInfo = true;
-
     private void OnValidate()
     {
         _passages.RemoveAll(passage => passage == null || passage.transform.parent != transform || passage.ParentShelter != this);
@@ -159,9 +156,9 @@ public class Shelter : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        if (!ShowInfo) return;
+        if (!ShowScriptInfo) return;
 
-        Color color = new(1f, 0.4f, 0, 1);
+        Color color = new Color(0f, 0.05f, 0.15f, 1);
 
         // 1. Рисуем проходы
         foreach (var passage in _passages)

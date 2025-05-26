@@ -3,21 +3,21 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
-public class WeatherPostProcessSystem : MonoBehaviour
+public class WeatherPostProcessSystem : MonoBehaviour, IWeatherSystem
 {
-    [DisableEdit, SerializeField] private bool _isPostProcessValide = false;
+    [field: SerializeField, DisableEdit] public bool IsSystemValid { get; set; }
 
     [Header("Обьем простпроцессинга:")]
-    [DisableEdit, SerializeField] private Volume _volume;
+    [SerializeField, DisableEdit] private Volume _volume;
 
-    public void ValidateReferences()
+    public void ValidateSystem()
     {
         _volume = FindFirstObjectByType<Volume>();
 
         // Проверка ссылок на метериалы:
         if (_volume == null)
         {
-            _isPostProcessValide = false;
+            IsSystemValid = false;
             return;
         }
 
@@ -27,7 +27,7 @@ public class WeatherPostProcessSystem : MonoBehaviour
         isValidePropertys = _volume.profile.TryGet<ColorAdjustments>(out var colorAdjustments);
         //isValidePropertys &= _volume.profile.TryGet<Bloom>(out var bloom);
 
-        _isPostProcessValide = isValidePropertys;
+        IsSystemValid = isValidePropertys;
 
 #if UNITY_EDITOR
         if (PrefabUtility.IsPartOfPrefabInstance(this))
@@ -35,9 +35,9 @@ public class WeatherPostProcessSystem : MonoBehaviour
 #endif
     }
 
-    public void UpdatePostProcessing(WeatherProfile currentProfile, WeatherProfile newProfile, float t)
+    public void UpdateSystem(WeatherProfile currentProfile, WeatherProfile newProfile, float t)
     {
-        if (!_isPostProcessValide)
+        if (!IsSystemValid)
         {
             Debug.Log("<color=orange>Модуль пост процессинга в сцене неисправен, либо отстутствует. Погода не будет менять обьем пост процесса!</color>");
             return;
@@ -53,13 +53,13 @@ public class WeatherPostProcessSystem : MonoBehaviour
 
     private void Awake()
     {
-        ValidateReferences();
+        ValidateSystem();
     }
 
 #if UNITY_EDITOR
     private void OnValidate()
     {
-        ValidateReferences();
+        ValidateSystem();
     }
 #endif
 }

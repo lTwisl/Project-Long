@@ -26,6 +26,7 @@ Material:
     m_Ints: []
     m_Floats:
     - _Distance: 0.002
+    - _Min_Intensity_Fog: 0.01
     - _Softness_Height: 0.01
     m_Colors:
     - _Color_Fog: {r: 1.4, g: 1.7, b: 2, a: 0.7490196}

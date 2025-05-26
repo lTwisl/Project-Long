@@ -1,9 +1,9 @@
-using EditorAttributes;
+п»їusing EditorAttributes;
 using System.Collections.Generic;
-using UnityEngine;
 using UnityEditor;
+using UnityEngine;
 
-public class Storage : MonoBehaviour, IInteractible
+public class Storage : MonoBehaviour, IInteractible, IShowable
 {
     [field: SerializeField] public Inventory Inventory { get; protected set; }
 
@@ -11,6 +11,7 @@ public class Storage : MonoBehaviour, IInteractible
 
     private string _storageId;
     public virtual bool IsCanInteract { get; protected set; } = true;
+    public bool ShowScriptInfo { get; set; }
 
     private void Awake()
     {
@@ -18,7 +19,6 @@ public class Storage : MonoBehaviour, IInteractible
         Inventory.Init();
         //LoadData();
     }
-
 
     private void LoadData()
     {
@@ -47,8 +47,8 @@ public class Storage : MonoBehaviour, IInteractible
 #if UNITY_EDITOR
     [Space(10)]
     [SerializeField] private List<InventoryItem> _initItems;
-    [Button("Добавить предметы в инвентарь", buttonHeight: 40)]
-    private void ItemsToInventory()
+    [Button("Р”РѕР±Р°РІРёС‚СЊ РїСЂРµРґРјРµС‚С‹ РІ РёРЅРІРµРЅС‚Р°СЂСЊ", buttonHeight: 40)]
+    public void ItemsToInventory()
     {
         Undo.RecordObject(this, "Undo Add Inventory Items");
         EditorUtility.SetDirty(this);
@@ -61,5 +61,22 @@ public class Storage : MonoBehaviour, IInteractible
         }
         //_initItems.Clear();
     }
+
+    private void OnDrawGizmos()
+    {
+        if (!ShowScriptInfo) return;
+
+        // 1. РўРµРєСЃС‚РѕРІР°СЏ РёРЅС„РѕСЂРјР°С†РёСЏ
+        GUIStyle textStyle = new GUIStyle
+        {
+            normal = { textColor = new Color(1f, 0.5f, 0f, 1f) },
+            alignment = TextAnchor.MiddleCenter,
+            fontStyle = FontStyle.Bold,
+            fontSize = 18,
+            richText = true
+        };
+        Handles.Label(transform.position + Vector3.up * 1f, $"<b>рџ—ѓ\n{name}</b>\n", textStyle);
+    }
+
 #endif
 }

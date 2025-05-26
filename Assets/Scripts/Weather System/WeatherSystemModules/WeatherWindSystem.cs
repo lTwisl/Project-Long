@@ -1,16 +1,13 @@
-﻿using System.Collections.Generic;
-using UnityEditor;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class WeatherWindSystem : MonoBehaviour
+public class WeatherWindSystem : MonoBehaviour, IWeatherSystem
 {
-    [field: SerializeField]
-    public float MaxWindTemperature { get; private set; }
+    [field: SerializeField, DisableEdit] public bool IsSystemValid { get; set; } = true;
 
-    [DisableEdit, SerializeField]
-    private Vector2 _windGloabalDirection;
-    [field: DisableEdit, SerializeField]
-    public float CurrentSpeed { get; private set; }
+    [field: SerializeField] public float MaxWindTemperature { get; private set; } = -1;
+
+    [SerializeField, DisableEdit] private Vector2 _windGloabalDirection;
+    [field: DisableEdit, SerializeField] public float CurrentSpeed { get; private set; }
 
     [Header("Параметры глобального ветра:")]
     [DisableEdit, SerializeField, Tooltip("Минимальная скорость ветра"), Min(1)]
@@ -43,10 +40,7 @@ public class WeatherWindSystem : MonoBehaviour
     private float _vectorsSizeMul = 1f;
     [HideIf(nameof(_drawWindField), false), SerializeField]
     private Gradient _intensityColorGradient;
-    public const float MaxSize = 33f; // Рабочий параметр шкалы Бофорта = 33 м/с
-
-    [Header("Ветровые локальные зоны влияния:")]
-    [SerializeField] private List<WindZone> _windZones = new List<WindZone>();
+    private const float _maxSize = 33f; // Рабочий параметр шкалы Бофорта = 33 м/с
 
     private Vector2 _directionNoiseOffset;
     private Vector2 _intensityNoiseOffset;
@@ -111,7 +105,7 @@ public class WeatherWindSystem : MonoBehaviour
     #region Работа с системой ветра
 
     /// <summary>
-    /// Получить глобальное направление ветра нормализованное
+    /// Получить глобальное нормализованное направление ветра
     /// </summary>
     public Vector2 GetWindGlobalVectorNormalized()
     {
@@ -139,9 +133,7 @@ public class WeatherWindSystem : MonoBehaviour
     /// </summary>
     public float GetWindLocalIntensity(Vector3 worldPosition)
     {
-        float baseIntensity = CalculateLocalIntensity(worldPosition);
-        float zoneMultiplier = CalculateZoneMultiplier(worldPosition);
-        return baseIntensity * zoneMultiplier;
+        return CalculateLocalIntensity(worldPosition);
     }
 
     private float CalculateLocalIntensity(Vector3 position)
@@ -167,36 +159,7 @@ public class WeatherWindSystem : MonoBehaviour
         );
     }
 
-
-    private float CalculateZoneMultiplier(Vector3 position)
-    {
-        float totalMultiplier = 1f;
-        foreach (var zone in _windZones)
-        {
-            if (zone.transform != null)
-            {
-                Vector2 flatPos = new Vector2(position.x, position.z);
-                Vector2 zonePos = new Vector2(zone.transform.position.x, zone.transform.position.z);
-                float distance = Vector2.Distance(flatPos, zonePos);
-
-                if (distance <= zone.radius)
-                {
-                    float normalizedDistance = Mathf.Clamp01(distance / zone.radius);
-                    float influence = zone.falloffCurve.Evaluate(normalizedDistance);
-                    totalMultiplier += (zone.intensityMultiplier - 1) * influence;
-                }
-            }
-        }
-        return Mathf.Clamp(totalMultiplier, 0.1f, 10f);
-    }
-
-    /// <summary>
-    /// Обновить параметры системы ветра
-    /// </summary>
-    /// <param name="currentProfile"></param>
-    /// <param name="newProfile"></param>
-    /// <param name="t"></param>
-    public void UpdateWind(WeatherProfile currentProfile, WeatherProfile newProfile, float t)
+    public void UpdateSystem(WeatherProfile currentProfile, WeatherProfile newProfile, float t)
     {
         float minWindSpeed = Mathf.Lerp(currentProfile.minWindSpeed, newProfile.minWindSpeed, t);
         float maxWindSpeed = Mathf.Lerp(currentProfile.maxWindSpeed, newProfile.maxWindSpeed, t);
@@ -206,14 +169,17 @@ public class WeatherWindSystem : MonoBehaviour
         InitializeSystemParameters(minWindSpeed, maxWindSpeed, intensityChangeSpeed, directionChangeSharpness, intensityChangeDirection);
     }
 
+    public void ValidateSystem() { }
+
     /// <summary>
     /// Установить базовые параметры ветра
     /// </summary>
     public void InitializeSystemParameters(float minWindSpeed, float maxWindSpeed, float intensityChangeSpeed, float directionChangeSharpness, float intensityChangeDirection)
     {
         // Приводим к допустимым границам скорости ветра
-        _minWindSpeed = Mathf.Clamp(minWindSpeed, 1f, MaxSize);
-        _maxWindSpeed = Mathf.Clamp(maxWindSpeed, 1f, MaxSize);
+        _minWindSpeed = Mathf.Clamp(minWindSpeed, 1f, _maxSize);
+        _maxWindSpeed = Mathf.Clamp(maxWindSpeed, 1f, _maxSize);
+
         // Ограничиваем параметры чтобы они соответствовали минимуму и максмуму
         _minWindSpeed = Mathf.Min(_minWindSpeed, _maxWindSpeed);
         _maxWindSpeed = Mathf.Max(_minWindSpeed, _maxWindSpeed);
@@ -221,68 +187,11 @@ public class WeatherWindSystem : MonoBehaviour
         _directionChangeSharpness = Mathf.Clamp(directionChangeSharpness, 0.001f, 2f);
         _intensityChangeSpeed = Mathf.Clamp(intensityChangeDirection, 0.01f, 5f);
     }
-
-    /// <summary>
-    /// Добавить новую ветровую зону с автоматическим именем
-    /// </summary>
-    public void AddWindZone(Transform zoneTransform, float radius, float multiplier)
-    {
-        string autoName = $"Wind Zone {_windZones.Count + 1}";
-        _windZones.Add(new WindZone
-        {
-            name = autoName,
-            transform = zoneTransform,
-            radius = Mathf.Max(0, radius),
-            intensityMultiplier = Mathf.Clamp(multiplier, 0.1f, 10f)
-        });
-
-        // Переименовать объект в сцене
-        RenameZoneObject(_windZones.Count - 1);
-    }
-
-    /// <summary>
-    /// Обновить все имена зон по шаблону "Wind Zone N"
-    /// </summary>
-    public void GenerateZoneNames()
-    {
-        for (int i = 0; i < _windZones.Count; i++)
-        {
-            if (string.IsNullOrEmpty(_windZones[i].name))
-                _windZones[i].name = $"Wind Zone {i + 1}";
-
-            // Переименовать объект в сцене
-            RenameZoneObject(i);
-        }
-    }
-
-    /// <summary>
-    /// Переименовать объект в сцене в соответствии с именем зоны
-    /// </summary>
-    private void RenameZoneObject(int index)
-    {
-        if (index < 0 || index >= _windZones.Count) return;
-
-        var zone = _windZones[index];
-        if (zone.transform != null && zone.renameTransform)
-        {
-            zone.transform.name = zone.name;
-            zone.renameTransform = false;
-        }
-    }
-
-    /// <summary>
-    /// Очистить все ветровые зоны
-    /// </summary>
-    public void ClearAllWindZones()
-    {
-        _windZones.Clear();
-    }
     #endregion
 
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
-        DrawWindZones();
         if (!_drawWindField || !Application.isPlaying) return;
 
         DrawWindField();
@@ -291,7 +200,7 @@ public class WeatherWindSystem : MonoBehaviour
     private void DrawWindField()
     {
         Vector3 basePosition = transform.position;
-        float gridSize = (_vectorsGrid - 1) * MaxSize;
+        float gridSize = (_vectorsGrid - 1) * _maxSize;
         Vector3 startPosition = basePosition - new Vector3(gridSize * 0.5f, 0, gridSize * 0.5f);
 
         // Отрисовка фона сетки
@@ -300,8 +209,8 @@ public class WeatherWindSystem : MonoBehaviour
         {
             for (int z = 0; z < _vectorsGrid; z++)
             {
-                Vector3 cellCenter = startPosition + new Vector3(x * MaxSize, 0, z * MaxSize);
-                Gizmos.DrawWireCube(cellCenter, new Vector3(MaxSize, 0, MaxSize));
+                Vector3 cellCenter = startPosition + new Vector3(x * _maxSize, 0, z * _maxSize);
+                Gizmos.DrawWireCube(cellCenter, new Vector3(_maxSize, 0, _maxSize));
             }
         }
 
@@ -311,14 +220,9 @@ public class WeatherWindSystem : MonoBehaviour
             for (int z = 0; z < _vectorsGrid; z++)
             {
                 Vector3 cellCenter = startPosition +
-                    new Vector3(x * MaxSize, 0, z * MaxSize);
+                    new Vector3(x * _maxSize, 0, z * _maxSize);
 
-                // Расчет интенсивности с учетом зон
-                float baseIntensity = CalculateLocalIntensity(cellCenter);
-                float zoneMultiplier = CalculateZoneMultiplier(cellCenter);
-                float finalIntensity = baseIntensity * zoneMultiplier;
-
-                DrawWindArrow(cellCenter, finalIntensity);
+                DrawWindArrow(cellCenter, CalculateLocalIntensity(cellCenter));
             }
         }
     }
@@ -346,62 +250,8 @@ public class WeatherWindSystem : MonoBehaviour
 
     private Color GetIntensityColor(float intensity)
     {
-        float t = Mathf.InverseLerp(0, MaxSize, intensity); // Интерпретация значений цвета ветра по шкале Бофорта
+        float t = Mathf.InverseLerp(0, _maxSize, intensity); // Интерпретация значений цвета ветра по шкале Бофорта
         return _intensityColorGradient.Evaluate(t);
     }
-
-    private void DrawWindZones()
-    {
-        foreach (var zone in _windZones)
-        {
-            if (zone.transform != null && _drawWindField)
-            {
-                // Градиентная сфера
-                int segments = 7;
-                for (int i = 0; i < segments; i++)
-                {
-                    float t = i / (float)segments;
-                    float radius = zone.radius * t;
-
-                    // Получаем значение кривой затухания
-                    float curveValue = zone.falloffCurve.Evaluate(t);
-
-                    // Определяем цвет на основе значения кривой
-                    Color zoneColor = GetZoneColor(curveValue);
-                    zoneColor.a = Mathf.Lerp(1f, 0.5f, t); // Прозрачность уменьшается к краям
-
-                    Gizmos.color = zoneColor;
-                    Gizmos.DrawWireSphere(zone.transform.position, radius);
-                }
-
-                // Подпись с силой влияния
-                Handles.Label(zone.transform.position + Vector3.up * 1.5f, $"Influence: {zone.intensityMultiplier:F2}");
-            }
-        }
-    }
-
-    // Метод для получения цвета на основе значения кривой
-    private Color GetZoneColor(float value)
-    {
-        return Color.Lerp(Color.red, Color.green, Mathf.Clamp01(value));
-    }
-
-    // Дешевый и простой вариант отображения зон
-    //private void DrawWindZones()
-    //{
-    //    foreach (var zone in _windZones)
-    //    {
-    //        if (zone.transform != null && _drawWindField)
-    //        {
-    //            // Цветовая индикация
-    //            float intensity = Mathf.Clamp01(zone.intensityMultiplier);
-    //            Gizmos.color = Color.Lerp(Color.green, Color.red, intensity);
-    //            Gizmos.DrawWireSphere(zone.transform.position, zone.radius);
-
-    //            // Подпись с силой влияния
-    //            UnityEditor.Handles.Label(zone.transform.position + Vector3.up * 1.5f, $"Multiplier: {zone.intensityMultiplier:F2}");
-    //        }
-    //    }
-    //}
-    #endif
+#endif
 }

@@ -121,7 +121,7 @@ public class ShelterPassage : MonoBehaviour
             direction = -transform.forward;
 
         // Управление цветом отрисовки дверей
-        var color = _passageType == PassageType.Entry ? new Color(0.15f, 0.05f, 0, 1) : new Color(0f, 0.05f, 0.15f, 1);
+        var color = _passageType == PassageType.Entry ? new Color(0f, 0.05f, 0.15f, 1) : new Color(0.15f, 0.05f, 0, 1);
 
         // Отрисовка направления входа/выхода
         Gizmos.color = color;
