@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
-using static ToxicityZone;
 
 public class Storage : MonoBehaviour, IInteractible, IShowable
 {
@@ -49,7 +48,7 @@ public class Storage : MonoBehaviour, IInteractible, IShowable
     [Space(10)]
     [SerializeField] private List<InventoryItem> _initItems;
     [Button("Добавить предметы в инвентарь", buttonHeight: 40)]
-    private void ItemsToInventory()
+    public void ItemsToInventory()
     {
         Undo.RecordObject(this, "Undo Add Inventory Items");
         EditorUtility.SetDirty(this);
