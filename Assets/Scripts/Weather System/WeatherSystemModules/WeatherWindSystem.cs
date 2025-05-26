@@ -40,7 +40,7 @@ public class WeatherWindSystem : MonoBehaviour, IWeatherSystem
     private float _vectorsSizeMul = 1f;
     [HideIf(nameof(_drawWindField), false), SerializeField]
     private Gradient _intensityColorGradient;
-    private const float _maxSize = 33f; // Рабочий параметр шкалы Бофорта = 33 м/с
+    public const float MaxWindIntensity = 33f; // Рабочий параметр шкалы Бофорта = 33 м/с
 
     private Vector2 _directionNoiseOffset;
     private Vector2 _intensityNoiseOffset;
@@ -177,8 +177,8 @@ public class WeatherWindSystem : MonoBehaviour, IWeatherSystem
     public void InitializeSystemParameters(float minWindSpeed, float maxWindSpeed, float intensityChangeSpeed, float directionChangeSharpness, float intensityChangeDirection)
     {
         // Приводим к допустимым границам скорости ветра
-        _minWindSpeed = Mathf.Clamp(minWindSpeed, 1f, _maxSize);
-        _maxWindSpeed = Mathf.Clamp(maxWindSpeed, 1f, _maxSize);
+        _minWindSpeed = Mathf.Clamp(minWindSpeed, 1f, MaxWindIntensity);
+        _maxWindSpeed = Mathf.Clamp(maxWindSpeed, 1f, MaxWindIntensity);
 
         // Ограничиваем параметры чтобы они соответствовали минимуму и максмуму
         _minWindSpeed = Mathf.Min(_minWindSpeed, _maxWindSpeed);
@@ -200,7 +200,7 @@ public class WeatherWindSystem : MonoBehaviour, IWeatherSystem
     private void DrawWindField()
     {
         Vector3 basePosition = transform.position;
-        float gridSize = (_vectorsGrid - 1) * _maxSize;
+        float gridSize = (_vectorsGrid - 1) * MaxWindIntensity;
         Vector3 startPosition = basePosition - new Vector3(gridSize * 0.5f, 0, gridSize * 0.5f);
 
         // Отрисовка фона сетки
@@ -209,8 +209,8 @@ public class WeatherWindSystem : MonoBehaviour, IWeatherSystem
         {
             for (int z = 0; z < _vectorsGrid; z++)
             {
-                Vector3 cellCenter = startPosition + new Vector3(x * _maxSize, 0, z * _maxSize);
-                Gizmos.DrawWireCube(cellCenter, new Vector3(_maxSize, 0, _maxSize));
+                Vector3 cellCenter = startPosition + new Vector3(x * MaxWindIntensity, 0, z * MaxWindIntensity);
+                Gizmos.DrawWireCube(cellCenter, new Vector3(MaxWindIntensity, 0, MaxWindIntensity));
             }
         }
 
@@ -220,7 +220,7 @@ public class WeatherWindSystem : MonoBehaviour, IWeatherSystem
             for (int z = 0; z < _vectorsGrid; z++)
             {
                 Vector3 cellCenter = startPosition +
-                    new Vector3(x * _maxSize, 0, z * _maxSize);
+                    new Vector3(x * MaxWindIntensity, 0, z * MaxWindIntensity);
 
                 DrawWindArrow(cellCenter, CalculateLocalIntensity(cellCenter));
             }
@@ -250,7 +250,7 @@ public class WeatherWindSystem : MonoBehaviour, IWeatherSystem
 
     private Color GetIntensityColor(float intensity)
     {
-        float t = Mathf.InverseLerp(0, _maxSize, intensity); // Интерпретация значений цвета ветра по шкале Бофорта
+        float t = Mathf.InverseLerp(0, MaxWindIntensity, intensity); // Интерпретация значений цвета ветра по шкале Бофорта
         return _intensityColorGradient.Evaluate(t);
     }
 #endif

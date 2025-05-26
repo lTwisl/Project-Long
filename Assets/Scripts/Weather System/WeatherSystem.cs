@@ -191,7 +191,7 @@ public class WeatherSystem : MonoBehaviour
     /// </summary>
     private void SetupVFXSystem()
     {
-        Transform VFXTargetTransform = FindAnyObjectByType<Player>().transform;
+        Transform VFXTargetTransform = FindAnyObjectByType<Player>()?.transform;
         if (VFXTargetTransform == null) VFXTargetTransform = WeatherVFXSystem.transform;
 
         WeatherVFXSystem.SpawnVFX(NewWeatherProfile, VFXTargetTransform);

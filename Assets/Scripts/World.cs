@@ -28,7 +28,7 @@ public class World : MonoBehaviour
 
 
     public WeatherSystem Weather { get; private set; }
-    public WeatherWindSystem Wind => Weather.WeatherWindSystem;
+    public WeatherWindSystem Wind => Weather?.WeatherWindSystem;
 
 
     public Shelter PlayerEnteredLastShelter { get; private set; }

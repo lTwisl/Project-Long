@@ -760,7 +760,7 @@ GameObject:
   - component: {fileID: 3091095891610705143}
   - component: {fileID: 823824602148339877}
   m_Layer: 7
-  m_Name: Sphere
+  m_Name: Capsule
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1146,7 +1146,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1387839494574334159}
   m_Layer: 7
-  m_Name: CaneraRoot
+  m_Name: CameraRoot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

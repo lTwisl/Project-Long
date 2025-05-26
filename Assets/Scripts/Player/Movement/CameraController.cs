@@ -31,11 +31,11 @@ public class CameraController : MonoBehaviour
 
     private void CameraRotation()
     {
-        if (_input.look.sqrMagnitude < _threshold)
+        if (_input.Look.sqrMagnitude < _threshold)
             return;
 
-        _cinemachineTargetPitch += _input.look.y * _rotationSpeed;
-        _rotationVelocity = _input.look.x * _rotationSpeed;
+        _cinemachineTargetPitch += _input.Look.y * _rotationSpeed;
+        _rotationVelocity = _input.Look.x * _rotationSpeed;
 
         _cinemachineTargetPitch = Utility.ClampAngle(_cinemachineTargetPitch, _bottomClamp, _topClamp);
 

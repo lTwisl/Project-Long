@@ -154,7 +154,7 @@ namespace FirstPersonMovement
                     new Vector3(wind.x, 0f, wind.y).normalized
                     );
 
-                float scale = dot * wind.magnitude / WeatherWindSystem.MaxSize;
+                float scale = dot * wind.magnitude / WeatherWindSystem.MaxWindIntensity;
                 maxSpeed *= Utility.MapRange(scale, -1, 1, 1 - _effectWindOnMaxSpeed, 1 + _effectWindOnMaxSpeed);
             }
 
