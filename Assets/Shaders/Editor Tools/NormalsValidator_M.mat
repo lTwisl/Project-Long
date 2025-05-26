@@ -40,7 +40,7 @@ Material:
     m_Floats:
     - _Alpha: 0
     - _ENUM: 0
-    - _MaxWalkAngle: 51.3
+    - _MaxWalkAngle: 42.6
     - _Steps: 4
     - _Visualise: 1
     m_Colors:

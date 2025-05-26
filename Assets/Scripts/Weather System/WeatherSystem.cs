@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
+
 public class WeatherSystem : MonoBehaviour
 {
     #region ПЕРЕМЕННЫЕ КЛАССА

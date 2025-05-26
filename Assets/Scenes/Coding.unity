@@ -6077,6 +6077,17 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &921762238 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7611072829369350415, guid: 7c5f26e0638bb1344bbb1c2128e7dba2, type: 3}
+  m_PrefabInstance: {fileID: 2010996975}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78793d5cb13511a45997302ea3dec59b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &928096806
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6085,10 +6096,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 12908795714837126, guid: 2d3c5dbd1ac7eea4687836b0f166025b, type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 129779659132080480, guid: 2d3c5dbd1ac7eea4687836b0f166025b, type: 3}
       propertyPath: Target.TrackingTarget
       value: 
@@ -6137,21 +6144,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: FirstPersonAimCamera
       objectReference: {fileID: 0}
-    - target: {fileID: 6050750590031511316, guid: 2d3c5dbd1ac7eea4687836b0f166025b, type: 3}
-      propertyPath: Damping
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6050750590031511316, guid: 2d3c5dbd1ac7eea4687836b0f166025b, type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 6001035305695055566, guid: 2d3c5dbd1ac7eea4687836b0f166025b, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1165523682}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2d3c5dbd1ac7eea4687836b0f166025b, type: 3}
 --- !u!43 &938231922
 Mesh:
@@ -6719,28 +6715,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de6396b1decb90746b62072ca6f3d543, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &1165523677 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6001035305695055566, guid: 2d3c5dbd1ac7eea4687836b0f166025b, type: 3}
-  m_PrefabInstance: {fileID: 928096806}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1165523682
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1165523677}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 68bb026fafb42b14791938953eaace77, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  NoiseProfile: {fileID: 0}
-  PivotOffset: {x: 0, y: 0, z: 0}
-  AmplitudeGain: 1
-  FrequencyGain: 1
-  m_NoiseOffsets: {x: -868.1481, y: 920.9585, z: 848.923}
 --- !u!1 &1173868860
 GameObject:
   m_ObjectHideFlags: 0
@@ -8095,6 +8069,18 @@ PrefabInstance:
     - target: {fileID: 9005220659476430823, guid: 2d3a85ecde41a8246a79669975912b74, type: 3}
       propertyPath: m_Name
       value: MainCamera
+      objectReference: {fileID: 0}
+    - target: {fileID: 9018249871969862650, guid: 2d3a85ecde41a8246a79669975912b74, type: 3}
+      propertyPath: UpdateMethod
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 9018249871969862650, guid: 2d3a85ecde41a8246a79669975912b74, type: 3}
+      propertyPath: IgnoreTimeScale
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9018249871969862650, guid: 2d3a85ecde41a8246a79669975912b74, type: 3}
+      propertyPath: BlendUpdateMethod
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -9717,6 +9703,14 @@ PrefabInstance:
       propertyPath: <WeatherFogSystem>k__BackingField
       value: 
       objectReference: {fileID: 430429749}
+    - target: {fileID: 7828725762744367070, guid: 7c5f26e0638bb1344bbb1c2128e7dba2, type: 3}
+      propertyPath: <WeatherVFXSystem>k__BackingField
+      value: 
+      objectReference: {fileID: 921762238}
+    - target: {fileID: 7828725762744367070, guid: 7c5f26e0638bb1344bbb1c2128e7dba2, type: 3}
+      propertyPath: <WeatherWindSystem>k__BackingField
+      value: 
+      objectReference: {fileID: 1108170581}
     - target: {fileID: 7828725762744367070, guid: 7c5f26e0638bb1344bbb1c2128e7dba2, type: 3}
       propertyPath: <WeatherSkyboxSystem>k__BackingField
       value: 

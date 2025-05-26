@@ -1081,25 +1081,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Use: 0
   Input: {x: 0, y: 0, z: 0}
-  _walkSpeed: 1.39
-  _runSpeed: 5.56
-  _moveAcceleration: 50
-  _groundDamping: 5
+  _settings: {fileID: 11400000, guid: 36e4d4776046bf240900d0f36ed05f7f, type: 2}
   _whatIsGround:
     serializedVersion: 2
     m_Bits: 1
   _groundOffset: 0.015
   _isGrounded: 0
-  _jumpForce: 5
-  _jumpCooldown: 0.25
-  _airAcceleration: 10
-  _crouchSpeed: 0.8
-  _crouchHeight: 1.2
-  _speedTransitionCrouch: 1
-  _maxSlideSpeed: 20
-  _freeSlideAngle: 55
-  _useWind: 1
-  _effectWindOnMaxSpeed: 0.5
   _friction: 0
   _slopeLimit: 0
   _groundAngle: 0

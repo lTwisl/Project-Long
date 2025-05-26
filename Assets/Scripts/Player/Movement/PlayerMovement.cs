@@ -1,6 +1,7 @@
 using EditorAttributes;
 using FiniteStateMachine;
 using ImprovedTimers;
+using StatsModifiers;
 using System;
 using UnityEngine;
 using Zenject;
@@ -15,76 +16,44 @@ namespace FirstPersonMovement
         public event Action OnLand = delegate { };
         public event Action<IState> OnChangedState = delegate { };
 
-        public float WalkSpeed => Request(MoveMode.Walk, _walkSpeed);
-        public float RunSpeed => Request(MoveMode.Run, _runSpeed);
-        public float CrouchSpeed => Request(MoveMode.Crouch, _crouchSpeed);
+        public float CurrentMaxSpeed { get; private set; }
+        public StatsMediator SpeedMediator { get; private set; } = new();
+        public float WalkSpeed => Request(MoveMode.Walk, _settings.WalkSpeed);
+        public float RunSpeed => Request(MoveMode.Run, _settings.RunSpeed);
+        public float CrouchSpeed => Request(MoveMode.Crouch, _settings.CrouchSpeed);
 
-        public bool Use;
-        public Vector3 Input;
+        [HideInInspector] public bool CanWalk = true;
+        [HideInInspector] public bool CanRun = true;
+        [HideInInspector] public bool CanJump = true;
 
-        [Header("Movement")]
-        [SerializeField] private float _walkSpeed = 4f;
-        [SerializeField] private float _runSpeed = 6f;
-        [SerializeField] private float _moveAcceleration = 50f;
-        [SerializeField] private float _groundDamping = 5;
+        [Inject] private World _world;
+        [SerializeField, PropertyDropdown] private MovementSettings _settings;
 
         [Header("Ground")]
         [SerializeField] private LayerMask _whatIsGround = 1;
         [SerializeField] private float _groundOffset = 0.2f;
-        [SerializeField, DisableField] private bool _isGrounded;
 
-        [Header("Jump")]
-        [SerializeField] private float _jumpForce = 5f;
-        [SerializeField] private float _jumpCooldown = 0.25f;
-        [SerializeField] private float _airAcceleration = 0f;
-
-
-        [Header("Crouch")]
-        [SerializeField] private float _crouchSpeed = 2f;
-        [SerializeField] private float _crouchHeight = 1.2f;
-        [SerializeField] private float _speedTransitionCrouch = 1f;
-
-        [Header("Slide")]
-        [SerializeField] private float _maxSlideSpeed = 20;
-        [SerializeField] private float _freeSlideAngle = 55;
-
-        [Header("Wind")]
-        [SerializeField] private bool _useWind = true;
-        [ShowField(nameof(_useWind)), Range(0f, 1f)]
-        [SerializeField] private float _effectWindOnMaxSpeed = 0.5f;
-
-        [Inject] private World _world;
-
-        private bool _readyToJump = true;
-
-        public float CurrentMaxSpeed { get; private set; }
-        public IState CurrentState => _stateMachine.CurrentState;
-
-        private float _initHeight;
-        private float _initCenterHeight;
-
-        // Ground info
-        [Header("Debug info")]
-        [SerializeField, DisableField] private float _friction;
-        [SerializeField, DisableField] private float _slopeLimit;
-        [SerializeField, DisableField] private float _groundAngle;
-        private RaycastHit _groundHit;
-
+        // Components
         private Rigidbody _rb;
         private CapsuleCollider _col;
         private InputReader _input;
         private CameraController _cameraController;
 
+        // Systems
         private StateMachine _stateMachine;
         private CountdownTimer _jumpTimer;
 
-        public StatsModifiers.StatsMediator SpeedMediator { get; private set; } = new();
+        [Header("Debug info")]
+        [SerializeField, DisableField] private bool _isGrounded;
+        [SerializeField, DisableField] private float _friction;
+        [SerializeField, DisableField] private float _slopeLimit;
+        [SerializeField, DisableField] private float _groundAngle;
 
+        private float _initHeight;
+        private float _initCenterHeight;
         Vector3 moveDirection;
-
-        [HideInInspector] public bool CanWalk = true;
-        [HideInInspector] public bool CanRun = true;
-        [HideInInspector] public bool CanJump = true;
+        private RaycastHit _groundHit;
+        private bool _readyToJump = true;
 
         private void Awake()
         {
@@ -102,7 +71,7 @@ namespace FirstPersonMovement
 
             TryGetComponent(out _cameraController);
 
-            _jumpTimer = new CountdownTimer(_jumpCooldown);
+            _jumpTimer = new CountdownTimer(_settings.JumpCooldown);
             _jumpTimer.OnTimerStop += ResetJump;
 
             _initHeight = _col.height;
@@ -146,7 +115,7 @@ namespace FirstPersonMovement
             else if (_stateMachine.CurrentState is CrouchingState)
                 maxSpeed = CrouchSpeed;
 
-            if (_useWind)
+            if (_settings.UseWind)
             {
                 Vector2 wind = _world.GetWindLocalVector();
                 float dot = Vector3.Dot(
@@ -155,7 +124,7 @@ namespace FirstPersonMovement
                     );
 
                 float scale = dot * wind.magnitude / WeatherWindSystem.MaxWindIntensity;
-                maxSpeed *= Utility.MapRange(scale, -1, 1, 1 - _effectWindOnMaxSpeed, 1 + _effectWindOnMaxSpeed);
+                maxSpeed *= Utility.MapRange(scale, -1, 1, 1 - _settings.EffectWindOnMaxSpeed, 1 + _settings.EffectWindOnMaxSpeed);
             }
 
             if (CurrentMaxSpeed != maxSpeed && maxSpeed < CurrentMaxSpeed)
@@ -166,7 +135,7 @@ namespace FirstPersonMovement
 
         protected float Request(MoveMode moveMode, float value)
         {
-            var q = new StatsModifiers.Query(new MaxSpeedCondition(moveMode), value);
+            var q = new Query(new MaxSpeedCondition(moveMode), value);
             SpeedMediator.PerformQuery(this, q);
             return q.Value;
         }
@@ -210,13 +179,11 @@ namespace FirstPersonMovement
         private void Mover()
         {
             moveDirection = transform.forward * _input.Move.y + transform.right * _input.Move.x;
-            if (Use)
-                moveDirection = Input;
             moveDirection.Normalize();
 
             if (!_isGrounded)
             {
-                _rb.AddForce(moveDirection * _airAcceleration, ForceMode.Acceleration);
+                _rb.AddForce(moveDirection * _settings.AirAcceleration, ForceMode.Acceleration);
                 return;
             }
 
@@ -229,7 +196,7 @@ namespace FirstPersonMovement
                 float dot = Vector3.Dot(moveDirection.normalized, slidingDir);
                 if (dot < 0)
                 {
-                    if (_groundAngle > _freeSlideAngle)
+                    if (_groundAngle > _settings.FreeSlideAngle)
                     {
                         Vector3 rigth = Vector3.Cross(new Vector3(slidingDir.x, 0f, slidingDir.z).normalized, Vector3.up);
                         moveDirection = Vector3.Project(moveDirection, rigth);
@@ -245,25 +212,25 @@ namespace FirstPersonMovement
             }
 
             if (CurrentMaxSpeed != 0)
-                _rb.AddForce(moveDirection * _moveAcceleration, ForceMode.Acceleration);
+                _rb.AddForce(moveDirection * _settings.MoveAcceleration, ForceMode.Acceleration);
         }
 
         private void UpdateCrouch()
         {
             if (_stateMachine.CurrentState is CrouchingState)
             {
-                if (_col.height != _crouchHeight)
+                if (_col.height != _settings.CrouchHeight)
                 {
-                    _col.height = Mathf.MoveTowards(_col.height, _crouchHeight, Time.deltaTime * _speedTransitionCrouch);
+                    _col.height = Mathf.MoveTowards(_col.height, _settings.CrouchHeight, Time.deltaTime * _settings.SpeedTransitionCrouch);
                 }
             }
             else if (_col.height != _initHeight &&
                 !Physics.CheckSphere(transform.position + new Vector3(0f, _initHeight - _col.radius + 0.1f, 0f), _col.radius, _whatIsGround))
             {
-                _col.height = Mathf.MoveTowards(_col.height, _initHeight, Time.deltaTime * _speedTransitionCrouch);
+                _col.height = Mathf.MoveTowards(_col.height, _initHeight, Time.deltaTime * _settings.SpeedTransitionCrouch);
             }
 
-            if (_col.height != _initHeight || _col.height != _crouchHeight)
+            if (_col.height != _initHeight || _col.height != _settings.CrouchHeight)
             {
                 _col.center = new Vector3(0f, _initCenterHeight - (_initHeight - _col.height) / 2, 0f);
                 _cameraController?.SetCameraOffset(new Vector3(0f, -_initHeight + _col.height, 0f));
@@ -288,7 +255,7 @@ namespace FirstPersonMovement
 
             if (_stateMachine.CurrentState is not SlidingState)
             {
-                _rb.linearDamping = _groundDamping * Mathf.Pow(_friction, 2);
+                _rb.linearDamping = _settings.GroundDamping * Mathf.Pow(_friction, 2);
                 _rb.linearVelocity = Vector3.ClampMagnitude(_rb.linearVelocity, CurrentMaxSpeed);
             }
             else if (_stateMachine.CurrentState is DownSlidingState)
@@ -299,13 +266,13 @@ namespace FirstPersonMovement
                 Vector3 slidingVel = Utility.ExtractDotVector(_rb.linearVelocity, slidingDir);
 
                 Vector3 lateralVel = Vector3.ClampMagnitude(_rb.linearVelocity - slidingVel, CurrentMaxSpeed);
-                slidingVel = Vector3.ClampMagnitude(slidingVel, _maxSlideSpeed);
+                slidingVel = Vector3.ClampMagnitude(slidingVel, _settings.MaxSlideSpeed);
 
                 _rb.linearVelocity = slidingVel + lateralVel;
             }
             else if (_stateMachine.CurrentState is UpSlidingState)
             {
-                _rb.linearDamping = _groundDamping * Mathf.Pow(_friction, 2);
+                _rb.linearDamping = _settings.GroundDamping * Mathf.Pow(_friction, 2);
                 _rb.linearVelocity = Vector3.ClampMagnitude(_rb.linearVelocity, CurrentMaxSpeed * Mathf.Cos(_groundAngle * Mathf.Deg2Rad));
             }
         }
@@ -313,14 +280,14 @@ namespace FirstPersonMovement
 
         private void Jump()
         {
-            if (_readyToJump && _isGrounded && _stateMachine.CurrentState is not CrouchingState && _groundAngle < _freeSlideAngle && CanJump)
+            if (_readyToJump && _isGrounded && _stateMachine.CurrentState is not CrouchingState && _groundAngle < _settings.FreeSlideAngle && CanJump)
             {
                 _rb.linearDamping = 0f;
                 _readyToJump = false;
                 _jumpTimer.Start();
 
                 _rb.linearVelocity = new Vector3(_rb.linearVelocity.x, 0f, _rb.linearVelocity.z);
-                _rb.AddForce(transform.up * _jumpForce, ForceMode.VelocityChange);
+                _rb.AddForce(transform.up * _settings.JumpForce, ForceMode.VelocityChange);
             }
         }
 
@@ -375,15 +342,6 @@ namespace FirstPersonMovement
             GUI.Box(rect, $"<size=30><color=white>Speed: {_rb.linearVelocity.magnitude:f2}</color></size>");
             GUI.color = Color.white;
         }
-
-        private void OnValidate()
-        {
-            if (_col == null)
-                _col = GetComponent<CapsuleCollider>();
-
-            _crouchHeight = Mathf.Max(_crouchHeight, _col.radius * 2);
-        }
-
 
 #endif
 

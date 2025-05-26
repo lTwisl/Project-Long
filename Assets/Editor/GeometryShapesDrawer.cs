@@ -73,7 +73,7 @@ public static class GeometryShapesDrawer
         }
     }
 
-    public static void DrawWireCapsuleTwoPoints(Vector3 bottomPoint, Vector3 upperPoint, float radius, Color color)
+    public static void DrawWireCapsule(Vector3 bottomPoint, Vector3 upperPoint, float radius, Color color)
     {
         // 1. ¬ычисл€ем направление локальных осей капсулы (от нижней точки к верхней)
         Vector3 direction = (upperPoint - bottomPoint);
@@ -93,13 +93,13 @@ public static class GeometryShapesDrawer
         }
     }
 
-    public static void DrawWireCapsuleTwoPoints(Vector3 bottomPoint, Vector3 upperPoint, float radius, Color color, Vector3 castVector)
+    public static void DrawWireCapsule(Vector3 bottomPoint, Vector3 upperPoint, float radius, Color color, Vector3 castVector)
     {
-        DrawWireCapsuleTwoPoints(bottomPoint, upperPoint, radius, color);
+        DrawWireCapsule(bottomPoint, upperPoint, radius, color);
 
         Vector3 newBottomPoint = bottomPoint + castVector;
         Vector3 newUpperPoint = upperPoint + castVector;
-        DrawWireCapsuleTwoPoints(newBottomPoint, newUpperPoint, radius, color);
+        DrawWireCapsule(newBottomPoint, newUpperPoint, radius, color);
 
         using (new Handles.DrawingScope(color))
         {

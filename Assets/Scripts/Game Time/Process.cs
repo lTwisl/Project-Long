@@ -47,7 +47,7 @@ public class Process : IComparable<Process>, IDisposable
 
     public void Play()
     {
-        if (_disposed)
+        if (_disposed || GameTime.Time == TimeSpan.Zero)
             return;
 
         StartTime = GameTime.Time;

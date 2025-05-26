@@ -9,7 +9,7 @@ using static PlayerProbeData;
 public class PlayerProbeEditorWindow : EditorWindow
 {
     [SerializeField] private PlayerDimensions _playerDimensions = new PlayerDimensions();
-    [SerializeField] private LayerMask _obstacleLayers = Physics.AllLayers;
+    [SerializeField] private LayerMask _obstacleLayers = 1;
     [SerializeField] private List<PlayerProbeData> _probes = new List<PlayerProbeData>();
     [SerializeField] private int _selectedProbeIndex = -1;
     [SerializeField] private ProbeState _defaultProbeState = ProbeState.Standing;
