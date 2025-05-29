@@ -880,3 +880,4 @@ MonoBehaviour:
   _uiDetails: {fileID: 4559014876818358191}
   _btnUse: {fileID: 0}
   _btnDrop: {fileID: 0}
+  _btnCancel: {fileID: 0}
