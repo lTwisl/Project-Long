@@ -1,4 +1,5 @@
 ﻿using FiniteStateMachine;
+using ImprovedTimers;
 using UnityEngine;
 using static FirstPersonMovement.PlayerMovement;
 
@@ -11,23 +12,24 @@ public class StaminaParameter : MovementParameter
     [Tooltip("Штраф за достижения нуля [мин]")]
     [SerializeField] private float _reload = 1;
 
-    private float _timer = 0f;
+    CountdownTimer _countdownTimer;
+
+    public override void Initialize()
+    {
+        base.Initialize();
+        _countdownTimer = new(_reload * GameTime.TimeScale);
+    }
 
     public override void UpdateParameter(float deltaTime)
     {
-        if (Current <= 0 && _timer < 0)
+        if (_countdownTimer.IsFinished)
+            base.UpdateParameter(deltaTime);
+
+        if (Current <= 0 && !_countdownTimer.IsRunning)
         {
-            _timer = _reload;
+            _countdownTimer.Start();
             base.UpdateParameter(deltaTime);
         }
-
-        if (_timer >= 0)
-        {
-            _timer -= deltaTime;
-            return;
-        }
-
-        base.UpdateParameter(deltaTime);
     }
 
     public override void SetChangeRateByMoveMode(IState state)
@@ -41,5 +43,7 @@ public class StaminaParameter : MovementParameter
 
         base.SetChangeRateByMoveMode(state);
     }
+
+    
 }
 

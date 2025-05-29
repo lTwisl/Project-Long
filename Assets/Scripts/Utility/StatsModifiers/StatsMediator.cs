@@ -10,9 +10,8 @@ namespace StatsModifiers
 
         public void PerformQuery(object sender, Query query)
         {
-            foreach (StatModifier modifier in _modifiers)
-                modifier.Handle(sender, query);
-
+            for (int i = 0; i < _modifiers.Count; ++i)
+                _modifiers[i].Handle(sender, query);
         }
 
         public void AddModifier(StatModifier modifier)

@@ -13,6 +13,7 @@ public class UI_Inventory : MonoBehaviour
     [SerializeField] private UI_ItemDetails _uiDetails;
     [SerializeField] private Button _btnUse;
     [SerializeField] private Button _btnDrop;
+    [SerializeField] private Button _btnCancel;
 
     public List<InventorySlot> ShowSlots { get; set; }
 
@@ -39,6 +40,12 @@ public class UI_Inventory : MonoBehaviour
         _btnUse.onClick.AddListener(() =>
         {
             _player.UseItem(_selectesSlot.Slot); 
+            UpdateView();
+        });
+
+        _btnCancel.onClick.AddListener(() =>
+        {
+            _player.CancelUseItem(_selectesSlot.Slot); 
             UpdateView();
         });
     }

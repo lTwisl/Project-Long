@@ -59,9 +59,7 @@ public class InventorySlot
 
     public void UseItem()
     {
-        Item.Use();
-
-        Capacity -= Item.CostOfUse;
+        Item.Use(this);
     }
 
 

@@ -75,4 +75,9 @@ public class PlayerParameters : ScriptableObject
     {
         _statusParameterCache[parameter].Current += value;
     }
+
+    public IPlayerParameter GetParameter(ParameterType parameter)
+    {
+        return _statusParameterCache[parameter];
+    }
 }

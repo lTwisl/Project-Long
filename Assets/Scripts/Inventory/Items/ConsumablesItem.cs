@@ -2,10 +2,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "ConsumablesItem", menuName = "Items/Food and drink")]
-public class ConsumablesItem : InventoryItem
+public class ConsumablesItem : InventoryItem, ReplenishingPlayerParameters, GiverOfBonuses
 {
     [field: Header("Additional Properties")]
-    [field: SerializeField] public List<PairParamterAndValue> StatusParameterImpacts { get; private set; }
+    [field: SerializeField] public List<PairParamterAndValue> ReplenishmentParameters { get; private set; }
     [field: SerializeField] public List<ScriptableObject> GivesBonus { get; private set; }
 
     private void OnEnable()
@@ -18,7 +18,7 @@ public class ConsumablesItem : InventoryItem
     {
         string s = "StatusParameterImpacts:\n";
 
-        foreach (var pair in StatusParameterImpacts)
+        foreach (var pair in ReplenishmentParameters)
         {
             s += "\t" + pair.ParameterType.ToString() + ": " + pair.Value.ToString() + "\n";
         }

@@ -1,42 +1,102 @@
+using StatsModifiers;
+using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
+using System;
 
 [CreateAssetMenu(fileName = "UseOnSelfStrategy", menuName = "Use Item Strategy/UseOnSelfStrategy")]
 public class UseOnSelfStrategy : UseStrategy
 {
-    public override void Execute(InventoryItem item)
+    [NonSerialized] private InventorySlot _usedSlot;
+    [NonSerialized] private List<StatModifier> _statModifiers = new();
+    [NonSerialized] private Dictionary<IPlayerParameter, bool> _keyValuePairs = new();
+
+    public override void Execute(InventorySlot slot)
     {
-        if (item is ConsumablesItem consumables)
-        {
-            foreach (var parameter in consumables.StatusParameterImpacts)
-            {
-                if (parameter.ParameterType == ParameterType.Capacity)
-                {
-                    Debug.LogWarning($"Предмет {item.Name} пытается начислить ParameterType.Capacity");
-                    continue;
-                }
+        if (_usedSlot != null)
+            return;
 
-                _player.GetComponent<PlayerStatusManager>().AdjustParameter(parameter.ParameterType, parameter.Value);
+        if (slot?.Item is not ReplenishingPlayerParameters consumables)
+            return;
+
+        _usedSlot = slot;
+
+        if (_playerParameters == null)
+            _playerParameters = _player.GetComponent<PlayerStatusManager>().PlayerParameters;
+
+
+        foreach (var parameter in consumables.ReplenishmentParameters)
+        {
+            if (parameter.ParameterType == ParameterType.Capacity)
+            {
+                Debug.LogWarning($"Предмет {slot.Item.Name} пытается начислить ParameterType.Capacity");
+                continue;
             }
 
-            Debug.Log($"Use item (ConsumablesItem) {consumables.Name} on self");
-            return;
-        }
+            IPlayerParameter p = _playerParameters.GetParameter(parameter.ParameterType);
+            _keyValuePairs.Add(p, false);
 
-        if (item is MedicineItem medicine)
-        {
-            foreach (var parameter in medicine.StatusParameterImpacts)
+            _statModifiers.Add(new(0, new ParameterTypeCondition(ValueType.ChangeRate), value =>
             {
-                if (parameter.ParameterType == ParameterType.Capacity)
+                if (slot.IsEmpty)
                 {
-                    Debug.LogWarning($"Предмет {item.Name} пытается начислить ParameterType.Capacity");
-                    continue;
+                    Clear();
+                    return value;
                 }
 
-                _player.GetComponent<PlayerStatusManager>().AdjustParameter(parameter.ParameterType, parameter.Value);
-            }
+                if (slot.Item.MeasuredAsInteger)
+                {
+                    float current = slot.Capacity;
+                    slot.Capacity -= 5 * GameTime.DeltaTime / 60f;
 
-            Debug.Log($"Use item (MedicineItem) {item.Name} on self");
-            return;
+                    if (Mathf.CeilToInt(current) != Mathf.CeilToInt(slot.Capacity))
+                    {
+                        slot.Capacity = Mathf.Ceil(slot.Capacity);
+                        Clear();
+                        return value;
+                    }
+                }
+                else
+                {
+                    if (_keyValuePairs[p] == false && p.Current >= p.Max)
+                    {
+                        _keyValuePairs[p] = true;
+
+                        if (!_keyValuePairs.Values.Contains(false))
+                        {
+                            Clear();
+                            return value;
+                        }
+                    }
+
+                    slot.Capacity -= slot.Item.CostOfUse * GameTime.DeltaTime / 60f;
+                }
+
+                return value + parameter.Value;
+            }));
+
+            p.Mediator.AddModifier(_statModifiers[^1]);
         }
+    }
+
+    public override void Cancel()
+    {
+        if (_usedSlot == null)
+            return;
+
+        if (_usedSlot.Item.MeasuredAsInteger)
+            return;
+
+        Clear();
+    }
+
+    private void Clear()
+    {
+        foreach (var m in _statModifiers)
+            m.Dispose();
+
+        _statModifiers.Clear();
+        _keyValuePairs.Clear();
+        _usedSlot = null;
     }
 }

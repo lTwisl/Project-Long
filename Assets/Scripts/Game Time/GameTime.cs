@@ -194,6 +194,23 @@ public class GameTime : MonoBehaviour
         //return $"Δενό {time.Days}: {time.Hours:00}:{time.Minutes:00}";
     }
 
+    public static void Pause()
+    {
+        if (_instance == null)
+            return;
+
+        _instance._isTimeStopped = true;
+    }
+
+    public static void Resume()
+    {
+        if (_instance == null)
+            return;
+
+        _instance._isTimeStopped = false;
+    }
+
+
     public static IEnumerator YieldNull()
     {
         do
