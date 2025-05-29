@@ -5,5 +5,9 @@ public abstract class UseStrategy : ScriptableObject
 {
     [Inject] protected Player _player;
 
-    public abstract void Execute(InventoryItem item);
+    protected PlayerParameters _playerParameters;
+
+    public virtual void Execute(InventorySlot slot) { }
+
+    public virtual void Cancel() { }
 }

@@ -1,4 +1,5 @@
 using FirstPersonMovement;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Windows;
@@ -21,6 +22,8 @@ public class Player : MonoBehaviour
 
     private PlayerMovement _playerMovement;
     private InputReader _input;
+
+    Coroutine _coroutineTemporaryUseItem;
 
     private void Awake()
     {
@@ -91,6 +94,11 @@ public class Player : MonoBehaviour
         _uiWindowsController.gameObject.SetActive(newVisibility);
         Cursor.visible = _uiWindowsController.gameObject.activeSelf;
         Cursor.lockState = !Cursor.visible ? CursorLockMode.Locked : CursorLockMode.None;
+
+/*        if (newVisibility)
+            GameTime.Pause();
+        else
+            GameTime.Resume();*/
     }
 
     private void UpdateClothesStaminaOffsetMax(InventorySlot _)
@@ -156,6 +164,11 @@ public class Player : MonoBehaviour
 
         if (slot.IsEmpty)
             Inventory.RemoveItem(slot);
+    }
+
+    public void CancelUseItem(InventorySlot slot)
+    {
+        slot.Item.UseStrategy.Cancel();
     }
 
     private void HandleMovementByCapacityStats()

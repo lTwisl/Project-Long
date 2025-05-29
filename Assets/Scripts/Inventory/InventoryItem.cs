@@ -53,6 +53,22 @@ public enum UnitsMeasurement
     Charge,
 }
 
+public interface ReplenishingPlayerParameters
+{
+    public List<PairParamterAndValue> ReplenishmentParameters { get; }
+}
+
+public interface GiverOfBonuses
+{
+    public List<ScriptableObject> GivesBonus { get; }
+}
+
+public interface HealingDiseases
+{
+    public List<ScriptableObject> HealsDisease { get; }
+}
+
+
 
 
 [System.Serializable]
@@ -137,11 +153,11 @@ public abstract class InventoryItem : ScriptableObject
             $"Description: {Description}\n";
     }
 
-    public void Use()
+    public void Use(InventorySlot parentSlot)
     {
         if (UseStrategy == null)
             return;
 
-        UseStrategy.Execute(this);
+        UseStrategy.Execute(parentSlot);
     }
 }

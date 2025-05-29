@@ -13,18 +13,18 @@ MonoBehaviour:
   m_Name: PlayerParameters
   m_EditorClassIdentifier: 
   <Health>k__BackingField:
-    _current: 100
+    _current: 31.953072
     <BaseMax>k__BackingField: 100
     <Max>k__BackingField: 100
     <BaseChangeRate>k__BackingField: 0
     <ChangeRate>k__BackingField: 0
     RegenerationRate: 10
   <Stamina>k__BackingField:
-    _current: 40.581802
+    _current: 100
     <BaseMax>k__BackingField: 100
     <Max>k__BackingField: 100
     <BaseChangeRate>k__BackingField: 20
-    <ChangeRate>k__BackingField: 20
+    <ChangeRate>k__BackingField: 0
     <DecreasedHealthRate>k__BackingField: 0
     <IdleChangeRate>k__BackingField: 20
     <WalkChangeRate>k__BackingField: 5
@@ -32,34 +32,34 @@ MonoBehaviour:
     <DecreaseDueJump>k__BackingField: 10
     _reload: 1
   <Capacity>k__BackingField:
-    _current: 0
+    _current: 48.849995
     <BaseMax>k__BackingField: 60
     <Max>k__BackingField: 60
     <BaseChangeRate>k__BackingField: 0
     <ChangeRate>k__BackingField: 0
     <DecreasedHealthRate>k__BackingField: 0
   <FoodBalance>k__BackingField:
-    _current: 3483.3755
+    _current: 3406.056
     <BaseMax>k__BackingField: 3500
     <Max>k__BackingField: 3500
     <BaseChangeRate>k__BackingField: -10
-    <ChangeRate>k__BackingField: -10
+    <ChangeRate>k__BackingField: -20
     <DecreasedHealthRate>k__BackingField: -10
     <IdleChangeRate>k__BackingField: -10
     <WalkChangeRate>k__BackingField: -20
     <SprintChangeRate>k__BackingField: -40
   <WaterBalance>k__BackingField:
-    _current: 3433.5005
+    _current: 3151.4736
     <BaseMax>k__BackingField: 3500
     <Max>k__BackingField: 3500
     <BaseChangeRate>k__BackingField: -40
-    <ChangeRate>k__BackingField: -40
+    <ChangeRate>k__BackingField: -80
     <DecreasedHealthRate>k__BackingField: -10
     <IdleChangeRate>k__BackingField: -40
     <WalkChangeRate>k__BackingField: -60
     <SprintChangeRate>k__BackingField: -100
   <Energy>k__BackingField:
-    _current: 1466.7502
+    _current: 1340.7599
     <BaseMax>k__BackingField: 1500
     <Max>k__BackingField: 1500
     <BaseChangeRate>k__BackingField: -20
@@ -69,15 +69,15 @@ MonoBehaviour:
     <WalkChangeRate>k__BackingField: -40
     <SprintChangeRate>k__BackingField: -60
   <Heat>k__BackingField:
-    _current: 2490.0293
+    _current: 2407.5496
     <BaseMax>k__BackingField: 2500
     <Max>k__BackingField: 2500
-    <BaseChangeRate>k__BackingField: -15
-    <ChangeRate>k__BackingField: -15
+    <BaseChangeRate>k__BackingField: -15.484848
+    <ChangeRate>k__BackingField: -15.484848
     <DecreasedHealthRate>k__BackingField: -10
   <Toxicity>k__BackingField:
-    _current: 0.33238024
+    _current: 0
     <BaseMax>k__BackingField: 100
     <Max>k__BackingField: 100
-    <BaseChangeRate>k__BackingField: 0.5
-    <ChangeRate>k__BackingField: 0.5
+    <BaseChangeRate>k__BackingField: 0
+    <ChangeRate>k__BackingField: 0

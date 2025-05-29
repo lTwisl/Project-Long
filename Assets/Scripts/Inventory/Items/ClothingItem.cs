@@ -15,7 +15,7 @@ public enum ClothesType
 }
 
 [CreateAssetMenu(fileName = "ClothingItem", menuName = "Items/Clothing")]
-public class ClothingItem : InventoryItem
+public class ClothingItem : InventoryItem, GiverOfBonuses
 {
     [field: Header("- - Additional Properties - -")]
     [field: SerializeField] public ClothesType ClothingType { get; private set; }
