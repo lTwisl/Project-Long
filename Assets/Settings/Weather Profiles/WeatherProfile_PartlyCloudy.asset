@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60db134660303e540ba0dcff3d41170e, type: 3}
+  m_Name: WeatherProfile_PartlyCloudy
+  m_EditorClassIdentifier: 
+  <Identifier>k__BackingField: 2
+  <Transitions>k__BackingField: -1
+  <MinLifetime>k__BackingField: 1
+  <MaxLifetime>k__BackingField: 2
+  <VFX>k__BackingField: []
+  <Temperature>k__BackingField: -5
+  <Wetness>k__BackingField: 0
+  <Toxicity>k__BackingField: 0
+  <SunMaxIntensity>k__BackingField: 1.7
+  <SunTemperature>k__BackingField: 9000
+  <SunZenithColor>k__BackingField: {r: 1, g: 1, b: 1, a: 1}
+  <SunSunsetColor>k__BackingField: {r: 1, g: 0.6264706, b: 0.25, a: 1}
+  <MoonMaxIntensity>k__BackingField: 0.1
+  <MoonZenithColor>k__BackingField: {r: 0.84, g: 0.85, b: 0.86, a: 1}
+  <MoonSunsetColor>k__BackingField: {r: 0.7, g: 0.76, b: 0.8, a: 1}
+  <MinWindSpeed>k__BackingField: 1
+  <MaxWindSpeed>k__BackingField: 12
+  <IntensityChangeSpeed>k__BackingField: 1
+  <DirectionChangeSharpness>k__BackingField: 0.05
+  <IntensityChangeDirection>k__BackingField: 1
+  <NearVolumFogMat>k__BackingField: {fileID: 2100000, guid: 641390b40dd441e42a4f11dc039598ec, type: 2}
+  <FarVolumFogMat>k__BackingField: {fileID: 2100000, guid: e60f9dbd103a0984eaaf891b0b33e332, type: 2}
+  <SkyboxMat>k__BackingField: {fileID: 2100000, guid: 78349a4e9f7dfdb4b9a72b2d5669c036, type: 2}
+  <ColAdjPostExposure>k__BackingField: 0
+  <ColAdjContrast>k__BackingField: 0
+  <ColAdjColorFilter>k__BackingField: {r: 1, g: 1, b: 1, a: 1}
+  <ColAdjSaturation>k__BackingField: 0
+  <BloomThreshold>k__BackingField: 1.2
+  <BloomIntensity>k__BackingField: 1
+  <BloomScatter>k__BackingField: 0.7
+  <BloomTint>k__BackingField: {r: 1, g: 1, b: 1, a: 1}

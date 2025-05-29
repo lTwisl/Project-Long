@@ -10,22 +10,25 @@ public class WeatherPostProcessSystem : MonoBehaviour, IWeatherSystem
     [Header("Обьем простпроцессинга:")]
     [SerializeField, DisableEdit] private Volume _volume;
 
+    [Header("Компоненты простпроцессинга:")]
+    [SerializeField, DisableEdit] private ColorAdjustments _colorAdj;
+    [SerializeField, DisableEdit] private Bloom _bloom;
+
     public void ValidateSystem()
     {
+        // 1. Иниицализируем ссылку на обьем пост процессинга:
         _volume = FindFirstObjectByType<Volume>();
-
-        // Проверка ссылок на метериалы:
-        if (_volume == null)
+        if (!_volume)
         {
             IsSystemValid = false;
             return;
         }
 
-        // Проверка компонентов обьема пост процессинга:
+        // 2. Проверка наличия компонентов обьема пост процессинга:
         bool isValidePropertys;
 
-        isValidePropertys = _volume.profile.TryGet<ColorAdjustments>(out var colorAdjustments);
-        //isValidePropertys &= _volume.profile.TryGet<Bloom>(out var bloom);
+        isValidePropertys = _volume.profile.TryGet<ColorAdjustments>(out _colorAdj);
+        isValidePropertys &= _volume.profile.TryGet<Bloom>(out _bloom);
 
         IsSystemValid = isValidePropertys;
 
@@ -35,20 +38,25 @@ public class WeatherPostProcessSystem : MonoBehaviour, IWeatherSystem
 #endif
     }
 
-    public void UpdateSystem(WeatherProfile currentProfile, WeatherProfile newProfile, float t)
+    public void UpdateSystem(WeatherProfile currentProfile, WeatherProfile nextProfile, float t)
     {
         if (!IsSystemValid)
         {
-            Debug.Log("<color=orange>Модуль пост процессинга в сцене неисправен, либо отстутствует. Погода не будет менять обьем пост процесса!</color>");
+            Debug.LogWarning("<color=orange>Модуль пост процессинга невалиден, либо отстутствует. Погода не будет управлять обьемом пост процессинга!</color>");
             return;
         }
 
-        if (_volume.profile.TryGet<ColorAdjustments>(out var colorAdjustments))
-        {
-            colorAdjustments.postExposure.value = Mathf.Lerp(currentProfile.postExposure, newProfile.postExposure, t);
-            colorAdjustments.contrast.value = Mathf.Lerp(currentProfile.constrast, newProfile.constrast, t);
-            colorAdjustments.saturation.value = Mathf.Lerp(currentProfile.saturation, newProfile.saturation, t);
-        }
+        // ColorAdjustments:
+        _colorAdj.postExposure.value = Mathf.Lerp(currentProfile.ColAdjPostExposure, nextProfile.ColAdjPostExposure, t);
+        _colorAdj.contrast.value = Mathf.Lerp(currentProfile.ColAdjContrast, nextProfile.ColAdjContrast, t);
+        _colorAdj.colorFilter.value = Color.Lerp(currentProfile.ColAdjColorFilter, nextProfile.ColAdjColorFilter, t);
+        _colorAdj.saturation.value = Mathf.Lerp(currentProfile.ColAdjSaturation, nextProfile.ColAdjSaturation, t);
+
+        // Bloom:
+        _bloom.threshold.value = Mathf.Lerp(currentProfile.BloomThreshold, nextProfile.BloomThreshold, t);
+        _bloom.intensity.value = Mathf.Lerp(currentProfile.BloomIntensity, nextProfile.BloomIntensity, t);
+        _bloom.scatter.value = Mathf.Lerp(currentProfile.BloomScatter, nextProfile.BloomScatter, t);
+        _bloom.tint.value = Color.Lerp(currentProfile.BloomTint, nextProfile.BloomTint, t);
     }
 
     private void Awake()

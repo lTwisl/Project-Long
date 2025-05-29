@@ -1,17 +1,17 @@
 public interface IWeatherSystem
 {
     /// <summary>
-    /// Система валидна?
+    /// Флаг валидности системы
     /// </summary>
     public bool IsSystemValid { get; set; }
 
     /// <summary>
-    /// Проверить валидность системы
+    /// Детальная самопроверка системы на валидность
     /// </summary>
     public void ValidateSystem();
 
     /// <summary>
-    /// Обновить требуемые параметры системы
+    /// Обновить требуемые параметры системы по погодным профилям
     /// </summary>
-    public void UpdateSystem(WeatherProfile currentProfile, WeatherProfile newProfile, float t);
+    public void UpdateSystem(WeatherProfile currentWeatherProfile, WeatherProfile nextWeatherProfile, float t);
 }

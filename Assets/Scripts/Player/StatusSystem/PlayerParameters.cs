@@ -22,9 +22,10 @@ public enum ParameterType
     Capacity,
 }
 
-[CreateAssetMenu(fileName = "PlayerParameters", menuName = "Scriptable Objects/PlayerParameters")]
+[CreateAssetMenu(fileName = "Player Parameters", menuName = "Scriptable Objects/Player Parameters File")]
 public class PlayerParameters : ScriptableObject
 {
+    [field: Header("<size=16>- - General Parameters:</size>")]
     [field: SerializeField] public HealthParameter Health { get; private set; }
 
     [field: Space(10)]
@@ -33,7 +34,7 @@ public class PlayerParameters : ScriptableObject
     [field: Space(10)]
     [field: SerializeField] public CapacityParameter Capacity { get; private set; }
 
-    [field: Header("<size=16>StatusParameters</size>")]
+    [field: Header("<size=16>- - Status Parameters:</size>")]
     [field: SerializeField] public FoodBalanceParameter FoodBalance { get; private set; }
 
     [field: Space(10)]

@@ -6,9 +6,9 @@ using static FirstPersonMovement.PlayerMovement;
 public class StaminaParameter : MovementParameter
 {
     [field: Tooltip("Мгновенное уменьшение текущего значения в следствии прыжка"), Space(5)]
-    [field: SerializeField] public float DecreaseDueJump { get; protected set; }
+    [field: SerializeField] public float JumpCost { get; protected set; }
 
-    [Tooltip("Штраф за достижения нуля [м]")]
+    [Tooltip("Штраф за достижения нуля [мин]")]
     [SerializeField] private float _reload = 1;
 
     private float _timer = 0f;
@@ -34,7 +34,7 @@ public class StaminaParameter : MovementParameter
     {
         if (state is JumpingState)
         {
-            Current -= DecreaseDueJump;
+            Current -= JumpCost;
             BaseChangeRate = 0;
             return;
         }

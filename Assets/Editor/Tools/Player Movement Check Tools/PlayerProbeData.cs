@@ -128,6 +128,8 @@ public class PlayerProbeData
                 capsuleCenter = Position + Vector3.up * (_dimensions.groundOffset + _dimensions.heightStanding / 2);
                 labelPosition = capsuleCenter + Vector3.up * (_dimensions.heightStanding / 2 + 0.5f);
                 GeometryShapesDrawer.DrawWireCapsule(capsuleCenter, _dimensions.capsuleRadius, _dimensions.heightStanding, Quaternion.identity, VisualizeColor, Position);
+                GeometryShapesDrawer.DrawArrow(Position, Quaternion.identity, 15, 0.2f, Color.red);
+                //GeometryShapesDrawer.DrawGrid(Position, 15, 15, Color.blue);
                 Handles.Label(labelPosition, $"{probeName}", headerStyle);
                 break;
 

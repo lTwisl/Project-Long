@@ -12,12 +12,12 @@ public class WeatherVFXSystem: MonoBehaviour, IWeatherSystem
 
     public void ValidateSystem() { }
 
-    public void SpawnVFX(WeatherProfile newProfile, Transform parent)
+    public void SpawnVFX(WeatherProfile newProfile)
     {
         foreach (GameObject vfx in newProfile.VFX)
         {
             if (vfx == null) continue;
-            NewVFXControllers.Add(Instantiate(vfx, parent.position, Quaternion.identity, parent).GetComponent<VFXController>());
+            NewVFXControllers.Add(Instantiate(vfx, transform.position, Quaternion.identity, transform).GetComponent<VFXController>());
         }
     }
 

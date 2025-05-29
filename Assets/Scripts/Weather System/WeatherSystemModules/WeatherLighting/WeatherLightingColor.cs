@@ -138,13 +138,13 @@ public class WeatherLightingColor : MonoBehaviour
     /// </summary>
     public void UpdateLighting(WeatherProfile currentProfile, WeatherProfile newProfile, float t)
     {
-        MaxIntensity = Mathf.Lerp(currentProfile.maxIntensitySun, newProfile.maxIntensitySun, t);
-        colorAtZenith = Color.Lerp(currentProfile.colorZenithSun, newProfile.colorZenithSun, t);
-        colorAtSunset = Color.Lerp(currentProfile.colorSunsetSun, newProfile.colorSunsetSun, t);
+        MaxIntensity = Mathf.Lerp(currentProfile.SunMaxIntensity, newProfile.SunMaxIntensity, t);
+        colorAtZenith = Color.Lerp(currentProfile.SunZenithColor, newProfile.SunZenithColor, t);
+        colorAtSunset = Color.Lerp(currentProfile.SunSunsetColor, newProfile.SunSunsetColor, t);
 
         if (isSun)
         {
-            Temperature = Mathf.Lerp(currentProfile.temperatureSun, newProfile.temperatureSun, t);
+            Temperature = Mathf.Lerp(currentProfile.SunTemperature, newProfile.SunTemperature, t);
         }
     }
 

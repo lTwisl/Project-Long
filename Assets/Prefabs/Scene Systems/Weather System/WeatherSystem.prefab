@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3982350974279347672}
   - component: {fileID: 7828725762744367070}
+  - component: {fileID: 7770052614879118849}
   m_Layer: 0
   m_Name: WeatherSystem
   m_TagString: Untagged
@@ -54,23 +55,37 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 62b6db9f95725c349b09f93c1854c909, type: 2}
   - {fileID: 11400000, guid: 05059311190a3f847b37c6959c77c5bb, type: 2}
   <CurrentWeatherProfile>k__BackingField: {fileID: 11400000, guid: 62b6db9f95725c349b09f93c1854c909, type: 2}
-  <NewWeatherProfile>k__BackingField: {fileID: 0}
+  <NextWeatherProfile>k__BackingField: {fileID: 0}
   <Temperature>k__BackingField: 0
-  <Wetness>k__BackingField: 0.2
-  <Toxicity>k__BackingField: 0.5
+  <Wetness>k__BackingField: 0
+  <Toxicity>k__BackingField: 0
   <SunLight>k__BackingField: {fileID: 0}
   <MoonLight>k__BackingField: {fileID: 0}
-  _isLightingSystemsValid: 1
+  <IsLightingSystemsValid>k__BackingField: 0
   <WeatherWindSystem>k__BackingField: {fileID: 6733437681237491628}
-  _isWindSystemValid: 1
+  <IsWindSystemValid>k__BackingField: 1
   <WeatherFogSystem>k__BackingField: {fileID: 3411355947148336652}
-  _isFogSystemValid: 1
+  <IsFogSystemValid>k__BackingField: 1
   <WeatherSkyboxSystem>k__BackingField: {fileID: 7197166586690042323}
-  _isSkyboxSystemValid: 1
+  <IsSkyboxSystemValid>k__BackingField: 1
   <WeatherPostProcessSystem>k__BackingField: {fileID: 7528676310365337471}
-  _isPostProcessSystemValid: 1
+  <IsPostProcessSystemValid>k__BackingField: 1
   <WeatherVFXSystem>k__BackingField: {fileID: 7611072829369350415}
-  _isVfxSystemValid: 1
+  <IsVfxSystemValid>k__BackingField: 1
+--- !u!114 &7770052614879118849
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3690970475114704028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a69b5e2eeda3e3b4891e1db7ea86984d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _weatherSystem: {fileID: 0}
+  _useWeatherSystemUpdate: 1
 --- !u!1 &5253470689031542207
 GameObject:
   m_ObjectHideFlags: 0
@@ -115,7 +130,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6a8d0d2a12790a44bfec81d07e0f682, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _isSkyboxValide: 1
+  <IsSystemValid>k__BackingField: 1
   _skyboxMaterial: {fileID: 2100000, guid: cf74f6d2e3814e84d8ae19faa473c992, type: 2}
   _sunTransform: {fileID: 0}
 --- !u!1 &5516812054343687718
@@ -162,8 +177,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1cbbf2097662dee49b0dead3a23bfe55, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _isPostProcessValide: 1
+  <IsSystemValid>k__BackingField: 1
   _volume: {fileID: 0}
+  _colorAdj: {fileID: 0}
+  _bloom: {fileID: 0}
 --- !u!1 &5945319906156504920
 GameObject:
   m_ObjectHideFlags: 0
@@ -208,6 +225,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78793d5cb13511a45997302ea3dec59b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <IsSystemValid>k__BackingField: 1
   <CurrentVFXControllers>k__BackingField: []
   <NewVFXControllers>k__BackingField: []
 --- !u!1 &7041458400281342136
@@ -254,11 +272,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 683df5cef6c3b9543b89c37b61bf9ae0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _isFogValide: 1
-  _nearFogFeatureName: FullScreenVolumetricFogNear
-  _farFogFeatureName: FullScreenVolumetricFogFar
-  _nearFogMaterial: {fileID: 2100000, guid: 47d7ec949da0c28458603888c2c87755, type: 2}
-  _farFogMaterial: {fileID: 2100000, guid: e7dbaa0ea93db594b9a594c85ed9df52, type: 2}
+  <IsSystemValid>k__BackingField: 1
+  _nameNearFogFeature: FullScreenVolumetricFogNear
+  _nameFarFogFeature: FullScreenVolumetricFogFar
+  _nearFogMaterial: {fileID: 2100000, guid: ffdf90ecda52eee4a815143f53fb5838, type: 2}
+  _farFogMaterial: {fileID: 2100000, guid: 14cdb3992491d314aa50ed55cdf69599, type: 2}
   _sunTransform: {fileID: 0}
 --- !u!1 &9014236117871535397
 GameObject:
@@ -304,9 +322,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de6396b1decb90746b62072ca6f3d543, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <MaxWindTemperature>k__BackingField: -1
+  <IsSystemValid>k__BackingField: 1
   _windGloabalDirection: {x: 0, y: 0}
   <CurrentSpeed>k__BackingField: 0
+  <MaxWindTemperature>k__BackingField: -1
   _minWindSpeed: 1
   _maxWindSpeed: 1
   _intensityChangeSpeed: 1
@@ -349,4 +368,3 @@ MonoBehaviour:
     m_ColorSpace: -1
     m_NumColorKeys: 2
     m_NumAlphaKeys: 2
-  _windZones: []

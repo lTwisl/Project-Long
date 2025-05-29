@@ -4,22 +4,23 @@ public class WeatherWindSystem : MonoBehaviour, IWeatherSystem
 {
     [field: SerializeField, DisableEdit] public bool IsSystemValid { get; set; } = true;
 
-    [field: SerializeField] public float MaxWindTemperature { get; private set; } = -1;
-
+    [Header("- - Текущие параметры ветра:")]
     [SerializeField, DisableEdit] private Vector2 _windGloabalDirection;
-    [field: DisableEdit, SerializeField] public float CurrentSpeed { get; private set; }
+    [field: SerializeField, DisableEdit] public float CurrentSpeed { get; private set; }
+    [field: SerializeField, Range(-20, 20)] public float MaxWindTemperature { get; private set; } = -10;
+
 
     [Header("Параметры глобального ветра:")]
-    [DisableEdit, SerializeField, Tooltip("Минимальная скорость ветра"), Min(1)]
+    [SerializeField, DisableEdit, Tooltip("Минимальная скорость ветра"), Min(1)]
     private float _minWindSpeed = 2f;
-    [DisableEdit, SerializeField, Tooltip("Максимальная скорость ветра"), Min(1)]
+    [SerializeField, DisableEdit, Tooltip("Максимальная скорость ветра"), Min(1)]
     private float _maxWindSpeed = 15f;
-    [DisableEdit, SerializeField, Tooltip("Интенсивность изменений скорости ветра"), Range(0.01f, 5f)]
+    [SerializeField, DisableEdit, Tooltip("Интенсивность изменений скорости ветра"), Range(0.01f, 5f)]
     private float _intensityChangeSpeed = 1f;
     [Space(8)]
-    [DisableEdit, SerializeField, Tooltip("Резкость изменения направления ветра по шуму Перлина (0.01 - штиль; 0.3 - порывистый ветер)"), Range(0.001f, 2f)]
+    [SerializeField, DisableEdit, Tooltip("Резкость изменения направления ветра по шуму Перлина (0.01 - штиль; 0.3 - порывистый ветер)"), Range(0.001f, 2f)]
     private float _directionChangeSharpness = 0.3f;
-    [DisableEdit, SerializeField, Tooltip("Интенсивность изменения направления ветра"), Range(0.01f, 5f)]
+    [SerializeField, DisableEdit, Tooltip("Интенсивность изменения направления ветра"), Range(0.01f, 5f)]
     private float _intensityChangeDirection = 1f;
 
     [Header("Параметры локального ветра:")]
@@ -45,7 +46,7 @@ public class WeatherWindSystem : MonoBehaviour, IWeatherSystem
     private Vector2 _directionNoiseOffset;
     private Vector2 _intensityNoiseOffset;
 
-    #region Инициализация системы
+
     private void Awake()
     {
         InitializeWindSystem();
@@ -60,7 +61,6 @@ public class WeatherWindSystem : MonoBehaviour, IWeatherSystem
         // Инициализация стартовой скорости
         CurrentSpeed = (_minWindSpeed + _maxWindSpeed) * 0.5f;
     }
-    #endregion
 
     void Update()
     {
@@ -101,6 +101,7 @@ public class WeatherWindSystem : MonoBehaviour, IWeatherSystem
             _intensityNoiseOffset -= _windGloabalDirection * (CurrentSpeed * _noiseWindSpeedSpeedMul * Time.deltaTime);
         }
     }
+
 
     #region Работа с системой ветра
 
@@ -161,11 +162,11 @@ public class WeatherWindSystem : MonoBehaviour, IWeatherSystem
 
     public void UpdateSystem(WeatherProfile currentProfile, WeatherProfile newProfile, float t)
     {
-        float minWindSpeed = Mathf.Lerp(currentProfile.minWindSpeed, newProfile.minWindSpeed, t);
-        float maxWindSpeed = Mathf.Lerp(currentProfile.maxWindSpeed, newProfile.maxWindSpeed, t);
-        float intensityChangeSpeed = Mathf.Lerp(currentProfile.intensityChangeSpeed, newProfile.intensityChangeSpeed, t);
-        float directionChangeSharpness = Mathf.Lerp(currentProfile.directionChangeSharpness, newProfile.directionChangeSharpness, t);
-        float intensityChangeDirection = Mathf.Lerp(currentProfile.intensityChangeDirection, newProfile.intensityChangeDirection, t);
+        float minWindSpeed = Mathf.Lerp(currentProfile.MinWindSpeed, newProfile.MinWindSpeed, t);
+        float maxWindSpeed = Mathf.Lerp(currentProfile.MaxWindSpeed, newProfile.MaxWindSpeed, t);
+        float intensityChangeSpeed = Mathf.Lerp(currentProfile.IntensityChangeSpeed, newProfile.IntensityChangeSpeed, t);
+        float directionChangeSharpness = Mathf.Lerp(currentProfile.DirectionChangeSharpness, newProfile.DirectionChangeSharpness, t);
+        float intensityChangeDirection = Mathf.Lerp(currentProfile.IntensityChangeDirection, newProfile.IntensityChangeDirection, t);
         InitializeSystemParameters(minWindSpeed, maxWindSpeed, intensityChangeSpeed, directionChangeSharpness, intensityChangeDirection);
     }
 
@@ -188,6 +189,8 @@ public class WeatherWindSystem : MonoBehaviour, IWeatherSystem
         _intensityChangeSpeed = Mathf.Clamp(intensityChangeDirection, 0.01f, 5f);
     }
     #endregion
+
+    #region ВИЗУАЛИЗАЦИЯ
 
 #if UNITY_EDITOR
     private void OnDrawGizmos()
@@ -219,39 +222,40 @@ public class WeatherWindSystem : MonoBehaviour, IWeatherSystem
         {
             for (int z = 0; z < _vectorsGrid; z++)
             {
-                Vector3 cellCenter = startPosition +
-                    new Vector3(x * MaxWindIntensity, 0, z * MaxWindIntensity);
+                Vector3 cellCenter = startPosition + new Vector3(x * MaxWindIntensity, 0, z * MaxWindIntensity);
 
-                DrawWindArrow(cellCenter, CalculateLocalIntensity(cellCenter));
+                //GeometryShapesDrawer.DrawWindArrow(cellCenter, CalculateLocalIntensity(cellCenter));
             }
         }
     }
 
-    private void DrawWindArrow(Vector3 position, float localSpeed)
+    //private void DrawWindArrow(Vector3 position, float localSpeed)
+    //{
+    //    Vector3 direction = new Vector3(_windGloabalDirection.x, 0, _windGloabalDirection.y);
+    //    float arrowLength = localSpeed * _vectorsSizeMul;
+
+    //    Gizmos.color = GetColorOfIntensity(localSpeed);
+    //    Quaternion rotation = Quaternion.LookRotation(direction.normalized);
+
+    //    Vector3 tip = position + rotation * Vector3.forward * arrowLength * 0.5f;
+    //    Vector3 tail = position - rotation * Vector3.forward * arrowLength * 0.5f;
+
+    //    Gizmos.DrawLine(tail, tip);
+
+    //    float wingSize = arrowLength * 0.25f;
+    //    Vector3 rightWing = tip + rotation * (-Vector3.forward + Vector3.right) * wingSize;
+    //    Vector3 leftWing = tip + rotation * (-Vector3.forward - Vector3.right) * wingSize;
+
+    //    Gizmos.DrawLine(tip, rightWing);
+    //    Gizmos.DrawLine(tip, leftWing);
+    //}
+
+    private Color GetColorOfIntensity(float intensity)
     {
-        Vector3 direction = new Vector3(_windGloabalDirection.x, 0, _windGloabalDirection.y);
-        float arrowLength = localSpeed * _vectorsSizeMul;
-
-        Gizmos.color = GetIntensityColor(localSpeed);
-        Quaternion rotation = Quaternion.LookRotation(direction.normalized);
-
-        Vector3 tip = position + rotation * Vector3.forward * arrowLength * 0.5f;
-        Vector3 tail = position - rotation * Vector3.forward * arrowLength * 0.5f;
-
-        Gizmos.DrawLine(tail, tip);
-
-        float wingSize = arrowLength * 0.25f;
-        Vector3 rightWing = tip + rotation * (-Vector3.forward + Vector3.right) * wingSize;
-        Vector3 leftWing = tip + rotation * (-Vector3.forward - Vector3.right) * wingSize;
-
-        Gizmos.DrawLine(tip, rightWing);
-        Gizmos.DrawLine(tip, leftWing);
-    }
-
-    private Color GetIntensityColor(float intensity)
-    {
-        float t = Mathf.InverseLerp(0, MaxWindIntensity, intensity); // Интерпретация значений цвета ветра по шкале Бофорта
-        return _intensityColorGradient.Evaluate(t);
+        // Интерпретация значений цвета ветра по шкале Бофорта
+        return _intensityColorGradient.Evaluate(Mathf.InverseLerp(0, MaxWindIntensity, intensity));
     }
 #endif
+
+    #endregion
 }

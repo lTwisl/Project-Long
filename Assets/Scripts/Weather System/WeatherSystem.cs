@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 
 public class WeatherSystem : MonoBehaviour
@@ -14,12 +17,12 @@ public class WeatherSystem : MonoBehaviour
     [field: SerializeField] public bool UseAutoTransition { get; private set; } = true;
 
     [field: Header("Все погодные профили:")]
-    [field: SerializeField] public List<WeatherProfile> AvailableWeatherProfiles { get; private set; }
+    [field: SerializeField] public List<WeatherProfile> AvailableWeatherProfiles { get; private set; } = new();
 
 
     [field: Header("Текущие погодные профили:")]
     [field: SerializeField] public WeatherProfile CurrentWeatherProfile { get; private set; }
-    [field: SerializeField, DisableEdit] public WeatherProfile NewWeatherProfile { get; private set; }
+    [field: SerializeField, DisableEdit] public WeatherProfile NextWeatherProfile { get; private set; }
 
 
     [field: Header("Параметры текущей погоды:")]
@@ -63,7 +66,7 @@ public class WeatherSystem : MonoBehaviour
     public TimeSpan TransitionDuration { get; private set; } = new TimeSpan(0, 1, 0, 0); // Время перехода между сменяемыми погодными условиями
 
     private Process _waitNextTransition;
-    private Coroutine _transitionCoroutine;
+    private Coroutine _transitionCoroutine = null;
     #endregion
 
     /// <summary>
@@ -89,245 +92,262 @@ public class WeatherSystem : MonoBehaviour
         IsVfxSystemValid = WeatherVFXSystem != null;
 
         // Выводы для отладки:
-        //if (!_isProfilesValide) Debug.LogWarning("<color=orange>В сцене не инициализированы профили погоды</color>", this);
-        //if (!_isLightingSystemsValide) Debug.LogWarning("<color=orange>Потеряна ссылка на источник света</color>", this);
-        //if (!_isWindSystemValide) Debug.LogWarning("<color=orange>Потеряна ссылка на WeatherWindSystem</color>", this);
-        //if (!_isFogSystemValide) Debug.LogWarning("<color=orange>Потеряна ссылка на WeatherFogSystem</color>", this);
-        //if (!_isSkyboxSystemValide) Debug.LogWarning("<color=orange>Потеряна ссылка на WeatherSkyboxSystem</color>", this);
-        //if (!_isPostProcessSystemValide) Debug.LogWarning("<color=orange>Потеряна ссылка на WeatherPostProcessSystem</color>", this);
-        //if (!_isPostProcessSystemValide) Debug.LogWarning("<color=orange>Потеряна ссылка на WeatherVFXSystem</color>", this);
+        if (AvailableWeatherProfiles.Count == 0) Debug.LogWarning("<color=orange>В сцене не инициализированы профили погоды</color>", this);
+        if (!IsLightingSystemsValid) Debug.LogWarning("<color=orange>Потеряна ссылка на источник света</color>", this);
+        if (!IsWindSystemValid) Debug.LogWarning("<color=orange>Потеряна ссылка на WeatherWindSystem</color>", this);
+        if (!IsFogSystemValid) Debug.LogWarning("<color=orange>Потеряна ссылка на WeatherFogSystem</color>", this);
+        if (!IsSkyboxSystemValid) Debug.LogWarning("<color=orange>Потеряна ссылка на WeatherSkyboxSystem</color>", this);
+        if (!IsPostProcessSystemValid) Debug.LogWarning("<color=orange>Потеряна ссылка на WeatherPostProcessSystem</color>", this);
+        if (!IsPostProcessSystemValid) Debug.LogWarning("<color=orange>Потеряна ссылка на WeatherVFXSystem</color>", this);
     }
 
     private void Start()
     {
         // Warning!!! Временное решение, ждем сохранения. Стартовая конфигурация сцены при запуске
-        SetNewWeatherImmediately(CurrentWeatherProfile);
+        SetWeatherConditionImmediately(CurrentWeatherProfile);
     }
 
     /// <summary>
-    /// Сменить погоду мгновенно
+    /// Установить новое состояние погоды мгновенно
     /// </summary>
-    public void SetNewWeatherImmediately(WeatherProfile weatherProfile)
+    public void SetWeatherConditionImmediately(WeatherProfile weatherProfile)
     {
-        if (weatherProfile == null)
+        if (!weatherProfile)
         {
-            Debug.LogError("<color=red>Попытка установить null профиль погоды!</color>");
+            Debug.LogError("<color=red>Попытка установить невалидный профиль погоды отклонена!</color>");
             return;
         }
 
-        if (CurrentWeatherProfile == null) CurrentWeatherProfile = weatherProfile;
-        NewWeatherProfile = weatherProfile;
-
+        // 1. Сначала останавливаем текущий переход
         StopWeatherTransition();
-        OnWeatherTransitionStarted?.Invoke(NewWeatherProfile);
-        SetupVFXSystem();
-        UpdateWeatherParameters(CurrentWeatherProfile, NewWeatherProfile, 1f);
+        
+        // 2. Устанавливаем профили погодных состояний
+        if (!CurrentWeatherProfile) CurrentWeatherProfile = weatherProfile;
+        NextWeatherProfile = weatherProfile;
 
-        // Обновляем профили
-        CalculateWeatherProfiles();
+        OnWeatherTransitionStarted?.Invoke(NextWeatherProfile);
 
-        // Обновляем временные рамки
-        CalculateTimeWeather();
+        // 3. Обновляем параметры погодного состояния
+        InitializeWeatherVFXSystem();
+        UpdateWeatherParameters(CurrentWeatherProfile, NextWeatherProfile, 1f);
+
+        // 4. Рассчитываем параметры следующего погодного состояния
+        SetNextWeatherProfile();
+        SetNextWeatherTimeBorders();
+
         OnWeatherTransitionFinished?.Invoke(CurrentWeatherProfile);
     }
 
     /// <summary>
     /// Сменить погоду плавно по установленному профилю
     /// </summary>
-    public void SetNewWeatherWithTransition(WeatherProfile weatherProfile)
+    public void SetWeatherConditionTransient(WeatherProfile weatherProfile)
     {
-        if (weatherProfile == null)
+        if (!weatherProfile)
         {
-            Debug.LogError("Попытка установить null профиль погоды!");
+            Debug.LogError("<color=red>Попытка установить невалидный профиль погоды отклонена!</color>");
             return;
         }
 
-        if (CurrentWeatherProfile == null) CurrentWeatherProfile = weatherProfile;
-        NewWeatherProfile = weatherProfile;
-
+        // 1. Сначала останавливаем текущий переход
         StopWeatherTransition();
-        _transitionCoroutine = StartCoroutine(WeatherTransitionCoroutine());
+
+        // 2. Устанавливаем профили погодных состояний
+        if (!CurrentWeatherProfile) CurrentWeatherProfile = weatherProfile;
+        NextWeatherProfile = weatherProfile;
+
+        // 3. Запускаем корутину перехода погодных состояний
+        OnWeatherTransitionStarted?.Invoke(NextWeatherProfile);
+        _transitionCoroutine = StartCoroutine(WeatherConditionTransitionCoroutine());
     }
 
     /// <summary>
-    /// Остановить текущий погодный переход, если он есть
+    /// Остановить текущий переход погодных состояний, если он запущен
     /// </summary>
     public void StopWeatherTransition()
     {
-        if (_transitionCoroutine == null) return;
-
-        StopCoroutine(_transitionCoroutine);
-        _transitionCoroutine = null;
+        if (_transitionCoroutine != null)
+        {
+            StopCoroutine(_transitionCoroutine);
+            _transitionCoroutine = null;
+        }
     }
 
-    private IEnumerator WeatherTransitionCoroutine()
+    private IEnumerator WeatherConditionTransitionCoroutine()
     {
-        OnWeatherTransitionStarted?.Invoke(NewWeatherProfile);
         TimeSpan startTime = GameTime.Time;
-        //Debug.Log($"<color=yellow>Началась смена погоды! Меняем: {CurrentWeatherProfile.weatherIdentifier} на {NewWeatherProfile.weatherIdentifier}. Время начала: {WorldTime.Instance.GetFormattedTime(startTime)}</color>");
+        //Debug.Log($"<color=green>Смена погодных условий началась в {GameTime.GetFormattedTime(startTime)}. Меняем: {CurrentWeatherProfile.weatherIdentifier} на {NewWeatherProfile.weatherIdentifier}.</color>");
 
-        // Процесс перехода
-        SetupVFXSystem();
+        // 1. Обновляем параметры погодного состояния
+        InitializeWeatherVFXSystem();
         float t = 0f;
         while (t < 1f)
         {
             TimeSpan passedTime = GameTime.GetPassedTime(startTime);
             t = Mathf.Clamp01((float)(passedTime.TotalSeconds / TransitionDuration.TotalSeconds));
-            UpdateWeatherParameters(CurrentWeatherProfile, NewWeatherProfile, t);
-            yield return new WaitForEndOfFrame();
+            UpdateWeatherParameters(CurrentWeatherProfile, NextWeatherProfile, t);
+            yield return null;
         }
 
-        // Обновляем профили
-        CalculateWeatherProfiles();
+        // 2. Рассчитываем параметры следующего погодного состояния
+        SetNextWeatherProfile();
+        SetNextWeatherTimeBorders();
 
-        // Обновляем временные рамки
-        CalculateTimeWeather();
-
-        _transitionCoroutine = null;
         OnWeatherTransitionFinished?.Invoke(CurrentWeatherProfile);
+        //Debug.Log($"<color=green>Смена погодных условий закончилась в {GameTime.GetFormattedTime(GameTime.Time)}! Сейчас состояние погоды: {CurrentWeatherProfile.weatherIdentifier}.</color>");
+        _transitionCoroutine = null;
     }
 
     /// <summary>
-    /// Погодготовить систему визуальных эффектов
+    /// Погодготовить систему визуальных эффектов погоды
     /// </summary>
-    private void SetupVFXSystem()
+    private void InitializeWeatherVFXSystem()
     {
-        Transform VFXTargetTransform = FindAnyObjectByType<Player>()?.transform;
-        if (VFXTargetTransform == null) VFXTargetTransform = WeatherVFXSystem.transform;
-
-        WeatherVFXSystem.SpawnVFX(NewWeatherProfile, VFXTargetTransform);
+        WeatherVFXSystem.SpawnVFX(NextWeatherProfile);
     }
 
     /// <summary>
-    /// Вычислить следующий профиль погоды
+    /// Вычислить профиль следующего погодного состояния
     /// </summary>
-    private void CalculateWeatherProfiles()
+    private void SetNextWeatherProfile()
     {
-        CurrentWeatherProfile = NewWeatherProfile;
-        //Debug.Log($"<color=green>Закончилась смена погоды! Сейчас на улице: {CurrentWeatherProfile.weatherIdentifier}. Текущее время: {GameTime.GetFormattedTime(GameTime.Time)}</color>");
+        // 1. Устанавливаем новый текущий профиль погоды
+        CurrentWeatherProfile = NextWeatherProfile;
 
-        List<WeatherProfile> availableTransitions = GetAvailableTransitions();
+        // 2. Рассчитываем следующее погодное состояние
+        List<WeatherProfile> availableTransitions = GetTransitionProfiles();
         if (availableTransitions.Count > 0)
-        {
-            NewWeatherProfile = availableTransitions[UnityEngine.Random.Range(0, availableTransitions.Count)];
-            //Debug.Log($"<color=lightblue>Следующей погодой будет: {NewWeatherProfile.weatherIdentifier}</color>");
-        }
+            NextWeatherProfile = availableTransitions[UnityEngine.Random.Range(0, availableTransitions.Count)];
         else
         {
-            NewWeatherProfile = CurrentWeatherProfile;
-            //Debug.LogWarning("<color=lightblue>Нет доступных погодных переходов. Оставлен текущий погодный профиль.</color>");
+            NextWeatherProfile = CurrentWeatherProfile;
+            Debug.Log("<color=orange>У текущей погоды нет перехода в другие погодные состояния. Погода не будет менять состояния!</color>");
         }
     }
 
     /// <summary>
-    /// Найти все доступные для перехода погодные профили
+    /// Получить все профили, доступные для перехода из текущего состояния погоды
     /// </summary>
-    private List<WeatherProfile> GetAvailableTransitions()
+    private List<WeatherProfile> GetTransitionProfiles()
     {
         List<WeatherProfile> availableProfiles = new();
 
-        // Проходим по всем профилям погод сцены, ищем доступные для перехода
         foreach (WeatherProfile profile in AvailableWeatherProfiles)
-            if (profile != null && CurrentWeatherProfile.weatherTransitions.HasFlag((WeatherTransitions)profile.weatherIdentifier))
+            if (profile && CurrentWeatherProfile && CurrentWeatherProfile.Transitions.HasFlag((WeatherTransitions)profile.Identifier))
                 availableProfiles.Add(profile);
 
         return availableProfiles;
     }
 
     /// <summary>
-    /// Рассчитать временные рамки погодных условий
+    /// Рассчитать временные рамки следующего погодного условия
     /// </summary>
-    private void CalculateTimeWeather()
+    private void SetNextWeatherTimeBorders()
     {
         TimeStartCurrentWeather = GameTime.Time;
-        int lifetimeHours = UnityEngine.Random.Range(CurrentWeatherProfile.minLifetimeHours, CurrentWeatherProfile.maxLifetimeHours + 1);
+        
+        // 1. Рассчитываем время существования текущего погодного состояния
+        int lifetimeHours = UnityEngine.Random.Range(CurrentWeatherProfile.MinLifetime, CurrentWeatherProfile.MaxLifetime + 1);
         TimeEndCurrentWeather = TimeStartCurrentWeather + TimeSpan.FromHours(lifetimeHours);
-        //Debug.Log($"<color=lightblue>Текущая погода закончится в: {GameTime.GetFormattedTime(TimeEndCurrentWeather)}, после начнется переход на предсказанную погоду</color>");
 
-        // Запускаем процесс ожидания наступления времени следующего погодного перехода
+        // 2. Если погода должна меняться автоматически - запускаем процесс ожидания времени следующего перехода
         if (UseAutoTransition)
         {
             _waitNextTransition = new Process(TimeEndCurrentWeather - TimeStartCurrentWeather,
-                () => SetNewWeatherWithTransition(NewWeatherProfile),
-                _ => Debug.Log("<color=red>Ожидание перехода погоды прервано</color>"));
+                () => SetWeatherConditionTransient(NextWeatherProfile),
+                _ => Debug.Log("<color=red>Процесс ожидания следующего перехода состояния погоды прерван!</color>"));
             _waitNextTransition.Play();
         }
     }
 
-    private void UpdateWeatherParameters(WeatherProfile currentProfile, WeatherProfile newProfile, float t)
+    private void UpdateWeatherParameters(WeatherProfile currentWeatherProfile, WeatherProfile nextWeatherProfile, float t)
     {
-        UpdateWeatherIndicators(currentProfile, newProfile, t);
+        UpdateWeatherIndicators(currentWeatherProfile, nextWeatherProfile, t);
+
         if (IsLightingSystemsValid)
         {
-            SunLight.UpdateLighting(currentProfile, newProfile, t);
-            MoonLight.UpdateLighting(currentProfile, newProfile, t);
+            SunLight.UpdateLighting(currentWeatherProfile, nextWeatherProfile, t);
+            MoonLight.UpdateLighting(currentWeatherProfile, nextWeatherProfile, t);
         }
-        if (IsWindSystemValid) WeatherWindSystem.UpdateSystem(currentProfile, newProfile, t);
-        if (IsFogSystemValid) WeatherFogSystem.UpdateSystem(currentProfile, newProfile, t);
-        if (IsSkyboxSystemValid) WeatherSkyboxSystem.UpdateSystem(currentProfile, newProfile, t);
-        if (IsPostProcessSystemValid) WeatherPostProcessSystem.UpdateSystem(currentProfile, newProfile, t);
-        if (IsVfxSystemValid) WeatherVFXSystem.UpdateSystem(currentProfile, newProfile, t);
+        if (IsWindSystemValid) WeatherWindSystem.UpdateSystem(currentWeatherProfile, nextWeatherProfile, t);
+        if (IsFogSystemValid) WeatherFogSystem.UpdateSystem(currentWeatherProfile, nextWeatherProfile, t);
+        if (IsSkyboxSystemValid) WeatherSkyboxSystem.UpdateSystem(currentWeatherProfile, nextWeatherProfile, t);
+        if (IsPostProcessSystemValid) WeatherPostProcessSystem.UpdateSystem(currentWeatherProfile, nextWeatherProfile, t);
+        if (IsVfxSystemValid) WeatherVFXSystem.UpdateSystem(currentWeatherProfile, nextWeatherProfile, t);
     }
 
-    private void UpdateWeatherIndicators(WeatherProfile currentProfile, WeatherProfile newProfile, float t)
+    private void UpdateWeatherIndicators(WeatherProfile currentProfile, WeatherProfile nextProfile, float t)
     {
-        Temperature = Mathf.Lerp(currentProfile.temperature, newProfile.temperature, t);
-        Wetness = Mathf.Lerp(currentProfile.wetness, newProfile.wetness, t);
-        Toxicity = Mathf.Lerp(currentProfile.toxicity, newProfile.toxicity, t);
+        Temperature = Mathf.Lerp(currentProfile.Temperature, nextProfile.Temperature, t);
+        Wetness = Mathf.Lerp(currentProfile.Wetness, nextProfile.Wetness, t);
+        Toxicity = Mathf.Lerp(currentProfile.Toxicity, nextProfile.Toxicity, t);
     }
 
     private void OnDestroy()
     {
 #if UNITY_EDITOR
-        // Сбрасываем погодные условия для редактора
-        SetNewWeatherImmediately(AvailableWeatherProfiles[0]);
+        SetWeatherConditionImmediately(AvailableWeatherProfiles[0]);
 #endif
     }
 
 #if UNITY_EDITOR
+
     private void OnValidate()
     {
-        ValidateReferences();
-        if (!IsFogSystemValid || !IsLightingSystemsValid || !IsPostProcessSystemValid || !IsSkyboxSystemValid || !IsWindSystemValid || !IsVfxSystemValid)
-            FindReferences();
+        FindReferences();
     }
 
     private void FindReferences()
     {
-        if (CurrentWeatherProfile != null)
+        if (PrefabUtility.IsPartOfPrefabInstance(this)) return;
+
+        // 1. Актуализируем погодные параметры
+        if (CurrentWeatherProfile)
         {
-            Temperature = CurrentWeatherProfile.temperature;
-            Wetness = CurrentWeatherProfile.wetness;
-            Toxicity = CurrentWeatherProfile.toxicity;
+            Temperature = CurrentWeatherProfile.Temperature;
+            Wetness = CurrentWeatherProfile.Wetness;
+            Toxicity = CurrentWeatherProfile.Toxicity;
         }
 
-        // Поиск главных модулей в сцене
-        WeatherLightingColor[] dynamicLightingColor = FindObjectsByType<WeatherLightingColor>(FindObjectsSortMode.None);
-        foreach (var dyn in dynamicLightingColor)
-            (SunLight, MoonLight) = dyn.isSun ? (dyn, MoonLight) : (SunLight, dyn);
+        // 2. Инициализируем каждую погодную систему при необходимости
+        if (!IsLightingSystemsValid)
+        {
+            WeatherLightingColor[] weatherLightings = FindObjectsByType<WeatherLightingColor>(FindObjectsSortMode.None);
 
-        WeatherFogSystem = FindFirstObjectByType<WeatherFogSystem>();
-        WeatherSkyboxSystem = FindFirstObjectByType<WeatherSkyboxSystem>();
-        WeatherWindSystem = FindFirstObjectByType<WeatherWindSystem>();
-        WeatherPostProcessSystem = FindFirstObjectByType<WeatherPostProcessSystem>();
-        WeatherVFXSystem = FindFirstObjectByType<WeatherVFXSystem>();
+            SunLight = weatherLightings.FirstOrDefault(wetLight => wetLight?.isSun == true);
+            MoonLight = weatherLightings.FirstOrDefault(wetLight => wetLight?.isSun == false);
+        }
+        if (!IsFogSystemValid) WeatherFogSystem = FindFirstObjectByType<WeatherFogSystem>();
+        if (!IsSkyboxSystemValid) WeatherSkyboxSystem = FindFirstObjectByType<WeatherSkyboxSystem>();
+        if (!IsWindSystemValid) WeatherWindSystem = FindFirstObjectByType<WeatherWindSystem>();
+        if (!IsPostProcessSystemValid) WeatherPostProcessSystem = FindFirstObjectByType<WeatherPostProcessSystem>();
+        if (!IsVfxSystemValid) WeatherVFXSystem = FindFirstObjectByType<WeatherVFXSystem>();
 
+        // 3. Проверяем валидности систем, чтобы обновить флаги после поиска систем
         ValidateReferences();
+
+        EditorUtility.SetDirty(this);
+
         if (PrefabUtility.IsPartOfPrefabInstance(this))
             PrefabUtility.RecordPrefabInstancePropertyModifications(this);
     }
 
-    public void SetSceneWeatherInEditor()
+    public void SetWeatherConditionEditor()
     {
-        Undo.RecordObject(this, "Вручную выставлена погода в редакторе");
+        Undo.RecordObject(this, "Установлено новогое погодное состояние в редакторе");
 
-        if (CurrentWeatherProfile == null)
+        if (!CurrentWeatherProfile)
         {
-            Debug.LogError("<color=red>Попытка установить null профиль погоды! Установи сменяемый профиль в переменной CurrentWeatherProfile</color>");
+            Debug.LogError("<color=red>Попытка установить невалидный профиль погоды отклонена!</color>");
             return;
         }
 
+        // 1. Обновляем параметры
         UpdateWeatherParameters(CurrentWeatherProfile, CurrentWeatherProfile, 1f);
+
+        // 2. Помечаем всю сцену как грязную
+        EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
     }
+
 #endif
 }
