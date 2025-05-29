@@ -116,6 +116,6 @@ Material:
     - _Fog_Color: {r: 0.9, g: 0.9916666, b: 1, a: 1}
     - _IntensityChangeRange: {r: 0.3, g: 0.3, b: 0, a: 0}
     - _LightIntensityRange: {r: 0, g: 0.5, b: 0, a: 0}
-    - _Sun_Direction: {r: 0, g: -0.42261827, b: 0.9063078, a: 0}
+    - _Sun_Direction: {r: 0, g: -0.8007315, b: 0.59902346, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

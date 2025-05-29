@@ -24,7 +24,7 @@ MonoBehaviour:
   <SunTemperature>k__BackingField: 9000
   <SunZenithColor>k__BackingField: {r: 1, g: 1, b: 1, a: 1}
   <SunSunsetColor>k__BackingField: {r: 1, g: 0.6264706, b: 0.25, a: 1}
-  <MoonMaxIntensity>k__BackingField: 0.1
+  <MoonMaxIntensity>k__BackingField: 0.07
   <MoonZenithColor>k__BackingField: {r: 0.84, g: 0.85, b: 0.86, a: 1}
   <MoonSunsetColor>k__BackingField: {r: 0.7, g: 0.76, b: 0.8, a: 1}
   <MinWindSpeed>k__BackingField: 1
