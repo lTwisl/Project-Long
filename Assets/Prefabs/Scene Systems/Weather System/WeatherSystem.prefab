@@ -177,7 +177,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1cbbf2097662dee49b0dead3a23bfe55, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <IsSystemValid>k__BackingField: 0
+  <IsSystemValid>k__BackingField: 1
   _volume: {fileID: 0}
   _colorAdj: {fileID: 0}
   _bloom: {fileID: 0}
@@ -323,22 +323,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <IsSystemValid>k__BackingField: 1
-  _windGloabalDirection: {x: 0, y: 0}
+  _windGlobalDirection: {x: 0, y: 0}
   <CurrentSpeed>k__BackingField: 0
-  <MaxWindTemperature>k__BackingField: -1
   _minWindSpeed: 1
   _maxWindSpeed: 1
-  _intensityChangeSpeed: 1
-  _directionChangeSharpness: 0.05
-  _intensityChangeDirection: 1
-  _tilingNoiseWindSpeed: 0.005
-  _influenceNoiseWindSpeed: 1
-  _useNoiseWindSpeedMotion: 0
+  _windSpeedInterpolationSpeed: 1
+  _windDirectionNoiseSharpness: 0.3
+  _windDirectionInterpolationSpeed: 1
+  _windIntensityNoiseTiling: 0.005
+  _windIntensityNoiseInfluence: 1
   _noiseWindSpeedSpeedMul: 1
-  _drawWindField: 1
-  _vectorsGrid: 46
-  _vectorsSizeMul: 10
-  _intensityColorGradient:
+  _drawWindField: 0
+  _windVectorsGridSize: 16
+  _windArrowsSizeMultiplier: 1
+  _gradientIntensityToColor:
     serializedVersion: 2
     key0: {r: 0, g: 0.041666627, b: 0.25, a: 1}
     key1: {r: 0, g: 1, b: 1, a: 1}

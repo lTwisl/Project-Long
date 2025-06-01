@@ -84,12 +84,12 @@ public class WeatherSystem : MonoBehaviour
     /// </summary>
     public void ValidateReferences()
     {
-        IsLightingSystemsValid = SunLight != null && MoonLight != null;
-        IsWindSystemValid = WeatherWindSystem != null;
-        IsFogSystemValid = WeatherFogSystem != null;
-        IsSkyboxSystemValid = WeatherSkyboxSystem != null;
-        IsPostProcessSystemValid = WeatherPostProcessSystem != null;
-        IsVfxSystemValid = WeatherVFXSystem != null;
+        IsLightingSystemsValid = SunLight && MoonLight;
+        IsWindSystemValid = WeatherWindSystem;
+        IsFogSystemValid = WeatherFogSystem;
+        IsSkyboxSystemValid = WeatherSkyboxSystem;
+        IsPostProcessSystemValid = WeatherPostProcessSystem;
+        IsVfxSystemValid = WeatherVFXSystem;
 
         // Выводы для отладки:
         if (AvailableWeatherProfiles.Count == 0) Debug.LogWarning("<color=orange>В сцене не инициализированы профили погоды</color>", this);
@@ -310,6 +310,7 @@ public class WeatherSystem : MonoBehaviour
         }
 
         // 2. Инициализируем каждую погодную систему при необходимости
+        Undo.RecordObject(this, "Weather System Find References");
         if (!IsLightingSystemsValid)
         {
             WeatherLightingColor[] weatherLightings = FindObjectsByType<WeatherLightingColor>(FindObjectsSortMode.None);
