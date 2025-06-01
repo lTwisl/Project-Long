@@ -6,7 +6,7 @@ using UnityEngine;
 public class MedicineItem : InventoryItem, ReplenishingPlayerParameters, GiverOfBonuses, HealingDiseases
 {
     [field: Header("Additional Properties")]
-    [field: SerializeField] public List<PairParamterAndValue> ReplenishmentParameters { get; private set; }
+    [field: SerializeField] public List<ReplenishmentParameter> ReplenishmentParameters { get; private set; }
     [field: SerializeField] public List<ScriptableObject> HealsDisease { get; private set; }
     [field: SerializeField] public List<ScriptableObject> GivesBonus { get; private set; }
 

@@ -17,7 +17,7 @@ namespace FirstPersonMovement
         public event Action<IState> OnChangedState = delegate { };
 
         public float CurrentMaxSpeed { get; private set; }
-        public StatsMediator SpeedMediator { get; private set; } = new();
+        public StatsMediator<MoveMode> SpeedMediator { get; private set; } = new();
         public float WalkSpeed => Request(MoveMode.Walk, _settings.WalkSpeed);
         public float RunSpeed => Request(MoveMode.Run, _settings.RunSpeed);
         public float CrouchSpeed => Request(MoveMode.Crouch, _settings.CrouchSpeed);
@@ -135,7 +135,7 @@ namespace FirstPersonMovement
 
         protected float Request(MoveMode moveMode, float value)
         {
-            var q = new Query(new MaxSpeedCondition(moveMode), value);
+            var q = new Query<MoveMode>(moveMode, value);
             SpeedMediator.PerformQuery(this, q);
             return q.Value;
         }

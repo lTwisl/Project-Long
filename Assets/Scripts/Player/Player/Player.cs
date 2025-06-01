@@ -173,7 +173,7 @@ public class Player : MonoBehaviour
 
     private void HandleMovementByCapacityStats()
     {
-        _playerMovement.SpeedMediator.AddModifier(new(0, new MaxSpeedCondition(MoveMode.Walk), (float speed) =>
+        _playerMovement.SpeedMediator.AddModifier(new(0, MoveMode.Walk, (float speed) =>
         {
             if (speed == 0 || _parameters.Capacity.GetCurrentWeightRange() < WeightRange.Ultimate)
                 return speed;
@@ -186,7 +186,7 @@ public class Player : MonoBehaviour
             return speed * scale;
         }));
 
-        _playerMovement.SpeedMediator.AddModifier(new(0, new MaxSpeedCondition(MoveMode.Run), (float speed) =>
+        _playerMovement.SpeedMediator.AddModifier(new(0, MoveMode.Run, (float speed) =>
         {
             if (speed == 0 || _parameters.Capacity.GetCurrentWeightRange() < WeightRange.Critical)
                 return speed;

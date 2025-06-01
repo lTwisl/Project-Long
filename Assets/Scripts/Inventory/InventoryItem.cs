@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public struct PairParamterAndValue
+public struct ReplenishmentParameter
 {
     public ParameterType ParameterType;
     public float Value;
@@ -55,7 +55,7 @@ public enum UnitsMeasurement
 
 public interface ReplenishingPlayerParameters
 {
-    public List<PairParamterAndValue> ReplenishmentParameters { get; }
+    public List<ReplenishmentParameter> ReplenishmentParameters { get; }
 }
 
 public interface GiverOfBonuses

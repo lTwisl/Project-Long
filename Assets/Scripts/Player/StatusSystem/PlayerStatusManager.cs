@@ -68,7 +68,7 @@ public class PlayerStatusManager : MonoBehaviour
     // Parameter Modifiers
     private void ApplyEnergyDependentModifiers()
     {
-        PlayerParameters.Capacity.Mediator.AddModifier(new(0, new ParameterTypeCondition(ValueType.Max), value =>
+        PlayerParameters.Capacity.Mediator.AddModifier(new(0, ValueType.Max, value =>
         {
             if (PlayerParameters.Energy.Current > 0.5f * PlayerParameters.Energy.Max)
                 return value;
@@ -81,7 +81,7 @@ public class PlayerStatusManager : MonoBehaviour
     // Inventory Load Effects
     private void UpdateStaminaModifierByCapacity()
     {
-        PlayerParameters.Stamina.Mediator.AddModifier(new(0, new ParameterTypeCondition(ValueType.ChangeRate), value =>
+        PlayerParameters.Stamina.Mediator.AddModifier(new(0, ValueType.ChangeRate, value =>
         {
             float scale = CalculateCapacityScale(WeightRange.Critical, WeightRange.Ultimate, 1, 3);
 
@@ -93,7 +93,7 @@ public class PlayerStatusManager : MonoBehaviour
 
     private void UpdateFoodModifierByCapacity()
     {
-        PlayerParameters.FoodBalance.Mediator.AddModifier(new(0, new ParameterTypeCondition(ValueType.ChangeRate), value =>
+        PlayerParameters.FoodBalance.Mediator.AddModifier(new(0, ValueType.ChangeRate, value =>
         {
             float scale = CalculateCapacityScale(WeightRange.Critical, WeightRange.Ultimate, 1, 2);
 
@@ -105,7 +105,7 @@ public class PlayerStatusManager : MonoBehaviour
 
     private void UpdateWaterModifierByCapacity()
     {
-        PlayerParameters.WaterBalance.Mediator.AddModifier(new(0, new ParameterTypeCondition(ValueType.ChangeRate), value =>
+        PlayerParameters.WaterBalance.Mediator.AddModifier(new(0, ValueType.ChangeRate, value =>
         {
             float scale = CalculateCapacityScale(WeightRange.Critical, WeightRange.Ultimate, 1, 2);
 

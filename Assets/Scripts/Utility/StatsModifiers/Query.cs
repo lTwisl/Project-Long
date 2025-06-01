@@ -1,12 +1,14 @@
-﻿namespace StatsModifiers
+﻿using System;
+
+namespace StatsModifiers
 {
-    public class Query
+    public class Query<T>
     {
-        public readonly ICondition Condition;
+        public readonly T Condition;
 
         public float Value;
 
-        public Query(ICondition condition, float value)
+        public Query(T condition, float value)
         {
             Condition = condition;
             Value = value;

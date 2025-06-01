@@ -11,7 +11,7 @@ public class BasePlayerParameter : PlayerParameter
     public TimeSpan TimeIsZero { get; private set; }
     public TimeSpan TimeGeaterZero { get; private set; }
 
-    public StatModifier DecreasedHealthModifier { get; private set; }
+    public StatModifier<ValueType> DecreasedHealthModifier { get; private set; }
     [field: SerializeField, Space(5)] public float DecreasedHealthRate { get; private set; }
 
     public event Action OnReachZero;
@@ -54,7 +54,7 @@ public class BasePlayerParameter : PlayerParameter
     {
         base.Initialize();
 
-        DecreasedHealthModifier = new(0, new ParameterTypeCondition(ValueType.ChangeRate), value => value += DecreasedHealthRate);
+        DecreasedHealthModifier = new(0, ValueType.ChangeRate, value => value += DecreasedHealthRate);
 
         IsZero = false;
         TimeIsZero = TimeSpan.Zero;
@@ -107,12 +107,12 @@ public class PlayerParameter : IPlayerParameter
 
     public float OffsetMax { get; set; }
 
-    public StatsMediator Mediator { get; } = new();
+    public StatsMediator<ValueType> Mediator { get; } = new();
 
 
     private float Request(ValueType valueType, float value)
     {
-        var q = new Query(new ParameterTypeCondition(valueType), value);
+        var q = new Query<ValueType>(valueType, value);
         Mediator.PerformQuery(this, q);
         return q.Value;
     }
@@ -152,7 +152,7 @@ public interface IPlayerParameter
 
     public event Action<float> OnValueChanged;
 
-    public StatsMediator Mediator { get; }
+    public StatsMediator<ValueType> Mediator { get; }
 
     public void UpdateParameter(float deltaSeconds);
 

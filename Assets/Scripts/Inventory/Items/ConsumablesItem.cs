@@ -5,7 +5,7 @@ using UnityEngine;
 public class ConsumablesItem : InventoryItem, ReplenishingPlayerParameters, GiverOfBonuses
 {
     [field: Header("Additional Properties")]
-    [field: SerializeField] public List<PairParamterAndValue> ReplenishmentParameters { get; private set; }
+    [field: SerializeField] public List<ReplenishmentParameter> ReplenishmentParameters { get; private set; }
     [field: SerializeField] public List<ScriptableObject> GivesBonus { get; private set; }
 
     private void OnEnable()

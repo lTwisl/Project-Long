@@ -3,18 +3,18 @@
 
 namespace StatsModifiers
 {
-    public class StatModifier : IDisposable
+    public class StatModifier<T> : IDisposable
     {
-        private readonly ICondition _condition;
+        private readonly T _condition;
         private readonly Func<float, float> _operation;
 
         public bool MarkedForRemoval = false;
 
-        public event Action<StatModifier> OnDispose = delegate { };
+        public event Action<StatModifier<T>> OnDispose = delegate { };
 
         private float _duration = 0;
 
-        public StatModifier(float duration, ICondition condition, Func<float, float> operation)
+        public StatModifier(float duration, T condition, Func<float, float> operation)
         {
             _duration = duration;
             _condition = condition;
@@ -33,7 +33,7 @@ namespace StatsModifiers
         }
 
 
-        public void Handle(object sender, Query query)
+        public void Handle(object sender, Query<T> query)
         {
             if (!_condition.Equals(query.Condition))
                 return;
