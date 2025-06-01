@@ -275,8 +275,8 @@ MonoBehaviour:
   <IsSystemValid>k__BackingField: 1
   _nameNearFogFeature: FullScreenVolumetricFogNear
   _nameFarFogFeature: FullScreenVolumetricFogFar
-  _nearFogMaterial: {fileID: 2100000, guid: ffdf90ecda52eee4a815143f53fb5838, type: 2}
-  _farFogMaterial: {fileID: 2100000, guid: 14cdb3992491d314aa50ed55cdf69599, type: 2}
+  _nearFogMaterial: {fileID: 2100000, guid: 47d7ec949da0c28458603888c2c87755, type: 2}
+  _farFogMaterial: {fileID: 2100000, guid: e7dbaa0ea93db594b9a594c85ed9df52, type: 2}
   _sunTransform: {fileID: 0}
 --- !u!1 &9014236117871535397
 GameObject:
@@ -333,11 +333,11 @@ MonoBehaviour:
   _intensityChangeDirection: 1
   _tilingNoiseWindSpeed: 0.005
   _influenceNoiseWindSpeed: 1
-  _useNoiseWindSpeedMotion: 1
+  _useNoiseWindSpeedMotion: 0
   _noiseWindSpeedSpeedMul: 1
-  _drawWindField: 0
-  _vectorsGrid: 4
-  _vectorsSizeMul: 1
+  _drawWindField: 1
+  _vectorsGrid: 46
+  _vectorsSizeMul: 10
   _intensityColorGradient:
     serializedVersion: 2
     key0: {r: 0, g: 0.041666627, b: 0.25, a: 1}
