@@ -106,7 +106,7 @@ namespace FirstPersonMovement
 
         private float GetMaxCurrentSpeed()
         {
-            float maxSpeed = CurrentMaxSpeed;
+            float maxSpeed = Mathf.Min(RunSpeed, CurrentMaxSpeed);
 
             if (_stateMachine.CurrentState is WalkState)
                 maxSpeed = WalkSpeed;
@@ -280,7 +280,8 @@ namespace FirstPersonMovement
 
         private void Jump()
         {
-            if (_readyToJump && _isGrounded && _stateMachine.CurrentState is not CrouchingState && _groundAngle < _settings.FreeSlideAngle && CanJump)
+            /*&& _groundAngle < _settings.FreeSlideAngle*/
+            if (_readyToJump && _isGrounded && _stateMachine.CurrentState is not CrouchingState && CanJump)
             {
                 _rb.linearDamping = 0f;
                 _readyToJump = false;
@@ -330,8 +331,8 @@ namespace FirstPersonMovement
 
         private void OnCollisionEnter(Collision collision)
         {
-            if (collision.collider != null && collision.collider != _groundHit.collider)
-                Debug.Log($"Contact with {collision.gameObject.name}, friction = {GetFriction(collision.collider.material)}");
+            //if (collision.collider != null && collision.collider != _groundHit.collider)
+            //    Debug.Log($"Contact with {collision.gameObject.name}, friction = {GetFriction(collision.collider.material)}");
         }
 
 #if UNITY_EDITOR
