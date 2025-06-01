@@ -24,28 +24,28 @@ public class PlayerStatusManager : MonoBehaviour
 
     private void OnEnable()
     {
-        SubscribeToEvents();
+        //SubscribeToEvents();
         GameTime.OnTimeChanged += HandleTimeUpdate;
     }
 
     private void OnDisable()
     {
-        UnsubscribeFromEvents();
+        //UnsubscribeFromEvents();
         GameTime.OnTimeChanged -= HandleTimeUpdate;
     }
 
     // Time-based Updates
     private void HandleTimeUpdate()
     {
-        UpdateWorldAffectedParameters();
+        //UpdateWorldAffectedParameters();
         UpdateAllParameters();
     }
 
-    private void UpdateWorldAffectedParameters()
+    /*private void UpdateWorldAffectedParameters()
     {
         PlayerParameters.Heat.BaseChangeRate = _world.TotalTemperature;
         PlayerParameters.Toxicity.BaseChangeRate = _world.TotalToxicity;
-    }
+    }*/
 
     private void UpdateAllParameters()
     {
@@ -55,81 +55,10 @@ public class PlayerStatusManager : MonoBehaviour
         }
     }
 
-    // Movement Handling
-    private void OnMovementStateChanged(FiniteStateMachine.IState state)
-    {
-        if (state == null)
-            return;
-
-        foreach (var param in PlayerParameters.AllParameters.OfType<MovementParameter>())
-            param.SetChangeRateByMoveMode(state);
-    }
-
-    // Parameter Modifiers
-    private void ApplyEnergyDependentModifiers()
-    {
-        PlayerParameters.Capacity.Mediator.AddModifier(new(0, ValueType.Max, value =>
-        {
-            if (PlayerParameters.Energy.Current > 0.5f * PlayerParameters.Energy.Max)
-                return value;
-
-            float value01 = Utility.MapRange(PlayerParameters.Energy.Current, 0, 0.5f * PlayerParameters.Energy.Max, 1, 0, true);
-            return value - 15f * value01;
-        }));
-    }
-
-    // Inventory Load Effects
-    private void UpdateStaminaModifierByCapacity()
-    {
-        PlayerParameters.Stamina.Mediator.AddModifier(new(0, ValueType.ChangeRate, value =>
-        {
-            float scale = CalculateCapacityScale(WeightRange.Critical, WeightRange.Ultimate, 1, 3);
-
-            return value > 0
-                ? value * Utility.MapRange(scale, 1, 3, 1, 0, true)
-                : value * scale;
-        }));
-    }
-
-    private void UpdateFoodModifierByCapacity()
-    {
-        PlayerParameters.FoodBalance.Mediator.AddModifier(new(0, ValueType.ChangeRate, value =>
-        {
-            float scale = CalculateCapacityScale(WeightRange.Critical, WeightRange.Ultimate, 1, 2);
-
-            return value > 0
-                ? value * Utility.MapRange(scale, 1, 2, 1, 0, true)
-                : value * scale;
-        }));
-    }
-
-    private void UpdateWaterModifierByCapacity()
-    {
-        PlayerParameters.WaterBalance.Mediator.AddModifier(new(0, ValueType.ChangeRate, value =>
-        {
-            float scale = CalculateCapacityScale(WeightRange.Critical, WeightRange.Ultimate, 1, 2);
-
-            return value > 0
-                ? value * Utility.MapRange(scale, 1, 2, 1, 0, true)
-                : value * scale;
-        }));
-    }
-
-    private float CalculateCapacityScale(WeightRange minRange, WeightRange maxRange, float minScale, float maxScale)
-    {
-        return Utility.MapRange(
-            PlayerParameters.Capacity.Current,
-            PlayerParameters.Capacity.GetRangeLoadCapacity(minRange),
-            PlayerParameters.Capacity.GetRangeLoadCapacity(maxRange),
-            minScale, maxScale, true
-        );
-    }
-
-    // Event Management
+    /*// Event Management
     private void SubscribeToEvents()
     {
         SubscribeToParameterEvents();
-        SubscribeToMovementEvents();
     }
 
     private void SubscribeToParameterEvents()
@@ -141,22 +70,11 @@ public class PlayerStatusManager : MonoBehaviour
             param.OnReachZero += () => PlayerParameters.Health.Mediator.AddModifier(param.DecreasedHealthModifier);
             param.OnRecoverFromZero += () => PlayerParameters.Health.Mediator.RemoveModifier(param.DecreasedHealthModifier);
         }
+    }*/
 
-        ApplyEnergyDependentModifiers();
-        UpdateStaminaModifierByCapacity();
-        UpdateFoodModifierByCapacity();
-        UpdateWaterModifierByCapacity();
-    }
-
-    private void SubscribeToMovementEvents()
-    {
-        _playerMovement.OnChangedState += OnMovementStateChanged;
-    }
-
-    private void UnsubscribeFromEvents()
+    /*private void UnsubscribeFromEvents()
     {
         UnsubscribeFromParameterEvents();
-        UnsubscribeFromMovementEvents();
     }
 
     private void UnsubscribeFromParameterEvents()
@@ -167,12 +85,7 @@ public class PlayerStatusManager : MonoBehaviour
                 continue;
             param.UnsubscribeAll();
         }
-    }
-
-    private void UnsubscribeFromMovementEvents()
-    {
-        _playerMovement.OnChangedState -= OnMovementStateChanged;
-    }
+    }*/
 
     // Public Interface
     public void AdjustParameter(ParameterType parameter, float value)

@@ -12,12 +12,14 @@ public class World : MonoBehaviour
     public float WeatherTemperature => Weather.Temperature;
     [field: SerializeField, DisableField] public float ShelterTemperature { get; private set; }
     [field: SerializeField, DisableField] public float TotalTemperature { get; private set; }
+    public event Action<float> OnChangedTotalTemperature;
 
     [field: Header("Влажность")]
     [field: SerializeField, Range(0, 1)] public float Wetness { get; private set; }
     public float WeatherWetness => Weather.Wetness;
     [field: SerializeField, DisableField] public float ShelterWetness { get; private set; }
     [field: SerializeField, DisableField] public float TotalWetness { get; private set; }
+    public event Action<float> OnChangedTotalWetness;
 
     [field: Header("Заражённость")]
     [field: SerializeField] public float Toxicity { get; private set; }
@@ -25,6 +27,7 @@ public class World : MonoBehaviour
     [field: SerializeField, DisableField] public float ShelterToxicity { get; private set; }
     [field: SerializeField, DisableField] public float ZoneToxicity { get; private set; }
     [field: SerializeField, DisableField] public float TotalToxicity { get; private set; }
+    public event Action<float> OnChangedTotalToxicity;
 
 
     public WeatherSystem Weather { get; private set; }
@@ -168,6 +171,7 @@ public class World : MonoBehaviour
         float WeatherOrShalter = PlayerEnteredLastShelter ? ShelterTemperature : WeatherTemperature;
 
         TotalTemperature = Temperature + WeatherOrShalter + GetMaxExternalHeatsByPosiotion() + _player.ClothingSystem.TotalTemperatureBonus;
+        OnChangedTotalTemperature?.Invoke(TotalTemperature);
     }
 
 
@@ -176,6 +180,7 @@ public class World : MonoBehaviour
         float WeatherOrShalter = PlayerEnteredLastShelter ? ShelterToxicity : WeatherToxicity;
 
         TotalToxicity = (Toxicity + WeatherOrShalter + ZoneToxicity) * (1 - _player.ClothingSystem.TotalToxicityProtection / 100);
+        OnChangedTotalToxicity?.Invoke(TotalToxicity);
     }
 
 
@@ -184,6 +189,7 @@ public class World : MonoBehaviour
         float WeatherOrShalter = PlayerEnteredLastShelter ? ShelterWetness : WeatherWetness;
 
         TotalWetness = (Wetness + WeatherOrShalter) * (1 - _player.ClothingSystem.TotalToxicityProtection);
+        OnChangedTotalWetness?.Invoke(TotalWetness);
     }
 
     /// <summary>

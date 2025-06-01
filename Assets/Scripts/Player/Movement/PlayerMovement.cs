@@ -106,7 +106,7 @@ namespace FirstPersonMovement
 
         private float GetMaxCurrentSpeed()
         {
-            float maxSpeed = CurrentMaxSpeed;
+            float maxSpeed = Mathf.Min(RunSpeed, CurrentMaxSpeed);
 
             if (_stateMachine.CurrentState is WalkState)
                 maxSpeed = WalkSpeed;
@@ -114,7 +114,7 @@ namespace FirstPersonMovement
                 maxSpeed = RunSpeed;
             else if (_stateMachine.CurrentState is CrouchingState)
                 maxSpeed = CrouchSpeed;
-
+                
             if (_settings.UseWind)
             {
                 Vector2 wind = _world.GetWindLocalVector();

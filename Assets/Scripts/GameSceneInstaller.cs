@@ -6,7 +6,6 @@ public class GameSceneInstaller : MonoInstaller
     [SerializeField] private World _world;
 
     [SerializeField] private Player _player;
-    [SerializeField] private PlayerMovementConfig _playerMovementConfig;
     [SerializeField] private PlayerParameters _playerParameters;
 
     [SerializeField] private UseStrategy[] _useStrategies;
@@ -15,9 +14,8 @@ public class GameSceneInstaller : MonoInstaller
     {
         Container.Bind<World>().FromInstance(_world).AsSingle();
 
-        Container.Bind<PlayerMovementConfig>().FromInstance(_playerMovementConfig).AsSingle();
         Container.Bind<PlayerParameters>().FromInstance(_playerParameters).AsSingle();
-        _playerParameters.Initialize(_player.Inventory);
+        _playerParameters.Initialize();
 
         Container.Bind<ClothingSystem>().AsSingle();
         Container.Bind<Inventory>().AsSingle();

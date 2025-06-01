@@ -1,8 +1,6 @@
 using FirstPersonMovement;
-using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.Windows;
 using Zenject;
 
 [SelectionBase]
@@ -23,12 +21,12 @@ public class Player : MonoBehaviour
     private PlayerMovement _playerMovement;
     private InputReader _input;
 
-    Coroutine _coroutineTemporaryUseItem;
-
     private void Awake()
     {
         InitializeComponents();
         InitializeSystems();
+
+        _parameters.Bind(Inventory, _playerMovement, _world);
     }
 
     private void OnEnable()
@@ -41,6 +39,8 @@ public class Player : MonoBehaviour
         HandleMovementByCapacityStats();
 
         SetVisibilityUiPlayer(false);
+
+        UpdateClothesStaminaOffsetMax();
     }
 
     private void OnDisable()
@@ -64,12 +64,8 @@ public class Player : MonoBehaviour
     private void SubscribeToEvents()
     {
         _input.OnChangedVisibilityUiPlayer += SetVisibilityUiPlayer;
-        ClothingSystem.OnEquip += UpdateClothesStaminaOffsetMax;
-        ClothingSystem.OnUnequip += UpdateClothesStaminaOffsetMax;
         GameTime.OnMinuteChanged += HandleMinuteChange;
         Inventory.OnItemRemoved += ClothingSystem.HandleItemRemoved;
-        Inventory.OnItemAdded += UpdateCurrentCapacity;
-        Inventory.OnItemRemoved += UpdateCurrentCapacity;
         _world.OnEnterToxicityZone += HandleToxicityZoneEnter;
         _world.OnEnterShelter += HandleEnterShelter;
         _world.OnExitShelter += HandleExitShelter;
@@ -78,12 +74,9 @@ public class Player : MonoBehaviour
     private void UnsubscribeFromEvents()
     {
         _input.OnChangedVisibilityUiPlayer -= SetVisibilityUiPlayer;
-        ClothingSystem.OnEquip -= UpdateClothesStaminaOffsetMax;
-        ClothingSystem.OnUnequip -= UpdateClothesStaminaOffsetMax;
         GameTime.OnMinuteChanged -= HandleMinuteChange;
         Inventory.OnItemRemoved -= ClothingSystem.HandleItemRemoved;
-        Inventory.OnItemAdded -= UpdateCurrentCapacity;
-        Inventory.OnItemRemoved -= UpdateCurrentCapacity;
+        _world.OnEnterToxicityZone -= HandleToxicityZoneEnter;
         _world.OnEnterShelter -= HandleEnterShelter;
         _world.OnExitShelter -= HandleExitShelter;
     }
@@ -94,16 +87,15 @@ public class Player : MonoBehaviour
         _uiWindowsController.gameObject.SetActive(newVisibility);
         Cursor.visible = _uiWindowsController.gameObject.activeSelf;
         Cursor.lockState = !Cursor.visible ? CursorLockMode.Locked : CursorLockMode.None;
-
-/*        if (newVisibility)
-            GameTime.Pause();
-        else
-            GameTime.Resume();*/
     }
 
-    private void UpdateClothesStaminaOffsetMax(InventorySlot _)
+    private void UpdateClothesStaminaOffsetMax()
     {
-        _parameters.Stamina.OffsetMax = ClothingSystem.TotalOffsetStamina;
+        _parameters.Stamina.Mediator.AddModifier(new(0, ValueType.Max, value =>
+        {
+            value += ClothingSystem.TotalOffsetStamina;
+            return value;
+        }));
     }
 
     private void HandleMinuteChange()
@@ -131,7 +123,6 @@ public class Player : MonoBehaviour
     }
 
     public void UpdateCurrentCapacity(InventorySlot _) => _parameters.Capacity.Current = Inventory.Weight;
-
 
     public void DropItem(InventorySlot slot)
     {
@@ -219,4 +210,28 @@ public class Player : MonoBehaviour
         };
     }
 
+#if UNITY_EDITOR
+    private void OnGUI()
+    {
+        if (_parameters == null)
+            return;
+
+        GUIStyle boxStyle = new GUIStyle(GUI.skin.box);
+        boxStyle.alignment = TextAnchor.UpperLeft;
+        boxStyle.richText = true;
+
+        Rect rect = new Rect(5, 5, 400, 250);
+        GUI.color = new Color(0.2f, 0.2f, 0.2f, 0.8f);
+        GUI.Box(rect, $"<size=30><color=white>" +
+            $"Здоровье: {_parameters.Health.Current:f1} <b>/</b> {_parameters.Health.Max}\n" +
+            $"Выносливость: {_parameters.Stamina.Current:f1} <b>/</b> {_parameters.Stamina.Max}\n" +
+            $"Сытость: {_parameters.FoodBalance.Current:f1} <b>/</b> {_parameters.FoodBalance.Max}\n" +
+            $"Жажда: {_parameters.WaterBalance.Current:f1} <b>/</b> {_parameters.WaterBalance.Max}\n" +
+            $"Бодрость: {_parameters.Energy.Current:f1} <b>/</b> {_parameters.Energy.Max}\n" +
+            $"Тепло: {_parameters.Heat.Current:f1} <b>/</b> {_parameters.Heat.Max}\n" +
+            $"Заражённость: {_parameters.Toxicity.Current:f1} <b>/</b> {_parameters.Toxicity.Max}" +
+            $"</color></size>", boxStyle);
+        GUI.color = Color.white;
+    }
+#endif
 }

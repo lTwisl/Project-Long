@@ -6,5 +6,10 @@ public class ToxicityParameter : PlayerParameter
         base.Initialize();
         Current = 0;
     }
+
+    public void Bind(World world)
+    {
+        world.OnChangedTotalToxicity += v => BaseChangeRate = v;
+    }
 }
 

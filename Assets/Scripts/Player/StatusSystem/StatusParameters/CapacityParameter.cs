@@ -2,7 +2,7 @@
 using System.Linq;
 
 [System.Serializable]
-public class CapacityParameter : BasePlayerParameter
+public class CapacityParameter : PlayerParameter
 {
     protected override bool ClampCurrentValue => false;
 
@@ -20,6 +20,14 @@ public class CapacityParameter : BasePlayerParameter
         BaseMax = _rangeLoadCapacity.Values.Max();
         OffsetMax = 0;
     }
+
+    public void Bind(Inventory inventory)
+    {
+        inventory.OnItemAdded += _ => Current = inventory.Weight;
+        inventory.OnItemRemoved += _ => Current = inventory.Weight;
+    }
+
+    public override void ChangeParameter(float deltaSeconds) { }
 
     public float GetRangeLoadCapacity(WeightRange weightRange) => _rangeLoadCapacity[weightRange] + (Max - BaseMax);
     public bool IsCanWalk() => Current < GetRangeLoadCapacity(WeightRange.UltimateImmovable);

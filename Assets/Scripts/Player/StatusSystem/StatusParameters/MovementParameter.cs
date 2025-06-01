@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FirstPersonMovement;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using static FirstPersonMovement.PlayerMovement;
@@ -16,15 +17,7 @@ public class MovementParameter : BasePlayerParameter
     [field: Tooltip("Скорость изменения при беге [ед/м]")]
     [field: SerializeField] public float SprintChangeRate { get; protected set; }
 
-
-
     private Dictionary<Type, float> _stateChangeRates;
-
-    public virtual void SetChangeRateByMoveMode(FiniteStateMachine.IState state)
-    {
-        if (_stateChangeRates.TryGetValue(state.GetType(), out float rate))
-            BaseChangeRate = rate;
-    }
 
     public override void Initialize()
     {
@@ -36,6 +29,17 @@ public class MovementParameter : BasePlayerParameter
             { typeof(IdelState), IdleChangeRate },
             { typeof(WalkState), WalkChangeRate },
             { typeof(RunState), SprintChangeRate },
+        };
+    }
+
+    public virtual void Bind(PlayerMovement playerMovement)
+    {
+        playerMovement.OnChangedState += state =>
+        {
+            if (_stateChangeRates.TryGetValue(state.GetType(), out float value))
+                BaseChangeRate = value;
+            else 
+                BaseChangeRate = 0f;
         };
     }
 }

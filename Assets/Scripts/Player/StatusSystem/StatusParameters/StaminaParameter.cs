@@ -1,4 +1,5 @@
 ﻿using FiniteStateMachine;
+using FirstPersonMovement;
 using ImprovedTimers;
 using UnityEngine;
 using static FirstPersonMovement.PlayerMovement;
@@ -32,18 +33,10 @@ public class StaminaParameter : MovementParameter
         }
     }
 
-    public override void SetChangeRateByMoveMode(IState state)
+    public override void Bind(PlayerMovement playerMovement)
     {
-        if (state is JumpingState)
-        {
-            Current -= JumpCost;
-            BaseChangeRate = 0;
-            return;
-        }
-
-        base.SetChangeRateByMoveMode(state);
+        base.Bind(playerMovement);
+        playerMovement.OnJump += () => Current -= JumpCost;
     }
-
-    
 }
 
