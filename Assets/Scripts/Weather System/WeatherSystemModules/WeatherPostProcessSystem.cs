@@ -5,40 +5,37 @@ using UnityEngine.Rendering.Universal;
 
 public class WeatherPostProcessSystem : MonoBehaviour, IWeatherSystem
 {
-    [field: SerializeField, DisableEdit] public bool IsSystemValid { get; set; }
+    [SerializeField, DisableEdit] private bool _isSystemValid;
+    public bool IsSystemValid => _isSystemValid;
 
-    [Header("Обьем простпроцессинга:")]
+    [Header("- - Обьем простпроцессинга:")]
     [SerializeField, DisableEdit] private Volume _volume;
 
-    [Header("Компоненты простпроцессинга:")]
+    [Header("- - Компоненты простпроцессинга:")]
     [SerializeField, DisableEdit] private ColorAdjustments _colorAdj;
     [SerializeField, DisableEdit] private Bloom _bloom;
 
-    public void ValidateSystem()
+    public void InitializeAndValidateSystem()
     {
-        // 1. Иниицализируем ссылку на обьем пост процессинга:
+        // 1. Поиск обьема пост процессинга в сцене:
         _volume = FindFirstObjectByType<Volume>();
+
+        // 2. Проверяем найденную ссылку на обьем:
         if (!_volume)
         {
-            IsSystemValid = false;
+            _isSystemValid = false;
             return;
         }
 
-        // 2. Проверка наличия компонентов обьема пост процессинга:
-        bool isValidePropertys;
+        // 3. Проверка наличия требуемых компонентов обьема пост процессинга с кешированием сслыки на них
+        bool isValideComponents;
+        isValideComponents = _volume.profile.TryGet<ColorAdjustments>(out _colorAdj);
+        isValideComponents &= _volume.profile.TryGet<Bloom>(out _bloom);
 
-        isValidePropertys = _volume.profile.TryGet<ColorAdjustments>(out _colorAdj);
-        isValidePropertys &= _volume.profile.TryGet<Bloom>(out _bloom);
-
-        IsSystemValid = isValidePropertys;
-
-#if UNITY_EDITOR
-        if (PrefabUtility.IsPartOfPrefabInstance(this))
-            PrefabUtility.RecordPrefabInstancePropertyModifications(this);
-#endif
+        _isSystemValid = isValideComponents;
     }
 
-    public void UpdateSystem(WeatherProfile currentProfile, WeatherProfile nextProfile, float t)
+    public void UpdateSystemParameters(WeatherProfile currentProfile, WeatherProfile nextProfile, float t)
     {
         if (!IsSystemValid)
         {
@@ -59,15 +56,18 @@ public class WeatherPostProcessSystem : MonoBehaviour, IWeatherSystem
         _bloom.tint.value = Color.Lerp(currentProfile.BloomTint, nextProfile.BloomTint, t);
     }
 
-    private void Awake()
-    {
-        ValidateSystem();
-    }
-
 #if UNITY_EDITOR
     private void OnValidate()
     {
-        ValidateSystem();
+        // 0. Не валидируем, если это префаб-ассет (не экземпляр)
+        if (PrefabUtility.IsPartOfPrefabAsset(this)) return;
+
+        // 1. Автоматически инициализируем и валидируем систему в редакторе
+        InitializeAndValidateSystem();
+
+        // 2. Сохраняем значения для префаба
+        if (PrefabUtility.IsPartOfPrefabInstance(this))
+            PrefabUtility.RecordPrefabInstancePropertyModifications(this);
     }
 #endif
 }

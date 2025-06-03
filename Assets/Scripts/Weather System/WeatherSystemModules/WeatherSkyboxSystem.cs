@@ -3,14 +3,15 @@ using UnityEngine;
 
 public class WeatherSkyboxSystem : MonoBehaviour, IWeatherSystem
 {
-    [field: SerializeField, DisableEdit] public bool IsSystemValid { get; set; }
+    [SerializeField, DisableEdit] private bool _isSystemValid;
+    public bool IsSystemValid => _isSystemValid;
 
     [Header("- - Материал скайбокса:")]
     [SerializeField, DisableEdit] private Material _skyboxMaterial;
     [Space(10)]
     [SerializeField, DisableEdit] private Transform _sunTransform;
 
-    public void ValidateSystem()
+    public void InitializeAndValidateSystem()
     {
         // 1. Инициализируем ссылку на материал скайбокса:
         _skyboxMaterial = RenderSettings.skybox;
@@ -18,7 +19,7 @@ public class WeatherSkyboxSystem : MonoBehaviour, IWeatherSystem
         // 2. Проверяем найденную ссылку на метериал:
         if (!_skyboxMaterial)
         {
-            IsSystemValid = false;
+            _isSystemValid = false;
             return;
         }
 
@@ -49,23 +50,23 @@ public class WeatherSkyboxSystem : MonoBehaviour, IWeatherSystem
         isValidePropertys &= _skyboxMaterial.HasProperty("_Moon_Color");
         isValidePropertys &= _skyboxMaterial.HasProperty("_Sun_Direction");
 
-        IsSystemValid = isValidePropertys;
+        _isSystemValid = isValidePropertys;
 
         if (!IsSystemValid) return;
 
-        // 4. Инициализация трансформа солнца в сцене:
-        WeatherLightingColor[] WeatherLightingColors = FindObjectsByType<WeatherLightingColor>(FindObjectsSortMode.None);
-        foreach (WeatherLightingColor lightColor in WeatherLightingColors)
-            if (lightColor.isSun)
-                _sunTransform = lightColor.transform;
-
-#if UNITY_EDITOR
-        if (PrefabUtility.IsPartOfPrefabInstance(this))
-            PrefabUtility.RecordPrefabInstancePropertyModifications(this);
-#endif
+        // 4. Кешируем ссылку на источник света(солнце) в сцене
+        WeatherLightingColor[] weatherLightColors = FindObjectsByType<WeatherLightingColor>(FindObjectsSortMode.None);
+        foreach (WeatherLightingColor weatherLightColor in weatherLightColors)
+        {
+            if (weatherLightColor.IsSun)
+            {
+                _sunTransform = weatherLightColor.transform;
+                break;
+            }
+        }
     }
 
-    public void UpdateSystem(WeatherProfile currentProfile, WeatherProfile newProfile, float t)
+    public void UpdateSystemParameters(WeatherProfile currentProfile, WeatherProfile nextProfile, float t)
     {
         if (!IsSystemValid)
         {
@@ -73,50 +74,49 @@ public class WeatherSkyboxSystem : MonoBehaviour, IWeatherSystem
             return;
         }
 
-        // Colors
-        _skyboxMaterial.SetColor("_Color_Zenith", Color.Lerp(currentProfile.SkyboxMat.GetColor("_Color_Zenith"), newProfile.SkyboxMat.GetColor("_Color_Zenith"), t));
-        _skyboxMaterial.SetColor("_Color_Horizon", Color.Lerp(currentProfile.SkyboxMat.GetColor("_Color_Horizon"), newProfile.SkyboxMat.GetColor("_Color_Horizon"), t));
-        _skyboxMaterial.SetFloat("_Softness_Zenith_Horizon", Mathf.Lerp(currentProfile.SkyboxMat.GetFloat("_Softness_Zenith_Horizon"), newProfile.SkyboxMat.GetFloat("_Softness_Zenith_Horizon"), t));
-        _skyboxMaterial.SetColor("_Color_Skyline", Color.Lerp(currentProfile.SkyboxMat.GetColor("_Color_Skyline"), newProfile.SkyboxMat.GetColor("_Color_Skyline"), t));
-        _skyboxMaterial.SetFloat("_Softness_Sky_Skyline", Mathf.Lerp(currentProfile.SkyboxMat.GetFloat("_Softness_Sky_Skyline"), newProfile.SkyboxMat.GetFloat("_Softness_Sky_Skyline"), t));
-        _skyboxMaterial.SetFloat("_Range_Skyline", Mathf.Lerp(currentProfile.SkyboxMat.GetFloat("_Range_Skyline"), newProfile.SkyboxMat.GetFloat("_Range_Skyline"), t));
-        _skyboxMaterial.SetColor("_Color_Ground", Color.Lerp(currentProfile.SkyboxMat.GetColor("_Color_Ground"), newProfile.SkyboxMat.GetColor("_Color_Ground"), t));
-        _skyboxMaterial.SetFloat("_Softness_Sky_Ground", Mathf.Lerp(currentProfile.SkyboxMat.GetFloat("_Softness_Sky_Ground"), newProfile.SkyboxMat.GetFloat("_Softness_Sky_Ground"), t));
-        // HeyneyGreenstein Scattering
-        _skyboxMaterial.SetFloat("_Sun_Phase_In", Mathf.Lerp(currentProfile.SkyboxMat.GetFloat("_Sun_Phase_In"), newProfile.SkyboxMat.GetFloat("_Sun_Phase_In"), t));
-        _skyboxMaterial.SetFloat("_Sun_Phase_Out", Mathf.Lerp(currentProfile.SkyboxMat.GetFloat("_Sun_Phase_Out"), newProfile.SkyboxMat.GetFloat("_Sun_Phase_Out"), t));
-        _skyboxMaterial.SetFloat("_Moon_Phase", Mathf.Lerp(currentProfile.SkyboxMat.GetFloat("_Moon_Phase"), newProfile.SkyboxMat.GetFloat("_Moon_Phase"), t));
-        // Rayleight Scattering
-        _skyboxMaterial.SetFloat("_Height_Atmosphere", Mathf.Lerp(currentProfile.SkyboxMat.GetFloat("_Height_Atmosphere"), newProfile.SkyboxMat.GetFloat("_Height_Atmosphere"), t));
-        // Stars
-        _skyboxMaterial.SetColor("_Color_Stars", Color.Lerp(currentProfile.SkyboxMat.GetColor("_Color_Stars"), newProfile.SkyboxMat.GetColor("_Color_Stars"), t));
-        _skyboxMaterial.SetFloat("_Horizon_Offset", Mathf.Lerp(currentProfile.SkyboxMat.GetFloat("_Horizon_Offset"), newProfile.SkyboxMat.GetFloat("_Horizon_Offset"), t));
-        _skyboxMaterial.SetFloat("_Scale_Flick_Noise", Mathf.Lerp(currentProfile.SkyboxMat.GetFloat("_Scale_Flick_Noise"), newProfile.SkyboxMat.GetFloat("_Scale_Flick_Noise"), t));
-        _skyboxMaterial.SetFloat("_Speed_Flick_Noise", Mathf.Lerp(currentProfile.SkyboxMat.GetFloat("_Speed_Flick_Noise"), newProfile.SkyboxMat.GetFloat("_Speed_Flick_Noise"), t));
-        // Moon
-        _skyboxMaterial.SetColor("_Moon_Color", Color.Lerp(currentProfile.SkyboxMat.GetColor("_Moon_Color"), newProfile.SkyboxMat.GetColor("_Moon_Color"), t));
-    }
+        if (!currentProfile.SkyboxMat || !nextProfile.SkyboxMat)
+        {
+            _isSystemValid = false;
+            Debug.LogWarning($"<color=orange>Погодный профиль {nextProfile.name} не содержит ссылку на материал скайбокса. Погода не будет управлять скайбоксом!</color>");
+            return;
+        }
 
-    private void Awake()
-    {
-        ValidateSystem();
+        // Colors
+        _skyboxMaterial.SetColor("_Color_Zenith", Color.Lerp(currentProfile.SkyboxMat.GetColor("_Color_Zenith"), nextProfile.SkyboxMat.GetColor("_Color_Zenith"), t));
+        _skyboxMaterial.SetColor("_Color_Horizon", Color.Lerp(currentProfile.SkyboxMat.GetColor("_Color_Horizon"), nextProfile.SkyboxMat.GetColor("_Color_Horizon"), t));
+        _skyboxMaterial.SetFloat("_Softness_Zenith_Horizon", Mathf.Lerp(currentProfile.SkyboxMat.GetFloat("_Softness_Zenith_Horizon"), nextProfile.SkyboxMat.GetFloat("_Softness_Zenith_Horizon"), t));
+        _skyboxMaterial.SetColor("_Color_Skyline", Color.Lerp(currentProfile.SkyboxMat.GetColor("_Color_Skyline"), nextProfile.SkyboxMat.GetColor("_Color_Skyline"), t));
+        _skyboxMaterial.SetFloat("_Softness_Sky_Skyline", Mathf.Lerp(currentProfile.SkyboxMat.GetFloat("_Softness_Sky_Skyline"), nextProfile.SkyboxMat.GetFloat("_Softness_Sky_Skyline"), t));
+        _skyboxMaterial.SetFloat("_Range_Skyline", Mathf.Lerp(currentProfile.SkyboxMat.GetFloat("_Range_Skyline"), nextProfile.SkyboxMat.GetFloat("_Range_Skyline"), t));
+        _skyboxMaterial.SetColor("_Color_Ground", Color.Lerp(currentProfile.SkyboxMat.GetColor("_Color_Ground"), nextProfile.SkyboxMat.GetColor("_Color_Ground"), t));
+        _skyboxMaterial.SetFloat("_Softness_Sky_Ground", Mathf.Lerp(currentProfile.SkyboxMat.GetFloat("_Softness_Sky_Ground"), nextProfile.SkyboxMat.GetFloat("_Softness_Sky_Ground"), t));
+        // HeyneyGreenstein Scattering
+        _skyboxMaterial.SetFloat("_Sun_Phase_In", Mathf.Lerp(currentProfile.SkyboxMat.GetFloat("_Sun_Phase_In"), nextProfile.SkyboxMat.GetFloat("_Sun_Phase_In"), t));
+        _skyboxMaterial.SetFloat("_Sun_Phase_Out", Mathf.Lerp(currentProfile.SkyboxMat.GetFloat("_Sun_Phase_Out"), nextProfile.SkyboxMat.GetFloat("_Sun_Phase_Out"), t));
+        _skyboxMaterial.SetFloat("_Moon_Phase", Mathf.Lerp(currentProfile.SkyboxMat.GetFloat("_Moon_Phase"), nextProfile.SkyboxMat.GetFloat("_Moon_Phase"), t));
+        // Rayleight Scattering
+        _skyboxMaterial.SetFloat("_Height_Atmosphere", Mathf.Lerp(currentProfile.SkyboxMat.GetFloat("_Height_Atmosphere"), nextProfile.SkyboxMat.GetFloat("_Height_Atmosphere"), t));
+        // Stars
+        _skyboxMaterial.SetColor("_Color_Stars", Color.Lerp(currentProfile.SkyboxMat.GetColor("_Color_Stars"), nextProfile.SkyboxMat.GetColor("_Color_Stars"), t));
+        _skyboxMaterial.SetFloat("_Horizon_Offset", Mathf.Lerp(currentProfile.SkyboxMat.GetFloat("_Horizon_Offset"), nextProfile.SkyboxMat.GetFloat("_Horizon_Offset"), t));
+        _skyboxMaterial.SetFloat("_Scale_Flick_Noise", Mathf.Lerp(currentProfile.SkyboxMat.GetFloat("_Scale_Flick_Noise"), nextProfile.SkyboxMat.GetFloat("_Scale_Flick_Noise"), t));
+        _skyboxMaterial.SetFloat("_Speed_Flick_Noise", Mathf.Lerp(currentProfile.SkyboxMat.GetFloat("_Speed_Flick_Noise"), nextProfile.SkyboxMat.GetFloat("_Speed_Flick_Noise"), t));
+        // Moon
+        _skyboxMaterial.SetColor("_Moon_Color", Color.Lerp(currentProfile.SkyboxMat.GetColor("_Moon_Color"), nextProfile.SkyboxMat.GetColor("_Moon_Color"), t));
     }
 
     void Update()
     {
-        UpdateSunDirection();
+        UpdateMaterialsSunDirection();
     }
 
-    /// <summary>
-    /// Передать актуальное направление солнца в указанные материалы
-    /// </summary>
-    public void UpdateSunDirection()
+    public void UpdateMaterialsSunDirection()
     {
         if (!IsSystemValid) return;
 
-        if (_sunTransform == null || !_skyboxMaterial.HasProperty("_Sun_Direction"))
+        if (!_sunTransform || !_skyboxMaterial.HasProperty("_Sun_Direction"))
         {
-            Debug.LogWarning("<color=orange>Отсутсвует ссылка на источник света(солнце) или у материала нет требуемой переменной. Направление источника света не будет передаваться в систему скайбокса!</color>");
+            Debug.LogWarning("<color=orange>Не удалось взять направление солнца или для материала скайбокса неправильно указан параметр направления солнца, направление солнца не передается</color>");
             return;
         }
 
@@ -126,7 +126,15 @@ public class WeatherSkyboxSystem : MonoBehaviour, IWeatherSystem
 #if UNITY_EDITOR
     private void OnValidate()
     {
-        ValidateSystem();
+        // 0. Не валидируем, если это префаб-ассет (не экземпляр)
+        if (PrefabUtility.IsPartOfPrefabAsset(this)) return;
+
+        // 1. Автоматически инициализируем и валидируем систему в редакторе
+        InitializeAndValidateSystem();
+
+        // 2. Сохраняем значения для префаба
+        if (PrefabUtility.IsPartOfPrefabInstance(this))
+            PrefabUtility.RecordPrefabInstancePropertyModifications(this);
     }
 #endif
 }

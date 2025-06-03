@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using FirstPersonMovement;
+using System.Collections.Generic;
+using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 using static PlayerProbeData;
@@ -27,6 +29,7 @@ public class PlayerProbeEditorWindow : EditorWindow
     private void OnEnable()
     {
         SceneView.duringSceneGui += OnSceneGUI;
+        UsePlayerReference();
     }
 
     private void OnDisable()
@@ -80,14 +83,32 @@ public class PlayerProbeEditorWindow : EditorWindow
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (!player)
         {
-            EditorUtility.DisplayDialog("Player Not Found", "No GameObject with tag 'Player' found in the scene.", "OK");
+            EditorUtility.DisplayDialog("Player not found", "No GameObject with tag 'Player' found in the scene.", "OK");
             return;
         }
 
         CapsuleCollider capsule = player.GetComponentInChildren<CapsuleCollider>();
         if (!capsule)
         {
-            EditorUtility.DisplayDialog("CapsuleCollider Missing", "Selected Player does not have a CapsuleCollider component.", "OK");
+            EditorUtility.DisplayDialog("CapsuleCollider not found", "Found Player does not have a CapsuleCollider component.", "OK");
+            return;
+        }
+        _playerDimensions.heightStanding = capsule.height;
+        _playerDimensions.capsuleRadius = capsule.radius;
+
+        PlayerMovement playerMovement = player.GetComponentInChildren<PlayerMovement>();
+        if (!playerMovement)
+        {
+            EditorUtility.DisplayDialog("PlayerMovement not found", "Found Player does not have a PlayerMovement component.", "OK");
+            return;
+        }
+        SerializedObject serializedPlayerMovement = new (playerMovement);
+        MovementSettings moveSettings = serializedPlayerMovement.FindProperty("_settings")?.objectReferenceValue as MovementSettings;
+        float groundOffset = serializedPlayerMovement.FindProperty("_groundOffset").floatValue;
+
+        if (!moveSettings)
+        {
+            EditorUtility.DisplayDialog("MoveSettings field is empty", "Found Player does not have a MoveSettings component.", "OK");
             return;
         }
 
@@ -95,12 +116,12 @@ public class PlayerProbeEditorWindow : EditorWindow
         {
             heightStanding = capsule.height,
             capsuleRadius = capsule.radius,
-            heightCrouching = _playerDimensions.heightCrouching,
-            heightJumping = _playerDimensions.heightJumping,
-            groundOffset = _playerDimensions.groundOffset
+            heightCrouching = moveSettings.CrouchHeight,
+            heightJumping = moveSettings.JumpForce * moveSettings.JumpForce / (2 * Mathf.Abs(Physics.gravity.y)),
+            groundOffset = groundOffset
         };
 
-        EditorUtility.DisplayDialog("Success", "Player dimensions loaded from CapsuleCollider.", "OK");
+        EditorUtility.DisplayDialog("Success", "Tools has update all actual Player Dimensions.", "OK");
     }
 
     #endregion
@@ -291,7 +312,8 @@ public class PlayerProbeEditorWindow : EditorWindow
         if (currentEvent.type == EventType.MouseDown && currentEvent.button == 0 && EditorGUIUtility.hotControl == 0)
         {
             Ray ray = HandleUtility.GUIPointToWorldRay(currentEvent.mousePosition);
-            if (Physics.Raycast(ray, out RaycastHit hit))
+
+            if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, _obstacleLayers, QueryTriggerInteraction.Ignore))
             {
                 if (currentEvent.control || currentEvent.command)
                 {

@@ -76,12 +76,12 @@ public class WeatherProfile : ScriptableObject
 
 
     [field: Header("- - Wind Params:")]
-    [field: SerializeField, Range(1f, 33f)] public float MinWindSpeed { get; private set; } = 1;
-    [field: SerializeField, Range(1f, 33f)] public float MaxWindSpeed { get; private set; } = 33;
-    [field: SerializeField, Range(0.01f, 5f)] public float IntensityChangeSpeed { get; private set; } = 1;
+    [field: SerializeField, Range(0.5f, 33f)] public float MinWindSpeed = 1f;
+    [field: SerializeField, Range(0.5f, 33f)] public float MaxWindSpeed = 33f;
+    [field: SerializeField, Range(0.01f, 10f)] public float IntensityChangeSpeed = 1f;
     [field: Space(8)]
-    [field: SerializeField, Range(0.001f, 2f)] public float DirectionChangeSharpness { get; private set; } = 0.05f;
-    [field: SerializeField, Range(0.01f, 5f)] public float IntensityChangeDirection { get; private set; } = 1;
+    [field: SerializeField, Range(0.001f, 2f)] public float DirectionChangeSharpness = 0.05f;
+    [field: SerializeField, Range(0.01f, 5f)] public float IntensityChangeDirection = 1f;
 
 
     [field: Header("- - Volumetric Fog:")]
