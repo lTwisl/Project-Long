@@ -3,18 +3,19 @@ using System.Collections.Generic;
 
 public class WeatherVFXSystem: MonoBehaviour, IWeatherSystem
 {
-    [field: SerializeField, DisableEdit] public bool IsSystemValid { get; set; } = true;
+    [SerializeField, DisableEdit] private bool _isSystemValid;
+    public bool IsSystemValid => _isSystemValid;
 
-    [field: Header("VFX Graphs:")]
-    [field: SerializeField] public List<VFXController> CurrentVFXControllers { get; private set; } = new();
-    [field: SerializeField] public List<VFXController> NewVFXControllers { get; private set; } = new();
+    [field: Header("- - VFX Graphs:")]
+    [field: SerializeField] public List<VFXController> CurrentVFXControllers { get; private set; }
+    [field: SerializeField] public List<VFXController> NewVFXControllers { get; private set; }
 
-    public void ValidateSystem() 
+    public void InitializeAndValidateSystem()
     {
-        
+        _isSystemValid = true;
     }
 
-    public void SpawnVFX(WeatherProfile nextProfile)
+    public void SpawnVFXControllers(WeatherProfile nextProfile)
     {
         foreach (GameObject vfx in nextProfile.VFX)
         {
@@ -23,7 +24,7 @@ public class WeatherVFXSystem: MonoBehaviour, IWeatherSystem
         }
     }
 
-    public void UpdateSystem(WeatherProfile currentProfile, WeatherProfile nextProfile, float t)
+    public void UpdateSystemParameters(WeatherProfile currentProfile, WeatherProfile nextProfile, float t)
     {
         // Заставляем исчезнуть старые эффекты
         foreach (VFXController vfx in CurrentVFXControllers)

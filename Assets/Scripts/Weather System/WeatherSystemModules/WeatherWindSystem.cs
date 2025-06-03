@@ -2,7 +2,9 @@
 
 public class WeatherWindSystem : MonoBehaviour, IWeatherSystem
 {
-    [field: SerializeField, DisableEdit] public bool IsSystemValid { get; set; } = true;
+    #region ПЕРЕМЕННЫЕ КЛАССА
+    [SerializeField, DisableEdit] private bool _isSystemValid;
+    public bool IsSystemValid => _isSystemValid;
 
     [Header("- - Текущие параметры ветра:")]
     [SerializeField, DisableEdit] private Vector2 _windGlobalDirection;
@@ -43,21 +45,24 @@ public class WeatherWindSystem : MonoBehaviour, IWeatherSystem
 
     private Vector2 _directionNoiseOffset;
     private Vector2 _intensityNoiseOffset;
+    #endregion
 
 
     private void Awake()
     {
-        InitializeWindSystem();
+        InitializeAndValidateSystem();
     }
 
-    private void InitializeWindSystem()
+    public void InitializeAndValidateSystem()
     {
-        // Инициализация стартового направления
+        // 1. Инициализация стартового направления
         _directionNoiseOffset = Random.insideUnitCircle * 100f;
         _intensityNoiseOffset = Random.insideUnitCircle * 100f;
 
-        // Инициализация стартовой скорости
+        // 2. Инициализация стартовой скорости
         CurrentSpeed = (_minWindSpeed + _maxWindSpeed) * 0.5f;
+
+        _isSystemValid = true;
     }
 
     void Update()
@@ -93,8 +98,7 @@ public class WeatherWindSystem : MonoBehaviour, IWeatherSystem
         _intensityNoiseOffset -= windDir;
     }
 
-    #region Работа с системой ветра
-
+    #region ФУНКЦИИ РАБОТЫ С СИСТЕМОЙ
     /// <summary>
     /// Получить глобальное нормализованное направление ветра
     /// </summary>
@@ -138,24 +142,14 @@ public class WeatherWindSystem : MonoBehaviour, IWeatherSystem
         return Mathf.Clamp(Mathf.Lerp(lerpMin, lerpMax, noise), _minWindSpeed, _maxWindSpeed);
     }
 
-    public void UpdateSystem(WeatherProfile currentProfile, WeatherProfile nextProfile, float t)
+    public void UpdateSystemParameters(WeatherProfile currentProfile, WeatherProfile nextProfile, float t)
     {
         float minWindSpeed = Mathf.Lerp(currentProfile.MinWindSpeed, nextProfile.MinWindSpeed, t);
         float maxWindSpeed = Mathf.Lerp(currentProfile.MaxWindSpeed, nextProfile.MaxWindSpeed, t);
-        float speedChangeSpeed = Mathf.Lerp(currentProfile.IntensityChangeSpeed, nextProfile.IntensityChangeSpeed, t);
-        float dirNoiseSharpness = Mathf.Lerp(currentProfile.DirectionChangeSharpness, nextProfile.DirectionChangeSharpness, t);
-        float dirChangeSpeed = Mathf.Lerp(currentProfile.IntensityChangeDirection, nextProfile.IntensityChangeDirection, t);
+        float windSpeedInterpolationSpeed = Mathf.Lerp(currentProfile.IntensityChangeSpeed, nextProfile.IntensityChangeSpeed, t);
+        float windDirectionNoiseSharpness = Mathf.Lerp(currentProfile.DirectionChangeSharpness, nextProfile.DirectionChangeSharpness, t);
+        float windDirectionInterpolationSpeed = Mathf.Lerp(currentProfile.IntensityChangeDirection, nextProfile.IntensityChangeDirection, t);
 
-        InitializeSystemParameters(minWindSpeed, maxWindSpeed, speedChangeSpeed, dirNoiseSharpness, dirChangeSpeed);
-    }
-
-    public void ValidateSystem() { }
-
-    /// <summary>
-    /// Установить базовые параметры ветра
-    /// </summary>
-    public void InitializeSystemParameters(float minWindSpeed, float maxWindSpeed, float windSpeedInterpolationSpeed, float windDirectionNoiseSharpness, float windDirectionInterpolationSpeed)
-    {
         _minWindSpeed = Mathf.Clamp(minWindSpeed, 0.5f, MaxWindIntensity);
         _maxWindSpeed = Mathf.Clamp(maxWindSpeed, 0.5f, MaxWindIntensity);
 
@@ -174,11 +168,6 @@ public class WeatherWindSystem : MonoBehaviour, IWeatherSystem
     {
         if (!_drawWindField || !Application.isPlaying) return;
 
-        DrawWindVectorsField();
-    }
-
-    private void DrawWindVectorsField()
-    {
         Vector3 startPosition = transform.position - new Vector3(MaxWindIntensity * (_windVectorsGridSize - 1) / 2, 0, MaxWindIntensity * (_windVectorsGridSize - 1) / 2);
 
         GeometryShapesDrawer.DrawGrid(transform.position, MaxWindIntensity, _windVectorsGridSize - 1, new Color(0.1f, 0.1f, 0.1f, 1f));
@@ -191,14 +180,9 @@ public class WeatherWindSystem : MonoBehaviour, IWeatherSystem
                 Vector3 direction = new Vector3(_windGlobalDirection.x, 0f, _windGlobalDirection.y).normalized;
                 Quaternion rotation = Quaternion.LookRotation(direction, Vector3.up);
                 float intensity = GetWindLocalIntensity(cellCenter);
-                GeometryShapesDrawer.DrawArrow(cellCenter, rotation, intensity * _windArrowsSizeMultiplier, 0.25f, GetColorOfIntensity(intensity));
+                GeometryShapesDrawer.DrawArrow(cellCenter, rotation, intensity * _windArrowsSizeMultiplier, 0.25f, _gradientIntensityToColor.Evaluate(Mathf.InverseLerp(0, MaxWindIntensity, intensity)));
             }
         }
-    }
-
-    private Color GetColorOfIntensity(float intensity)
-    {
-        return _gradientIntensityToColor.Evaluate(Mathf.InverseLerp(0, MaxWindIntensity, intensity));
     }
 #endif
 }

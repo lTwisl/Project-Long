@@ -3,15 +3,15 @@ public interface IWeatherSystem
     /// <summary>
     /// Флаг валидности системы
     /// </summary>
-    public bool IsSystemValid { get; set; }
+    public bool IsSystemValid { get; }
 
     /// <summary>
-    /// Детальная самопроверка системы на валидность
+    /// Инициализация и детальная самопроверка системы на валидность
     /// </summary>
-    public void ValidateSystem();
+    public void InitializeAndValidateSystem();
 
     /// <summary>
     /// Обновить требуемые параметры системы по погодным профилям
     /// </summary>
-    public void UpdateSystem(WeatherProfile currentWeatherProfile, WeatherProfile nextWeatherProfile, float t);
+    public void UpdateSystemParameters(WeatherProfile currentWeatherProfile, WeatherProfile nextWeatherProfile, float t);
 }

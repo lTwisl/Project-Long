@@ -3,7 +3,8 @@ using UnityEngine;
 
 public class WeatherLightingAngle : MonoBehaviour
 {
-    private const float DegreesPerSecond = 0.25f / 60f; // Градусов в секунду
+    private const float SECONDS_IN_DAY = 86400f;
+    private const float DEGREES_PER_SECOND = 360f / SECONDS_IN_DAY;
 
     private void Awake()
     {
@@ -12,22 +13,15 @@ public class WeatherLightingAngle : MonoBehaviour
 
     private void UpdateLightAngle()
     {
-        //Debug.Log($"Изменили позицию солнца. Новый угол: {transform.eulerAngles}");
-        transform.rotation = Quaternion.Euler(CalculateSunRotation(GameTime.Time), 0, 0);
+        transform.rotation = Quaternion.Euler(CalculateTheRotationXAngle(GameTime.Time), transform.eulerAngles.y, transform.eulerAngles.z);
     }
 
-    /// <summary>
-    /// Вычисляет угол поворота солнца на основе текущего времени.
-    /// </summary>
-    /// <returns>Угол поворота солнца по оси X.</returns>
-    private float CalculateSunRotation(TimeSpan currentTime)
+    private float CalculateTheRotationXAngle(TimeSpan currentTime)
     {
-        // Вычисляем общее количество минут с начала суток
-        float totalSeconds = (float)currentTime.TotalSeconds % 86400; // Ограничиваем 24 часами (86400 секунд)
+        // Конвертируем время в секунды, а затем нормализуем в пределах 24 часов
+        float totalSeconds = (float)currentTime.TotalSeconds % SECONDS_IN_DAY;
 
-        // Вычисляем угол поворота
-        float rotationAngle = totalSeconds * DegreesPerSecond - 90f;
-        return rotationAngle;
+        return totalSeconds * DEGREES_PER_SECOND - 90f;
     }
 
     private void OnDestroy()

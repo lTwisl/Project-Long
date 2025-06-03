@@ -6,25 +6,26 @@ using UnityEngine.Rendering.Universal;
 
 public class WeatherFogSystem : MonoBehaviour, IWeatherSystem
 {
-    [field: SerializeField, DisableEdit] public bool IsSystemValid { get; set; }
+    [SerializeField, DisableEdit] private bool _isSystemValid;
+    public bool IsSystemValid => _isSystemValid;
 
-    [Header("- - Render Features обьемного тумана:")]
+    [Header("- - Названия Render Features тумана:")]
     [SerializeField] private string _nameNearFogFeature = "FullScreenVolumetricFogNear";
     [SerializeField] private string _nameFarFogFeature = "FullScreenVolumetricFogFar";
 
-    [Header("- - Материалы обьемного тумана:")]
+    [Header("- - Материалы тумана:")]
     [SerializeField, DisableEdit] private Material _nearFogMaterial;
     [SerializeField, DisableEdit] private Material _farFogMaterial;
     [Space(10)]
     [SerializeField, DisableEdit] private Transform _sunTransform;
 
-    public void ValidateSystem()
+    public void InitializeAndValidateSystem()
     {
         // 1. Инициализируем ссылки на материалы тумана из их RenderFeature:
         var pipeline = GraphicsSettings.currentRenderPipeline as UniversalRenderPipelineAsset;
         if (pipeline == null)
         {
-            IsSystemValid = false;
+            _isSystemValid = false;
             return;
         }
 
@@ -39,7 +40,7 @@ public class WeatherFogSystem : MonoBehaviour, IWeatherSystem
         // 2. Проверяем найденные ссылки на материалы:
         if (_nearFogMaterial == null || _farFogMaterial == null)
         {
-            IsSystemValid = false;
+            _isSystemValid = false;
             return;
         }
 
@@ -76,27 +77,34 @@ public class WeatherFogSystem : MonoBehaviour, IWeatherSystem
         isPropertysValid &= _farFogMaterial.HasProperty("_Transparency");
         isPropertysValid &= _farFogMaterial.HasProperty("_Sun_Direction");
 
-        IsSystemValid = isPropertysValid;
+        _isSystemValid = isPropertysValid;
 
         if (!IsSystemValid) return;
 
-        // 4. Инициализация трансформа солнца в сцене:
-        WeatherLightingColor[] WeatherLightingColors = FindObjectsByType<WeatherLightingColor>(FindObjectsSortMode.None);
-        foreach (WeatherLightingColor lightColor in WeatherLightingColors)
-            if (lightColor.isSun)
-                _sunTransform = lightColor.transform;
-
-#if UNITY_EDITOR
-        if (PrefabUtility.IsPartOfPrefabInstance(this))
-            PrefabUtility.RecordPrefabInstancePropertyModifications(this);
-#endif
+        // 4. Кешируем ссылку на источник света(солнце) в сцене
+        WeatherLightingColor[] weatherLightColors = FindObjectsByType<WeatherLightingColor>(FindObjectsSortMode.None);
+        foreach (WeatherLightingColor weatherLightColor in weatherLightColors)
+        {
+            if (weatherLightColor.IsSun)
+            {
+                _sunTransform = weatherLightColor.transform;
+                break;
+            }
+        }
     }
 
-    public void UpdateSystem(WeatherProfile currentProfile, WeatherProfile newProfile, float t)
+    public void UpdateSystemParameters(WeatherProfile currentProfile, WeatherProfile newProfile, float t)
     {
         if (!IsSystemValid)
         {
-            Debug.LogWarning("<color=orange>Модуль тумана неисправен. Система погоды не будет управлять туманом!</color>");
+            Debug.LogWarning("<color=orange>Модуль тумана в сцене неисправен. Погода не будет управлять туманом!</color>");
+            return;
+        }
+
+        if (!newProfile.NearVolumFogMat || !newProfile.FarVolumFogMat)
+        {
+            _isSystemValid = false;
+            Debug.LogWarning($"<color=orange>Погодный профиль {newProfile.name} не содержит ссылки на материалы тумана. Погода не будет управлять туманом!</color>");
             return;
         }
 
@@ -128,27 +136,19 @@ public class WeatherFogSystem : MonoBehaviour, IWeatherSystem
         _farFogMaterial.SetFloat("_Softness_Height", Mathf.Lerp(currentProfile.FarVolumFogMat.GetFloat("_Softness_Height"), newProfile.FarVolumFogMat.GetFloat("_Softness_Height"), t));
         _farFogMaterial.SetFloat("_Transparency", Mathf.Lerp(currentProfile.FarVolumFogMat.GetFloat("_Transparency"), newProfile.FarVolumFogMat.GetFloat("_Transparency"), t));
     }
-
-    private void Awake()
-    {
-        ValidateSystem();
-    }
     
     private void Update()
     {
-        UpdateSunDirection();
+        UpdateMaterialsSunDirection();
     }
 
-    /// <summary>
-    /// Передать актуальное направление солнца в указанные материалы
-    /// </summary>
-    public void UpdateSunDirection()
+    public void UpdateMaterialsSunDirection()
     {
         if (!IsSystemValid) return;
 
-        if (_sunTransform == null || !_nearFogMaterial.HasProperty("_Sun_Direction") || !_farFogMaterial.HasProperty("_Sun_Direction"))
+        if (!_sunTransform || !_nearFogMaterial.HasProperty("_Sun_Direction") || !_farFogMaterial.HasProperty("_Sun_Direction"))
         {
-            Debug.LogWarning("<color=orange>Отсутсвует ссылка на источник света(солнце) или у материалов нет требуемой переменной. Направление источника света не будет передаваться в систему тумана!</color>");
+            Debug.LogWarning("<color=orange>Не удалось взять направление солнца или для материалов тумана неправильно указан параметр направления солнца, направление солнца не передается!</color>");
             return;
         }
 
@@ -159,10 +159,19 @@ public class WeatherFogSystem : MonoBehaviour, IWeatherSystem
 #if UNITY_EDITOR
     private void OnValidate()
     {
-        ValidateSystem();
+        // 0. Не валидируем, если это префаб-ассет (не экземпляр)
+        if (PrefabUtility.IsPartOfPrefabAsset(this)) return;
 
+        // 1. Автоматически инициализируем и валидируем систему в редакторе
+        InitializeAndValidateSystem();
+
+        // 2. Автоматически возвращаем значения названий VolumetricFogRenderFeatures
         if (string.IsNullOrEmpty(_nameNearFogFeature)) _nameNearFogFeature = "FullScreenVolumetricFogNear";
         if (string.IsNullOrEmpty(_nameFarFogFeature)) _nameFarFogFeature = "FullScreenVolumetricFogFar";
+
+        // 3. Сохраняем значения для префаба
+        if (PrefabUtility.IsPartOfPrefabInstance(this))
+            PrefabUtility.RecordPrefabInstancePropertyModifications(this);
     }
 #endif
 }
