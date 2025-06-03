@@ -21,12 +21,6 @@ public class CapacityParameter : PlayerParameter
         OffsetMax = 0;
     }
 
-    public void Bind(Inventory inventory)
-    {
-        inventory.OnItemAdded += _ => Current = inventory.Weight;
-        inventory.OnItemRemoved += _ => Current = inventory.Weight;
-    }
-
     public override void ChangeParameter(float deltaSeconds) { }
 
     public float GetRangeLoadCapacity(WeightRange weightRange) => _rangeLoadCapacity[weightRange] + (Max - BaseMax);
@@ -46,5 +40,4 @@ public class CapacityParameter : PlayerParameter
 
         return WeightRange.UltimateImmovable;
     }
-
 }

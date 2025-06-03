@@ -25,8 +25,6 @@ public class Player : MonoBehaviour
     {
         InitializeComponents();
         InitializeSystems();
-
-        _parameters.Bind(Inventory, _playerMovement, _world);
     }
 
     private void OnEnable()
@@ -36,6 +34,8 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
+        GetComponent<PlayerParameterHandler>().Bind(Inventory, _playerMovement, _world);
+
         HandleMovementByCapacityStats();
 
         SetVisibilityUiPlayer(false);
@@ -164,74 +164,6 @@ public class Player : MonoBehaviour
 
     private void HandleMovementByCapacityStats()
     {
-        _playerMovement.SpeedMediator.AddModifier(new(0, MoveMode.Walk, (float speed) =>
-        {
-            if (speed == 0 || _parameters.Capacity.GetCurrentWeightRange() < WeightRange.Ultimate)
-                return speed;
-
-            float scale = Utility.MapRange(_parameters.Capacity.Current,
-                _parameters.Capacity.GetRangeLoadCapacity(WeightRange.Ultimate),
-                _parameters.Capacity.GetRangeLoadCapacity(WeightRange.UltimateImmovable),
-            1, 0, true);
-
-            return speed * scale;
-        }));
-
-        _playerMovement.SpeedMediator.AddModifier(new(0, MoveMode.Run, (float speed) =>
-        {
-            if (speed == 0 || _parameters.Capacity.GetCurrentWeightRange() < WeightRange.Critical)
-                return speed;
-
-            float scale = Utility.MapRange(_parameters.Capacity.Current,
-                _parameters.Capacity.GetRangeLoadCapacity(WeightRange.Critical),
-                _parameters.Capacity.GetRangeLoadCapacity(WeightRange.Ultimate),
-                1, _playerMovement.WalkSpeed / speed, true);
-
-            return speed * scale;
-        }));
-
-        _parameters.Capacity.OnValueChanged += _ =>
-        {
-            _playerMovement.CanRun &= _parameters.Capacity.IsCanRun();
-            _playerMovement.CanWalk &= _parameters.Capacity.IsCanWalk();
-            _playerMovement.CanJump &= _parameters.Capacity.IsCanRun();
-        };
-
-        _parameters.Stamina.OnReachZero += () =>
-        {
-            _playerMovement.CanRun = false;
-            _playerMovement.CanJump = false;
-        };
-
-        _parameters.Stamina.OnRecoverFromZero += () =>
-        {
-            _playerMovement.CanRun = _parameters.Capacity.IsCanRun();
-            _playerMovement.CanJump = _parameters.Capacity.IsCanRun();
-        };
+        
     }
-
-#if UNITY_EDITOR
-    private void OnGUI()
-    {
-        if (_parameters == null)
-            return;
-
-        GUIStyle boxStyle = new GUIStyle(GUI.skin.box);
-        boxStyle.alignment = TextAnchor.UpperLeft;
-        boxStyle.richText = true;
-
-        Rect rect = new Rect(5, 5, 400, 250);
-        GUI.color = new Color(0.2f, 0.2f, 0.2f, 0.8f);
-        GUI.Box(rect, $"<size=30><color=white>" +
-            $"Здоровье: {_parameters.Health.Current:f1} <b>/</b> {_parameters.Health.Max}\n" +
-            $"Выносливость: {_parameters.Stamina.Current:f1} <b>/</b> {_parameters.Stamina.Max}\n" +
-            $"Сытость: {_parameters.FoodBalance.Current:f1} <b>/</b> {_parameters.FoodBalance.Max}\n" +
-            $"Жажда: {_parameters.WaterBalance.Current:f1} <b>/</b> {_parameters.WaterBalance.Max}\n" +
-            $"Бодрость: {_parameters.Energy.Current:f1} <b>/</b> {_parameters.Energy.Max}\n" +
-            $"Тепло: {_parameters.Heat.Current:f1} <b>/</b> {_parameters.Heat.Max}\n" +
-            $"Заражённость: {_parameters.Toxicity.Current:f1} <b>/</b> {_parameters.Toxicity.Max}" +
-            $"</color></size>", boxStyle);
-        GUI.color = Color.white;
-    }
-#endif
 }

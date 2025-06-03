@@ -61,11 +61,12 @@ public class BasePlayerParameter : PlayerParameter
         TimeGeaterZero = TimeSpan.Zero;
     }
 
-    public override void UnsubscribeAll()
+    public override void Dispose()
     {
-        base.UnsubscribeAll();
-        OnReachZero = null;
+        base.Dispose();
+
         OnRecoverFromZero = null;
+        OnReachZero = null;
     }
 }
 
@@ -78,6 +79,7 @@ public class PlayerParameter : IPlayerParameter
 
     [Tooltip("Текущее значение")]
     [SerializeField, DisableField] private float _current;
+
     public float Current
     {
         get => _current;
@@ -137,15 +139,15 @@ public class PlayerParameter : IPlayerParameter
         Current = Current + ChangeRate * deltaSeconds;
     }
 
-    public virtual void UnsubscribeAll()
+    public virtual void Dispose()
     {
         OnValueChanged = null;
     }
 }
 
-public interface IPlayerParameter
+public interface IPlayerParameter : IDisposable
 {
-    public float Current { get; }
+    public float Current { get; set; }
     public float Max { get; }
     public float OffsetMax { get; }
     public float BaseChangeRate { get; }

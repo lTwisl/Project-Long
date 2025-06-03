@@ -15,7 +15,7 @@ public class GameSceneInstaller : MonoInstaller
         Container.Bind<World>().FromInstance(_world).AsSingle();
 
         Container.Bind<PlayerParameters>().FromInstance(_playerParameters).AsSingle();
-        _playerParameters.Initialize();
+        //_playerParameters.Initialize();
 
         Container.Bind<ClothingSystem>().AsSingle();
         Container.Bind<Inventory>().AsSingle();

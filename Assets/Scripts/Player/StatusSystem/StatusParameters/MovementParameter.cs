@@ -1,4 +1,5 @@
-﻿using FirstPersonMovement;
+﻿using FiniteStateMachine;
+using FirstPersonMovement;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -32,15 +33,12 @@ public class MovementParameter : BasePlayerParameter
         };
     }
 
-    public virtual void Bind(PlayerMovement playerMovement)
+    public void UpdateBaseChangeRate(IState state)
     {
-        playerMovement.OnChangedState += state =>
-        {
-            if (_stateChangeRates.TryGetValue(state.GetType(), out float value))
-                BaseChangeRate = value;
-            else 
-                BaseChangeRate = 0f;
-        };
+        if (_stateChangeRates.TryGetValue(state.GetType(), out float value))
+            BaseChangeRate = value;
+        else
+            BaseChangeRate = 0f;
     }
 }
 

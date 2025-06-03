@@ -1,6 +1,7 @@
 ﻿using FiniteStateMachine;
 using FirstPersonMovement;
 using ImprovedTimers;
+using System.Security.Cryptography;
 using UnityEngine;
 using static FirstPersonMovement.PlayerMovement;
 
@@ -33,10 +34,11 @@ public class StaminaParameter : MovementParameter
         }
     }
 
-    public override void Bind(PlayerMovement playerMovement)
+    public override void Dispose()
     {
-        base.Bind(playerMovement);
-        playerMovement.OnJump += () => Current -= JumpCost;
+        base.Dispose();
+
+        _countdownTimer?.Dispose();
     }
 }
 

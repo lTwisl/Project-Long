@@ -8,7 +8,6 @@ public class HealthParameter : PlayerParameter
     {
         float newChangeRate = ChangeRate < 0 ? ChangeRate : RegenerationRate;
 
-        //float newChangeRate = ChangeRate < 0 ? ChangeRate : RegenerationRate;
         Current = Mathf.Clamp(Current + newChangeRate * deltaSeconds, 0f, Max);
     }
 }
