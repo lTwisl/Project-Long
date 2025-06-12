@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 
 [Serializable]
-public class InventorySlot
+public class InventorySlot : IDisposable
 {
     [field: SerializeField] public InventoryItem Item { get; private set; }
 
@@ -14,6 +14,9 @@ public class InventorySlot
         {
             _capacity = value;
             OnCapacityChanged?.Invoke(_capacity);
+
+            if (_capacity <= 0)
+                Dispose();
         }
     }
 
@@ -25,15 +28,20 @@ public class InventorySlot
         {
             _condition = value;
             OnConditionChanged?.Invoke(_condition);
+
+            if (_condition <= 0)
+                Dispose();
         }
     }
+
+    public bool MarkedForRemoval { get; private set; } = false;
 
     public event Action<float> OnCapacityChanged;
     public event Action<double> OnConditionChanged;
 
     // Äכÿ ןנוהלועמג מהוזהû
     public bool IsWearing { get; set; }
-    public float Wet { get; set; }
+    [field: SerializeField] public float Wet { get; set; }
 
 
     public bool IsEmpty => Item == null || Capacity <= 0 || Condition <= 0;
@@ -76,5 +84,16 @@ public class InventorySlot
         if (Item is ClothingItem clothes)
             return Capacity * Item.Weight * (1 + clothes.WaterAbsorptionRatio * Wet);
         return Capacity * Item.Weight;
+    }
+
+    public void Dispose()
+    {
+        if (MarkedForRemoval)
+            return;
+
+        OnCapacityChanged = null;
+        OnConditionChanged = null;
+
+        MarkedForRemoval = true;
     }
 }

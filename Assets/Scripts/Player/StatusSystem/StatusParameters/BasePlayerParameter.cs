@@ -78,7 +78,7 @@ public class PlayerParameter : IPlayerParameter
     public event Action<float> OnValueChanged;
 
     [Tooltip("Текущее значение")]
-    [SerializeField, DisableField] private float _current;
+    [SerializeField, DisableEdit] private float _current;
 
     public float Current
     {
@@ -101,11 +101,11 @@ public class PlayerParameter : IPlayerParameter
 
     [field: Tooltip("Максимальное значение"), Space(5)]
     [field: SerializeField] public float BaseMax { get; protected set; }
-    [field: SerializeField, DisableField] public virtual float Max { get; private set; }
+    [field: SerializeField, DisableEdit] public virtual float Max { get; private set; }
 
-    [field: Tooltip("Скорость изменения [ед/м]"), DisableField, Space(5)]
+    [field: Tooltip("Скорость изменения [ед/м]"), DisableEdit, Space(5)]
     [field: SerializeField] public float BaseChangeRate { get; set; }
-    [field: SerializeField, DisableField] public virtual float ChangeRate { get; private set; }
+    [field: SerializeField, DisableEdit] public virtual float ChangeRate { get; private set; }
 
     public float OffsetMax { get; set; }
 

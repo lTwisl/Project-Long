@@ -3,7 +3,7 @@ using FirstPersonMovement;
 using System;
 using System.Linq;
 
-public class MovementSystem : IDisposable
+public class MovementInteractionSystem : IDisposable
 {
     private PlayerParameters _parameters;
     private PlayerMovement _movement;

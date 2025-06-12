@@ -7,26 +7,28 @@ using UnityEngine;
 
 public class World : MonoBehaviour
 {
+    [SerializeField] private float _degradationScaleOutside = 2f;
+
     [field: Header("Температура")]
     [field: SerializeField] public float Temperature { get; private set; }
     public float WeatherTemperature => Weather.Temperature;
-    [field: SerializeField, DisableField] public float ShelterTemperature { get; private set; }
-    [field: SerializeField, DisableField] public float TotalTemperature { get; private set; }
+    [field: SerializeField, DisableEdit] public float ShelterTemperature { get; private set; }
+    [field: SerializeField, DisableEdit] public float TotalTemperature { get; private set; }
     public event Action<float> OnChangedTotalTemperature;
 
     [field: Header("Влажность")]
     [field: SerializeField, Range(0, 1)] public float Wetness { get; private set; }
     public float WeatherWetness => Weather.Wetness;
-    [field: SerializeField, DisableField] public float ShelterWetness { get; private set; }
-    [field: SerializeField, DisableField] public float TotalWetness { get; private set; }
+    [field: SerializeField, DisableEdit] public float ShelterWetness { get; private set; }
+    [field: SerializeField, DisableEdit] public float TotalWetness { get; private set; }
     public event Action<float> OnChangedTotalWetness;
 
     [field: Header("Заражённость")]
     [field: SerializeField] public float Toxicity { get; private set; }
     public float WeatherToxicity => Weather.Toxicity;
-    [field: SerializeField, DisableField] public float ShelterToxicity { get; private set; }
-    [field: SerializeField, DisableField] public float ZoneToxicity { get; private set; }
-    [field: SerializeField, DisableField] public float TotalToxicity { get; private set; }
+    [field: SerializeField, DisableEdit] public float ShelterToxicity { get; private set; }
+    [field: SerializeField, DisableEdit] public float ZoneToxicity { get; private set; }
+    [field: SerializeField, DisableEdit] public float TotalToxicity { get; private set; }
     public event Action<float> OnChangedTotalToxicity;
 
 
@@ -50,6 +52,7 @@ public class World : MonoBehaviour
     private List<TemperatureZone> _externalHeats = new List<TemperatureZone>();
     private float _currentMaxExternalTemp;
 
+    public float DegradationScale { get; private set; }
 
     private void Awake()
     {
@@ -59,15 +62,15 @@ public class World : MonoBehaviour
 
     private void OnEnable()
     {
-        GameTime.OnMinuteChanged += HandleChangedMinute;
+        GameTime.OnTimeChanged += HandleChangedTime;
     }
 
     private void OnDisable()
     {
-        GameTime.OnMinuteChanged -= HandleChangedMinute;
+        GameTime.OnTimeChanged -= HandleChangedTime;
     }
 
-    private void HandleChangedMinute()
+    private void HandleChangedTime()
     {
         CalculateTotalTemperature();
         CalculateTotalToxicity();
@@ -84,6 +87,8 @@ public class World : MonoBehaviour
         ShelterTemperature = shelterSystem.Temperature;
         ShelterWetness = shelterSystem.Wetness;
         ShelterToxicity = shelterSystem.Toxicity;
+
+        DegradationScale = 1;
 
         //CalculateTotalTemperature();
         //CalculateTotalToxicity();
@@ -107,6 +112,8 @@ public class World : MonoBehaviour
         ShelterTemperature = 0;
         ShelterWetness = 0;
         ShelterToxicity = 0;
+
+        DegradationScale = _degradationScaleOutside;
 
         //CalculateTotalTemperature();
         //CalculateTotalToxicity();
@@ -170,7 +177,7 @@ public class World : MonoBehaviour
     {
         float WeatherOrShalter = PlayerEnteredLastShelter ? ShelterTemperature : WeatherTemperature;
 
-        TotalTemperature = Temperature + WeatherOrShalter + GetMaxExternalHeatsByPosiotion() + _player.ClothingSystem.TotalTemperatureBonus;
+        TotalTemperature = Temperature + WeatherOrShalter + GetMaxExternalHeatsByPosiotion();
         OnChangedTotalTemperature?.Invoke(TotalTemperature);
     }
 
@@ -179,7 +186,7 @@ public class World : MonoBehaviour
     {
         float WeatherOrShalter = PlayerEnteredLastShelter ? ShelterToxicity : WeatherToxicity;
 
-        TotalToxicity = (Toxicity + WeatherOrShalter + ZoneToxicity) * (1 - _player.ClothingSystem.TotalToxicityProtection / 100);
+        TotalToxicity = Toxicity + WeatherOrShalter + ZoneToxicity;
         OnChangedTotalToxicity?.Invoke(TotalToxicity);
     }
 
@@ -188,7 +195,7 @@ public class World : MonoBehaviour
     {
         float WeatherOrShalter = PlayerEnteredLastShelter ? ShelterWetness : WeatherWetness;
 
-        TotalWetness = (Wetness + WeatherOrShalter) * (1 - _player.ClothingSystem.TotalToxicityProtection);
+        TotalWetness = Wetness + WeatherOrShalter;
         OnChangedTotalWetness?.Invoke(TotalWetness);
     }
 

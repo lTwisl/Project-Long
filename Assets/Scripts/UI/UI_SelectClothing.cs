@@ -21,13 +21,15 @@ public class UI_SelectClothing : MonoBehaviour
     private int _currentIndex;
 
 
-    private ClothingSystem _clothesSystem;
+    //private ClothingSystem _clothesSystem;
 
-    [Inject]
+    [Inject] Player _player;
+
+    /*[Inject]
     private void Construct(Player player)
     {
         _clothesSystem = player.ClothingSystem;
-    }
+    }*/
 
 
     private void Awake()
@@ -37,18 +39,29 @@ public class UI_SelectClothing : MonoBehaviour
             if (CurrentUiClothesSlot == null || Slots.Count == 0)
                 return;
 
-            _clothesSystem.Unequip(CurrentUiClothesSlot.Slot);
-            _clothesSystem.TryEquip(Slots[_currentIndex], CurrentUiClothesSlot.IndexLayer);
-            CurrentUiClothesSlot.Set(Slots[_currentIndex]);
+            //_clothesSystem.Unequip(CurrentUiClothesSlot.Slot);
+            //_clothesSystem.TryEquip(Slots[_currentIndex], CurrentUiClothesSlot.IndexLayer);
+
+            if (Slots.Count > _currentIndex)
+            {
+                Debug.Log("TryUnequip: " + _player.ClothingSystem.TryUnequip(Slots[_currentIndex]));
+                Debug.Log("TryEquip: " + _player.ClothingSystem.TryEquip(Slots[_currentIndex], CurrentUiClothesSlot.IndexLayer));
+                CurrentUiClothesSlot.Set(Slots[_currentIndex]);
+            }
+            
         });
 
         _btnPutOff.onClick.AddListener(() =>
         {
 
-            if (!_clothesSystem.TryGetClothesSlot(CurrentUiClothesSlot.ClothesType, out ClothingSlot clothingSlot))
-                return;
+            /*if (!_clothesSystem.TryGetClothesSlot(CurrentUiClothesSlot.ClothesType, out ClothingSlot clothingSlot))
+                return;*/
 
-            _clothesSystem.Unequip(CurrentUiClothesSlot.Slot);
+            if (Slots.Count > _currentIndex)
+            {
+                Debug.Log("TryUnequip: " + _player.ClothingSystem.TryUnequip(Slots[_currentIndex]));
+            }
+            //_clothesSystem.Unequip(CurrentUiClothesSlot.Slot);
             CurrentUiClothesSlot.Clear();
         });
 

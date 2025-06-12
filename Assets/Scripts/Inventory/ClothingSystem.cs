@@ -13,14 +13,14 @@ public class ClothingSlot
     public List<InventorySlot> Layers = new List<InventorySlot>();
 }
 
-[Serializable]
+[Serializable, Obsolete]
 public class ClothingSystem
 {
     private List<ClothingSlot> _bodySlots = new List<ClothingSlot>
     {
         new ClothingSlot { ClothesType = ClothesType.Hat, MaxLayers = 2 },
-        new ClothingSlot { ClothesType = ClothesType.Outerwear, MaxLayers = 2 },
-        new ClothingSlot { ClothesType = ClothesType.Undershirt, MaxLayers = 2 },
+        new ClothingSlot { ClothesType = ClothesType.Jacket, MaxLayers = 2 },
+        new ClothingSlot { ClothesType = ClothesType.Shirt, MaxLayers = 2 },
         new ClothingSlot { ClothesType = ClothesType.Gloves, MaxLayers = 1 },
         new ClothingSlot { ClothesType = ClothesType.Pants, MaxLayers = 2 },
         new ClothingSlot { ClothesType = ClothesType.Underpants, MaxLayers = 2 },

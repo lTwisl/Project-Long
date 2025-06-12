@@ -50,6 +50,11 @@ public class UI_Inventory : MonoBehaviour
         });
     }
 
+    private void Update()
+    {
+        UpdateView();
+    }
+
     public void OnDisable()
     {
         _btnDrop.onClick.RemoveAllListeners();

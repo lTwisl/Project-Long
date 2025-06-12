@@ -1,5 +1,4 @@
 ﻿// ================== СИСТЕМЫ ВЗАИМОДЕЙСТВИЯ ==================
-using FirstPersonMovement;
 using System;
 
 public class InventoryInteractionSystem : IDisposable
@@ -12,19 +11,17 @@ public class InventoryInteractionSystem : IDisposable
         _parameters = parameters;
         _inventory = inventory;
 
-        _inventory.OnItemAdded += UpdateCurrentCapacity;
-        _inventory.OnItemRemoved += UpdateCurrentCapacity;
+        _inventory.OnChangedWeight += UpdateCurrentCapacity;
     }
 
-    private void UpdateCurrentCapacity(InventorySlot _)
+    private void UpdateCurrentCapacity(float weight)
     {
-        _parameters.Capacity.Current = _inventory.Weight;
+        _parameters.Capacity.Current = weight;
     }
 
     public void Cleanup()
     {
-        _inventory.OnItemAdded -= UpdateCurrentCapacity;
-        _inventory.OnItemRemoved -= UpdateCurrentCapacity;
+        _inventory.OnChangedWeight -= UpdateCurrentCapacity;
     }
 
     public void Dispose()

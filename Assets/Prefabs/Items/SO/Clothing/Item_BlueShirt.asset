@@ -28,7 +28,7 @@ MonoBehaviour:
   <UnitMeasurement>k__BackingField: 0
   <CostOfUse>k__BackingField: 0
   <DegradeType>k__BackingField: 2
-  <DegradationValue>k__BackingField: 0.0007716049382716049
+  <DegradationValue>k__BackingField: 0.0000496031746031746
   <Actions>k__BackingField: 9
   <DeconstructRecipe>k__BackingField: []
   <RepairRecipe>k__BackingField:
@@ -36,12 +36,12 @@ MonoBehaviour:
     Items: []
   <ChargeRecipe>k__BackingField: {fileID: 0}
   <ClothingType>k__BackingField: 2
-  <TemperatureBonus>k__BackingField: 2
-  <WaterProtection>k__BackingField: 0
-  <WindProtection>k__BackingField: 1
-  <ToxicityProtection>k__BackingField: 0
+  <TemperatureBonus>k__BackingField: 10
+  <WaterProtection>k__BackingField: 0.5
+  <WindProtection>k__BackingField: 0.2
+  <ToxicityProtection>k__BackingField: 0.1
   <PhysicProtection>k__BackingField: 0
-  <OffsetStamina>k__BackingField: 0
+  <OffsetStamina>k__BackingField: 0.5
   <FrictionBonus>k__BackingField: 0
   <WaterAbsorptionRatio>k__BackingField: 2
   <DryingRate>k__BackingField: 1

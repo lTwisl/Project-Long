@@ -44,16 +44,23 @@ namespace FirstPersonMovement
         private CountdownTimer _jumpTimer;
 
         [Header("Debug info")]
-        [SerializeField, DisableField] private bool _isGrounded;
-        [SerializeField, DisableField] private float _friction;
-        [SerializeField, DisableField] private float _slopeLimit;
-        [SerializeField, DisableField] private float _groundAngle;
+        [SerializeField, DisableEdit] private bool _isGrounded;
+        [SerializeField, DisableEdit] private float _friction;
+        [SerializeField, DisableEdit] private float _slopeLimit;
+        [SerializeField, DisableEdit] private float _groundAngle;
 
         private float _initHeight;
         private float _initCenterHeight;
         Vector3 moveDirection;
         private RaycastHit _groundHit;
         private bool _readyToJump = true;
+
+        [Inject]
+        private void Construction(MovementSettings settings)
+        {
+            if (_settings == null)
+                _settings = settings;
+        }
 
         private void Awake()
         {
