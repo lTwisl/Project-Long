@@ -1,4 +1,3 @@
-using EditorAttributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +7,7 @@ using UnityEngine;
 public class World : MonoBehaviour
 {
     [SerializeField] private float _degradationScaleOutside = 2f;
+    [SerializeField] private float _scaleSpeedWetting = 0.1f; 
 
     [field: Header("Температура")]
     [field: SerializeField] public float Temperature { get; private set; }
@@ -195,7 +195,7 @@ public class World : MonoBehaviour
     {
         float WeatherOrShalter = PlayerEnteredLastShelter ? ShelterWetness : WeatherWetness;
 
-        TotalWetness = Wetness + WeatherOrShalter;
+        TotalWetness = Mathf.Clamp01(Wetness + WeatherOrShalter) * _scaleSpeedWetting;
         OnChangedTotalWetness?.Invoke(TotalWetness);
     }
 

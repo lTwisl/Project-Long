@@ -90,7 +90,7 @@ public class PlayerParameter : IPlayerParameter
                 return;
 
             if (ClampCurrentValue)
-                _current = Mathf.Clamp(value, 0f, Max);
+                _current = Mathf.Clamp(value, 0f, Mathf.Max(0, Max));
             else
                 _current = value;
 
@@ -132,6 +132,7 @@ public class PlayerParameter : IPlayerParameter
         ChangeParameter(deltaSeconds);
 
         Max = Request(ValueType.Max, BaseMax);
+        Max = Mathf.Max(0, Max);
         ChangeRate = Request(ValueType.ChangeRate, BaseChangeRate);
     }
 

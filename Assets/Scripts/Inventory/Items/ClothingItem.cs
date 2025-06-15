@@ -73,8 +73,9 @@ public class ClothingItem : InventoryItem, IGiverOfEffects
         return base.ToString() + $"Temperature: {TemperatureBonus} | " +
             $"Water: {WaterProtection}\n" +
             $"Wind: {WindProtection} | " +
-            $"_friction: {FrictionBonus}\n" +
-            $"Toxisity: {ToxicityProtection}\n";
+            $"Friction: {FrictionBonus}\n" +
+            $"Toxisity: {ToxicityProtection}\n" +
+            $"OffsetStamina: {OffsetStamina}\n";
     }
 
     private void OnValidate()

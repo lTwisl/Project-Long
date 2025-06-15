@@ -10,7 +10,7 @@ namespace ClothingSystems
         private readonly BodyType _bodyType;
         private readonly Dictionary<ClothesType, ClothingSlot> _slotMap = new();
 
-        private const float _tempWet = 1.5f;
+        private const float _tempWet = 0.5f;
 
         [field: SerializeField, DisableEdit] public float TotalFrictionBonus { get; private set; }
         [field: SerializeField, DisableEdit] public float TotalTemperatureBonus { get; private set; }
@@ -50,7 +50,7 @@ namespace ClothingSystems
             TotalOffsetStamina = 0f;
             TotalPhysicProtection = 0f;
 
-            _dryingRateFactor = Utility.MapRange(_world.TotalTemperature, 10, 50, 0, 1, true);
+            _dryingRateFactor = Utility.MapRange(_world.TotalTemperature, 10, 80, 0, 1, true);
 
             // Определяем состояние верхней одежды один раз в кадре
             _allUpperWet = true;
@@ -89,10 +89,16 @@ namespace ClothingSystems
                 {
                     var slot = item.Slots[i];
                     if (slot == null)
+                    {
+                        TotalTemperatureBonus += WeatherWindSystem.MaxWindTemperature * normForceWindRatio;
                         continue;
+                    }
 
                     if (slot.Item is not ClothingItem clothing)
+                    {
+                        TotalTemperatureBonus += WeatherWindSystem.MaxWindTemperature * normForceWindRatio;
                         continue;
+                    }
 
                     float condition = (float)slot.Condition;
 
@@ -115,7 +121,7 @@ namespace ClothingSystems
                     }
 
 
-                    float tempByClothing = clothing.TemperatureBonus * condition * (1 - slot.Wet * _tempWet);
+                    float tempByClothing = clothing.TemperatureBonus * condition - clothing.TemperatureBonus * slot.Wet * _tempWet;
                     float tempByWind = (1 - clothing.WindProtection * condition) * WeatherWindSystem.MaxWindTemperature * normForceWindRatio;
 
                     TotalTemperatureBonus += tempByClothing + tempByWind;
