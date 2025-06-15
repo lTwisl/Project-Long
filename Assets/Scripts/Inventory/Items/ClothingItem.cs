@@ -75,7 +75,7 @@ public class ClothingItem : InventoryItem, IGiverOfEffects
             $"Wind: {WindProtection} | " +
             $"Friction: {FrictionBonus}\n" +
             $"Toxisity: {ToxicityProtection}\n" +
-            $"OffsetStamina: {OffsetStamina}\n";
+            $"OffsetStamina: {StaminaBonus}\n";
     }
 
     private void OnValidate()
