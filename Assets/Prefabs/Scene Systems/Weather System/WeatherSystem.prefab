@@ -56,12 +56,12 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 05059311190a3f847b37c6959c77c5bb, type: 2}
   <CurrentWeatherProfile>k__BackingField: {fileID: 11400000, guid: 62b6db9f95725c349b09f93c1854c909, type: 2}
   <NextWeatherProfile>k__BackingField: {fileID: 0}
-  <Temperature>k__BackingField: 0
+  <Temperature>k__BackingField: -10
   <Wetness>k__BackingField: 0
   <Toxicity>k__BackingField: 0
   <SunLight>k__BackingField: {fileID: 0}
   <MoonLight>k__BackingField: {fileID: 0}
-  <IsLightingSystemsValid>k__BackingField: 0
+  <IsLightingSystemsValid>k__BackingField: 1
   <WeatherWindSystem>k__BackingField: {fileID: 6733437681237491628}
   <IsWindSystemValid>k__BackingField: 1
   <WeatherFogSystem>k__BackingField: {fileID: 3411355947148336652}
@@ -84,8 +84,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a69b5e2eeda3e3b4891e1db7ea86984d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _weatherSystem: {fileID: 0}
-  _useWeatherSystemUpdate: 1
+  _useModulesUpdate: 1
+  _weatherSystem: {fileID: 7828725762744367070}
 --- !u!1 &5253470689031542207
 GameObject:
   m_ObjectHideFlags: 0
@@ -111,7 +111,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5253470689031542207}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -130,7 +130,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6a8d0d2a12790a44bfec81d07e0f682, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <IsSystemValid>k__BackingField: 1
+  _isSystemValid: 1
   _skyboxMaterial: {fileID: 2100000, guid: cf74f6d2e3814e84d8ae19faa473c992, type: 2}
   _sunTransform: {fileID: 0}
 --- !u!1 &5516812054343687718
@@ -177,7 +177,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1cbbf2097662dee49b0dead3a23bfe55, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <IsSystemValid>k__BackingField: 1
+  _isSystemValid: 1
   _volume: {fileID: 0}
   _colorAdj: {fileID: 0}
   _bloom: {fileID: 0}
@@ -225,7 +225,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78793d5cb13511a45997302ea3dec59b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <IsSystemValid>k__BackingField: 1
+  _isSystemValid: 0
   <CurrentVFXControllers>k__BackingField: []
   <NewVFXControllers>k__BackingField: []
 --- !u!1 &7041458400281342136
@@ -272,7 +272,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 683df5cef6c3b9543b89c37b61bf9ae0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <IsSystemValid>k__BackingField: 1
+  _isSystemValid: 1
   _nameNearFogFeature: FullScreenVolumetricFogNear
   _nameFarFogFeature: FullScreenVolumetricFogFar
   _nearFogMaterial: {fileID: 2100000, guid: 47d7ec949da0c28458603888c2c87755, type: 2}
@@ -322,7 +322,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de6396b1decb90746b62072ca6f3d543, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <IsSystemValid>k__BackingField: 1
+  _isSystemValid: 0
   _windGlobalDirection: {x: 0, y: 0}
   <CurrentSpeed>k__BackingField: 0
   _minWindSpeed: 1
