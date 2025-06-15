@@ -15,7 +15,7 @@ MonoBehaviour:
   <Identifier>k__BackingField: 1
   <Transitions>k__BackingField: -1
   <MinLifetime>k__BackingField: 1
-  <MaxLifetime>k__BackingField: 12
+  <MaxLifetime>k__BackingField: 2
   <VFX>k__BackingField: []
   <Temperature>k__BackingField: 0
   <Wetness>k__BackingField: 0
@@ -27,11 +27,11 @@ MonoBehaviour:
   <MoonMaxIntensity>k__BackingField: 0.1
   <MoonZenithColor>k__BackingField: {r: 0.84, g: 0.85, b: 0.86, a: 1}
   <MoonSunsetColor>k__BackingField: {r: 0.7, g: 0.76, b: 0.8, a: 1}
-  <MinWindSpeed>k__BackingField: 1
-  <MaxWindSpeed>k__BackingField: 6
-  <IntensityChangeSpeed>k__BackingField: 1
-  <DirectionChangeSharpness>k__BackingField: 0.05
-  <IntensityChangeDirection>k__BackingField: 1
+  MinWindSpeed: 1
+  MaxWindSpeed: 33
+  IntensityChangeSpeed: 1
+  DirectionChangeSharpness: 0.05
+  IntensityChangeDirection: 1
   <NearVolumFogMat>k__BackingField: {fileID: 2100000, guid: 8c5737803f42fd948ab1b69f9a21f476, type: 2}
   <FarVolumFogMat>k__BackingField: {fileID: 2100000, guid: 90f2241d0b095d94c9a57f4800537d7a, type: 2}
   <SkyboxMat>k__BackingField: {fileID: 2100000, guid: f857135a39824734a8f08d117eead192, type: 2}

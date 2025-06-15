@@ -16,7 +16,7 @@ public class VFXController : MonoBehaviour
     }
     [SerializeField] protected RepositionType _repositionType;
     [SerializeField, HideIf(nameof(_repositionType), RepositionType.Static)] protected Transform _targetTransform;
-    [SerializeField, HideIf(nameof(_repositionType), RepositionType.Static)] protected float _height = 0;
+    [SerializeField, HideIf(nameof(_repositionType), RepositionType.Static)] protected float _heightPosition = 0;
     protected enum DestroyType
     {
         /// <summary> ћгновенное уничтожение </summary>
@@ -48,11 +48,11 @@ public class VFXController : MonoBehaviour
         switch (_repositionType)
         {
             case (RepositionType.FollowTargetWithWorldHeight):
-                newPosition = new Vector3(_targetTransform.position.x, _height, _targetTransform.position.z);
+                newPosition = new Vector3(_targetTransform.position.x, _heightPosition, _targetTransform.position.z);
                 break;
 
             case (RepositionType.FollowTargetWithLocalHeight):
-                newPosition = new Vector3(_targetTransform.position.x, _targetTransform.position.y + _height, _targetTransform.position.z);
+                newPosition = new Vector3(_targetTransform.position.x, _targetTransform.position.y + _heightPosition, _targetTransform.position.z);
                 break;
 
             default:

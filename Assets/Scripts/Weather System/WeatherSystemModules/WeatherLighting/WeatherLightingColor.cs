@@ -2,40 +2,48 @@ using System;
 using UnityEditor;
 using UnityEngine;
 
-public class WeatherLightingColor : MonoBehaviour
+public class WeatherLightingColor : MonoBehaviour, IWeatherSystem
 {
-    [Header("Настройки света:")] public bool isSun = true;
-    [DisableEdit, SerializeField] private bool _isLightValide;
-    [SerializeField, Tooltip("Максимальная интенсивность источника освещения"), Min(0)]
-    private float _maxIntensity = 2f;
-    [HideIf(nameof(isSun), false), SerializeField, Tooltip("Температура источника освещения"), Min(0)]
-    private float _temperature = 8000f;
-    [Tooltip("Цвет света в полдень")] public Color colorAtZenith = new Color(1f, 0.95f, 0.9f);
-    [Tooltip("Цвет света на закате")] public Color colorAtSunset = new Color(1f, 0.503f, 0f);
+    [SerializeField, DisableEdit] private bool _isSystemValid;
+    public bool IsSystemValid => _isSystemValid;
 
-    [SerializeField, Tooltip("Смещение позиции горизонта изменения интенсивности"), Range(-1, 1)]
-    private float _horizontOffset = 0.1f;
-    [SerializeField, Tooltip("Диапазон углов для верхнего перехода (от X'верх' до Y'низ')")]
-    private Vector2 _colorTransitionRangeAngles = new(90, 0);
+    [field: Header("- - Настройки источника света:")]
+    [field: SerializeField] public bool IsSun { get; private set; } = true;
 
-    [HideIf(nameof(isSun), false), SerializeField, Tooltip("Максимальная интенсивность рассеянного освещения"), Range(0f, 2f)]
-    private float _maxAmbientIntensity = 1.2f;
-    [HideIf(nameof(isSun), false), SerializeField, Tooltip("Минимальная интенсивность рассеянного освещения"), Range(0f, 1f)]
-    private float _minAmbientIntensity = 0.5f;
+    [SerializeField, Tooltip("Цвет света в полдень")] private Color _colorAtZenith = new(1f, 0.95f, 0.9f);
+    [SerializeField, Tooltip("Цвет света на закате")] private Color _colorAtSunset = new(1f, 0.5f, 0f);
 
-    [Header("Кривые анимации:")]
-    [SerializeField] private AnimationCurve _intensityCurve = new AnimationCurve(new Keyframe(0, 0), new Keyframe(1, 1));
-    [SerializeField] private AnimationCurve _colorBlendCurve = new AnimationCurve(new Keyframe(0, 0), new Keyframe(1, 1));
-    [HideIf(nameof(isSun), false), SerializeField] private AnimationCurve _ambientIntensityCurve = new AnimationCurve(new Keyframe(0, 0), new Keyframe(1, 1));
+    [SerializeField, Min(0)] private float _maxIntensity = 3f;
+    [HideIf(nameof(IsSun), false)]
+    [SerializeField, Min(0)] private float _temperature = 8000f;
+
+    [Tooltip("Максимальная интенсивность рассеянного освещения"), HideIf(nameof(IsSun), false)]
+    [SerializeField, Range(0f, 2f)] private float _maxAmbientIntensity = 1f;
+    [Tooltip("Минимальная интенсивность рассеянного освещения"), HideIf(nameof(IsSun), false)]
+    [SerializeField, Range(0f, 1f)] private float _minAmbientIntensity = 0.5f;
+
+    [Tooltip("Смещение позиции горизонта изменения интенсивности")]
+    [SerializeField, Range(-1, 1)] private float _horizontOffset = 0.1f;
+    [Tooltip("Диапазон углов для верхнего перехода (от X'верх' до Y'низ')")]
+    [SerializeField] private Vector2 _colorTransitionRangeAngles = new(90, 0);
+
+
+    [Header("- - Анимационные кривые перехода:")]
+    [SerializeField] private AnimationCurve _intensityCurve = new(new Keyframe(0, 0), new Keyframe(1, 1));
+    [SerializeField] private AnimationCurve _colorBlendCurve = new(new Keyframe(0, 0), new Keyframe(1, 1));
+    [HideIf(nameof(IsSun), false)]
+    [SerializeField] private AnimationCurve _ambientIntensityCurve = new(new Keyframe(0, 0), new Keyframe(1, 1));
 
     [SerializeField, DisableEdit] private Light _light;
+    public Light GetLight => _light;
     private Vector2 _colorTransitionRange;
 
     public float MaxIntensity
     {
         get => _maxIntensity;
-        set => _maxIntensity = Mathf.Clamp(value, 0, float.MaxValue);
+        set => _maxIntensity = Mathf.Clamp(value, 0, 5);
     }
+
     public float Temperature
     {
         get => _temperature;
@@ -44,16 +52,15 @@ public class WeatherLightingColor : MonoBehaviour
 
     private void Awake()
     {
-        ValidateReferences();
         GameTime.OnTimeChanged += UpdateLightingParameters;
     }
 
-    public void ValidateReferences()
+    public void InitializeAndValidateSystem()
     {
-        _light = GetComponent<Light>();
-        if (_light == null)
+        _light ??= GetComponent<Light>();
+        if (!_light)
         {
-            _isLightValide = false;
+            _isSystemValid = false;
             return;
         }
 
@@ -63,34 +70,33 @@ public class WeatherLightingColor : MonoBehaviour
             Mathf.Sin(_colorTransitionRangeAngles.y * Mathf.Deg2Rad)
         );
 
-        _isLightValide = true;
+        _isSystemValid = true;
+    }
 
-#if UNITY_EDITOR
-        if (PrefabUtility.IsPartOfPrefabInstance(this))
-            PrefabUtility.RecordPrefabInstancePropertyModifications(this);
-#endif
+    private void Update()
+    {
+        UpdateLightingParameters();
     }
 
     /// <summary>
-    /// Обновление параметров света
+    /// Рассчет и изменение параметров света из параметров скрипта
     /// </summary>
     public void UpdateLightingParameters()
     {
-        if (!_isLightValide) return;
+        if (!IsSystemValid) return;
 
         float dotProduct = CalculateDotProduct();
         float normalizedAngle = Mathf.Clamp((dotProduct + _horizontOffset), 0, 1);
 
         SetLightIntensity(normalizedAngle);
         SetLightColor(dotProduct);
-        if (isSun)
-            SetAmbientIntensity(normalizedAngle);
+
+        if (IsSun) SetAmbientIntensity(normalizedAngle);
     }
 
     /// <summary>
     /// Вычисление скалярного произведения для определения направления света
     /// </summary>
-    /// <returns>Значение скалярного произведения</returns>
     private float CalculateDotProduct()
     {
         return Vector3.Dot(-transform.forward, Vector3.up);
@@ -99,7 +105,7 @@ public class WeatherLightingColor : MonoBehaviour
     /// <summary>
     /// Изменение интенсивности света
     /// </summary>
-    /// <param name="normalizedAngle">Нормализованный угол</param>
+    /// <param name="normalizedAngle">Нормализованный угол направления источника света</param>
     private void SetLightIntensity(float normalizedAngle)
     {
         float curveValue = _intensityCurve.Evaluate(normalizedAngle);
@@ -109,7 +115,7 @@ public class WeatherLightingColor : MonoBehaviour
     /// <summary>
     /// Изменение цвета света
     /// </summary>
-    /// <param name="dotProduct">Скалярное произведение</param>
+    /// <param name="dotProduct">Скалярное произведение направления света</param>
     private void SetLightColor(float dotProduct)
     {
         // Нормализуем dotProduct в диапазоне перехода
@@ -119,13 +125,13 @@ public class WeatherLightingColor : MonoBehaviour
         float colorBlend = _colorBlendCurve.Evaluate(normalizedDot);
 
         // Интерполируем цвет между зенитом и горизонтом
-        _light.color = Color.Lerp(colorAtZenith, colorAtSunset, colorBlend);
+        _light.color = Color.Lerp(_colorAtZenith, _colorAtSunset, colorBlend);
     }
 
     /// <summary>
-    /// Изменение интенсивности окружающего света
+    /// Изменение интенсивности рассеянного освещения
     /// </summary>
-    /// <param name="normalizedAngle">Нормализованный угол</param>
+    /// <param name="normalizedAngle">Нормализованный угол направления источника света</param>
     private void SetAmbientIntensity(float normalizedAngle)
     {
         _light.colorTemperature = _temperature;
@@ -136,20 +142,20 @@ public class WeatherLightingColor : MonoBehaviour
     /// <summary>
     /// Обновить параметры системы освещения
     /// </summary>
-    public void UpdateLighting(WeatherProfile currentProfile, WeatherProfile newProfile, float t)
+    public void UpdateSystemParameters(WeatherProfile currentProfile, WeatherProfile newProfile, float t)
     {
-        if (isSun)
+        if (IsSun)
         {
             MaxIntensity = Mathf.Lerp(currentProfile.SunMaxIntensity, newProfile.SunMaxIntensity, t);
-            colorAtZenith = Color.Lerp(currentProfile.SunZenithColor, newProfile.SunZenithColor, t);
-            colorAtSunset = Color.Lerp(currentProfile.SunSunsetColor, newProfile.SunSunsetColor, t);
+            _colorAtZenith = Color.Lerp(currentProfile.SunZenithColor, newProfile.SunZenithColor, t);
+            _colorAtSunset = Color.Lerp(currentProfile.SunSunsetColor, newProfile.SunSunsetColor, t);
             Temperature = Mathf.Lerp(currentProfile.SunTemperature, newProfile.SunTemperature, t);
         }
         else
         {
             MaxIntensity = Mathf.Lerp(currentProfile.MoonMaxIntensity, newProfile.MoonMaxIntensity, t);
-            colorAtZenith = Color.Lerp(currentProfile.MoonZenithColor, newProfile.MoonZenithColor, t);
-            colorAtSunset = Color.Lerp(currentProfile.MoonSunsetColor, newProfile.MoonSunsetColor, t);
+            _colorAtZenith = Color.Lerp(currentProfile.MoonZenithColor, newProfile.MoonZenithColor, t);
+            _colorAtSunset = Color.Lerp(currentProfile.MoonSunsetColor, newProfile.MoonSunsetColor, t);
         }
     }
 
@@ -159,9 +165,28 @@ public class WeatherLightingColor : MonoBehaviour
     }
 
 #if UNITY_EDITOR
+    private Quaternion _oldRotation;
+
     private void OnValidate()
     {
-        ValidateReferences();
+        // 0. Не валидируем, если это префаб-ассет (не экземпляр)
+        if (PrefabUtility.IsPartOfPrefabAsset(this)) return;
+
+        // 1. Автоматически инициализируем и валидируем систему в редакторе
+        InitializeAndValidateSystem();
+
+        // 2. Сохраняем значения для префаба
+        if (PrefabUtility.IsPartOfPrefabInstance(this))
+            PrefabUtility.RecordPrefabInstancePropertyModifications(this);
+    }
+
+    public void UpdateEnviromentLight()
+    {
+        if (transform.rotation == _oldRotation) return;
+
+        _oldRotation = transform.rotation;
+        DynamicGI.UpdateEnvironment();
+        SceneView.RepaintAll();
     }
 #endif
 }

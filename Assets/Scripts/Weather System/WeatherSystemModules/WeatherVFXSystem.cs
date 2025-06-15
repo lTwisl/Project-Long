@@ -1,27 +1,30 @@
 using UnityEngine;
 using System.Collections.Generic;
-using System.Collections;
 
 public class WeatherVFXSystem: MonoBehaviour, IWeatherSystem
 {
-    [field: SerializeField, DisableEdit] public bool IsSystemValid { get; set; } = true;
+    [SerializeField, DisableEdit] private bool _isSystemValid;
+    public bool IsSystemValid => _isSystemValid;
 
-    [field: Header("VFX Graphs:")]
+    [field: Header("- - VFX Graphs:")]
     [field: SerializeField] public List<VFXController> CurrentVFXControllers { get; private set; }
     [field: SerializeField] public List<VFXController> NewVFXControllers { get; private set; }
 
-    public void ValidateSystem() { }
-
-    public void SpawnVFX(WeatherProfile newProfile)
+    public void InitializeAndValidateSystem()
     {
-        foreach (GameObject vfx in newProfile.VFX)
+        _isSystemValid = true;
+    }
+
+    public void SpawnVFXControllers(WeatherProfile nextProfile)
+    {
+        foreach (GameObject vfx in nextProfile.VFX)
         {
             if (vfx == null) continue;
             NewVFXControllers.Add(Instantiate(vfx, transform.position, Quaternion.identity, transform).GetComponent<VFXController>());
         }
     }
 
-    public void UpdateSystem(WeatherProfile currentProfile, WeatherProfile newProfile, float t)
+    public void UpdateSystemParameters(WeatherProfile currentProfile, WeatherProfile nextProfile, float t)
     {
         // Заставляем исчезнуть старые эффекты
         foreach (VFXController vfx in CurrentVFXControllers)

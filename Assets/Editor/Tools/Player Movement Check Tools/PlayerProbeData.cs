@@ -81,8 +81,7 @@ public class PlayerProbeData
                 break;
 
             case ProbeState.Jumping:
-                var jumpCenter = Position + Vector3.up * (_dimensions.groundOffset + _dimensions.heightStanding + _dimensions.heightJumping / 2);
-                IsPassable = !HasProbeCollision(jumpCenter, _dimensions.capsuleRadius, _dimensions.heightJumping);
+                IsPassable = !HasProbeCollision(Position + Vector3.up * (_dimensions.groundOffset + _dimensions.heightJumping + _dimensions.heightStanding / 2), _dimensions.capsuleRadius, _dimensions.heightStanding);
                 break;
         }
 
@@ -128,8 +127,6 @@ public class PlayerProbeData
                 capsuleCenter = Position + Vector3.up * (_dimensions.groundOffset + _dimensions.heightStanding / 2);
                 labelPosition = capsuleCenter + Vector3.up * (_dimensions.heightStanding / 2 + 0.5f);
                 GeometryShapesDrawer.DrawWireCapsule(capsuleCenter, _dimensions.capsuleRadius, _dimensions.heightStanding, Quaternion.identity, VisualizeColor, Position);
-                GeometryShapesDrawer.DrawArrow(Position, Quaternion.identity, 15, 0.2f, Color.red);
-                //GeometryShapesDrawer.DrawGrid(Position, 15, 15, Color.blue);
                 Handles.Label(labelPosition, $"{probeName}", headerStyle);
                 break;
 
@@ -141,9 +138,9 @@ public class PlayerProbeData
                 break;
 
             case ProbeState.Jumping:
-                capsuleCenter = Position + Vector3.up * (_dimensions.groundOffset + _dimensions.heightStanding + _dimensions.heightJumping / 2);
-                labelPosition = capsuleCenter + Vector3.up * (_dimensions.heightJumping / 2 + 0.5f);
-                GeometryShapesDrawer.DrawWireCapsule(capsuleCenter, _dimensions.capsuleRadius, _dimensions.heightJumping, Quaternion.identity, VisualizeColor, Position);
+                capsuleCenter = Position + Vector3.up * (_dimensions.groundOffset + _dimensions.heightJumping + _dimensions.heightStanding / 2);
+                labelPosition = capsuleCenter + Vector3.up * (_dimensions.heightStanding / 2 + 0.5f);
+                GeometryShapesDrawer.DrawWireCapsule(capsuleCenter, _dimensions.capsuleRadius, _dimensions.heightStanding, Quaternion.identity, VisualizeColor, Position);
                 Handles.Label(labelPosition, $"{probeName}", headerStyle);
                 break;
         }

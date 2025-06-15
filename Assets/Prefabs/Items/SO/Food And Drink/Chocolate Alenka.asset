@@ -36,7 +36,5 @@ MonoBehaviour:
     Tool: {fileID: 0}
     Items: []
   <ChargeRecipe>k__BackingField: {fileID: 0}
-  <StatusParameterImpacts>k__BackingField:
-  - ParameterType: 2
-    Value: 125
+  <ReplenishmentParameters>k__BackingField: []
   <GivesBonus>k__BackingField: []
