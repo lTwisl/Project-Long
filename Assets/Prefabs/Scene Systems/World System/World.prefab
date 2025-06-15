@@ -77,7 +77,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1751f519ca51b4b4e90feac8b1b7e6b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <Temperature>k__BackingField: 0
+  _degradationScaleOutside: 2
+  <Temperature>k__BackingField: -10
   <ShelterTemperature>k__BackingField: 0
   <TotalTemperature>k__BackingField: 0
   <Wetness>k__BackingField: 0

@@ -41,8 +41,8 @@ MonoBehaviour:
   <WindProtection>k__BackingField: 1
   <ToxicityProtection>k__BackingField: 0
   <PhysicProtection>k__BackingField: 1
-  <OffsetStamina>k__BackingField: 1
+  <StaminaBonus>k__BackingField: -1
   <FrictionBonus>k__BackingField: 0
   <WaterAbsorptionRatio>k__BackingField: 2
   <DryingRate>k__BackingField: 1
-  <GivesBonus>k__BackingField: []
+  <GivesEffects>k__BackingField: []

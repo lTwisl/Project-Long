@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <Identifier>k__BackingField: 1
   <Transitions>k__BackingField: -1
-  <MinLifetime>k__BackingField: 1
-  <MaxLifetime>k__BackingField: 2
+  <MinLifetime>k__BackingField: 23
+  <MaxLifetime>k__BackingField: 23
   <VFX>k__BackingField: []
   <Temperature>k__BackingField: 0
   <Wetness>k__BackingField: 0
@@ -27,8 +27,8 @@ MonoBehaviour:
   <MoonMaxIntensity>k__BackingField: 0.1
   <MoonZenithColor>k__BackingField: {r: 0.84, g: 0.85, b: 0.86, a: 1}
   <MoonSunsetColor>k__BackingField: {r: 0.7, g: 0.76, b: 0.8, a: 1}
-  MinWindSpeed: 1
-  MaxWindSpeed: 33
+  MinWindSpeed: 0.5
+  MaxWindSpeed: 0.5
   IntensityChangeSpeed: 1
   DirectionChangeSharpness: 0.05
   IntensityChangeDirection: 1

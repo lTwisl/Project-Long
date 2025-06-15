@@ -46,8 +46,8 @@ namespace ClothingSystems
             foreach (var t in Enum.GetValues(typeof(BodyType)).Cast<BodyType>())
                 _groups.Add(t, new ClothingSlotGroup(_world, _config, t));
 
-            OnEquip += slot => TotalOffsetStamina += (slot.Item as ClothingItem).OffsetStamina;
-            OnUnequip += slot => TotalOffsetStamina -= (slot.Item as ClothingItem).OffsetStamina;
+            OnEquip += slot => TotalOffsetStamina += (slot.Item as ClothingItem).StaminaBonus;
+            OnUnequip += slot => TotalOffsetStamina -= (slot.Item as ClothingItem).StaminaBonus;
         }
 
         public void UpdateGroups(float deltaTime)

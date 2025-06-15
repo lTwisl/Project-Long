@@ -21,7 +21,7 @@ public enum ClothingLayer
 }
 
 [CreateAssetMenu(fileName = "ClothingItem", menuName = "Items/Clothing")]
-public class ClothingItem : InventoryItem, GiverOfBonuses
+public class ClothingItem : InventoryItem, IGiverOfEffects
 {
     [field: Header("- - Additional Properties - -")]
     [field: SerializeField] public ClothesType ClothingType { get; private set; }
@@ -42,7 +42,7 @@ public class ClothingItem : InventoryItem, GiverOfBonuses
     [field: SerializeField] public float PhysicProtection { get; private set; }
 
     [field: Range(-1, 1), Tooltip("Добавочное значение к максимальному значению выносливости [%]")]
-    [field: SerializeField] public float OffsetStamina { get; private set; }
+    [field: SerializeField] public float StaminaBonus { get; private set; }
 
     [field: Range(0f, 1f), Tooltip("Бонус к трению с поверхностью [ед]")]
     [field: SerializeField] public float FrictionBonus { get; private set; }
@@ -50,11 +50,10 @@ public class ClothingItem : InventoryItem, GiverOfBonuses
     [field: Range(0, 5), Tooltip("Коэффициент впитывания влаги (множитель веса, если равен 0, то вещь не намокает)")]
     [field: SerializeField] public float WaterAbsorptionRatio { get; private set; }
 
-    [field: Space(8), Min(0), Tooltip("Скорость высыхания [ед/мин]")]
+    [field: Min(0), Tooltip("Скорость высыхания [ед/мин]"), Space]
     [field: SerializeField] public float DryingRate { get; private set; }
 
-
-    [field: SerializeField] public List<ScriptableObject> GivesBonus { get; private set; }
+    [field: SerializeField] public List<ScriptableObject> GivesEffects { get; private set; }
 
     private void OnEnable()
     {

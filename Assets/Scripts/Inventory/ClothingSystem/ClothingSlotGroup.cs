@@ -125,7 +125,7 @@ namespace ClothingSystems
 
                     TotalPhysicProtection += clothing.PhysicProtection;
 
-                    TotalOffsetStamina += clothing.OffsetStamina;
+                    TotalOffsetStamina += clothing.StaminaBonus;
 
                     slot.Condition -= clothing.DegradationValue * deltaTime * _world.DegradationScale;
 

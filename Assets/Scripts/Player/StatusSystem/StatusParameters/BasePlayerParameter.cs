@@ -1,6 +1,7 @@
 ﻿using EditorAttributes;
 using StatsModifiers;
 using System;
+using System.Runtime.InteropServices;
 using UnityEngine;
 
 
@@ -12,7 +13,7 @@ public class BasePlayerParameter : PlayerParameter
     public TimeSpan TimeGeaterZero { get; private set; }
 
     public StatModifier<ValueType> DecreasedHealthModifier { get; private set; }
-    [field: SerializeField, Space(5)] public float DecreasedHealthRate { get; private set; }
+    [field: SerializeField, Space(5), Tooltip("доли % в минуту")] public float DecreasedHealthRate { get; private set; }
 
     public event Action OnReachZero;
     public event Action OnRecoverFromZero;

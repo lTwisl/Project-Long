@@ -38,6 +38,7 @@ MonoBehaviour:
   - <Item>k__BackingField: {fileID: 0}
     _capacity: 1
     _condition: 100
+    <Wet>k__BackingField: 0
   <RepairRecipe>k__BackingField:
     Tool: {fileID: 0}
     Items: []

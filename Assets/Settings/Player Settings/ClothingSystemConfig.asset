@@ -17,38 +17,23 @@ MonoBehaviour:
     _serializedList:
     - Key: 0
       Value:
-        <FrictionBonus>k__BackingField: 1
-        <TemperatureBonus>k__BackingField: Infinity
         <ToxicityProtection>k__BackingField: 0.4
-        <PhysicProtection>k__BackingField: 1
         _clothesTypes: 0300000000000000
     - Key: 1
       Value:
-        <FrictionBonus>k__BackingField: 1
-        <TemperatureBonus>k__BackingField: Infinity
         <ToxicityProtection>k__BackingField: 0.3
-        <PhysicProtection>k__BackingField: 1
         _clothesTypes: 0100000002000000
     - Key: 2
       Value:
-        <FrictionBonus>k__BackingField: 1
-        <TemperatureBonus>k__BackingField: Infinity
         <ToxicityProtection>k__BackingField: 0.2
-        <PhysicProtection>k__BackingField: 1
         _clothesTypes: 0400000005000000
     - Key: 3
       Value:
-        <FrictionBonus>k__BackingField: 1
-        <TemperatureBonus>k__BackingField: Infinity
         <ToxicityProtection>k__BackingField: 0.1
-        <PhysicProtection>k__BackingField: 1
         _clothesTypes: 0700000006000000
     - Key: 4
       Value:
-        <FrictionBonus>k__BackingField: 1
-        <TemperatureBonus>k__BackingField: Infinity
-        <ToxicityProtection>k__BackingField: 0
-        <PhysicProtection>k__BackingField: 1
+        <ToxicityProtection>k__BackingField: 0.3
         _clothesTypes: 08000000
   _clothesTypeDataMap:
     _serializedList:

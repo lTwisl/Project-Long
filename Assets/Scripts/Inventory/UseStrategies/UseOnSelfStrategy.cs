@@ -15,7 +15,7 @@ public class UseOnSelfStrategy : UseStrategy
     // Начинает использование предмета на себе.
     public override void Execute(InventorySlot slot)
     {
-        if (_usedSlot != null || slot?.Item is not ReplenishingPlayerParameters consumables)
+        if (_usedSlot != null || slot?.Item is not IGiverPlayerParameters consumables)
             return;
 
         _usedSlot = slot;
@@ -46,9 +46,9 @@ public class UseOnSelfStrategy : UseStrategy
 
 
     // Создаёт модификаторы для параметров предмета.
-    private void InitializeModifiers(ReplenishingPlayerParameters consumables)
+    private void InitializeModifiers(IGiverPlayerParameters consumables)
     {
-        foreach (var parameter in consumables.ReplenishmentParameters)
+        foreach (var parameter in consumables.GivesParameters)
         {
             if (parameter.ParameterType == ParameterType.Capacity)
             {
@@ -69,7 +69,7 @@ public class UseOnSelfStrategy : UseStrategy
 
 
     // Обновляет значение параметра игрока во время использования предмета.
-    private float UpdateParameterValue(IPlayerParameter parameter, ReplenishmentParameter replenishment, float baseValue)
+    private float UpdateParameterValue(IPlayerParameter parameter, GivesParameter replenishment, float baseValue)
     {
         if (_usedSlot.IsEmpty)
         {
@@ -87,7 +87,7 @@ public class UseOnSelfStrategy : UseStrategy
 
 
     // Обрабатывает логику для целочисленных предметов.
-    private float HandleIntegerConsumable(IPlayerParameter parameter, ReplenishmentParameter replenishment)
+    private float HandleIntegerConsumable(IPlayerParameter parameter, GivesParameter replenishment)
     {
         float currentCapacity = _usedSlot.Capacity;
         _usedSlot.Capacity -= 5 * GameTime.DeltaTime / 60f;
@@ -103,7 +103,7 @@ public class UseOnSelfStrategy : UseStrategy
 
 
     // Обрабатывает логику для непрерывных предметов.
-    private float HandleContinuousConsumable(IPlayerParameter parameter, ReplenishmentParameter replenishment, float baseValue)
+    private float HandleContinuousConsumable(IPlayerParameter parameter, GivesParameter replenishment, float baseValue)
     {
         if (_parameterFlags[parameter] == false && parameter.Current >= parameter.Max)
         {

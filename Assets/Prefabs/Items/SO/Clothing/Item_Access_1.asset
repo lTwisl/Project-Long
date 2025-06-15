@@ -36,6 +36,7 @@ MonoBehaviour:
     - <Item>k__BackingField: {fileID: 0}
       _capacity: 1
       _condition: 100
+      <Wet>k__BackingField: 0
   <ChargeRecipe>k__BackingField: {fileID: 0}
   <ClothingType>k__BackingField: 8
   <TemperatureBonus>k__BackingField: 25

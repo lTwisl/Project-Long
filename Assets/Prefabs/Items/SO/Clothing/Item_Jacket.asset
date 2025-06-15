@@ -42,7 +42,7 @@ MonoBehaviour:
   <ClothingType>k__BackingField: 1
   <TemperatureBonus>k__BackingField: 8
   <WaterProtection>k__BackingField: 1
-  <WindProtection>k__BackingField: 1
+  <WindProtection>k__BackingField: 0.5
   <ToxicityProtection>k__BackingField: 0
   <PhysicProtection>k__BackingField: 0
   <OffsetStamina>k__BackingField: 0

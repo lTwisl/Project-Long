@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public struct ReplenishmentParameter
+public struct GivesParameter
 {
     public ParameterType ParameterType;
     public float Value;
@@ -53,19 +53,19 @@ public enum UnitsMeasurement
     Charge,
 }
 
-public interface ReplenishingPlayerParameters
+public interface IGiverPlayerParameters
 {
-    public List<ReplenishmentParameter> ReplenishmentParameters { get; }
+    public List<GivesParameter> GivesParameters { get; }
 }
 
-public interface GiverOfBonuses
+public interface IGiverOfEffects
 {
-    public List<ScriptableObject> GivesBonus { get; }
+    public List<ScriptableObject> GivesEffects { get; }
 }
 
-public interface HealingDiseases
+public interface IRemovableDiseases
 {
-    public List<ScriptableObject> HealsDisease { get; }
+    public List<ScriptableObject> RemoveDisease { get; }
 }
 
 
