@@ -9520,22 +9520,6 @@ PrefabInstance:
       propertyPath: _player
       value: 
       objectReference: {fileID: 1064263026}
-    - target: {fileID: 7387069309819762372, guid: e6df8ca8325fe4045b11aed0eebbcbda, type: 3}
-      propertyPath: _gameInput
-      value: 
-      objectReference: {fileID: 11400000, guid: 16e38847bfcba3848b20b8235287d158, type: 2}
-    - target: {fileID: 7387069309819762372, guid: e6df8ca8325fe4045b11aed0eebbcbda, type: 3}
-      propertyPath: _inputReader
-      value: 
-      objectReference: {fileID: 11400000, guid: 16e38847bfcba3848b20b8235287d158, type: 2}
-    - target: {fileID: 7387069309819762372, guid: e6df8ca8325fe4045b11aed0eebbcbda, type: 3}
-      propertyPath: _movementSettings
-      value: 
-      objectReference: {fileID: 11400000, guid: 36e4d4776046bf240900d0f36ed05f7f, type: 2}
-    - target: {fileID: 7387069309819762372, guid: e6df8ca8325fe4045b11aed0eebbcbda, type: 3}
-      propertyPath: _clothingSystemConfig
-      value: 
-      objectReference: {fileID: 11400000, guid: 7fd6505d83dd0414b8eb8747505af0e9, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

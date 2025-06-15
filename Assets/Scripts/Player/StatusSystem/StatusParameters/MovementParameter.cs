@@ -27,7 +27,7 @@ public class MovementParameter : BasePlayerParameter
 
         _stateChangeRates = new()
         {
-            { typeof(IdelState), IdleChangeRate },
+            { typeof(IdleState), IdleChangeRate },
             { typeof(WalkState), WalkChangeRate },
             { typeof(RunState), SprintChangeRate },
         };

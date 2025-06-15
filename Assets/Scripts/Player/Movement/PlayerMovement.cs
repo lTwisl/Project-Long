@@ -107,21 +107,23 @@ namespace FirstPersonMovement
             CurrentMaxSpeed = GetMaxCurrentSpeed();
 
             UpdateCrouch();
+        }
 
+        private void LateUpdate()
+        {
             ClampSpeedAndSetLinearDamping();
         }
 
         private float GetMaxCurrentSpeed()
         {
-            float maxSpeed = Mathf.Min(RunSpeed, CurrentMaxSpeed);
+            float maxSpeed = _stateMachine.CurrentState.GetType().Name switch
+            {
+                nameof(RunState) => RunSpeed,
+                nameof(CrouchingState) => CrouchSpeed,
+                nameof(WalkState) or nameof(IdleState) => WalkSpeed,
+                _ => Mathf.Min(RunSpeed, CurrentMaxSpeed),
+            };
 
-            if (_stateMachine.CurrentState is WalkState)
-                maxSpeed = WalkSpeed;
-            else if (_stateMachine.CurrentState is RunState)
-                maxSpeed = RunSpeed;
-            else if (_stateMachine.CurrentState is CrouchingState)
-                maxSpeed = CrouchSpeed;
-                
             if (_settings.UseWind)
             {
                 Vector2 wind = _world.GetWindLocalVector();
@@ -131,6 +133,7 @@ namespace FirstPersonMovement
                     );
 
                 float scale = dot * wind.magnitude / WeatherWindSystem.MaxWindIntensity;
+
                 maxSpeed *= Utility.MapRange(scale, -1, 1, 1 - _settings.EffectWindOnMaxSpeed, 1 + _settings.EffectWindOnMaxSpeed);
             }
 
@@ -254,6 +257,7 @@ namespace FirstPersonMovement
                 Vector3 horVel = new Vector3(_rb.linearVelocity.x, 0f, _rb.linearVelocity.z);
 
                 _rb.linearVelocity = Vector3.ClampMagnitude(horVel, CurrentMaxSpeed) + vertVel;
+                //Debug.Log($"-1: {Utility.RemoveDotVector(_rb.linearVelocity, Vector3.up).magnitude}");
                 return;
             }
 
@@ -294,8 +298,15 @@ namespace FirstPersonMovement
                 _readyToJump = false;
                 _jumpTimer.Start();
 
+                //Debug.Log($"0: {Utility.RemoveDotVector(_rb.linearVelocity, Vector3.up).magnitude}");
+
                 _rb.linearVelocity = new Vector3(_rb.linearVelocity.x, 0f, _rb.linearVelocity.z);
+
+                //Debug.Log($"1: {Utility.RemoveDotVector(_rb.linearVelocity, Vector3.up).magnitude}");
+
                 _rb.AddForce(transform.up * _settings.JumpForce, ForceMode.VelocityChange);
+
+                //Debug.Log($"2: {Utility.RemoveDotVector(_rb.linearVelocity, Vector3.up).magnitude}");
             }
         }
 
@@ -313,7 +324,7 @@ namespace FirstPersonMovement
             _stateMachine.OnChangedState += state => OnChangedState.Invoke(state);
 
 
-            var idel = new IdelState(this);
+            var idel = new IdleState(this);
             var walk = new WalkState(this);
             var run = new RunState(this);
             var crouch = new CrouchingState(this);
@@ -336,12 +347,6 @@ namespace FirstPersonMovement
             _stateMachine.SetState(fall);
         }
 
-        private void OnCollisionEnter(Collision collision)
-        {
-            //if (collision.collider != null && collision.collider != _groundHit.collider)
-            //    Debug.Log($"Contact with {collision.gameObject.name}, friction = {GetFriction(collision.collider.material)}");
-        }
-
 #if UNITY_EDITOR
         private void OnGUI()
         {
@@ -350,7 +355,6 @@ namespace FirstPersonMovement
             GUI.Box(rect, $"<size=30><color=white>Speed: {_rb.linearVelocity.magnitude:f2}</color></size>");
             GUI.color = Color.white;
         }
-
 #endif
 
         public class State : IState
@@ -371,9 +375,9 @@ namespace FirstPersonMovement
             public virtual void Update() { }
         }
 
-        public class IdelState : State
+        public class IdleState : State
         {
-            public IdelState(PlayerMovement movement) : base(movement)
+            public IdleState(PlayerMovement movement) : base(movement)
             {
             }
         }

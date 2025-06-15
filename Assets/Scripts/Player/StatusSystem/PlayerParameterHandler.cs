@@ -72,11 +72,9 @@ public partial class PlayerParameterHandler : MonoBehaviour
         foreach (var disposable in _disposables)
             disposable.Dispose();
 
-        if (_world != null)
-        {
-            _world.OnChangedTotalToxicity -= UpdateToxicityBaseChangeRate;
-            _world.OnChangedTotalTemperature -= UpdateHeatBaseChangeRate;
-        }
+        _world.OnChangedTotalToxicity -= UpdateToxicityBaseChangeRate;
+        _world.OnChangedTotalTemperature -= UpdateHeatBaseChangeRate;
+
     }
 
     private void UpdatePlayerParameters()
