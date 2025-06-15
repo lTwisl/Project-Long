@@ -79,8 +79,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _world: {fileID: 0}
   _player: {fileID: 0}
-  _playerMovementConfig: {fileID: 11400000, guid: c0762a4821a94a048a714a0841db59a6, type: 2}
   _playerParameters: {fileID: 11400000, guid: a9730dc9ae96ea540a8751e77afb7254, type: 2}
+  _movementSettings: {fileID: 11400000, guid: 36e4d4776046bf240900d0f36ed05f7f, type: 2}
+  _clothingSystemConfig: {fileID: 11400000, guid: 7fd6505d83dd0414b8eb8747505af0e9, type: 2}
   _useStrategies:
   - {fileID: 11400000, guid: 80c95c19e30a80d479fc161997d4b4c3, type: 2}
   - {fileID: 11400000, guid: 00377d1a194340949b38a77e4180c5ab, type: 2}

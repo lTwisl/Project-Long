@@ -18,9 +18,6 @@ namespace EditorAttributes.Editor
 		public static readonly Color DEFAULT_GLOBAL_COLOR = new(0.8f, 0.8f, 0.8f, 1.0f);
 		public static Color GLOBAL_COLOR = DEFAULT_GLOBAL_COLOR;
 
-		private const string MENU_ITEM_PATH = "CONTEXT/Object/Show Static Fields";
-		private static bool ENABLE_STATIC_FIELDS;
-
 		private string buttonParamsDataFilePath;
 
 		private Dictionary<MethodInfo, bool> buttonFoldouts = new();
@@ -33,7 +30,7 @@ namespace EditorAttributes.Editor
 			functions = target.GetType().GetMethods(ReflectionUtility.BINDING_FLAGS);
 
 			ButtonDrawer.LoadParamsData(functions, target, ref buttonFoldouts, ref buttonParameterValues);
-			
+
 			try
 			{
 				buttonParamsDataFilePath = Path.Combine(ButtonDrawer.PARAMS_DATA_LOCATION, $"{target}ParamsData.json");
@@ -42,8 +39,6 @@ namespace EditorAttributes.Editor
 			{
 				return;
 			}
-
-			ENABLE_STATIC_FIELDS = Menu.GetChecked(MENU_ITEM_PATH);
 		}
 
 		protected virtual void OnDisable()
@@ -62,26 +57,14 @@ namespace EditorAttributes.Editor
 			// Reset the global color per component GUI so it doesnt leak from other components
 			GLOBAL_COLOR = DEFAULT_GLOBAL_COLOR;
 
-			var root = new VisualElement();			
+			var root = new VisualElement();
 
+			var nonSerializedMembers = DrawNonSerilizedMembers();
 			var defaultInspector = DrawDefaultInspector();
-			var staticFields = DrawStaticFields();
 			var buttons = DrawButtons();
 
 			root.Add(defaultInspector);
-
-			PropertyDrawerBase.UpdateVisualElement(root, () =>
-			{
-				if (ENABLE_STATIC_FIELDS)
-				{
-					PropertyDrawerBase.AddElement(root, staticFields);
-				}
-				else
-				{
-					PropertyDrawerBase.RemoveElement(root, staticFields);
-				}
-			});
-			
+			root.Add(nonSerializedMembers);
 			root.Add(buttons);
 
 			return root;
@@ -100,7 +83,7 @@ namespace EditorAttributes.Editor
 
 					do
 					{
-						var propertyField = new PropertyField(property);
+						var propertyField = PropertyDrawerBase.CreatePropertyField(property);
 
 						if (property.name == "m_Script")
 						{
@@ -147,40 +130,134 @@ namespace EditorAttributes.Editor
 			foreach (var property in orderedProperties)
 				root.Add(property.Value);
 
-            return root;
-		}
-
-		[MenuItem(MENU_ITEM_PATH, priority = 0)]
-		private static void ToggleStaticFields()
-		{
-			ENABLE_STATIC_FIELDS = !ENABLE_STATIC_FIELDS;
-
-			Menu.SetChecked(MENU_ITEM_PATH, ENABLE_STATIC_FIELDS);
+			return root;
 		}
 
 		/// <summary>
-		/// Draws all the static and const fields
+		/// Draws all the members marked with the ShowInInspector attribute
 		/// </summary>
-		/// <returns>A visual element containing all static and const fields</returns>
-		protected VisualElement DrawStaticFields()
+		/// <returns>A visual element containing all non serialized member fields</returns>
+		protected VisualElement DrawNonSerilizedMembers()
 		{
 			var root = new VisualElement();
-			var staticFields = target.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static);
 
-			foreach (var staticField in staticFields)
+			var nonSerializedFields = target.GetType().GetFields(ReflectionUtility.BINDING_FLAGS).Where((field) => field.GetCustomAttribute<ShowInInspectorAttribute>() != null);
+
+			foreach (var nonSerializedField in nonSerializedFields)
 			{
-				if (staticField.GetCustomAttribute<HideInInspector>() != null)
+				if (HasRestrictedAttributes(nonSerializedField, out string errorMessage))
+				{
+					root.Add(new HelpBox(errorMessage, HelpBoxMessageType.Error));
 					continue;
-				
-				var propertyField = ButtonDrawer.DrawParameterField(staticField.FieldType, ObjectNames.NicifyVariableName(staticField.Name), staticField.GetValue(target));
+				}
 
-				propertyField.AddToClassList(BaseField<Void>.alignedFieldUssClassName);
-				propertyField.SetEnabled(false);
+				var field = DrawNonSerializedField(nonSerializedField, nonSerializedField.FieldType, nonSerializedField.GetValue(target));
 
-				root.Add(propertyField);
+				root.Add(field);
+			}
+
+			var nonSerializedProperties = target.GetType().GetProperties(ReflectionUtility.BINDING_FLAGS).Where((field) => field.GetCustomAttribute<ShowInInspectorAttribute>() != null);
+
+			foreach (var nonSerializedProperty in nonSerializedProperties)
+			{
+				if (HasRestrictedAttributes(nonSerializedProperty, out string errorMessage))
+				{
+					root.Add(new HelpBox(errorMessage, HelpBoxMessageType.Error));
+					continue;
+				}
+
+				var field = DrawNonSerializedField(nonSerializedProperty, nonSerializedProperty.PropertyType, nonSerializedProperty.GetValue(target));
+
+				root.Add(field);
+			}
+
+			var nonSerializedMethods = target.GetType().GetMethods(ReflectionUtility.BINDING_FLAGS).Where((field) => field.GetCustomAttribute<ShowInInspectorAttribute>() != null);
+
+			foreach (var nonSerializedMethod in nonSerializedMethods)
+			{
+				if (HasRestrictedAttributes(nonSerializedMethod, out string errorMessage))
+				{
+					root.Add(new HelpBox(errorMessage, HelpBoxMessageType.Error));
+					continue;
+				}
+
+				if (nonSerializedMethod.GetParameters().Length > 0 || nonSerializedMethod.ContainsGenericParameters)
+				{
+					root.Add(new HelpBox($"Method <b>{nonSerializedMethod.Name}</b> cannot be drawn because it has parameters or is generic", HelpBoxMessageType.Error));
+					continue;
+				}
+
+				var field = DrawNonSerializedField(nonSerializedMethod, nonSerializedMethod.ReturnType, nonSerializedMethod.Invoke(target, null));
+
+				root.Add(field);
 			}
 
 			return root;
+		}
+
+		private VisualElement DrawNonSerializedField(MemberInfo memberInfo, Type memberType, object memberValue)
+		{
+			var root = new VisualElement();
+
+			var headerAttribute = memberInfo.GetCustomAttribute<HeaderAttribute>();
+
+			var header = new Label()
+			{
+				style = {
+					marginTop = 13,
+					marginLeft = 3,
+					marginRight = -2,
+					unityFontStyleAndWeight = FontStyle.Bold,
+					unityTextAlign = TextAnchor.LowerLeft
+				}
+			};
+
+			header.AddToClassList("unity-header-drawer__label");
+
+			var field = PropertyDrawerBase.CreateFieldForType(memberType, memberInfo.Name, memberValue);
+
+			field.AddToClassList(BaseField<Void>.alignedFieldUssClassName);
+			field.SetEnabled(false);
+
+			PropertyDrawerBase.BindFieldToMember(memberType, field, memberInfo, target);
+
+			foreach (var spaceAttribute in memberInfo.GetCustomAttributes<SpaceAttribute>())
+			{
+				var space = new VisualElement();
+
+				space.style.height = spaceAttribute.height;
+
+				space.AddToClassList("unity-space-drawer");
+				root.Add(space);
+			}
+
+			if (headerAttribute != null)
+			{
+				header.text = headerAttribute.header;
+				root.Add(header);
+			}
+
+			root.Add(field);
+
+			return root;
+		}
+
+		private bool HasRestrictedAttributes(MemberInfo memberInfo, out string errorMessage)
+		{
+			if (memberInfo.GetCustomAttribute<HideInInspector>() != null || memberInfo.GetCustomAttribute<HidePropertyAttribute>() != null)
+			{
+				errorMessage = $"You want to show the member <b>{memberInfo.Name}</b> but you mark it with the HideInInspector or HideProperty Attribute, make up your mind bro";
+				return true;
+			}
+
+			if (memberInfo.GetCustomAttribute<SerializeField>() != null)
+			{
+				errorMessage = $"The member <b>{memberInfo.Name}</b> is already serialized, there is no need to use the ShowInInspector Attribute";
+				return true;
+			}
+
+			errorMessage = string.Empty;
+			return false;
 		}
 
 		/// <summary>
@@ -198,7 +275,7 @@ namespace EditorAttributes.Editor
 			{
 				var buttonAttribute = function.GetCustomAttribute<ButtonAttribute>();
 
-				if (buttonAttribute == null) 
+				if (buttonAttribute == null)
 					continue;
 
 				var colorAttribute = function?.GetCustomAttribute<GUIColorAttribute>();
@@ -224,7 +301,7 @@ namespace EditorAttributes.Editor
 					{
 						var conditionValue = PropertyDrawerBase.GetConditionValue(conditionalProperty, buttonAttribute, target, errorBox);
 
-						if (buttonAttribute.Negate) 
+						if (buttonAttribute.Negate)
 							conditionValue = !conditionValue;
 
 						switch (buttonAttribute.ConditionResult)

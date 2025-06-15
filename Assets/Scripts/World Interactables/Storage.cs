@@ -2,34 +2,26 @@
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using Zenject;
 
 public class Storage : MonoBehaviour, IInteractible, IShowable
 {
-    [field: SerializeField] public Inventory Inventory { get; protected set; }
+    public bool ShowScriptInfo { get; set; } // Для SceneScriptsControlsWindow
+
 
     [field: SerializeField] public InteractionType InteractionType { get; protected set; }
+    [SerializeField] private List<InventorySlot> _initSlots = new();
 
-    private string _storageId;
+    public Inventory Inventory { get; protected set; }
+
     public virtual bool IsCanInteract { get; protected set; } = true;
-    public bool ShowScriptInfo { get; set; }
+
+    [Inject] private World _world;
+
 
     private void Awake()
     {
-        _storageId = gameObject.name + transform.position.ToString();
-        Inventory.Init();
-        //LoadData();
-    }
-
-    private void LoadData()
-    {
-        string json = PlayerPrefs.GetString(_storageId);
-        Inventory = JsonUtility.FromJson<Inventory>(json);
-    }
-
-    private void OnDestroy()
-    {
-        /*string json = JsonUtility.ToJson(Inventory);
-        PlayerPrefs.SetString(_storageId, json);*/
+        Inventory = new Inventory(_world, _initSlots);
     }
 
     public virtual void Interact(Player player)
@@ -41,6 +33,11 @@ public class Storage : MonoBehaviour, IInteractible, IShowable
             player.Inventory.AddItem(slot.Item, slot.Capacity, slot.Condition);
         }
 
+        AfterInteract();
+    }
+
+    public virtual void AfterInteract()
+    {
         Inventory.Clear();
     }
 
@@ -52,14 +49,13 @@ public class Storage : MonoBehaviour, IInteractible, IShowable
     {
         Undo.RecordObject(this, "Undo Add Inventory Items");
         EditorUtility.SetDirty(this);
+        _initSlots.Clear();
         foreach (var item in _initItems)
         {
             if (item == null)
                 continue;
-
-            Inventory.InitSlots.Add(new InventorySlot(item, 1, 100));
+            _initSlots.Add(new(item, item.MaxCapacity, 1));
         }
-        //_initItems.Clear();
     }
 
     private void OnDrawGizmos()

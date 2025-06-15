@@ -2,17 +2,19 @@ using FirstPersonMovement;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
+using ClothingSystems;
+
 
 [SelectionBase]
 public class Player : MonoBehaviour
 {
-    [field: Inject] public Inventory Inventory { get; private set; }
-    [field: Inject] public ClothingSystem ClothingSystem { get; private set; }
+    public Inventory Inventory { get; private set; }
+    public ClothingSystems.ClothingSystem ClothingSystem { get; private set; }
+
+    [Inject] private ClothingSystemConfig _clothingSystemConfig;
 
     [Inject] private World _world;
     [Inject] private PlayerParameters _parameters;
-
-    [SerializeField] private float _degradationScaleOutside = 2;
 
     // UI References
     [SerializeField] private Slider _slider;
@@ -25,6 +27,8 @@ public class Player : MonoBehaviour
     {
         InitializeComponents();
         InitializeSystems();
+
+        
     }
 
     private void OnEnable()
@@ -34,13 +38,9 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
-        GetComponent<PlayerParameterHandler>().Bind(Inventory, _playerMovement, _world);
-
-        HandleMovementByCapacityStats();
+        GetComponent<PlayerParameterHandler>().Bind(Inventory, ClothingSystem, _playerMovement, _world);
 
         SetVisibilityUiPlayer(false);
-
-        UpdateClothesStaminaOffsetMax();
     }
 
     private void OnDisable()
@@ -57,28 +57,24 @@ public class Player : MonoBehaviour
 
     private void InitializeSystems()
     {
-        Inventory.Init();
-        ClothingSystem.Init();
+        Inventory = new(_world);
+        ClothingSystem = new(_clothingSystemConfig, _world);
     }
 
     private void SubscribeToEvents()
     {
+        GameTime.OnTimeChanged += HandleMinuteChange;
+        
         _input.OnChangedVisibilityUiPlayer += SetVisibilityUiPlayer;
-        GameTime.OnMinuteChanged += HandleMinuteChange;
-        Inventory.OnItemRemoved += ClothingSystem.HandleItemRemoved;
         _world.OnEnterToxicityZone += HandleToxicityZoneEnter;
-        _world.OnEnterShelter += HandleEnterShelter;
-        _world.OnExitShelter += HandleExitShelter;
     }
 
     private void UnsubscribeFromEvents()
     {
+        GameTime.OnTimeChanged -= HandleMinuteChange;
+
         _input.OnChangedVisibilityUiPlayer -= SetVisibilityUiPlayer;
-        GameTime.OnMinuteChanged -= HandleMinuteChange;
-        Inventory.OnItemRemoved -= ClothingSystem.HandleItemRemoved;
         _world.OnEnterToxicityZone -= HandleToxicityZoneEnter;
-        _world.OnEnterShelter -= HandleEnterShelter;
-        _world.OnExitShelter -= HandleExitShelter;
     }
 
     // ========================== UI MANAGEMENT ========================== //
@@ -89,44 +85,29 @@ public class Player : MonoBehaviour
         Cursor.lockState = !Cursor.visible ? CursorLockMode.Locked : CursorLockMode.None;
     }
 
-    private void UpdateClothesStaminaOffsetMax()
-    {
-        _parameters.Stamina.Mediator.AddModifier(new(0, ValueType.Max, value =>
-        {
-            value += ClothingSystem.TotalOffsetStamina;
-            return value;
-        }));
-    }
-
     private void HandleMinuteChange()
     {
-        Inventory.Update(1);
-        ClothingSystem.Update(1);
-    }
-
-    private void HandleEnterShelter(Shelter shelter)
-    {
-        Inventory.DegradationScale = 1;
-        ClothingSystem.DegradationScale = 1;
-    }
-
-    private void HandleExitShelter(Shelter shelter)
-    {
-        Inventory.DegradationScale = _degradationScaleOutside;
-        ClothingSystem.DegradationScale = _degradationScaleOutside;
+        Inventory.Update(GameTime.DeltaTime / 60f);
+        ClothingSystem.UpdateGroups(GameTime.DeltaTime / 60f);
     }
 
     private void HandleToxicityZoneEnter(ToxicityZone zone)
     {
         if (zone.CurrentType == ToxicityZone.ZoneType.Single)
-            _parameters.Toxicity.Current += zone.Toxicity * (1 - ClothingSystem.TotalToxicityProtection / 100);
-    }
+        {
+            float protection = 0f;
+            foreach (var item in ClothingSystem.ClothingSlotGroups)
+            {
+                protection += zone.Toxicity * item.TotalToxicityProtection;
+            }
 
-    public void UpdateCurrentCapacity(InventorySlot _) => _parameters.Capacity.Current = Inventory.Weight;
+            _parameters.Toxicity.Current += zone.Toxicity - protection;
+        }
+    }
 
     public void DropItem(InventorySlot slot)
     {
-        if (!Inventory.Slots.Contains(slot)) return;
+        if (!Inventory.Contains(slot)) return;
 
         Vector3 origin = transform.position + Vector3.up * 1.8f;
         for (float angle = 0f; angle < 360f; angle += 5f)
@@ -144,7 +125,7 @@ public class Player : MonoBehaviour
         }
 
         if (slot.Item is ClothingItem clothes && slot.IsWearing)
-            ClothingSystem.Unequip(slot);
+            ClothingSystem.TryUnequip(slot);
 
         Inventory.RemoveItem(slot);
     }
@@ -160,10 +141,5 @@ public class Player : MonoBehaviour
     public void CancelUseItem(InventorySlot slot)
     {
         slot.Item.UseStrategy.Cancel();
-    }
-
-    private void HandleMovementByCapacityStats()
-    {
-        
     }
 }

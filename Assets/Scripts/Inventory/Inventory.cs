@@ -6,72 +6,76 @@ using UnityEngine;
 [System.Serializable]
 public class Inventory
 {
-    private class ItemNameComparer : IComparer<InventorySlot>
-    {
-        public int Compare(InventorySlot x, InventorySlot y)
-        {
-            if (x == null || y == null)
-                return 0;
-            return string.Compare(x.Item.Name, y.Item.Name, StringComparison.Ordinal);
-        }
-    }
-
-
-    private class ItemConditionComparer : IComparer<InventorySlot>
-    {
-        public int Compare(InventorySlot x, InventorySlot y)
-        {
-            if (x == null || y == null)
-                return 0;
-            return x.Condition.CompareTo(y.Condition);
-        }
-    }
-
-
-    private class ItemWeightComparer : IComparer<InventorySlot>
-    {
-        public int Compare(InventorySlot x, InventorySlot y)
-        {
-            if (x == null || y == null)
-                return 0;
-            return (x.Capacity * x.Item.Weight).CompareTo(y.Capacity * y.Item.Weight);
-        }
-    }
-
-
-    public enum SortingFilter
-    {
-        Alphabet,
-        Condition,
-        Weight,
-    }
-
+    public event Action<InventorySlot> OnItemAdded;
+    public event Action<InventorySlot> OnItemRemoved;
+    public event Action<float> OnChangedWeight;
 
     [HideInInspector] public SortingFilter Filter;
     public Category? Categoty;
+    
+    public IReadOnlyCollection<InventorySlot> Slots => _slots;
+    public float Weight { get; private set; }
 
-    public event Action<InventorySlot> OnItemAdded;
-    public event Action<InventorySlot> OnItemRemoved;
+
+    private readonly LinkedList<InventorySlot> _slots;
+    private readonly World _world;
 
 
-    [SerializeField] public List<InventorySlot> InitSlots = new();
-    public LinkedList<InventorySlot> Slots { get; private set; }
-
-    [field: SerializeField, DisableEdit] public float Weight { get; private set; }
-
-    private float _degradationScale = 1f;
-    public float DegradationScale
+    public Inventory(World world)
     {
-        get => _degradationScale;
-        set => _degradationScale = Mathf.Max(0, value);
+        _world = world;
+        _slots = new();
+        Weight = 0;
     }
 
-    public void Init()
+    public Inventory(World world, List<InventorySlot> initSlots)
     {
-        Slots = new LinkedList<InventorySlot>(InitSlots);
+        _world = world;
+
+        _slots = new LinkedList<InventorySlot>(initSlots);
+        RecalculateWeight();
+    }
+
+    public void Update(float deltaTime)
+    {
+        if (_slots.Count == 0)
+            return;
+
+        LinkedListNode<InventorySlot> currentNode = _slots.First;
+
+        while (currentNode != null)
+        {
+            LinkedListNode<InventorySlot> nextNode = currentNode.Next;
+            InventorySlot slot = currentNode.Value;
+
+
+            if (slot.IsEmpty)
+            {
+                slot.Dispose();
+            }
+            else
+            {
+                InventoryItem item = slot.Item;
+
+                // Деградация предмета
+                if (item.DegradeType == DegradationType.Rate && item is not ClothingItem && item is not HeatingItem)
+                {
+                    slot.Condition -= item.DegradationValue * _world.DegradationScale * deltaTime;
+                }
+            }
+
+            if (slot.MarkedForRemoval)
+            {
+                RemoveItem(slot);
+            }
+
+            currentNode = nextNode;
+        }
 
         RecalculateWeight();
     }
+
+    #region Добавление предмета в инвентарь
 
     /// <summary>
     /// Основной метод добавления предмета в инвентарь
@@ -82,6 +86,7 @@ public class Inventory
             return;
 
         Weight += item.Weight * quantity;
+        OnChangedWeight?.Invoke(Weight);
 
         if (!item.IsStackable)
         {
@@ -138,7 +143,7 @@ public class Inventory
     /// </returns>
     private InventorySlot FindPartialSlot(InventoryItem item, double condition)
     {
-        return Slots.FirstOrDefault(slot =>
+        return _slots.FirstOrDefault(slot =>
             slot.Item == item
             && (int)(slot.Condition * 100) == (int)(condition * 100)
             && !slot.IsFull);
@@ -166,10 +171,10 @@ public class Inventory
     /// </summary>
     private void CreateNewSlotsWithRemaining(InventoryItem item, float quantity, double condition, float maxCapacity)
     {
-        int fullSlotsCount = (int)(quantity / maxCapacity);
+        int full_slotsCount = (int)(quantity / maxCapacity);
         float remainder = quantity % maxCapacity;
 
-        for (int i = 0; i < fullSlotsCount; i++)
+        for (int i = 0; i < full_slotsCount; i++)
         {
             CreateNewSlot(item, maxCapacity, condition);
         }
@@ -186,28 +191,27 @@ public class Inventory
     private void CreateNewSlot(InventoryItem item, float quantity, double condition)
     {
         InventorySlot newSlot = new InventorySlot(item, quantity, condition);
-        Slots.AddLast(newSlot);
+        _slots.AddLast(newSlot);
         OnItemAdded?.Invoke(newSlot);
     }
-
+    #endregion
 
 
     public void RemoveItem(InventorySlot slot)
     {
-        if (!Slots.Remove(slot))
+        if (!_slots.Remove(slot))
             return;
 
         Weight -= slot.GetWeight();
         OnItemRemoved?.Invoke(slot);
+
+        OnChangedWeight?.Invoke(Weight);
     }
 
-
-    public void Clear() => Slots.Clear();
-
-
+    public bool Contains(InventorySlot slot) => _slots.Contains(slot);
     public bool Contains(InventoryItem item, float minCapacity = -1, float minCondition = -1)
     {
-        var slots = Slots.Where(slot => slot.Item == item);
+        var slots = _slots.Where(slot => slot.Item == item);
 
         if (slots.Any())
             return false;
@@ -217,47 +221,23 @@ public class Inventory
 
         return conditionMet && capacityMet;
     }
+    public void Clear() => _slots.Clear();
 
-
-    public void Update(float deltaTime)
+    public void RecalculateWeight()
     {
-        if (Slots.Count == 0)
+        Weight = 0;
+
+        if (_slots.Count == 0)
             return;
 
-        LinkedListNode<InventorySlot> currentNode = Slots.First;
+        foreach (var slot in _slots)
+            Weight += slot.GetWeight();
 
-        while (currentNode != null)
-        {
-            LinkedListNode<InventorySlot> nextNode = currentNode.Next;
-            InventorySlot slot = currentNode.Value;
-            bool shouldRemove = false;
-
-            if (slot.IsEmpty)
-            {
-                shouldRemove = true;
-            }
-            else
-            {
-                InventoryItem item = slot.Item;
-
-                // Деградация предмета
-                if (item.DegradeType == DegradationType.Rate && item is not ClothingItem && item is not HeatingItem)
-                {
-                    slot.Condition -= item.DegradationValue * DegradationScale * deltaTime;
-                    shouldRemove = slot.Condition <= 0;
-                }
-            }
-
-            if (shouldRemove)
-            {
-                RemoveItem(slot);
-            }
-
-            currentNode = nextNode;
-        }
+        OnChangedWeight?.Invoke(Weight);
     }
 
 
+    #region Сортировака инвентаря
     public List<InventorySlot> GetSorteredSlots()
     {
         return GetSorteredSlots(Filter, Categoty);
@@ -274,29 +254,56 @@ public class Inventory
             _ => throw new NotImplementedException(),
         };
 
-        return new List<InventorySlot>(GetSorteredSlotsByCategoty(category).OrderBy(s => s, comparer));
+        return GetSorteredSlotsByCategoty(category).OrderBy(s => s, comparer).ToList();
     }
 
 
     private IEnumerable<InventorySlot> GetSorteredSlotsByCategoty(Category? category)
     {
         if (category != null)
-            return Slots.Where(slot => slot.Item.Category == category);
+            return _slots.Where(slot => slot.Item.Category == category);
 
-        return Slots;
+        return _slots;
     }
 
-
-    public void RecalculateWeight()
+    private class ItemNameComparer : IComparer<InventorySlot>
     {
-        Weight = 0;
-
-        if (Slots.Count == 0)
-            return;
-
-        foreach (var slot in Slots)
+        public int Compare(InventorySlot x, InventorySlot y)
         {
-            Weight += slot.GetWeight();
+            if (x == null || y == null)
+                return 0;
+            return string.Compare(x.Item.Name, y.Item.Name, StringComparison.Ordinal);
         }
     }
+
+
+    private class ItemConditionComparer : IComparer<InventorySlot>
+    {
+        public int Compare(InventorySlot x, InventorySlot y)
+        {
+            if (x == null || y == null)
+                return 0;
+            return x.Condition.CompareTo(y.Condition);
+        }
+    }
+
+
+    private class ItemWeightComparer : IComparer<InventorySlot>
+    {
+        public int Compare(InventorySlot x, InventorySlot y)
+        {
+            if (x == null || y == null)
+                return 0;
+            return (x.Capacity * x.Item.Weight).CompareTo(y.Capacity * y.Item.Weight);
+        }
+    }
+
+
+    public enum SortingFilter
+    {
+        Alphabet,
+        Condition,
+        Weight,
+    }
+    #endregion
 }

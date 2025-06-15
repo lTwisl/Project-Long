@@ -1,5 +1,4 @@
 using UnityEditor;
-using UnityEditor.UIElements;
 using UnityEngine.UIElements;
 using EditorAttributes.Editor.Utility;
 
@@ -16,30 +15,24 @@ namespace EditorAttributes.Editor
 			var root = new VisualElement();
 			var errorBox = new HelpBox();
 
-			var propertyField = new PropertyField(property);
+			var propertyField = CreatePropertyField(property);
 
 			root.Add(propertyField);
 
-            if (string.IsNullOrEmpty(hideAttribute.ConditionName))
-            {
-                RemoveElement(root, propertyField);
-            }
-            else
-            {
-                UpdateVisualElement(root, () =>
+			UpdateVisualElement(root, () =>
+			{
+				if (!GetConditionValue(conditionalProperty, hideAttribute, property, errorBox))
 				{
-					if (!GetConditionValue(conditionalProperty, hideAttribute, property, errorBox))
-					{
-						AddElement(root, propertyField);
-					}
-					else
-					{
-						RemoveElement(root, propertyField);
-					}
+					AddElement(root, propertyField);
+				}
+				else
+				{
+					RemoveElement(root, propertyField);
+				}
 
-					DisplayErrorBox(root, errorBox);
-				});
-			}
+				DisplayErrorBox(root, errorBox);
+			});
+
 			return root;
 		}
 	}

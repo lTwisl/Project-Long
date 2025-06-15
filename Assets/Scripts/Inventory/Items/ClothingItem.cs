@@ -4,14 +4,20 @@ using UnityEngine;
 public enum ClothesType
 {
     Hat,
-    Outerwear,
-    Undershirt,
+    Jacket,
+    Shirt,
     Gloves,
     Pants,
     Underpants,
     Socks,
     Boots,
     Accessories,
+}
+
+public enum ClothingLayer
+{
+    Upper,
+    Lower,
 }
 
 [CreateAssetMenu(fileName = "ClothingItem", menuName = "Items/Clothing")]

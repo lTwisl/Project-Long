@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using Zenject;
-
+[SelectionBase]
 public class UI_ClothesSlot : MonoBehaviour, IPointerDownHandler
 {
     [SerializeField] private Image _icon;
@@ -69,26 +69,21 @@ public class UI_ClothesSlot : MonoBehaviour, IPointerDownHandler
         }
 
         _icon.sprite = Slot.Item.Icon;
-        _wet.text = Slot.Wet.ToString();
+        _wet.text = Slot.Wet.ToString("0.00");
     }
 
     public void OnPointerDown(PointerEventData eventData)
     {
         List<InventorySlot> slots = new();
-        foreach (var slot in _player.Inventory.Slots)
+        foreach (var invSlot in _player.Inventory.Slots)
         {
-            if (slot.Item.Category == Category.Clothes
-                && (slot.Item as ClothingItem).ClothingType == ClothesType)
+            if (invSlot.Item.Category == Category.Clothes
+                && (invSlot.Item as ClothingItem).ClothingType == ClothesType)
             {
-                if (_player.ClothingSystem.TryGetClothesSlot(ClothesType, out ClothingSlot clothingSlot))
-                {
-                    if (clothingSlot.Layers.Contains(slot) && Slot != slot)
-                        continue;
-                    else
-                        slots.Add(slot);
-                }
-                else
-                    slots.Add(slot);
+                if (_player.ClothingSystem.Contains(invSlot) && Slot != invSlot)
+                    continue;
+
+                slots.Add(invSlot);
             }
         }
 

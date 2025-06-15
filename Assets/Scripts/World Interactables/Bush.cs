@@ -10,10 +10,8 @@ public class Bush : Storage
 
     private float timer = 0;
 
-    public override void Interact(Player player)
+    public override void AfterInteract() 
     {
-        base.Interact(player);
-
         timer = _reload * 24 * 60; // Перевод из дней в минуты
         GameTime.OnMinuteChanged += HandleChangedMinute;
 
@@ -30,7 +28,7 @@ public class Bush : Storage
         if (timer <= 0)
         {
             IsCanInteract = true;
-            Inventory.Init();
+
             foreach (var obj in _hideAfterPickup)
             {
                 obj.SetActive(true);

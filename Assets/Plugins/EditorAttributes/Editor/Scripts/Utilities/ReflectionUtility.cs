@@ -19,13 +19,13 @@ namespace EditorAttributes.Editor.Utility
 		/// <returns>The field info of the desired field</returns>
 		public static FieldInfo FindField(string fieldName, SerializedProperty property)
 		{
-		if (fieldName.Contains('.'))
+			if (fieldName.Contains('.'))
 				return GetStaticMemberInfoFromPath(fieldName, MemberTypes.Field) as FieldInfo;
 
 			var fieldInfo = FindField(fieldName, property.serializedObject.targetObject);
 
-            // If the field null we try to see if its inside a serialized object
-            if (fieldInfo == null)
+			// If the field null we try to see if its inside a serialized object
+			if (fieldInfo == null)
 			{
 				var serializedObjectType = GetNestedObjectType(property, out _);				
 
@@ -272,6 +272,26 @@ namespace EditorAttributes.Editor.Utility
 			var memberInfoType = GetMemberInfoType(arrayField);
 
 			return memberInfoType.IsArray || memberInfoType.GetInterfaces().Contains(typeof(IList));
+		}
+
+		/// <summary>
+		/// Checks to see if a member has one of the specified attributes
+		/// </summary>
+		/// <param name="memberInfo">The member to check</param>
+		/// <param name="attributeTypes">The attribute types</param>
+		/// <returns>True if the member has at least one of specified attributes</returns>
+		public static bool HasAnyAttributes(MemberInfo memberInfo, params Type[] attributeTypes)
+		{
+			if (memberInfo == null)
+				return false;
+
+			foreach (var attribute in attributeTypes)
+			{
+				if (memberInfo.GetCustomAttribute(attribute) != null)
+					return true;
+			}
+
+			return false;
 		}
 
 		/// <summary>
