@@ -155,7 +155,7 @@ namespace ClothingSystems
                     return false;
 
                 slotList.Slots[index] = slot;
-
+                slot.IsWearing = true;
                 return true;
             }
 
@@ -171,7 +171,7 @@ namespace ClothingSystems
                     continue;
                 
                 item.Slots[index] = null;
-                
+                slot.IsWearing = false;
                 return true;
             }
 

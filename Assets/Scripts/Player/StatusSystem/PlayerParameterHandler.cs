@@ -1,4 +1,5 @@
-﻿using FirstPersonMovement;
+﻿using ClothingSystems;
+using FirstPersonMovement;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,23 +13,30 @@ public partial class PlayerParameterHandler : MonoBehaviour
 
     [Inject] private PlayerParameters _parameters;
 
+    private CapsuleCollider _collider;
+    private float _baseFriction;
+
     private InventoryInteractionSystem _inventorySystem;
     private ClothingInteractionSystem _clothingInteractionSystem;
     private MovementInteractionSystem _movementSystem;
     private StatModifierSystem _statModifierSystem;
 
     private List<IDisposable> _disposables = new();
-    private World _world;
     private Inventory _inventory;
-    private ClothingSystems.ClothingSystem _clothingSystem;
+    private ClothingSystem _clothingSystem;
     private PlayerMovement _playerMovement;
+    
+    private World _world;
 
     private void Awake()
     {
         _parameters.Initialize();
+
+        _collider = GetComponent<CapsuleCollider>();
+        _baseFriction = _collider.material.dynamicFriction;
     }
 
-    public void Bind(Inventory inventory, ClothingSystems.ClothingSystem clothingSystem, PlayerMovement playerMovement, World world)
+    public void Bind(Inventory inventory, ClothingSystem clothingSystem, PlayerMovement playerMovement, World world)
     {
         _inventory = inventory;
         _clothingSystem = clothingSystem;
@@ -74,8 +82,13 @@ public partial class PlayerParameterHandler : MonoBehaviour
 
         _world.OnChangedTotalToxicity -= UpdateToxicityBaseChangeRate;
         _world.OnChangedTotalTemperature -= UpdateHeatBaseChangeRate;
-
     }
+
+    public void GiveDamage(float damgage)
+    {
+        _parameters.Health.Current -= damgage * (1f - _clothingSystem.TotalPhysicProtection);
+    }
+
 
     private void UpdatePlayerParameters()
     {
@@ -83,6 +96,9 @@ public partial class PlayerParameterHandler : MonoBehaviour
         {
             parameter.UpdateParameter(GameTime.DeltaTime / 60f);
         }
+
+        _collider.material.dynamicFriction = _clothingSystem.TotalFrictionBonus + _baseFriction;
+        _collider.material.staticFriction = _clothingSystem.TotalFrictionBonus + _baseFriction;
     }
 
     private void UpdateToxicityBaseChangeRate(float value)
@@ -95,6 +111,11 @@ public partial class PlayerParameterHandler : MonoBehaviour
     {
         _parameters.Heat.BaseChangeRate = value;
         //_parameters.ModifyParameter(ParameterType.Heat, value);
+    }
+
+    public IPlayerParameter GetPlayerParameter(ParameterType parameterType)
+    {
+        return _parameters.GetParameter(parameterType);
     }
 
 #if UNITY_EDITOR

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -50,23 +51,33 @@ namespace ClothingSystems
             OnUnequip += slot => TotalOffsetStamina -= (slot.Item as ClothingItem).StaminaBonus;
         }
 
-        public void UpdateGroups(float deltaTime)
+        public IEnumerator UpdateGroups(float deltaTime)
         {
-            TotalTemperatureBonus = 0f;
-            TotalFrictionBonus = 0f;
-            TotalPhysicProtection = 0f;
+            float dt = deltaTime / ClothingSlotGroups.Count();
 
-            foreach (var item in ClothingSlotGroups)
+            while (true)
             {
-                item.UpdateSlots(deltaTime);
+                float totalTemperatureBonus = 0f;
+                float totalFrictionBonus = 0f;
+                float totalPhysicProtection = 0f;
 
-                TotalTemperatureBonus += item.TotalTemperatureBonus;
-                TotalPhysicProtection += item.TotalPhysicProtection;
+                foreach (var item in ClothingSlotGroups)
+                {
+                    item.UpdateSlots(dt);
 
-                TotalFrictionBonus += item.TotalFrictionBonus;
+                    totalTemperatureBonus += item.TotalTemperatureBonus;
+                    totalPhysicProtection += item.TotalPhysicProtection;
+
+                    totalFrictionBonus += item.TotalFrictionBonus;
+
+                    yield return null;
+                }
+
+                TotalTemperatureBonus = totalTemperatureBonus;
+
+                TotalFrictionBonus = 0.4f * totalFrictionBonus / (totalFrictionBonus + 0.2f);
+                TotalPhysicProtection = totalPhysicProtection / (totalPhysicProtection + 0.5f);
             }
-
-            TotalFrictionBonus = 0.4f * TotalFrictionBonus / (TotalFrictionBonus + 0.2f);
         }
 
         public bool TryEquip(InventorySlot slot, int index)

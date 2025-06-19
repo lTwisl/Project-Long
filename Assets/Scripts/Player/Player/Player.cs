@@ -9,7 +9,7 @@ using ClothingSystems;
 public class Player : MonoBehaviour
 {
     public Inventory Inventory { get; private set; }
-    public ClothingSystems.ClothingSystem ClothingSystem { get; private set; }
+    public ClothingSystem ClothingSystem { get; private set; }
 
     [Inject] private ClothingSystemConfig _clothingSystemConfig;
 
@@ -41,6 +41,8 @@ public class Player : MonoBehaviour
         GetComponent<PlayerParameterHandler>().Bind(Inventory, ClothingSystem, _playerMovement, _world);
 
         SetVisibilityUiPlayer(false);
+
+        StartCoroutine(ClothingSystem.UpdateGroups(GameTime.DeltaTime / 60f));
     }
 
     private void OnDisable()
@@ -88,7 +90,7 @@ public class Player : MonoBehaviour
     private void HandleMinuteChange()
     {
         Inventory.Update(GameTime.DeltaTime / 60f);
-        ClothingSystem.UpdateGroups(GameTime.DeltaTime / 60f);
+        //ClothingSystem.UpdateGroups(GameTime.DeltaTime / 60f);
     }
 
     private void HandleToxicityZoneEnter(ToxicityZone zone)

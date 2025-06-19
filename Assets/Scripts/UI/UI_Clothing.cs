@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using Zenject;
-using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class UI_Clothing : MonoBehaviour
 {
@@ -104,60 +103,60 @@ public class UI_Clothing : MonoBehaviour
             }*/
     }
 
-        /*foreach (var slot in _player.SlotGroup.GetAllSlots())
+    /*foreach (var slot in _player.SlotGroup.GetAllSlots())
+    {
+        if (slot == null) 
+            continue;
+
+        var clothing = slot.Item as ClothingItem;
+
+        if (!_uiSlotCache.TryGetValue(clothing.ClothingType, out List<UI_ClothesSlot> layers))
+            continue;
+
+        for (int i = 0; i < layers.Count; ++i)
         {
-            if (slot == null) 
-                continue;
-
-            var clothing = slot.Item as ClothingItem;
-
-            if (!_uiSlotCache.TryGetValue(clothing.ClothingType, out List<UI_ClothesSlot> layers))
-                continue;
-
-            for (int i = 0; i < layers.Count; ++i)
+            if (*//*slot.Layers.Count <= i*//* slot.IsEmpty)
             {
-                if (*//*slot.Layers.Count <= i*//* slot.IsEmpty)
-                {
-                    layers[i].Clear();
-                    continue;
-                }
-
-                layers[i].Set(slot);
-
-                p1 += clothing.TemperatureBonus;
-                p2 += clothing.WaterProtection;
-                p3 += clothing.WindProtection;
-                p4 += clothing.FrictionBonus;
-                p5 += clothing.ToxicityProtection;
-            }
-        }*/
-
-        
-
-        /*foreach (var slot in _clothesSystem.SlotCache.Values)
-        {
-            if (!_uiSlotCache.TryGetValue(slot.ClothesType, out List<UI_ClothesSlot> layers))
+                layers[i].Clear();
                 continue;
-
-            for (int i = 0; i < layers.Count; ++i)
-            {
-                if (*//*slot.Layers.Count <= i*//* slot.Layers[i].Item == null)
-                {
-                    layers[i].Clear();
-                    continue;
-                }
-
-                layers[i].Set(slot.Layers[i]);
-
-                var clothes = slot.Layers[i].Item as ClothingItem;
-                p1 += clothes.TemperatureBonus;
-                p2 += clothes.WaterProtection;
-                p3 += clothes.WindProtection;
-                p4 += clothes.FrictionBonus;
-                p5 += clothes.ToxicityProtection;
             }
+
+            layers[i].Set(slot);
+
+            p1 += clothing.TemperatureBonus;
+            p2 += clothing.WaterProtection;
+            p3 += clothing.WindProtection;
+            p4 += clothing.FrictionBonus;
+            p5 += clothing.ToxicityProtection;
         }
+    }*/
 
-        _text.text = $"Temperature = {p1} | Water = {p2} | Wind = {p3} | _friction = {p4} | Toxisity = {p4}";*/
-    
+
+
+    /*foreach (var slot in _clothesSystem.SlotCache.Values)
+    {
+        if (!_uiSlotCache.TryGetValue(slot.ClothesType, out List<UI_ClothesSlot> layers))
+            continue;
+
+        for (int i = 0; i < layers.Count; ++i)
+        {
+            if (*//*slot.Layers.Count <= i*//* slot.Layers[i].Item == null)
+            {
+                layers[i].Clear();
+                continue;
+            }
+
+            layers[i].Set(slot.Layers[i]);
+
+            var clothes = slot.Layers[i].Item as ClothingItem;
+            p1 += clothes.TemperatureBonus;
+            p2 += clothes.WaterProtection;
+            p3 += clothes.WindProtection;
+            p4 += clothes.FrictionBonus;
+            p5 += clothes.ToxicityProtection;
+        }
+    }
+
+    _text.text = $"Temperature = {p1} | Water = {p2} | Wind = {p3} | _friction = {p4} | Toxisity = {p4}";*/
+
 }

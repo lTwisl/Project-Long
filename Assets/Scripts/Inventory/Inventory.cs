@@ -43,6 +43,8 @@ public class Inventory
 
         LinkedListNode<InventorySlot> currentNode = _slots.First;
 
+        float _dryingRateFactor = Utility.MapRange(_world.TotalTemperature, 10, 80, 0, 1, true);
+
         while (currentNode != null)
         {
             LinkedListNode<InventorySlot> nextNode = currentNode.Next;
@@ -61,6 +63,16 @@ public class Inventory
                 if (item.DegradeType == DegradationType.Rate && item is not ClothingItem && item is not HeatingItem)
                 {
                     slot.Condition -= item.DegradationValue * _world.DegradationScale * deltaTime;
+                }
+
+                ClothingItem clothing = item as ClothingItem;
+                if (clothing != null && !slot.IsWearing && slot.Wet > 0f)
+                {
+                    float addWet = _world.TotalWetness * (1 - clothing.WaterProtection * (float)slot.Condition) -
+                            (clothing.DryingRate * _dryingRateFactor);
+
+                    if (addWet < 0)
+                        slot.Wet = Mathf.Clamp01(slot.Wet + addWet * deltaTime);
                 }
             }
 
