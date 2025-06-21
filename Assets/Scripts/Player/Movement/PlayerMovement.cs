@@ -3,6 +3,7 @@ using FiniteStateMachine;
 using ImprovedTimers;
 using StatsModifiers;
 using System;
+using System.Collections;
 using UnityEngine;
 using Zenject;
 
@@ -54,6 +55,9 @@ namespace FirstPersonMovement
         Vector3 moveDirection;
         private RaycastHit _groundHit;
         private bool _readyToJump = true;
+
+        private bool _isCrouching = false;
+        private bool _isTransitionCrouching = false;
 
         [Inject]
         private void Construction(MovementSettings settings)
@@ -225,27 +229,41 @@ namespace FirstPersonMovement
                 _rb.AddForce(moveDirection * _settings.MoveAcceleration, ForceMode.Acceleration);
         }
 
+        
         private void UpdateCrouch()
         {
-            if (_stateMachine.CurrentState is CrouchingState)
+            bool isCanCrouching = _isGrounded && _slopeLimit > _groundAngle;
+
+            if (isCanCrouching && _input.IsCrouching && !_isCrouching && !_isTransitionCrouching)
             {
-                if (_col.height != _settings.CrouchHeight)
+                _isTransitionCrouching = true;
+                _isCrouching = true;
+                _cameraController.SmoothMoveCamera(new Vector3(0f, -_initHeight + _settings.CrouchHeight, 0f), () =>
                 {
-                    _col.height = Mathf.MoveTowards(_col.height, _settings.CrouchHeight, Time.deltaTime * _settings.SpeedTransitionCrouch);
-                }
-            }
-            else if (_col.height != _initHeight &&
-                !Physics.CheckSphere(transform.position + new Vector3(0f, _initHeight - _col.radius + 0.1f, 0f), _col.radius, _whatIsGround))
-            {
-                _col.height = Mathf.MoveTowards(_col.height, _initHeight, Time.deltaTime * _settings.SpeedTransitionCrouch);
+                    _col.height = _settings.CrouchHeight;
+                    _col.center = new Vector3(0f, _initCenterHeight - (_initHeight - _col.height) / 2, 0f);
+                    _isTransitionCrouching = false;
+                });
             }
 
-            if (_col.height != _initHeight || _col.height != _settings.CrouchHeight)
+            if (((!_input.IsCrouching && _isCrouching && !_isTransitionCrouching) ||
+                (!isCanCrouching && _isCrouching)) && 
+                !Physics.CheckSphere(transform.position + new Vector3(0f, _initHeight - _col.radius + 0.1f, 0f), _col.radius, _whatIsGround))
             {
+                _isTransitionCrouching = true;
+                _isCrouching = false;
+
+                _col.height = _initHeight;
                 _col.center = new Vector3(0f, _initCenterHeight - (_initHeight - _col.height) / 2, 0f);
-                _cameraController?.SetCameraOffset(new Vector3(0f, -_initHeight + _col.height, 0f));
+
+                _cameraController.SmoothMoveCamera(new Vector3(0f, _initHeight - _settings.CrouchHeight, 0f), () =>
+                {
+                    _isTransitionCrouching = false;
+                });
             }
         }
+
+
 
         private void ClampSpeedAndSetLinearDamping()
         {
@@ -336,7 +354,7 @@ namespace FirstPersonMovement
             _stateMachine.AddAnyTransition(idel, new FuncPredicate(() => _isGrounded && _slopeLimit > _groundAngle && !_input.IsCrouching && _input.Move == Vector2.zero));
             _stateMachine.AddAnyTransition(walk, new FuncPredicate(() => _isGrounded && _slopeLimit > _groundAngle && !_input.IsCrouching && CanWalk && (!_input.IsRunning || !CanRun)));
             _stateMachine.AddAnyTransition(run, new FuncPredicate(() => _isGrounded && _slopeLimit > _groundAngle && !_input.IsCrouching && _input.IsRunning && CanRun));
-            _stateMachine.AddAnyTransition(crouch, new FuncPredicate(() => _isGrounded && _slopeLimit > _groundAngle && _input.IsCrouching));
+            _stateMachine.AddAnyTransition(crouch, new FuncPredicate(() => _isGrounded && _slopeLimit > _groundAngle && _input.IsCrouching && _isCrouching));
 
             _stateMachine.AddAnyTransition(upSlide, new FuncPredicate(() => _isGrounded && _slopeLimit < _groundAngle && _rb.linearVelocity.y > 0f));
             _stateMachine.AddAnyTransition(downSlide, new FuncPredicate(() => _isGrounded && _slopeLimit < _groundAngle && _rb.linearVelocity.y < 0f));

@@ -1,4 +1,6 @@
 ﻿using EditorAttributes;
+using System;
+using System.Collections;
 using UnityEngine;
 
 public class CameraController : MonoBehaviour
@@ -47,6 +49,29 @@ public class CameraController : MonoBehaviour
     public void SetCameraOffset(Vector3 offset)
     {
         _cinemachineCameraTarget.transform.localPosition = _initCameraPos + offset;
+    }
+
+    public void SmoothMoveCamera(Vector3 offset)
+    {
+        StartCoroutine(_SmoothMoveCamera(offset, null));
+    }
+
+    public void SmoothMoveCamera(Vector3 offset, Action action)
+    {
+        StartCoroutine(_SmoothMoveCamera(offset, action));
+    }
+
+    private IEnumerator _SmoothMoveCamera(Vector3 offset, Action action)
+    {
+        Vector3 targetPos = _cinemachineCameraTarget.transform.localPosition + offset;
+
+        while (_cinemachineCameraTarget.transform.localPosition != targetPos)
+        {
+            _cinemachineCameraTarget.transform.localPosition = Vector3.MoveTowards(_cinemachineCameraTarget.transform.localPosition, targetPos, Time.deltaTime);
+            yield return null;
+        }
+
+        action?.Invoke();
     }
 }
 
