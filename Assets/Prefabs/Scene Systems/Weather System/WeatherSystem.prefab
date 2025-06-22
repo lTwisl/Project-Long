@@ -56,7 +56,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 05059311190a3f847b37c6959c77c5bb, type: 2}
   <CurrentWeatherProfile>k__BackingField: {fileID: 11400000, guid: 62b6db9f95725c349b09f93c1854c909, type: 2}
   <NextWeatherProfile>k__BackingField: {fileID: 0}
-  <Temperature>k__BackingField: -10
+  <Temperature>k__BackingField: 0
   <Wetness>k__BackingField: 0
   <Toxicity>k__BackingField: 0
   <SunLight>k__BackingField: {fileID: 0}

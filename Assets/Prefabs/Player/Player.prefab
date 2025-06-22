@@ -916,7 +916,6 @@ MonoBehaviour:
   _changeSpeedMultiplier: 5
   _disableComponents:
   - {fileID: 2664309092099708906}
-  - {fileID: 0}
 --- !u!114 &6673401988270284543
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -987,6 +986,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5456fd4eb16ce54ca2431ac8adbbcf6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _showDebugInfoOnScreen: 0
 --- !u!1 &6836966812123088361
 GameObject:
   m_ObjectHideFlags: 0

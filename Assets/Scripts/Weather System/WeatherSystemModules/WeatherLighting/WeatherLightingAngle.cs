@@ -1,31 +1,111 @@
+﻿using EditorAttributes;
 using System;
 using UnityEngine;
 
 public class WeatherLightingAngle : MonoBehaviour
 {
+    [Tooltip("Географическая широта места (в градусах)")]
+    [SerializeField, Range(-90, 90)] private float _latitude = 45f;
+
+    [Tooltip("Угол поворота сцены относительно направления на восток (в градусах)")]
+    [SerializeField, Range(0, 360)] private float _angleToEast = 45f;
+
+    private const float AXIAL_TILT = 23.5f;
     private const float SECONDS_IN_DAY = 86400f;
-    private const float DEGREES_PER_SECOND = 360f / SECONDS_IN_DAY;
+    private const int FIXED_DAY_OF_YEAR = 66; // Фиксированный особенный день года (7 марта) ПАСХАЛКА))
 
     private void Awake()
     {
-        GameTime.OnTimeChanged += UpdateLightAngle; 
+        GameTime.OnTimeChanged += UpdateSunPosition;
     }
 
-    private void UpdateLightAngle()
+    private void UpdateSunPosition()
     {
-        transform.rotation = Quaternion.Euler(CalculateTheRotationXAngle(GameTime.Time), transform.eulerAngles.y, transform.eulerAngles.z);
+        transform.eulerAngles = CalculateSunEulerAngles(GameTime.Time);
     }
 
-    private float CalculateTheRotationXAngle(TimeSpan currentTime)
+    private Vector3 CalculateSunEulerAngles(TimeSpan currentTime)
     {
-        // ������������ ����� � �������, � ����� ����������� � �������� 24 �����
-        float totalSeconds = (float)currentTime.TotalSeconds % SECONDS_IN_DAY;
+        // 1. Расчет временных параметров:
+        float totalSeconds = (float)(currentTime.TotalSeconds + 12 * 3600) % SECONDS_IN_DAY;
+        float hourAngle = (totalSeconds / SECONDS_IN_DAY * 360f - 180f); // Часовой угол в градусах
 
-        return totalSeconds * DEGREES_PER_SECOND - 90f;
+        // 2. Расчет склонения солнца (по упрощенной синуисудальной зависимости):
+        float solarDeclination = AXIAL_TILT * Mathf.Sin(Mathf.Deg2Rad * (360f * (FIXED_DAY_OF_YEAR - 81) / 365f));
+
+        // 3. Расчет высоты солнца над горизонтом:
+        float elevation = CalculateElevation(hourAngle, solarDeclination);
+
+        // 4. Расчет азимута солнца:
+        float azimuth = CalculateAzimuth(hourAngle, solarDeclination, elevation);
+
+        // 5. Применяем смещение направления на восток
+        azimuth = (azimuth + _angleToEast) % 360f;
+
+        return new Vector3(-elevation, azimuth, 0f);
+    }
+
+    private float CalculateElevation(float hourAngle, float declination)
+    {
+        float latRad = Mathf.Deg2Rad * _latitude;
+        float decRad = Mathf.Deg2Rad * declination;
+        float haRad = Mathf.Deg2Rad * hourAngle;
+
+        // Формула высоты солнца: sin(h) = sin(φ)*sin(δ) + cos(φ)*cos(δ)*cos(H)
+        float sinElevation = Mathf.Sin(latRad) * Mathf.Sin(decRad) + Mathf.Cos(latRad) * Mathf.Cos(decRad) * Mathf.Cos(haRad);
+
+        return Mathf.Rad2Deg * Mathf.Asin(sinElevation);
+    }
+
+    private float CalculateAzimuth(float hourAngle, float declination, float elevation)
+    {
+        float latRad = Mathf.Deg2Rad * _latitude;
+        float decRad = Mathf.Deg2Rad * declination;
+        float haRad = Mathf.Deg2Rad * hourAngle;
+        float elRad = Mathf.Deg2Rad * elevation;
+
+        // Защита от деления на ноль при зените
+        if (Mathf.Approximately(elRad, Mathf.PI / 2))
+        {
+            return 180f;
+        }
+
+        float sinAzimuth = -Mathf.Sin(haRad) * Mathf.Cos(decRad) / Mathf.Cos(elRad);
+        float cosAzimuth = (Mathf.Sin(decRad) - Mathf.Sin(latRad) * Mathf.Sin(elRad))
+                         / (Mathf.Cos(latRad) * Mathf.Cos(elRad));
+
+        float azimuthRad = Mathf.Atan2(sinAzimuth, cosAzimuth);
+        float azimuth = Mathf.Rad2Deg * azimuthRad;
+
+        // Нормализация в диапазон [0, 360]
+        return (azimuth + 360f) % 360f;
     }
 
     private void OnDestroy()
     {
-        GameTime.OnTimeChanged -= UpdateLightAngle;
+        GameTime.OnTimeChanged -= UpdateSunPosition;
     }
+
+#if UNITY_EDITOR
+    [Header("- - Настройки времени в редакторе:")]
+    [SerializeField, Range(0, 23)] private int _hour = 8;
+    [SerializeField, Range(0, 59)] private int _minute = 0;
+
+    public void SetTimeInEditor()
+    {
+        _hour = Mathf.Clamp(_hour, 0, 23);
+        _minute = Mathf.Clamp(_minute, 0, 59);
+
+        transform.rotation = Quaternion.Euler(CalculateSunEulerAngles(new TimeSpan(_hour, _minute, 0)));
+    }
+
+    private void OnValidate()
+    {
+        SetTimeInEditor();
+
+        // Отключаю трансформ, чтобы не было соблазна играться с ним
+        if (transform.hideFlags != HideFlags.NotEditable)
+            transform.hideFlags = HideFlags.NotEditable;
+    }
+#endif
 }

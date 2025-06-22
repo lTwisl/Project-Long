@@ -330,18 +330,18 @@ public class WeatherSystem : MonoBehaviour
 
         // 3. Инициализируем ссылку на каждую погодную систему при необходимости
         Undo.RecordObject(this, "Weather System Find References");
-        if (!IsLightingSystemsValid)
+        if (!SunLight || !MoonLight)
         {
             WeatherLightingColor[] weatherLightings = FindObjectsByType<WeatherLightingColor>(FindObjectsSortMode.None);
 
             SunLight = weatherLightings.FirstOrDefault(wetLight => wetLight?.IsSun == true);
             MoonLight = weatherLightings.FirstOrDefault(wetLight => wetLight?.IsSun == false);
         }
-        if (!IsFogSystemValid) WeatherFogSystem = FindFirstObjectByType<WeatherFogSystem>();
-        if (!IsSkyboxSystemValid) WeatherSkyboxSystem = FindFirstObjectByType<WeatherSkyboxSystem>();
-        if (!IsWindSystemValid) WeatherWindSystem = FindFirstObjectByType<WeatherWindSystem>();
-        if (!IsPostProcessSystemValid) WeatherPostProcessSystem = FindFirstObjectByType<WeatherPostProcessSystem>();
-        if (!IsVfxSystemValid) WeatherVFXSystem = FindFirstObjectByType<WeatherVFXSystem>();
+        if (!WeatherFogSystem) WeatherFogSystem = FindFirstObjectByType<WeatherFogSystem>();
+        if (!WeatherSkyboxSystem) WeatherSkyboxSystem = FindFirstObjectByType<WeatherSkyboxSystem>();
+        if (!WeatherWindSystem) WeatherWindSystem = FindFirstObjectByType<WeatherWindSystem>();
+        if (!WeatherPostProcessSystem) WeatherPostProcessSystem = FindFirstObjectByType<WeatherPostProcessSystem>();
+        if (!WeatherVFXSystem) WeatherVFXSystem = FindFirstObjectByType<WeatherVFXSystem>();
 
         // 4.1. Для не префабов устанавливаем флаг грязного обьекта
         EditorUtility.SetDirty(this);

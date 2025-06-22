@@ -26,6 +26,6 @@ Material:
     m_Ints: []
     m_Floats: []
     m_Colors:
-    - _Sun_Direction: {r: 0.64085644, g: -0.4226183, b: 0.6408564, a: 0}
+    - _Sun_Direction: {r: 0.9945204, g: -0.0845766, b: -0.061448395, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

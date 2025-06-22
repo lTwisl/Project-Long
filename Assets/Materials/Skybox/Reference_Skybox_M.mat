@@ -34,9 +34,9 @@ Material:
   disabledShaderPasses:
   - MOTIONVECTORS
   m_LockedProperties: _Atmosphere_Height _Debug_Mode _Height_Atmosphere _HideSkybox
-    _Mask_Texture_Stars _Min_Light_Color _Min_Scaterring _MoonSize _Ray_Leight_Intensity
-    _Rayleight_Influence _Rayleight_Intensity _Ready _Sun_Inner_Phase _Sun_Min_Intensity
-    _Sun_Outer_Phase _Tiling_Flick_Noise _Tiling_Stars
+    _Mask_Texture_Stars _Min_Light_Color _Min_Scaterring _MoonSize _Moon_Texture
+    _Ray_Leight_Intensity _Rayleight_Influence _Rayleight_Intensity _Ready _Sun_Inner_Phase
+    _Sun_Min_Intensity _Sun_Outer_Phase _Tiling_Flick_Noise _Tiling_Stars
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -46,6 +46,14 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _Mask_Texture_Stars:
         m_Texture: {fileID: 2800000, guid: 7321e87a949528d42bfa2b8e836c7c8e, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Moon_Texture:
+        m_Texture: {fileID: 2800000, guid: b84b720190a61e84c89b270401db0c48, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_8bd11391c2a44531940d8e84d1f93116_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: b84b720190a61e84c89b270401db0c48, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SampleTexture2D_afaaedcc2f534365a7ee4ce43fe6eed4_Texture_1_Texture2D:
@@ -148,9 +156,9 @@ Material:
     - _Start: 1
     - _Step: 0.06
     - _Sun_Fallof_Range: -0.154
-    - _Sun_Inner_Phase: 0.995
+    - _Sun_Inner_Phase: 0.999
     - _Sun_Min_Intensity: 0.05
-    - _Sun_Outer_Phase: 0.9
+    - _Sun_Outer_Phase: 0.75
     - _Sun_Phase: 0.995
     - _Sun_Phase_In: 0.995
     - _Sun_Phase_Out: 0.8
@@ -169,6 +177,7 @@ Material:
     - _Color_Haze: {r: 3.441591, g: 2.025244, b: 1.548716, a: 1}
     - _Color_Horizon: {r: 0.8988236, g: 1.947451, b: 2.996079, a: 1}
     - _Color_Horizont: {r: 1, g: 1, b: 1, a: 1}
+    - _Color_Moon: {r: 5.9921575, g: 5.9921575, b: 5.9921575, a: 1}
     - _Color_Night: {r: 0.5785419, g: 1.06066, b: 0.7713892, a: 1}
     - _Color_On_Ground: {r: 0.038461532, g: 0.11538463, b: 0.2, a: 1}
     - _Color_On_Horizon: {r: 0.7947111, g: 1.6661906, b: 2.2706032, a: 1}

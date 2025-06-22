@@ -8,18 +8,21 @@ public class WeatherSkyboxSystem : MonoBehaviour, IWeatherSystem
 
     [Header("- - Материал скайбокса:")]
     [SerializeField, DisableEdit] private Material _skyboxMaterial;
-    [Space(10)]
+
+    [Header("- - Transform солнца в сцене:")]
     [SerializeField, DisableEdit] private Transform _sunTransform;
 
     public void InitializeAndValidateSystem()
     {
-        // 1. Инициализируем ссылку на материал скайбокса:
+        // 1. Инициализируем ссылку на материал скайбокса и трансформ солнца:
         _skyboxMaterial = RenderSettings.skybox;
+        _sunTransform = RenderSettings.sun.transform;
 
-        // 2. Проверяем найденную ссылку на метериал:
+        // 2. Проверяем найденную ссылку на материал:
         if (!_skyboxMaterial)
         {
             _isSystemValid = false;
+            Debug.LogWarning("<color=orange>Не удалось найти ссылку на материал скайбокса!</color>");
             return;
         }
 
@@ -27,28 +30,14 @@ public class WeatherSkyboxSystem : MonoBehaviour, IWeatherSystem
         _isSystemValid = ShaderSkyboxIDs.IsPropertiesValid(_skyboxMaterial);
 
         if (!IsSystemValid)
-        {
             Debug.LogWarning("<color=orange>Не удалось найти все необходимые параметры шейдера скайбокса!</color>");
-            return;
-        }
-
-        // 4. Кешируем ссылку на источник света(солнце) в сцене
-        WeatherLightingColor[] weatherLightColors = FindObjectsByType<WeatherLightingColor>(FindObjectsSortMode.None);
-        foreach (WeatherLightingColor weatherLightColor in weatherLightColors)
-        {
-            if (weatherLightColor.IsSun)
-            {
-                _sunTransform = weatherLightColor.transform;
-                break;
-            }
-        }
     }
 
     public void UpdateSystemParameters(WeatherProfile currentProfile, WeatherProfile nextProfile, float t)
     {
         if (!IsSystemValid)
         {
-            Debug.LogWarning("<color=orange>Модуль скайбокса неисправен. Система погоды не будет управлять скайбоксом!</color>");
+            Debug.LogWarning("<color=orange>Модуль скайбокса неисправен. Погода не будет управлять скайбоксом!</color>");
             return;
         }
 
@@ -102,15 +91,14 @@ public class WeatherSkyboxSystem : MonoBehaviour, IWeatherSystem
             currentProfile.SkyboxMat.GetFloat(ShaderSkyboxIDs.SunsetRange),
             nextProfile.SkyboxMat.GetFloat(ShaderSkyboxIDs.SunsetRange), t));
 
-        // Heyney-Greenstein Scattering
-        _skyboxMaterial.SetFloat(ShaderSkyboxIDs.MoonOuterPhase, Mathf.Lerp(
-            currentProfile.SkyboxMat.GetFloat(ShaderSkyboxIDs.MoonOuterPhase),
-            nextProfile.SkyboxMat.GetFloat(ShaderSkyboxIDs.MoonOuterPhase), t));
-
         // Stars
         _skyboxMaterial.SetColor(ShaderSkyboxIDs.ColorStars, Color.Lerp(
             currentProfile.SkyboxMat.GetColor(ShaderSkyboxIDs.ColorStars),
             nextProfile.SkyboxMat.GetColor(ShaderSkyboxIDs.ColorStars), t));
+
+        _skyboxMaterial.SetColor(ShaderSkyboxIDs.ColorMoon, Color.Lerp(
+            currentProfile.SkyboxMat.GetColor(ShaderSkyboxIDs.ColorMoon),
+            nextProfile.SkyboxMat.GetColor(ShaderSkyboxIDs.ColorMoon), t));
 
         _skyboxMaterial.SetFloat(ShaderSkyboxIDs.SpeedFlickingStars, Mathf.Lerp(
             currentProfile.SkyboxMat.GetFloat(ShaderSkyboxIDs.SpeedFlickingStars),
@@ -142,15 +130,14 @@ public class WeatherSkyboxSystem : MonoBehaviour, IWeatherSystem
 #if UNITY_EDITOR
     private void OnValidate()
     {
-        // 0. Не валидируем, если это префаб-ассет (не экземпляр)
+        // 1. Проверяем находимся ли мы в режиме редактирования префаба
         if (PrefabUtility.IsPartOfPrefabAsset(this)) return;
 
-        // 1. Автоматически инициализируем и валидируем систему в редакторе
+        // 2. Автоматически инициализируем и валидируем систему в редакторе
         InitializeAndValidateSystem();
 
         // 2. Сохраняем значения для префаба
-        if (PrefabUtility.IsPartOfPrefabInstance(this))
-            PrefabUtility.RecordPrefabInstancePropertyModifications(this);
+        EditorChangeTracker.MarkAsDirty(this, "Intialize and Validate Skybox System");
     }
 #endif
 }
