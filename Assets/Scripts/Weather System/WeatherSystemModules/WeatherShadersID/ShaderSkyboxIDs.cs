@@ -18,11 +18,9 @@ public class ShaderSkyboxIDs
     // Time of Day Correction
     public static readonly int SunsetRange = Shader.PropertyToID("_Sunset_Range");
 
-    // Heyney-Greenstein Scattering
-    public static readonly int MoonOuterPhase = Shader.PropertyToID("_Moon_Outer_Phase");
-
     // Stars
     public static readonly int ColorStars = Shader.PropertyToID("_Color_Stars");
+    public static readonly int ColorMoon = Shader.PropertyToID("_Color_Moon");
     public static readonly int SpeedFlickingStars = Shader.PropertyToID("_Speed_Flicking_Stars");
     public static readonly int HorizonOffsetStars = Shader.PropertyToID("_Horizon_Offset_Stars");
 
@@ -53,9 +51,8 @@ public class ShaderSkyboxIDs
 
             material.HasProperty(SunsetRange) &&
 
-            material.HasProperty(MoonOuterPhase) &&
-
             material.HasProperty(ColorStars) &&
+            material.HasProperty(ColorMoon) &&
             material.HasProperty(SpeedFlickingStars) &&
             material.HasProperty(HorizonOffsetStars) &&
 

@@ -1,3 +1,4 @@
+using EditorAttributes;
 using UnityEditor;
 using UnityEngine;
 
@@ -31,6 +32,12 @@ public class WeatherSystemEditorUpdater : MonoBehaviour
         if (_weatherSystem) return;
 
         _weatherSystem = FindAnyObjectByType<WeatherSystem>();
+    }
+
+    [Button]
+    public void UpdateGlobalIllumination()
+    {
+        DynamicGI.UpdateEnvironment();
     }
 
     private void OnValidate()
