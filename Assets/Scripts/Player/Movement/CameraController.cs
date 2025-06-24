@@ -1,4 +1,5 @@
 ﻿using EditorAttributes;
+using ModestTree.Util;
 using System;
 using System.Collections;
 using UnityEngine;
@@ -11,7 +12,7 @@ public class CameraController : MonoBehaviour
     [SerializeField] private float _bottomClamp = -89.0f;
     [SerializeField] private float _rotationSpeed = 1.0f;
 
-    private Vector3 _initCameraPos;
+    public Vector3 InitCameraPos { get; private set; }
     private float _cinemachineTargetPitch;
     private float _rotationVelocity;
     private const float _threshold = 0.01f;
@@ -23,7 +24,7 @@ public class CameraController : MonoBehaviour
     {
         _input = GetComponent<InputReader>();
 
-        _initCameraPos = _cinemachineCameraTarget.transform.localPosition;
+        InitCameraPos = _cinemachineCameraTarget.transform.localPosition;
     }
 
     private void LateUpdate()
@@ -48,30 +49,28 @@ public class CameraController : MonoBehaviour
 
     public void SetCameraOffset(Vector3 offset)
     {
-        _cinemachineCameraTarget.transform.localPosition = _initCameraPos + offset;
+        _cinemachineCameraTarget.transform.localPosition = InitCameraPos + offset;
     }
 
-    public void SmoothMoveCamera(Vector3 offset)
+    public void SmoothMove(Vector3 offset, float maxDistanceDelta, Action onGoal = null)
     {
-        StartCoroutine(_SmoothMoveCamera(offset, null));
+        StartCoroutine(SmoothToTargetCoroutine(_cinemachineCameraTarget.transform.localPosition + offset, maxDistanceDelta, onGoal));
     }
 
-    public void SmoothMoveCamera(Vector3 offset, Action action)
+    public void SmoothToTarget(Vector3 localTarget, float maxDistanceDelta, Action onGoal = null)
     {
-        StartCoroutine(_SmoothMoveCamera(offset, action));
+        StartCoroutine(SmoothToTargetCoroutine(localTarget, maxDistanceDelta, onGoal));
     }
 
-    private IEnumerator _SmoothMoveCamera(Vector3 offset, Action action)
+    private IEnumerator SmoothToTargetCoroutine(Vector3 localTarget, float maxDistanceDelta, Action onGoal)
     {
-        Vector3 targetPos = _cinemachineCameraTarget.transform.localPosition + offset;
-
-        while (_cinemachineCameraTarget.transform.localPosition != targetPos)
+        while (_cinemachineCameraTarget.transform.localPosition != localTarget)
         {
-            _cinemachineCameraTarget.transform.localPosition = Vector3.MoveTowards(_cinemachineCameraTarget.transform.localPosition, targetPos, Time.deltaTime);
+            _cinemachineCameraTarget.transform.localPosition = Vector3.MoveTowards(_cinemachineCameraTarget.transform.localPosition, localTarget, maxDistanceDelta);
             yield return null;
         }
 
-        action?.Invoke();
+        onGoal?.Invoke();
     }
 }
 

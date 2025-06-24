@@ -36,10 +36,31 @@ namespace ClothingSystems
 
         public IReadOnlyDictionary<BodyType, BodyTypeData> BodyTypeDataMap => _bodyTypeDataMap;
         public IReadOnlyDictionary<ClothesType, ClothesTypeData> ClothesTypeDataMap => _clothesTypeDataMap;
+        private int _summaryCountSlots;
 
 
         public bool GetIsOuter(ClothesType type) => _clothesTypeDataMap[type].IsOuter;
         public int GetCountSlots(ClothesType type) => _clothesTypeDataMap[type].CountSlots;
+        public int GetSummaryCountSlots()
+        {
+            if (_summaryCountSlots != 0)
+                return _summaryCountSlots;
+
+            int count = 0;
+            foreach (var kvp in _bodyTypeDataMap)
+            {
+                if (kvp.Key == BodyType.Accessories)
+                    continue;
+
+                foreach (var kvp2 in kvp.Value.ClothesTypes)
+                {
+                    count += GetCountSlots(kvp2);
+                }
+            }
+
+            _summaryCountSlots = count;
+            return count;
+        }
 
         public float GetToxicityProtection(BodyType type) => _bodyTypeDataMap[type].ToxicityProtection;
         public IReadOnlyList<ClothesType> GetClothesTypes(BodyType type) => _bodyTypeDataMap[type].ClothesTypes;
@@ -54,6 +75,8 @@ namespace ClothingSystems
             _clothesTypeDataMap.Clear();
             foreach (var t in Enum.GetValues(typeof(ClothesType)).Cast<ClothesType>())
                 _clothesTypeDataMap.Add(t, new ClothesTypeData());
+
+            _summaryCountSlots = GetSummaryCountSlots();
         }
     }
 }

@@ -56,8 +56,10 @@ namespace FirstPersonMovement
         private RaycastHit _groundHit;
         private bool _readyToJump = true;
 
+        private Coroutine CoroutineCrouch;
         private bool _isCrouching = false;
         private bool _isTransitionCrouching = false;
+        private float _transitionCrouchHeight;
 
         [Inject]
         private void Construction(MovementSettings settings)
@@ -85,7 +87,7 @@ namespace FirstPersonMovement
             _jumpTimer = new CountdownTimer(_settings.JumpCooldown);
             _jumpTimer.OnTimerStop += ResetJump;
 
-            _initHeight = _col.height;
+            _initHeight = _transitionCrouchHeight = _col.height;
             _initCenterHeight = _col.center.y;
 
             SetupStateMachine();
@@ -229,41 +231,62 @@ namespace FirstPersonMovement
                 _rb.AddForce(moveDirection * _settings.MoveAcceleration, ForceMode.Acceleration);
         }
 
-        
+       
         private void UpdateCrouch()
         {
             bool isCanCrouching = _isGrounded && _slopeLimit > _groundAngle;
 
             if (isCanCrouching && _input.IsCrouching && !_isCrouching && !_isTransitionCrouching)
             {
-                _isTransitionCrouching = true;
+                if (CoroutineCrouch != null)
+                    StopCoroutine(CoroutineCrouch);
+
                 _isCrouching = true;
-                _cameraController.SmoothMoveCamera(new Vector3(0f, -_initHeight + _settings.CrouchHeight, 0f), () =>
-                {
-                    _col.height = _settings.CrouchHeight;
-                    _col.center = new Vector3(0f, _initCenterHeight - (_initHeight - _col.height) / 2, 0f);
-                    _isTransitionCrouching = false;
-                });
+                CoroutineCrouch = StartCoroutine(StartCrouch());
             }
 
             if (((!_input.IsCrouching && _isCrouching && !_isTransitionCrouching) ||
                 (!isCanCrouching && _isCrouching)) && 
-                !Physics.CheckSphere(transform.position + new Vector3(0f, _initHeight - _col.radius + 0.1f, 0f), _col.radius, _whatIsGround))
+                !Physics.CheckSphere(transform.position + new Vector3(0f, _initHeight - _col.radius + 0.1f, 0f), _col.radius - 0.01f, _whatIsGround))
             {
-                _isTransitionCrouching = true;
+                if (CoroutineCrouch != null)
+                    StopCoroutine(CoroutineCrouch);
+
                 _isCrouching = false;
-
-                _col.height = _initHeight;
-                _col.center = new Vector3(0f, _initCenterHeight - (_initHeight - _col.height) / 2, 0f);
-
-                _cameraController.SmoothMoveCamera(new Vector3(0f, _initHeight - _settings.CrouchHeight, 0f), () =>
-                {
-                    _isTransitionCrouching = false;
-                });
+                CoroutineCrouch = StartCoroutine(StopCrouch());
             }
         }
 
+        
+        private IEnumerator StartCrouch()
+        {
+            _col.height = _transitionCrouchHeight;
 
+            while (_col.height != _settings.CrouchHeight)
+            {
+                _col.height = Mathf.MoveTowards(_col.height, _settings.CrouchHeight, Time.deltaTime * _settings.SpeedTransitionCrouch);
+                _col.center = new Vector3(0f, _initCenterHeight - (_initHeight - _col.height) / 2f, 0f);
+                _cameraController.SetCameraOffset(new Vector3(0f, -_initHeight + _col.height, 0f));
+
+                _transitionCrouchHeight = _col.height;
+                yield return null;
+            }
+        }
+
+        private IEnumerator StopCrouch()
+        {
+            _transitionCrouchHeight = _col.height;
+
+            _col.height = _initHeight;
+            _col.center = new Vector3(0f, _initCenterHeight - (_initHeight - _col.height) / 2f, 0f);
+
+            while (_transitionCrouchHeight != _initHeight)
+            {
+                _transitionCrouchHeight = Mathf.MoveTowards(_transitionCrouchHeight, _initHeight, Time.deltaTime * _settings.SpeedTransitionCrouch);
+                _cameraController.SetCameraOffset(new Vector3(0f, -_initHeight + _transitionCrouchHeight, 0f));
+                yield return null;
+            }
+        }
 
         private void ClampSpeedAndSetLinearDamping()
         {

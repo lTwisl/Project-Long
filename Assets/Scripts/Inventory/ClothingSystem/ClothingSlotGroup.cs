@@ -88,17 +88,22 @@ namespace ClothingSystems
                 for (int i = 0; i < item.Slots.Count; ++i)
                 {
                     var slot = item.Slots[i];
+
+                    
                     if (slot == null)
                     {
-                        TotalTemperatureBonus += WeatherWindSystem.MaxWindTemperature * normForceWindRatio;
+                        if (BodyType != BodyType.Accessories)
+                            TotalTemperatureBonus += WeatherWindSystem.MaxWindTemperature * normForceWindRatio / _config.GetSummaryCountSlots();
                         continue;
                     }
 
                     if (slot.Item is not ClothingItem clothing)
                     {
-                        TotalTemperatureBonus += WeatherWindSystem.MaxWindTemperature * normForceWindRatio;
+                        if (BodyType != BodyType.Accessories)
+                            TotalTemperatureBonus += WeatherWindSystem.MaxWindTemperature * normForceWindRatio / _config.GetSummaryCountSlots();
                         continue;
                     }
+                    
 
                     float condition = (float)slot.Condition;
 
@@ -122,7 +127,10 @@ namespace ClothingSystems
 
 
                     float tempByClothing = clothing.TemperatureBonus * condition - clothing.TemperatureBonus * slot.Wet * _tempWet;
-                    float tempByWind = (1 - clothing.WindProtection * condition) * WeatherWindSystem.MaxWindTemperature * normForceWindRatio;
+
+                    float tempByWind = 0;
+                    if (BodyType != BodyType.Accessories)
+                        tempByWind = (1 - clothing.WindProtection * condition) * WeatherWindSystem.MaxWindTemperature * normForceWindRatio / _config.GetSummaryCountSlots();
 
                     TotalTemperatureBonus += tempByClothing + tempByWind;
 
