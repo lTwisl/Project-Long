@@ -463,4 +463,42 @@ public class InventoryItemEditor : Editor
         unitMeasurementField.SetEnabled(isEnable);
         root.Add(unitMeasurementField);
     }
+
+    public override string GetInfoString()
+    {
+        return "Icon Preview";
+    }
+
+    /*public override void OnPreviewGUI(Rect rect, GUIStyle background)
+    {
+        InventoryItem item = (InventoryItem)target;
+        if (item.Icon != null)
+        {
+            GUI.DrawTexture(rect, item.Icon.texture, ScaleMode.ScaleToFit);
+        }
+    }*/
+
+    // Основной метод для отрисовки миниатюры в Project Browser
+    public override Texture2D RenderStaticPreview(string assetPath, UnityEngine.Object[] subAssets, int width, int height)
+    {
+        InventoryItem item = (InventoryItem)target;
+        if (item.Icon != null && item.Icon.texture != null)
+        {
+            Texture2D texture = new Texture2D(width, height);
+            Rect rect = new Rect(0, 0, width, height);
+            RenderTexture renderTexture = RenderTexture.GetTemporary(width, height);
+            Graphics.Blit(item.Icon.texture, renderTexture);
+
+            RenderTexture.active = renderTexture;
+            texture.ReadPixels(rect, 0, 0);
+            texture.Apply();
+
+            RenderTexture.ReleaseTemporary(renderTexture);
+            RenderTexture.active = null;
+
+            return texture;
+        }
+
+        return null;
+    }
 }
