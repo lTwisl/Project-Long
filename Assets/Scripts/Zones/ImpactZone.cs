@@ -1,10 +1,10 @@
+using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
 public class ImpactZone : MonoBehaviour
 {
-    [SerializeField] private ParameterType _parameterType;
-    [SerializeField] private float _impactValue;
+    [SerializeField] private List<GivesParameter> _givesParameters;
 
     [Space(10)]
     [SerializeField] private float _addWetValue;
@@ -33,6 +33,7 @@ public class ImpactZone : MonoBehaviour
             }
         });
 
-        _parameters.GetParameter(_parameterType).Current += _impactValue;
+        foreach (var param in _givesParameters)
+            _parameters.GetParameter(param.ParameterType).Current += param.Value;
     }
 }
