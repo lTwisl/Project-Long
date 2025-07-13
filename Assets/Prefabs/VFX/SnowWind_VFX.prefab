@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 4531423073082014474}
   - component: {fileID: 2181187702412947234}
   m_Layer: 0
-  m_Name: SnowWind_VFX
+  m_Name: Snowwind_VFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -47,9 +47,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 926ca930c18bb8343aadaea1a709a221, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _isControllerValide: 0
-  _destroyVFXInstantly: 0
   <VFXGraph>k__BackingField: {fileID: 435673994064610687}
+  _destroyType: 0
+  _repositionType: 1
+  _targetTransform: {fileID: 0}
+  _height: 20
 --- !u!2083052967 &435673994064610687
 VisualEffect:
   m_ObjectHideFlags: 0

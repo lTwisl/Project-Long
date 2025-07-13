@@ -36,5 +36,13 @@ MonoBehaviour:
     Tool: {fileID: 0}
     Items: []
   <ChargeRecipe>k__BackingField: {fileID: 0}
-  <GivesParameters>k__BackingField: []
+  <GivesParameters>k__BackingField:
+  - ParameterType: 0
+    Value: 0
+  - ParameterType: 2
+    Value: 0
+  - ParameterType: 3
+    Value: 0
+  - ParameterType: 6
+    Value: 0
   <GivesEffects>k__BackingField: []

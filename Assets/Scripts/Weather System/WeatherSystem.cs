@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -142,7 +141,7 @@ public class WeatherSystem : MonoBehaviour
         OnWeatherTransitionStarted?.Invoke(NextWeatherProfile);
 
         // 3. Обновляем параметры погодного состояния
-        InitializeWeatherVFXSystem();
+        PrepareWeatherVFXSystem(NextWeatherProfile);
         UpdateWeatherParameters(CurrentWeatherProfile, NextWeatherProfile, 1f);
 
         // 4. Рассчитываем параметры следующего погодного состояния
@@ -193,7 +192,7 @@ public class WeatherSystem : MonoBehaviour
         //Debug.Log($"<color=green>Смена погодных условий началась в {GameTime.GetFormattedTime(startTime)}. Меняем: {CurrentWeatherProfile.weatherIdentifier} на {NewWeatherProfile.weatherIdentifier}.</color>");
 
         // 1. Обновляем параметры погодного состояния
-        InitializeWeatherVFXSystem();
+        PrepareWeatherVFXSystem(NextWeatherProfile);
         float t = 0f;
         while (t < 1f)
         {
@@ -215,9 +214,21 @@ public class WeatherSystem : MonoBehaviour
     /// <summary>
     /// Погодготовить систему визуальных эффектов погоды
     /// </summary>
-    private void InitializeWeatherVFXSystem()
+    private void PrepareWeatherVFXSystem(WeatherProfile nextProfile)
     {
-        WeatherVFXSystem.SpawnVFXControllers(NextWeatherProfile);
+        if (!IsVfxSystemValid) return;
+
+        WeatherVFXSystem.PreSpawnVFXControllers(nextProfile);
+    }
+
+    /// <summary>
+    /// Очистить систему визуальных эффектов погоды
+    /// </summary>
+    private void ClearWeatherVFXSystem()
+    {
+        if (IsVfxSystemValid) return;
+
+        WeatherVFXSystem.ClearVFXControllers();
     }
 
     /// <summary>
@@ -229,9 +240,11 @@ public class WeatherSystem : MonoBehaviour
         CurrentWeatherProfile = NextWeatherProfile;
 
         // 2. Рассчитываем следующее погодное состояние
-        List<WeatherProfile> availableTransitions = GetTransitionProfiles();
-        if (availableTransitions.Count > 0)
-            NextWeatherProfile = availableTransitions[UnityEngine.Random.Range(0, availableTransitions.Count)];
+        List<WeatherProfile> availableWeatherProfiles = GetAvailableWeatherProfiles();
+        if (availableWeatherProfiles.Count > 0)
+        {
+            NextWeatherProfile = availableWeatherProfiles[UnityEngine.Random.Range(0, availableWeatherProfiles.Count)];
+        }
         else
         {
             NextWeatherProfile = CurrentWeatherProfile;
@@ -242,15 +255,15 @@ public class WeatherSystem : MonoBehaviour
     /// <summary>
     /// Получить все профили, доступные для перехода из текущего состояния погоды
     /// </summary>
-    private List<WeatherProfile> GetTransitionProfiles()
+    private List<WeatherProfile> GetAvailableWeatherProfiles()
     {
-        List<WeatherProfile> availableProfiles = new();
+        List<WeatherProfile> availableWeatherProfiles = new();
 
         foreach (WeatherProfile profile in AvailableWeatherProfiles)
             if (profile && CurrentWeatherProfile && CurrentWeatherProfile.Transitions.HasFlag((WeatherTransitions)profile.Identifier))
-                availableProfiles.Add(profile);
+                availableWeatherProfiles.Add(profile);
 
-        return availableProfiles;
+        return availableWeatherProfiles;
     }
 
     /// <summary>
@@ -297,30 +310,26 @@ public class WeatherSystem : MonoBehaviour
         Toxicity = Mathf.Lerp(currentProfile.Toxicity, nextProfile.Toxicity, t);
     }
 
+#if UNITY_EDITOR
     private void OnDestroy()
     {
-#if UNITY_EDITOR
         if (AvailableWeatherProfiles.Count > 0)
             SetWeatherConditionImmediately(AvailableWeatherProfiles[0]);
-#endif
     }
 
-#if UNITY_EDITOR
 
     private void OnValidate()
     {
-        // Не выполняем поиск, если это префаб в режиме изоляции
-        if (PrefabUtility.IsPartOfPrefabAsset(this)) return;
-
-        FindReferences();
+        if (!Application.isPlaying)
+            FindReferences();
     }
 
     private void FindReferences()
     {
-        // 1. Не выполняем авто-поиск для экземпляров префабов (только для корневого объекта в сцене)
-        if (PrefabUtility.IsPartOfPrefabInstance(this)) return;
+        if (EditorChangeTracker.IsPrefabInEditMode(this)) return;
 
-        // 2. Актуализируем погодные параметры
+        EditorChangeTracker.RegisterUndo(this, "Find Weather System References");
+
         if (CurrentWeatherProfile)
         {
             Temperature = CurrentWeatherProfile.Temperature;
@@ -328,8 +337,6 @@ public class WeatherSystem : MonoBehaviour
             Toxicity = CurrentWeatherProfile.Toxicity;
         }
 
-        // 3. Инициализируем ссылку на каждую погодную систему при необходимости
-        Undo.RecordObject(this, "Weather System Find References");
         if (!SunLight || !MoonLight)
         {
             WeatherLightingColor[] weatherLightings = FindObjectsByType<WeatherLightingColor>(FindObjectsSortMode.None);
@@ -342,33 +349,28 @@ public class WeatherSystem : MonoBehaviour
         if (!WeatherWindSystem) WeatherWindSystem = FindFirstObjectByType<WeatherWindSystem>();
         if (!WeatherPostProcessSystem) WeatherPostProcessSystem = FindFirstObjectByType<WeatherPostProcessSystem>();
         if (!WeatherVFXSystem) WeatherVFXSystem = FindFirstObjectByType<WeatherVFXSystem>();
-
-        // 4.1. Для не префабов устанавливаем флаг грязного обьекта
-        EditorUtility.SetDirty(this);
-
-        // 4.2. Для префабов в фиксируем изменения префаба
-        if (PrefabUtility.IsPartOfPrefabInstance(this))
-            PrefabUtility.RecordPrefabInstancePropertyModifications(this);
-
-        // 5. Обновляем валидность каждой системы
         ValidateReferences();
+
+        EditorChangeTracker.SetDirty(this);
     }
 
     public void SetWeatherConditionEditor()
     {
+        if (EditorChangeTracker.IsPrefabInEditMode(this)) return;
+
         if (!CurrentWeatherProfile)
         {
-            Debug.LogError("<color=red>Попытка установить невалидный профиль погоды отклонена!</color>");
+            Debug.LogError("<color=red>Отклонена попытка установить null профиль погоды!</color>");
             return;
         }
 
-        // 1. Обновляем параметры
-        Undo.RecordObject(this, "Установлено новогое погодное состояние в редакторе");
+        EditorChangeTracker.RegisterUndo(this, $"Set new Weather Profile Editor - {CurrentWeatherProfile.Identifier}");
+
+        ClearWeatherVFXSystem();
+        PrepareWeatherVFXSystem(CurrentWeatherProfile);
         UpdateWeatherParameters(CurrentWeatherProfile, CurrentWeatherProfile, 1f);
 
-        // 2. Помечаем всю сцену как грязную
         EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
     }
-
 #endif
 }

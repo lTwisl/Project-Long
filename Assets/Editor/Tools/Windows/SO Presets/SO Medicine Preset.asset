@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c350a64fb238dec4cb7016feeaf41386, type: 3}
+  m_Name: SO Medicine Preset
+  m_EditorClassIdentifier: 
+  <Description>k__BackingField: This preset contain all project "Medicine Scriptable
+    Objects". Use this preset, if you worked with Medicine Items.
+  <ScriptableObjects>k__BackingField:
+  - {fileID: 11400000, guid: 0741750cbbd82434b9cfc983899ffd0f, type: 2}
+  - {fileID: 11400000, guid: f7c11734fdef53343b0686d38cd89efb, type: 2}
+  - {fileID: 11400000, guid: 858d033b7ee5d694fadaa8647f4dd4aa, type: 2}
+  - {fileID: 11400000, guid: 0326110bc71dbb64dab23f8b663aa8ec, type: 2}
+  - {fileID: 11400000, guid: 726f5ffd78b278447a2ec616d8914065, type: 2}
+  - {fileID: 11400000, guid: 93fa603eff4cc3643bbf5df6e829ae86, type: 2}

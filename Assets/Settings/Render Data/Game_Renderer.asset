@@ -36,7 +36,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b00045f12942b46c698459096c89274e, type: 3}
-  m_Name: FullScreenVolumetricFogFar
+  m_Name: FullScreenAtmosphericFog
   m_EditorClassIdentifier: 
   m_Active: 1
   injectionPoint: 550
@@ -56,7 +56,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b00045f12942b46c698459096c89274e, type: 3}
-  m_Name: FullScreenVolumetricFogNear
+  m_Name: FullScreenVolumetricFog
   m_EditorClassIdentifier: 
   m_Active: 1
   injectionPoint: 550
@@ -91,11 +91,11 @@ MonoBehaviour:
     probeSamplingDebugTexture: {fileID: 0}
     probeVolumeBlendStatesCS: {fileID: 0}
   m_RendererFeatures:
-  - {fileID: -1753871306529863744}
   - {fileID: -2675411701934795552}
+  - {fileID: -1753871306529863744}
   - {fileID: -4771592466879060175}
   - {fileID: 7220151334194800304}
-  m_RendererFeatureMap: c08789d056ffa8e7e0d440663b07dfda3167beaeeee5c7bdb0663e6b62213364
+  m_RendererFeatureMap: e0d440663b07dfdac08789d056ffa8e73167beaeeee5c7bdb0663e6b62213364
   m_UseNativeRenderPass: 1
   xrSystemData: {fileID: 0}
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}

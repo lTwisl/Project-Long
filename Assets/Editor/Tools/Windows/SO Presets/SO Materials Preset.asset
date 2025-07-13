@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c350a64fb238dec4cb7016feeaf41386, type: 3}
+  m_Name: SO Materials Preset
+  m_EditorClassIdentifier: 
+  <Description>k__BackingField: This preset contain all project "Material Scriptable
+    Objects". Use this preset, if you worked with Material Items.
+  <ScriptableObjects>k__BackingField:
+  - {fileID: 11400000, guid: 4840668f728669744b3cebe30091faf8, type: 2}
+  - {fileID: 11400000, guid: ab825bca8886d344383923f0b5293031, type: 2}
+  - {fileID: 11400000, guid: 6b4888fc5cdc7fc49b79de15e21984ff, type: 2}

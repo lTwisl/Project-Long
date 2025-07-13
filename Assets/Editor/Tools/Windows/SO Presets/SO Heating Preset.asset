@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c350a64fb238dec4cb7016feeaf41386, type: 3}
+  m_Name: SO Heating Preset
+  m_EditorClassIdentifier: 
+  <Description>k__BackingField: This preset contain all project "Heating Scriptable
+    Objects". Use this preset, if you worked with Heating Items.
+  <ScriptableObjects>k__BackingField:
+  - {fileID: 11400000, guid: b6140c26260ea7743907e6f367f8bdd0, type: 2}
+  - {fileID: 11400000, guid: 46fcc58dd76b1024aa96418b9c556cbb, type: 2}
+  - {fileID: 11400000, guid: b002374376027204ab584b83760c7887, type: 2}

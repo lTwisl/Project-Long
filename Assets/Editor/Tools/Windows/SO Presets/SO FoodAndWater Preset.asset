@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c350a64fb238dec4cb7016feeaf41386, type: 3}
+  m_Name: SO FoodAndWater Preset
+  m_EditorClassIdentifier: 
+  <Description>k__BackingField: This preset contain all project "Food and Water Scriptable
+    Objects". Use this preset, if you worked with Food and Water Items.
+  <ScriptableObjects>k__BackingField:
+  - {fileID: 11400000, guid: ca47c3a9dc3e75348956bc895adbfd60, type: 2}
+  - {fileID: 11400000, guid: de1179026cc1e1d4ca4711119571598f, type: 2}
+  - {fileID: 11400000, guid: 7ed95cd52f525fb4d8708f018dbe58e2, type: 2}
+  - {fileID: 11400000, guid: 4d556aee08895d64db3efef6a76f71ae, type: 2}
+  - {fileID: 11400000, guid: bf1bbef48343bbf4085eac155e6a390f, type: 2}

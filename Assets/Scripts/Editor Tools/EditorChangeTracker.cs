@@ -1,123 +1,170 @@
 #if UNITY_EDITOR
-using UnityEngine;
-using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.SceneManagement;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
-/// <summary>
-/// Универсальный инструмент для работы с изменениями объектов в Unity Editor
-/// </summary>
 public static class EditorChangeTracker
 {
+    #region SET DIRTY|UNDO METHODS
     /// <summary>
-    /// Универсальная логика сохранения изменений для любого типа и контекста объекта
+    /// Регистрация Undo: для одного объекта
     /// </summary>
-    /// <param name="obj">Объект, который необходимо сохранить</param>
-    /// <param name="description">Описание изменения для системы Undo</param>
-    /// <param name="immediateSave">Нужно ли сразу сохранять изменения на диск</param>
-    public static void MarkAsDirty(Object obj, string description, bool immediateSave = false)
+    public static void RegisterUndo(Object target, string undoMessage = "Editor Change Tracker Undo")
     {
-        if (!obj)
+        if (target == null) return;
+
+        Undo.RecordObject(target, undoMessage);
+    }
+
+    /// <summary>
+    /// Метка грязного обьекта: для одного обьекта
+    /// </summary>
+    public static void SetDirty(Object target)
+    {
+        if (target == null) return;
+
+        // Prefab-Instance
+        if (IsPrefabInstance(target))
         {
-            Debug.LogWarning("EditorSaver: Попытка сохранить null объект");
+            PrefabUtility.RecordPrefabInstancePropertyModifications(target);
             return;
         }
 
-        // Заносим изменение в систему Undo
-        UndoRegisterChange(obj, description);
-
-        // Обрабатываем разные контексты объектов
-        if (PrefabUtility.IsPartOfPrefabAsset(obj)) // Для обьектов, которые являются частями префабов в режиме редакторования префаба
+        // Prefab-Asset, SO, ... 
+        if (EditorUtility.IsPersistent(target))
         {
-            HandlePrefabAsset(obj, immediateSave);
-        }
-        else if (PrefabUtility.IsPartOfPrefabInstance(obj)) // Для обьектов, которые являются частями префабов в экземпляре префаба сцены
-        {
-            HandlePrefabInstance(obj);
-        }
-        else // Для обьектов, которые находятся в сцене и не являются частями префабов
-        {
-            HandleSceneObject(obj);
+            EditorUtility.SetDirty(target);
+            return;
         }
 
-        // Принудительное обновление инспектора
-        EditorApplication.RepaintHierarchyWindow();
-        EditorApplication.RepaintProjectWindow();
+        // Object, Component, other in Scene... 
+        Scene scene = GetSceneFromTarget(target);
+        if (scene.IsValid()) EditorSceneManager.MarkSceneDirty(scene);
+    }
+    #endregion
+
+    #region UTILITY METHODS
+    private static Scene GetSceneFromTarget(Object target)
+    {
+        if (target is GameObject go) return go.scene;
+        if (target is Component comp) return comp.gameObject.scene;
+        return default;
+    }
+    #endregion
+
+    #region OBJECT CONTEXT
+    /// <summary>
+    /// Проверка: является ли объект префабом в Project View?
+    /// </summary>
+    public static bool IsPrefabAsset(Object target)
+    {
+        if (target == null) return false;
+
+        return PrefabUtility.IsPartOfPrefabAsset(target) && !PrefabUtility.IsPartOfNonAssetPrefabInstance(target);
     }
 
     /// <summary>
-    /// Сохраняет несколько объектов одновременно
+    /// Проверка: является ли объект экземпляром префаба в сцене?
     /// </summary>
-    public static void MarkMultipleAsDirty(IEnumerable<Object> objects, string description, bool immediateSave = false)
+    public static bool IsPrefabInstance(Object target)
     {
-        if (objects == null) return;
+        if (target == null) return false;
 
-        Undo.SetCurrentGroupName(description);
-        var group = Undo.GetCurrentGroup();
-
-        foreach (var obj in objects)
+        GameObject gameObject = target switch
         {
-            MarkAsDirty(obj, description, immediateSave);
-        }
+            Component component => component.gameObject,
+            GameObject gameObj => gameObj,
+            _ => null
+        };
 
-        Undo.CollapseUndoOperations(group);
+        return PrefabUtility.IsPartOfPrefabInstance(gameObject) && PrefabUtility.GetCorrespondingObjectFromSource(gameObject) != null && !PrefabUtility.IsPrefabAssetMissing(gameObject);
     }
 
-    #region Функциональные методы
-
-    private static void UndoRegisterChange(Object obj, string description)
+    /// <summary>
+    /// Проверка: является ли объект корнем редактируемого префаба?
+    /// </summary>
+    public static bool IsPrefabRoot(Object target)
     {
-        // Если это компонент
-        if (obj is Component component)
-        {
-            Undo.RecordObject(component.gameObject, description);
-        }
-        else
-        {
-            Undo.RecordObject(obj, description);
-        }
+        if (target == null) return false;
+
+        var stage = PrefabStageUtility.GetCurrentPrefabStage();
+        return stage != null && stage.prefabContentsRoot == target;
     }
 
-    private static void HandlePrefabAsset(Object obj, bool immediateSave)
+    /// <summary>
+    /// Проверка: находится ли объект внутри редактируемого префаба?
+    /// </summary>
+    public static bool IsPrefabInEditMode(Object target)
     {
-        EditorUtility.SetDirty(obj);
-        if (immediateSave)
+        if (target == null) return false;
+
+        if (target is Component c) target = c.gameObject;
+        if (target is GameObject go)
         {
-            AssetDatabase.SaveAssetIfDirty(obj);
+            var stage = PrefabStageUtility.GetCurrentPrefabStage();
+            return stage != null && stage.IsPartOfPrefabContents(go);
         }
+        return false;
     }
 
-    private static void HandlePrefabInstance(Object obj)
+    /// <summary>
+    /// Проверка: является ли объект частью сцены (не префабом)
+    /// </summary>
+    public static bool IsSceneObject(Object target)
     {
-        var root = PrefabUtility.GetOutermostPrefabInstanceRoot(obj);
-        if (root)
-        {
-            PrefabUtility.RecordPrefabInstancePropertyModifications(obj);
-            EditorUtility.SetDirty(root);
+        if (target == null) return false;
 
-            // Для вложенных префабов
-            if (PrefabUtility.IsPartOfVariantPrefab(root) || PrefabUtility.IsPartOfRegularPrefab(root))
-            {
-                PrefabUtility.RecordPrefabInstancePropertyModifications(root);
-            }
-        }
+        // Проверка принадлежности сцене
+        bool inValidScene = target switch
+        {
+            GameObject go => go.scene.IsValid(),
+            Component c => c.gameObject.scene.IsValid(),
+            _ => false
+        };
+
+        return inValidScene && !PrefabUtility.IsPartOfPrefabAsset(target) && !PrefabUtility.IsPartOfPrefabInstance(target) && !IsPrefabInEditMode(target);
     }
 
-    private static void HandleSceneObject(Object obj)
+    /// <summary>
+    /// Проверка: является ли объект компонентом на игровом объекте сцены?
+    /// </summary>
+    public static bool IsPrefabAssetComponent(Object target)
     {
-        EditorUtility.SetDirty(obj);
+        if (target == null) return false;
 
-        // Для GameObject также помечаем сцену как изменённую
-        if (obj is GameObject go && !EditorApplication.isPlaying)
-        {
-            var scene = go.scene;
-            if (scene.IsValid() && scene.isLoaded)
-            {
-                EditorSceneManager.MarkSceneDirty(scene);
-            }
-        }
+        return target is Component component && (IsPrefabAsset(component) || IsPrefabInEditMode(component));
     }
 
+    /// <summary>
+    /// Проверка: является ли объект компонентом на игровом объекте сцены?
+    /// </summary>
+    public static bool IsSceneComponent(Object target)
+    {
+        if (target == null) return false;
+
+        return target is Component component && component.gameObject.scene.IsValid() && IsSceneObject(component);
+    }
+
+
+    /// <summary>
+    /// Получить тип контекста объекта в виде строки
+    /// </summary>
+    public static void GetContextInfo(Object target)
+    {
+        if (target == null) Debug.Log("NULL");
+
+        if (IsPrefabAsset(target)) Debug.Log($"Object (<color=cyan>{target.name}</color>) is Prefab Asset");
+        if (IsPrefabInstance(target)) Debug.Log($"Object (<color=cyan>{target.name}</color>) is Prefab Instance");
+        if (IsPrefabInEditMode(target)) Debug.Log($"Object (<color=cyan>{target.name}</color>) is Prefab In Edit Mode");
+
+        if (IsPrefabRoot(target)) Debug.Log($"Object (<color=cyan>{target.name}</color>) is Prefab Root");
+
+        if (IsSceneObject(target)) Debug.Log($"Object (<color=cyan>{target.name}</color>) is Scene Object");
+
+        if (IsPrefabAssetComponent(target)) Debug.Log($"Object (<color=cyan>{target.name}</color>) is Prefab Asset Component");
+        if (IsSceneComponent(target)) Debug.Log($"Object (<color=cyan>{target.name}</color>) is Scene Component");
+    }
     #endregion
 }
 #endif

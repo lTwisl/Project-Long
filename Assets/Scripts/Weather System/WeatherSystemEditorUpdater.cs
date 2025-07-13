@@ -1,5 +1,4 @@
 using EditorAttributes;
-using UnityEditor;
 using UnityEngine;
 
 [ExecuteInEditMode]
@@ -13,27 +12,12 @@ public class WeatherSystemEditorUpdater : MonoBehaviour
         // Обновление параметров погодных систем в Editor
         if (_useModulesUpdate && _weatherSystem)
         {
-            // 1. Обновляем параметры света от направления солнца:
             _weatherSystem.SunLight?.UpdateLightingParameters();
             _weatherSystem.MoonLight?.UpdateLightingParameters();
-
-            // 2. Обновляем глобальное освещение сцены от направления солнца:
-            //_weatherSystem.SunLight?.UpdateEnviromentLight();
-
-            // 3. Обновляем направление солнца для материалов:
-            _weatherSystem.WeatherFogSystem?.UpdateMaterialsSunDirection();
-            _weatherSystem.WeatherSkyboxSystem?.UpdateMaterialsSunDirection();
         }
     }
 
 #if UNITY_EDITOR
-    public void FindReferences()
-    {
-        if (_weatherSystem) return;
-
-        _weatherSystem = FindAnyObjectByType<WeatherSystem>();
-    }
-
     [Button]
     public void UpdateGlobalIllumination()
     {
@@ -42,15 +26,12 @@ public class WeatherSystemEditorUpdater : MonoBehaviour
 
     private void OnValidate()
     {
-        // 0. Не валидируем, если это префаб-ассет (не экземпляр)
-        if (PrefabUtility.IsPartOfPrefabAsset(this)) return;
-
-        // 1. Автоматически инициализируем систему в редакторе
-        FindReferences();
-
-        // 2. Сохраняем значения для префаба
-        if (PrefabUtility.IsPartOfPrefabInstance(this))
-            PrefabUtility.RecordPrefabInstancePropertyModifications(this);
+        if (EditorChangeTracker.IsPrefabInstance(this))
+        {
+        EditorChangeTracker.RegisterUndo(this, "Find Weather System In Editor");
+        _weatherSystem ??= FindAnyObjectByType<WeatherSystem>();
+        EditorChangeTracker.SetDirty(this);
+        }
     }
 #endif
 }

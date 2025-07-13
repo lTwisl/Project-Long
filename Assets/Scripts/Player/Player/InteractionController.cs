@@ -109,7 +109,7 @@ public class InteractionController : MonoBehaviour
 #if UNITY_EDITOR
     private void OnGUI()
     {
-        if (Physics.Raycast(_mainCamera.transform.position, _mainCamera.transform.forward, out RaycastHit hitInfo, 100f))
+        if (Physics.Raycast(_mainCamera.transform.position, _mainCamera.transform.forward, out RaycastHit hitInfo, _interactionDistance, _interactionLayer))
         {
             Rect rect = new Rect(Screen.width - 200, 20, 200, 40);
             GUI.Label(rect, $"Наблюдаемый объект: {hitInfo.transform.name}", new GUIStyle()

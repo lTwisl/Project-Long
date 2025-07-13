@@ -21,7 +21,7 @@ MonoBehaviour:
   <AirAcceleration>k__BackingField: 10
   <CrouchSpeed>k__BackingField: 2
   <CrouchHeight>k__BackingField: 1.2
-  <SpeedTransitionCrouch>k__BackingField: 1
+  <SpeedTransitionCrouch>k__BackingField: 3
   <MaxSlideSpeed>k__BackingField: 20
   <FreeSlideAngle>k__BackingField: 55
   <UseWind>k__BackingField: 0

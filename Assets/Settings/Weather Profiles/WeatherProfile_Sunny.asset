@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: WeatherProfile_Sunny
   m_EditorClassIdentifier: 
   <Identifier>k__BackingField: 1
-  <Transitions>k__BackingField: -1
-  <MinLifetime>k__BackingField: 23
-  <MaxLifetime>k__BackingField: 23
+  <Transitions>k__BackingField: 512
+  <MinLifetime>k__BackingField: 1
+  <MaxLifetime>k__BackingField: 1
   <VFX>k__BackingField: []
   <Temperature>k__BackingField: 0
   <Wetness>k__BackingField: 0
@@ -27,13 +27,13 @@ MonoBehaviour:
   <MoonMaxIntensity>k__BackingField: 0.1
   <MoonZenithColor>k__BackingField: {r: 0.84, g: 0.85, b: 0.86, a: 1}
   <MoonSunsetColor>k__BackingField: {r: 0.7, g: 0.76, b: 0.8, a: 1}
-  MinWindSpeed: 0.5
-  MaxWindSpeed: 0.5
-  IntensityChangeSpeed: 1
-  DirectionChangeSharpness: 0.05
-  IntensityChangeDirection: 1
-  <NearVolumFogMat>k__BackingField: {fileID: 2100000, guid: 8c5737803f42fd948ab1b69f9a21f476, type: 2}
-  <FarVolumFogMat>k__BackingField: {fileID: 2100000, guid: 90f2241d0b095d94c9a57f4800537d7a, type: 2}
+  <MinWindSpeed>k__BackingField: 0
+  <MaxWindSpeed>k__BackingField: 0
+  <IntensityChangeSpeed>k__BackingField: 1
+  <DirectionChangeSharpness>k__BackingField: 0.05
+  <IntensityChangeDirection>k__BackingField: 1
+  <AtmosphericFogMat>k__BackingField: {fileID: 2100000, guid: 90f2241d0b095d94c9a57f4800537d7a, type: 2}
+  <VolumetricFogMat>k__BackingField: {fileID: 2100000, guid: 8c5737803f42fd948ab1b69f9a21f476, type: 2}
   <SkyboxMat>k__BackingField: {fileID: 2100000, guid: f857135a39824734a8f08d117eead192, type: 2}
   <ColAdjPostExposure>k__BackingField: 0
   <ColAdjContrast>k__BackingField: 0

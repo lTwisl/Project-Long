@@ -5,19 +5,22 @@ using UnityEngine;
 
 public class ScriptableObjectsEditWindow : EditorWindow
 {
-    private const string WINDOW_TITLE = "Open ScrObj Edit Window";
     private const float CONTROL_PANEL_WIDTH = 300f;
     private const float MIN_PANEL_WIDTH = 200f;
     private const float MAX_PANEL_WIDTH = 600f;
 
     private enum SortMode { Name, Type, Date }
+    private enum LoadMode { Replace, Add }
 
-    private List<ScriptableObject> _SOPool = new List<ScriptableObject>();
-    private List<ScriptableObject> _deletePool = new List<ScriptableObject>();
+    private List<ScriptableObject> _SOPool = new();
+    private List<ScriptableObject> _deletePool = new();
+    private ScriptableObjectsWindowPreset _presetSO;
+    private TextAsset _jsonPreset;
+    private LoadMode _loadMode = LoadMode.Replace;
 
-    private Dictionary<ScriptableObject, bool> _foldoutStates = new Dictionary<ScriptableObject, bool>();
-    private Dictionary<ScriptableObject, Editor> _editorCache = new Dictionary<ScriptableObject, Editor>();
-    private Dictionary<ScriptableObject, Vector2> _panelScrollPositions = new Dictionary<ScriptableObject, Vector2>();
+    private Dictionary<ScriptableObject, bool> _foldoutStates = new();
+    private Dictionary<ScriptableObject, Editor> _editorCache = new();
+    private Dictionary<ScriptableObject, Vector2> _panelScrollPositions = new();
 
     private Vector2 _horizontalScrollPosition;
     private Vector2 _verticalScrollPosition;
@@ -31,12 +34,12 @@ public class ScriptableObjectsEditWindow : EditorWindow
     private GUIStyle _closeButtonStyle;
     private GUIStyle _visibleStyle;
     private GUIStyle _hideStyle;
-    private GUIStyle _infoStyle;
+    private GUIStyle _descriptionStyle;
 
-    [MenuItem("Tools/" + WINDOW_TITLE)]
+    [MenuItem("Tools/Open SO Edit Window")]
     public static void ShowWindow()
     {
-        GetWindow<ScriptableObjectsEditWindow>(WINDOW_TITLE);
+        GetWindow<ScriptableObjectsEditWindow>("SO Edit Window");
     }
 
     private void OnEnable()
@@ -53,14 +56,6 @@ public class ScriptableObjectsEditWindow : EditorWindow
             alignment = TextAnchor.MiddleCenter
         };
 
-        _infoStyle = new GUIStyle(EditorStyles.largeLabel)
-        {
-            fontSize = 12,
-            fontStyle = FontStyle.Normal,
-            normal = { textColor = Color.cyan },
-            alignment = TextAnchor.MiddleRight
-        };
-
         _closeButtonStyle = new GUIStyle(EditorStyles.miniButton)
         {
             fontSize = 14,
@@ -70,55 +65,63 @@ public class ScriptableObjectsEditWindow : EditorWindow
         _visibleStyle = new GUIStyle(EditorStyles.miniButton)
         {
             fontSize = 12,
-            normal = { textColor = Color.cyan }
+            normal = { textColor = Color.cyan },
+            alignment = TextAnchor.MiddleLeft
         };
 
         _hideStyle = new GUIStyle(EditorStyles.miniButton)
         {
             fontSize = 12,
-            normal = { textColor = new Color(0.6f, 0.6f, 0.6f, 1) }
+            normal = { textColor = new Color(0.6f, 0.6f, 0.6f, 1) },
+            alignment = TextAnchor.MiddleLeft
+        };
+
+        _descriptionStyle = new GUIStyle(EditorStyles.helpBox)
+        {
+            wordWrap = true,
+            fontSize = 11,
+            padding = new RectOffset(8, 8, 8, 8)
         };
     }
 
     private void OnGUI()
     {
-        DrawControlPanel();
-        HandleDragAndDrop();
+        DrawToolbar();
+        DrawDragAndDrop();
         SortObjects();
         DrawObjectsPanel();
     }
 
-    private void DrawControlPanel()
+    private void DrawToolbar()
     {
         GUILayout.BeginHorizontal(EditorStyles.toolbar);
         {
-            GUILayout.Label("Сортировать:", _infoStyle, GUILayout.Width(100));
+            GUILayout.Label("Sorting by:");
 
-            if (GUILayout.Toggle(_currentSortMode == SortMode.Name, "Имя", EditorStyles.toolbarButton))
+            if (GUILayout.Toggle(_currentSortMode == SortMode.Name, "Name", EditorStyles.toolbarButton))
                 SetSortMode(SortMode.Name);
 
-            if (GUILayout.Toggle(_currentSortMode == SortMode.Type, "Тип", EditorStyles.toolbarButton))
+            if (GUILayout.Toggle(_currentSortMode == SortMode.Type, "Type", EditorStyles.toolbarButton))
                 SetSortMode(SortMode.Type);
 
-            if (GUILayout.Toggle(_currentSortMode == SortMode.Date, "Дата", EditorStyles.toolbarButton))
+            if (GUILayout.Toggle(_currentSortMode == SortMode.Date, "Date", EditorStyles.toolbarButton))
                 SetSortMode(SortMode.Date);
 
             GUILayout.FlexibleSpace();
 
-            GUILayout.Label($"Объектов: {_SOPool.Count}", _infoStyle, GUILayout.Width(100));
-
-            if (GUILayout.Button("Добавить выбранные", EditorStyles.toolbarButton))
+            if (GUILayout.Button("Add Selected In Project", EditorStyles.toolbarButton))
                 AddSelectedObjects();
 
-            if (GUILayout.Button("Очистить все", EditorStyles.toolbarButton))
+            if (GUILayout.Button("Clear All Tracked", EditorStyles.toolbarButton))
                 ClearWindow();
         }
         GUILayout.EndHorizontal();
     }
 
-    private void HandleDragAndDrop()
+    private void DrawDragAndDrop()
     {
         if (!_useDragAndDrop) return;
+
         if (Event.current.type == EventType.DragUpdated || Event.current.type == EventType.DragPerform)
         {
             bool hasValidObjects = false;
@@ -148,6 +151,19 @@ public class ScriptableObjectsEditWindow : EditorWindow
         }
     }
 
+    private void SortObjects()
+    {
+        if (!_needsSort) return;
+
+        switch (_currentSortMode)
+        {
+            case SortMode.Name: _SOPool.Sort((a, b) => a.name.CompareTo(b.name)); break;
+            case SortMode.Type: _SOPool.Sort((a, b) => a.GetType().Name.CompareTo(b.GetType().Name)); break;
+            case SortMode.Date: _SOPool.Sort((a, b) => File.GetLastWriteTime(AssetDatabase.GetAssetPath(a)).CompareTo(File.GetLastWriteTime(AssetDatabase.GetAssetPath(b)))); break;
+        }
+        _needsSort = false;
+    }
+
     private void DrawObjectsPanel()
     {
         ValidateScriptableObjectsPool();
@@ -155,10 +171,8 @@ public class ScriptableObjectsEditWindow : EditorWindow
 
         if (_SOPool.Count == 0)
         {
-            EditorGUILayout.HelpBox("Нет отслеживаемых ScriptableObject", MessageType.Info);
-            if (_useDragAndDrop != true)
-                _useDragAndDrop = true;
-            return;
+            EditorGUILayout.HelpBox("The tracked ScriptableObjects are not selected.\n" + "Use (Drag and Drop) or (Add Selected In Project) to add SO to the window.", MessageType.Warning);
+            if (_useDragAndDrop != true) _useDragAndDrop = true;
         }
 
         GUILayout.BeginHorizontal();
@@ -192,17 +206,50 @@ public class ScriptableObjectsEditWindow : EditorWindow
         GUILayout.BeginVertical(GUI.skin.box, GUILayout.Width(CONTROL_PANEL_WIDTH));
         _verticalScrollPosition = EditorGUILayout.BeginScrollView(_verticalScrollPosition);
 
-        EditorGUILayout.LabelField("Ширина панелей:");
-        _panelWidth = EditorGUILayout.Slider(_panelWidth, MIN_PANEL_WIDTH, MAX_PANEL_WIDTH);
+        EditorGUILayout.LabelField("Editing SO Preset:", EditorStyles.boldLabel);
+        GUILayout.BeginHorizontal();
+        {
+            _presetSO = (ScriptableObjectsWindowPreset)EditorGUILayout.ObjectField(_presetSO, typeof(ScriptableObjectsWindowPreset), false);
+            if (GUILayout.Button("Load", GUILayout.Width(60)))
+            {
+                if (_presetSO != null)
+                {
+                    LoadPresetFromSO(_presetSO);
+                }
+            }
+        }
+        GUILayout.EndHorizontal();
 
-        EditorGUILayout.Space(2);
-        string buttonDragText = _useDragAndDrop ? "Drag and Drop (Scriptable)" : "Drag and Drop (Propertys)";
+        if (_presetSO)
+        {
+            EditorGUILayout.TextArea($"Selected preset contains: {_presetSO.GetSoCount} Scriptable Objects.", _descriptionStyle);
+            if (!string.IsNullOrEmpty(_presetSO.Description))
+                EditorGUILayout.TextArea(_presetSO.Description, _descriptionStyle);
+        }
+
+        GUILayout.BeginHorizontal();
+        {
+            if (GUILayout.Toggle(_loadMode == LoadMode.Replace, "Replace", EditorStyles.miniButtonLeft))
+                _loadMode = LoadMode.Replace;
+
+            if (GUILayout.Toggle(_loadMode == LoadMode.Add, "Add", EditorStyles.miniButtonRight))
+                _loadMode = LoadMode.Add;
+        }
+        GUILayout.EndHorizontal();
+
+        EditorGUILayout.Space(10);
+
+        EditorGUILayout.LabelField("Drag And Drop Mode:", EditorStyles.boldLabel);
+        string buttonDragText = _useDragAndDrop ? "Scriptable Objects" : "Propertys / References";
         if (GUILayout.Button(buttonDragText, _useDragAndDrop ? EditorStyles.toolbarButton : EditorStyles.toolbarButton))
             _useDragAndDrop = !_useDragAndDrop;
 
-        EditorGUILayout.Space(2);
-        EditorGUILayout.LabelField("Scriptable Objects:", EditorStyles.boldLabel);
+        EditorGUILayout.Space(10);
+        EditorGUILayout.LabelField("Tracked Editors Width:", EditorStyles.boldLabel);
+        _panelWidth = EditorGUILayout.Slider(_panelWidth, MIN_PANEL_WIDTH, MAX_PANEL_WIDTH);
 
+        EditorGUILayout.Space(10);
+        EditorGUILayout.LabelField($"Tracked Scriptable Objects ({_SOPool.Count}):", EditorStyles.boldLabel);
 
         foreach (var so in _SOPool)
         {
@@ -211,7 +258,7 @@ public class ScriptableObjectsEditWindow : EditorWindow
             GUILayout.BeginHorizontal();
             {
                 bool isExpanded = _foldoutStates.GetValueOrDefault(so);
-                string buttonText = isExpanded ? $"▼ {so.name}" : $"▶ {so.name}";
+                string buttonText = isExpanded ? $"▶ {so.name}" : $"▼ {so.name}";
 
                 if (GUILayout.Button(buttonText, isExpanded ? _visibleStyle : _hideStyle))
                     _foldoutStates[so] = !isExpanded;
@@ -239,7 +286,6 @@ public class ScriptableObjectsEditWindow : EditorWindow
                 _editorCache[so] = editor;
             }
 
-            // Добавляем вертикальный скролл для каждой панели
             if (!_panelScrollPositions.ContainsKey(so))
                 _panelScrollPositions[so] = Vector2.zero;
 
@@ -251,6 +297,22 @@ public class ScriptableObjectsEditWindow : EditorWindow
             EditorGUILayout.EndScrollView();
         }
         GUILayout.EndVertical();
+    }
+
+    private void LoadPresetFromSO(ScriptableObjectsWindowPreset preset)
+    {
+        if (preset == null) return;
+
+        if (_loadMode == LoadMode.Replace)
+        {
+            ClearWindow();
+        }
+
+        foreach (ScriptableObject SO in preset.ScriptableObjects)
+        {
+            TryAddScriptableObject(SO);
+        }
+        _needsSort = true;
     }
 
     private void ValidateScriptableObjectsPool()
@@ -278,19 +340,6 @@ public class ScriptableObjectsEditWindow : EditorWindow
     }
 
     private bool IsValid(ScriptableObject so) => so != null && AssetDatabase.Contains(so);
-
-    private void SortObjects()
-    {
-        if (!_needsSort) return;
-
-        switch (_currentSortMode)
-        {
-            case SortMode.Name: _SOPool.Sort((a, b) => a.name.CompareTo(b.name)); break;
-            case SortMode.Type: _SOPool.Sort((a, b) => a.GetType().Name.CompareTo(b.GetType().Name)); break;
-            case SortMode.Date: _SOPool.Sort((a, b) => File.GetLastWriteTime(AssetDatabase.GetAssetPath(a)).CompareTo(File.GetLastWriteTime(AssetDatabase.GetAssetPath(b)))); break;
-        }
-        _needsSort = false;
-    }
 
     private void SetSortMode(SortMode mode)
     {

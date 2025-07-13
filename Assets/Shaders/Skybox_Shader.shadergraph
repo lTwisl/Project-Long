@@ -7952,7 +7952,7 @@
     "m_Title": "Rayleight Scattering Height Attenuation",
     "m_Position": {
         "x": -4799.2001953125,
-        "y": -925.599853515625
+        "y": -925.599609375
     }
 }
 
@@ -9628,7 +9628,7 @@
     "m_Title": "Stars Mask",
     "m_Position": {
         "x": -3248.800048828125,
-        "y": -927.199951171875
+        "y": -927.19970703125
     }
 }
 
@@ -9686,7 +9686,7 @@
     "m_Title": "Use Light Color",
     "m_Position": {
         "x": -4152.7998046875,
-        "y": -660.800048828125
+        "y": -660.7998046875
     }
 }
 
@@ -9708,7 +9708,7 @@
     "m_DismissedVersion": 0,
     "m_Precision": 0,
     "overrideHLSLDeclaration": true,
-    "hlslDeclarationOverride": 2,
+    "hlslDeclarationOverride": 1,
     "m_Hidden": false,
     "m_Value": {
         "x": 0.0,
