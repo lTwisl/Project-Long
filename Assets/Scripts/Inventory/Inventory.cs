@@ -32,7 +32,7 @@ public class Inventory
     {
         _world = world;
 
-        _slots = new LinkedList<InventorySlot>(initSlots);
+        _slots = new LinkedList<InventorySlot>(initSlots.Where(s => s?.Item != null));
         RecalculateWeight();
     }
 

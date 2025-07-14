@@ -15,14 +15,9 @@ public class UI_Slot : MonoBehaviour, IPointerDownHandler
 
     public InventorySlot Slot { get; private set; }
 
-    public void Init(InventorySlot slot)
+    public void SetItem(InventorySlot slot)
     {
         Slot = slot;
-
-        UpdateView();
-
-        Slot.OnConditionChanged += _ => UpdateView();
-        Slot.OnCapacityChanged += _ => UpdateView();
     }
 
     public void OnEnable()
@@ -44,6 +39,8 @@ public class UI_Slot : MonoBehaviour, IPointerDownHandler
 
     public void UpdateView()
     {
+        Debug.Log($"{Time.frameCount}: UpdateView");
+
         _icon.sprite = Slot.Item.Icon;
 
         if (Slot.Item.UnitMeasurement == UnitsMeasurement.None)

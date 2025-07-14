@@ -2,11 +2,12 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-
 [CustomPropertyDrawer(typeof(InventorySlot))]
 public class InventorySlotDrawer : PropertyDrawer
 {
-    private static Dictionary<string, bool> foldoutStates = new Dictionary<string, bool>();
+    private readonly float _iconSize = EditorGUIUtility.singleLineHeight * 4;
+
+    private static Dictionary<string, bool> _foldoutStates = new();
 
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
     {
@@ -14,15 +15,15 @@ public class InventorySlotDrawer : PropertyDrawer
 
         // Генерируем уникальный ключ для каждого элемента
         string key = $"{property.propertyPath}";
-        if (!foldoutStates.ContainsKey(key)) foldoutStates[key] = false;
+        if (!_foldoutStates.ContainsKey(key)) _foldoutStates[key] = false;
 
         // Foldout заголовок
         Rect foldRect = new Rect(position.x, position.y, position.width, EditorGUIUtility.singleLineHeight);
-        foldoutStates[key] = EditorGUI.Foldout(foldRect, foldoutStates[key], GetHeaderLabel(property), true);
+        _foldoutStates[key] = EditorGUI.Foldout(foldRect, _foldoutStates[key], GetHeaderLabel(property), true);
 
         EditorGUI.indentLevel++;
 
-        if (foldoutStates[key])
+        if (_foldoutStates[key])
         {
             SerializedProperty itemProp = property.FindPropertyRelative("<Item>k__BackingField");
             SerializedProperty capacityProp = property.FindPropertyRelative("_capacity");
@@ -32,12 +33,20 @@ public class InventorySlotDrawer : PropertyDrawer
             float y = position.y + EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
 
             // Поле Item
-            Rect itemRect = new Rect(position.x, y, position.width, EditorGUIUtility.singleLineHeight);
+
+            Texture textureIcon = (itemProp.objectReferenceValue as InventoryItem)?.Icon.texture;
+            if (textureIcon != null)
+            {
+                Rect iconRect = new Rect(position.x, y, _iconSize, _iconSize);
+                EditorGUI.DrawTextureTransparent(iconRect, textureIcon);
+            }
+
+            Rect itemRect = new Rect(position.x + _iconSize, y, position.width - _iconSize, EditorGUIUtility.singleLineHeight);
             EditorGUI.PropertyField(itemRect, itemProp);
             y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
 
             // Поле Count
-            Rect capacityRect = new Rect(position.x, y, position.width, EditorGUIUtility.singleLineHeight);
+            Rect capacityRect = new Rect(position.x + _iconSize, y, position.width - _iconSize, EditorGUIUtility.singleLineHeight);
             DrawCapacityField(itemProp, capacityProp, capacityRect);
             y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
 
@@ -48,7 +57,7 @@ public class InventorySlotDrawer : PropertyDrawer
             }
 
             // Поле Condition
-            Rect conditionRect = new Rect(position.x, y, position.width, EditorGUIUtility.singleLineHeight);
+            Rect conditionRect = new Rect(position.x + _iconSize, y, position.width - _iconSize, EditorGUIUtility.singleLineHeight);
             EditorGUI.Slider(conditionRect, conditionProp, 0.001f, 1f, "Condition");
             y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
 
@@ -56,7 +65,7 @@ public class InventorySlotDrawer : PropertyDrawer
                 conditionProp.floatValue = 1;
 
             // Weight
-            Rect weightRect = new Rect(position.x, y, position.width, EditorGUIUtility.singleLineHeight);
+            Rect weightRect = new Rect(position.x + _iconSize, y, position.width - _iconSize, EditorGUIUtility.singleLineHeight);
             DrawWeightField(itemProp, capacityProp, weightRect);
         }
         EditorGUI.indentLevel--;
@@ -66,7 +75,7 @@ public class InventorySlotDrawer : PropertyDrawer
     public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
     {
         string key = $"{property.propertyPath}";
-        if (!foldoutStates.TryGetValue(key, out bool isExpanded)) isExpanded = false;
+        if (!_foldoutStates.TryGetValue(key, out bool isExpanded)) isExpanded = false;
 
         return isExpanded
             ? 5 * EditorGUIUtility.singleLineHeight + 4 * EditorGUIUtility.standardVerticalSpacing
@@ -77,7 +86,7 @@ public class InventorySlotDrawer : PropertyDrawer
     {
         var itemProp = property.FindPropertyRelative("<Item>k__BackingField");
         string capacity = property.FindPropertyRelative("_capacity").floatValue.ToString("0.##");
-        string condition = property.FindPropertyRelative("_condition").floatValue.ToString("0.###");
+        string condition = (property.FindPropertyRelative("_condition").floatValue * 100).ToString("0.###");
         string itemName = itemProp.objectReferenceValue?.name ?? "Empty";
         return new GUIContent($"{itemName} ({capacity}) ({condition}%)");
     }

@@ -64,7 +64,8 @@ public class UI_Inventory : MonoBehaviour
     private void CreateUiSlot(InventorySlot slot)
     {
         var uiSlot = Instantiate(_uiSlotPrefab, _uiGrid.transform);
-        uiSlot.Init(slot);
+        uiSlot.SetItem(slot);
+        uiSlot.UpdateView();
         _uiSlots.Add(uiSlot);
 
         uiSlot.OnClick += slot =>
@@ -94,7 +95,8 @@ public class UI_Inventory : MonoBehaviour
         {
             if (i < _uiSlots.Count)
             {
-                _uiSlots[i].Init(slot);
+                _uiSlots[i].SetItem(slot);
+                _uiSlots[i].UpdateView();
             }
             else
             {
