@@ -18,10 +18,8 @@ public class CapacityParameter : PlayerParameter
     {
         Current = 0;
         BaseMax = _rangeLoadCapacity.Values.Max();
-        OffsetMax = 0;
+        //OffsetMax = 0;
     }
-
-    public override void ChangeParameter(float deltaSeconds) { }
 
     public float GetRangeLoadCapacity(WeightRange weightRange) => _rangeLoadCapacity[weightRange] + (Max - BaseMax);
     public bool IsCanWalk() => Current < GetRangeLoadCapacity(WeightRange.UltimateImmovable);

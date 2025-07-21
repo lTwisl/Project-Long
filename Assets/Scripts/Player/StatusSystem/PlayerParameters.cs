@@ -44,9 +44,9 @@ public class PlayerParameters : ScriptableObject
     [field: Space(10)]
     [field: SerializeField] public ToxicityParameter Toxicity { get; private set; }
 
-    private Dictionary<ParameterType, IPlayerParameter> _parameterMap;
+    private Dictionary<ParameterType, PlayerParameter> _parameterMap;
 
-    public IEnumerable<IPlayerParameter> AllParameters => _parameterMap.Values.AsEnumerable();
+    public IEnumerable<PlayerParameter> AllParameters => _parameterMap.Values.AsEnumerable();
 
     public void Initialize()
     {
@@ -57,7 +57,7 @@ public class PlayerParameters : ScriptableObject
 
     private void InitializeParameterMap()
     {
-        _parameterMap = new Dictionary<ParameterType, IPlayerParameter>()
+        _parameterMap = new Dictionary<ParameterType, PlayerParameter>()
         {
             { ParameterType.Health, Health },
             { ParameterType.Stamina, Stamina },
@@ -71,7 +71,7 @@ public class PlayerParameters : ScriptableObject
     }
 
     // Базовые методы для доступа извне
-    public IPlayerParameter GetParameter(ParameterType parameter)
+    public PlayerParameter GetParameter(ParameterType parameter)
     {
         return _parameterMap[parameter];
     }

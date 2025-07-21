@@ -1,7 +1,5 @@
-﻿using EditorAttributes;
-using StatsModifiers;
+﻿using StatsModifiers;
 using System;
-using System.Runtime.InteropServices;
 using UnityEngine;
 
 
@@ -18,9 +16,8 @@ public class BasePlayerParameter : PlayerParameter
     public event Action OnReachZero;
     public event Action OnRecoverFromZero;
 
-    public override void UpdateParameter(float deltaSeconds)
+    public override void Update(float deltaTime)
     {
-
         if (Current > 0)
         {
             if (IsZero)
@@ -31,14 +28,14 @@ public class BasePlayerParameter : PlayerParameter
             }
             else
             {
-                TimeGeaterZero += TimeSpan.FromMinutes(deltaSeconds);
+                TimeGeaterZero += TimeSpan.FromMinutes(deltaTime);
             }
         }
         else
         {
             if (IsZero)
             {
-                TimeIsZero += TimeSpan.FromMinutes(deltaSeconds);
+                TimeIsZero += TimeSpan.FromMinutes(deltaTime);
             }
             else
             {
@@ -48,7 +45,7 @@ public class BasePlayerParameter : PlayerParameter
             }
         }
 
-        base.UpdateParameter(deltaSeconds);
+        base.Update(deltaTime);
     }
 
     public override void Initialize()
@@ -74,9 +71,9 @@ public class BasePlayerParameter : PlayerParameter
 
 
 [Serializable]
-public class PlayerParameter : IPlayerParameter
+public class PlayerParameter : IReadOnlyPlayerParameter
 {
-    public event Action<float> OnValueChanged;
+    public event Action<float> OnCurrentChanged;
 
     [Tooltip("Текущее значение")]
     [SerializeField, DisableEdit] private float _current;
@@ -94,7 +91,7 @@ public class PlayerParameter : IPlayerParameter
             else
                 _current = value;
 
-            OnValueChanged?.Invoke(_current);
+            OnCurrentChanged?.Invoke(_current);
         }
     }
 
@@ -105,10 +102,8 @@ public class PlayerParameter : IPlayerParameter
     [field: SerializeField, DisableEdit] public virtual float Max { get; private set; }
 
     [field: Tooltip("Скорость изменения [ед/м]"), DisableEdit, Space(5)]
-    [field: SerializeField] public float BaseChangeRate { get; set; }
+    [field: SerializeField] public float BaseChangeRate { get; protected set; }
     [field: SerializeField, DisableEdit] public virtual float ChangeRate { get; private set; }
-
-    public float OffsetMax { get; set; }
 
     public StatsMediator<ValueType> Mediator { get; } = new();
 
@@ -122,43 +117,37 @@ public class PlayerParameter : IPlayerParameter
 
     public virtual void Initialize()
     {
-        OffsetMax = 0;
         Current = Max;
         BaseChangeRate = 0.0f;
     }
 
-    public virtual void UpdateParameter(float deltaSeconds)
+    public virtual void Update(float deltaTime)
     {
-        ChangeParameter(deltaSeconds);
+        ChangeCurrent(deltaTime);
 
         Max = Request(ValueType.Max, BaseMax);
         Max = Mathf.Max(0, Max);
         ChangeRate = Request(ValueType.ChangeRate, BaseChangeRate);
     }
 
-    public virtual void ChangeParameter(float deltaSeconds)
+    public virtual void ChangeCurrent(float deltaTime)
     {
-        Current = Current + ChangeRate * deltaSeconds;
+        Current = Current + ChangeRate * deltaTime;
     }
 
     public virtual void Dispose()
     {
-        OnValueChanged = null;
+        OnCurrentChanged = null;
     }
 }
 
-public interface IPlayerParameter : IDisposable
+public interface IReadOnlyPlayerParameter : IDisposable
 {
-    public float Current { get; set; }
+    public float Current { get; }
+    public float BaseMax { get; }
     public float Max { get; }
-    public float OffsetMax { get; }
     public float BaseChangeRate { get; }
+    public float ChangeRate { get; }
 
-    public event Action<float> OnValueChanged;
-
-    public StatsMediator<ValueType> Mediator { get; }
-
-    public void UpdateParameter(float deltaSeconds);
-
-    public void Initialize();
+    public event Action<float> OnCurrentChanged;
 }

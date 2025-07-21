@@ -22,15 +22,15 @@ public class StaminaParameter : MovementParameter
         _countdownTimer = new(_reload * GameTime.TimeScale);
     }
 
-    public override void UpdateParameter(float deltaTime)
+    public override void Update(float deltaTime)
     {
         if (_countdownTimer.IsFinished)
-            base.UpdateParameter(deltaTime);
+            base.Update(deltaTime);
 
         if (Current <= 0 && !_countdownTimer.IsRunning)
         {
             _countdownTimer.Start();
-            base.UpdateParameter(deltaTime);
+            base.Update(deltaTime);
         }
     }
 

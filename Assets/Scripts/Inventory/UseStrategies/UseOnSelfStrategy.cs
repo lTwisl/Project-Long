@@ -9,7 +9,7 @@ public class UseOnSelfStrategy : UseStrategy
 {
     [NonSerialized] private InventorySlot _usedSlot;
     [NonSerialized] private List<StatModifier<ValueType>> _statModifiers = new();
-    [NonSerialized] private Dictionary<IPlayerParameter, bool> _parameterFlags = new();
+    [NonSerialized] private Dictionary<IReadOnlyPlayerParameter, bool> _parameterFlags = new();
 
     float initCapasity = 0;
 
@@ -74,7 +74,7 @@ public class UseOnSelfStrategy : UseStrategy
 
 
     // Обновляет значение параметра игрока во время использования предмета.
-    private float UpdateParameterValue(IPlayerParameter parameter, GivesParameter replenishment, float baseValue)
+    private float UpdateParameterValue(IReadOnlyPlayerParameter parameter, GivesParameter replenishment, float baseValue)
     {
         if (_usedSlot.IsEmpty)
         {
@@ -92,7 +92,7 @@ public class UseOnSelfStrategy : UseStrategy
 
 
     // Обрабатывает логику для целочисленных предметов.
-    private float HandleIntegerConsumable(IPlayerParameter parameter, GivesParameter replenishment)
+    private float HandleIntegerConsumable(IReadOnlyPlayerParameter parameter, GivesParameter replenishment)
     {
         float currentCapacity = _usedSlot.Capacity;
         _usedSlot.Capacity -= 5 * GameTime.DeltaTime / 60f;
@@ -121,7 +121,7 @@ public class UseOnSelfStrategy : UseStrategy
 
 
     // Обрабатывает логику для непрерывных предметов.
-    private float HandleContinuousConsumable(IPlayerParameter parameter, GivesParameter replenishment, float baseValue)
+    private float HandleContinuousConsumable(IReadOnlyPlayerParameter parameter, GivesParameter replenishment, float baseValue)
     {
         if (_parameterFlags[parameter] == false && parameter.Current >= parameter.Max)
         {

@@ -61,8 +61,8 @@ public partial class PlayerParameterHandler : MonoBehaviour
         _disposables.Add(_statModifierSystem);
 
         // Подписываемся на события окружения
-        _world.OnChangedTotalToxicity += UpdateToxicityBaseChangeRate;
-        _world.OnChangedTotalTemperature += UpdateHeatBaseChangeRate;
+        _world.OnChangedTotalToxicity += _parameters.Toxicity.SetBaseChangeRate;
+        _world.OnChangedTotalTemperature += _parameters.Heat.SetBaseChangeRate;
     }
 
     private void OnEnable()
@@ -80,8 +80,8 @@ public partial class PlayerParameterHandler : MonoBehaviour
         foreach (var disposable in _disposables)
             disposable.Dispose();
 
-        _world.OnChangedTotalToxicity -= UpdateToxicityBaseChangeRate;
-        _world.OnChangedTotalTemperature -= UpdateHeatBaseChangeRate;
+        _world.OnChangedTotalToxicity -= _parameters.Toxicity.SetBaseChangeRate;
+        _world.OnChangedTotalTemperature -= _parameters.Heat.SetBaseChangeRate;
     }
 
     public void GiveDamage(float damgage)
@@ -94,26 +94,14 @@ public partial class PlayerParameterHandler : MonoBehaviour
     {
         foreach (var parameter in _parameters.AllParameters)
         {
-            parameter.UpdateParameter(GameTime.DeltaTime / 60f);
+            parameter.Update(GameTime.DeltaTime / 60f);
         }
 
         _collider.material.dynamicFriction = _clothingSystem.TotalFrictionBonus + _baseFriction;
         _collider.material.staticFriction = _clothingSystem.TotalFrictionBonus + _baseFriction;
     }
 
-    private void UpdateToxicityBaseChangeRate(float value)
-    {
-        _parameters.Toxicity.BaseChangeRate = value;
-        //_parameters.ModifyParameter(ParameterType.Toxicity, value);
-    }
-
-    private void UpdateHeatBaseChangeRate(float value)
-    {
-        _parameters.Heat.BaseChangeRate = value;
-        //_parameters.ModifyParameter(ParameterType.Heat, value);
-    }
-
-    public IPlayerParameter GetPlayerParameter(ParameterType parameterType)
+    public PlayerParameter GetPlayerParameter(ParameterType parameterType)
     {
         return _parameters.GetParameter(parameterType);
     }

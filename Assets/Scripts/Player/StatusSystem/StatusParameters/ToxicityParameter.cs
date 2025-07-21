@@ -21,9 +21,9 @@ public class ToxicityParameter : PlayerParameter
         Current = 0;
     }
 
-    public override void ChangeParameter(float deltaSeconds)
+    public override void ChangeCurrent(float deltaTime)
     {
-        base.ChangeParameter(deltaSeconds);
+        base.ChangeCurrent(deltaTime);
 
         /*if (Current < _levels[currentLevel].countPoints)
             Current = _levels[currentLevel].countPoints;
@@ -31,5 +31,8 @@ public class ToxicityParameter : PlayerParameter
         if (currentLevel + 1 < _levels.Count && Current > _levels[currentLevel + 1].countPoints)
             currentLevel++;*/
     }
+
+    public void SetBaseChangeRate(float rate)
+        => BaseChangeRate = rate;
 }
 

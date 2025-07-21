@@ -16,7 +16,7 @@ public class MovementInteractionSystem : IDisposable
         _movement.OnJump += ApplyJumpCost;
         _parameters.Stamina.OnRecoverFromZero += EnableMovementAfterStaminaRecovery;
         _parameters.Stamina.OnReachZero += DisableMovementWhenStaminaEmpty;
-        _parameters.Capacity.OnValueChanged += UpdateMovementConstraints;
+        _parameters.Capacity.OnCurrentChanged += UpdateMovementConstraints;
 
         SetupSpeedModifiers();
 
@@ -89,7 +89,7 @@ public class MovementInteractionSystem : IDisposable
         _movement.OnJump -= ApplyJumpCost;
         _parameters.Stamina.OnRecoverFromZero -= EnableMovementAfterStaminaRecovery;
         _parameters.Stamina.OnReachZero -= DisableMovementWhenStaminaEmpty;
-        _parameters.Capacity.OnValueChanged -= UpdateMovementConstraints;
+        _parameters.Capacity.OnCurrentChanged -= UpdateMovementConstraints;
 
         foreach (var paran in _parameters.AllParameters.OfType<MovementParameter>())
             _movement.OnChangedState -= paran.UpdateBaseChangeRate;
