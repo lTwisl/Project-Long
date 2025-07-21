@@ -8,7 +8,7 @@ using System;
 public class UseOnSelfStrategy : UseStrategy
 {
     [NonSerialized] private InventorySlot _usedSlot;
-    [NonSerialized] private List<StatModifier<ValueType>> _statModifiers = new();
+    [NonSerialized] private List<StatModifier<ModifiableValue>> _statModifiers = new();
     [NonSerialized] private Dictionary<IReadOnlyPlayerParameter, bool> _parameterFlags = new();
 
     float initCapasity = 0;
@@ -64,7 +64,7 @@ public class UseOnSelfStrategy : UseStrategy
             var playerParameter = PlayerParameters.GetParameter(parameter.ParameterType);
             _parameterFlags.Add(playerParameter, false);
 
-            var modifier = new StatModifier<ValueType>(0, ValueType.ChangeRate,
+            var modifier = new StatModifier<ModifiableValue>(0, ModifiableValue.ChangeRate,
                 value => UpdateParameterValue(playerParameter, parameter, value));
 
             playerParameter.Mediator.AddModifier(modifier);

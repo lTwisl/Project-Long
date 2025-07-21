@@ -10,7 +10,7 @@ public class BasePlayerParameter : PlayerParameter
     public TimeSpan TimeIsZero { get; private set; }
     public TimeSpan TimeGeaterZero { get; private set; }
 
-    public StatModifier<ValueType> DecreasedHealthModifier { get; private set; }
+    public StatModifier<ModifiableValue> DecreasedHealthModifier { get; private set; }
     [field: SerializeField, Space(5), Tooltip("доли % в минуту")] public float DecreasedHealthRate { get; private set; }
 
     public event Action OnReachZero;
@@ -52,7 +52,7 @@ public class BasePlayerParameter : PlayerParameter
     {
         base.Initialize();
 
-        DecreasedHealthModifier = new(0, ValueType.ChangeRate, value => value += DecreasedHealthRate, $"DecreasedHealthModifier by {GetType().Name}");
+        DecreasedHealthModifier = new(0, ModifiableValue.ChangeRate, value => value += DecreasedHealthRate, $"DecreasedHealthModifier by {GetType().Name}");
 
         IsZero = false;
         TimeIsZero = TimeSpan.Zero;
@@ -105,12 +105,12 @@ public class PlayerParameter : IReadOnlyPlayerParameter
     [field: SerializeField] public float BaseChangeRate { get; protected set; }
     [field: SerializeField, DisableEdit] public virtual float ChangeRate { get; private set; }
 
-    public StatsMediator<ValueType> Mediator { get; } = new();
+    public StatsMediator<ModifiableValue> Mediator { get; } = new();
 
 
-    private float Request(ValueType valueType, float value)
+    private float Request(ModifiableValue valueType, float value)
     {
-        var q = new Query<ValueType>(valueType, value);
+        var q = new Query<ModifiableValue>(valueType, value);
         Mediator.PerformQuery(this, q);
         return q.Value;
     }
@@ -125,9 +125,9 @@ public class PlayerParameter : IReadOnlyPlayerParameter
     {
         ChangeCurrent(deltaTime);
 
-        Max = Request(ValueType.Max, BaseMax);
+        Max = Request(ModifiableValue.Max, BaseMax);
         Max = Mathf.Max(0, Max);
-        ChangeRate = Request(ValueType.ChangeRate, BaseChangeRate);
+        ChangeRate = Request(ModifiableValue.ChangeRate, BaseChangeRate);
     }
 
     public virtual void ChangeCurrent(float deltaTime)

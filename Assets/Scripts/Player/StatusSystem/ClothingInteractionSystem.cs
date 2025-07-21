@@ -10,11 +10,11 @@ public class ClothingInteractionSystem : IDisposable
         _parameters = parameters;
         _clothingSystem = clothingSystem;
 
-        _parameters.Stamina.Mediator.AddModifier(new(0, ValueType.Max, value => value + _clothingSystem.TotalOffsetStamina));
+        _parameters.Stamina.Mediator.AddModifier(new(0, ModifiableValue.Max, value => value + _clothingSystem.TotalOffsetStamina));
 
-        _parameters.Heat.Mediator.AddModifier(new(0, ValueType.ChangeRate, value => value + _clothingSystem.TotalTemperatureBonus));
+        _parameters.Heat.Mediator.AddModifier(new(0, ModifiableValue.ChangeRate, value => value + _clothingSystem.TotalTemperatureBonus));
 
-        _parameters.Toxicity.Mediator.AddModifier(new(0, ValueType.ChangeRate, value =>
+        _parameters.Toxicity.Mediator.AddModifier(new(0, ModifiableValue.ChangeRate, value =>
         {
             float potection = 0f;
             foreach (var item in _clothingSystem.ClothingSlotGroups)

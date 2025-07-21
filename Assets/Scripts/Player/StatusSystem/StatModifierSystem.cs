@@ -18,7 +18,7 @@ public class StatModifierSystem : IDisposable
 
     private void ApplyCapacityModifierByEnergy()
     {
-        _parameters.Capacity.Mediator.AddModifier(new(0, ValueType.Max, value =>
+        _parameters.Capacity.Mediator.AddModifier(new(0, ModifiableValue.Max, value =>
         {
             if (_parameters.Energy.Current > 0.5f * _parameters.Energy.Max)
                 return value;
@@ -34,7 +34,7 @@ public class StatModifierSystem : IDisposable
 
     private void ApplyStaminaModifierByCapacity()
     {
-        _parameters.Stamina.Mediator.AddModifier(new(0, ValueType.ChangeRate, value =>
+        _parameters.Stamina.Mediator.AddModifier(new(0, ModifiableValue.ChangeRate, value =>
         {
             float scale = CalculateCapacityScale(WeightRange.Critical, WeightRange.Ultimate, 1, 3);
             return value > 0
@@ -45,7 +45,7 @@ public class StatModifierSystem : IDisposable
 
     private void ApplyFoodModifierByCapacity()
     {
-        _parameters.FoodBalance.Mediator.AddModifier(new(0, ValueType.ChangeRate, value =>
+        _parameters.FoodBalance.Mediator.AddModifier(new(0, ModifiableValue.ChangeRate, value =>
         {
             float scale = CalculateCapacityScale(WeightRange.Critical, WeightRange.Ultimate, 1, 2);
             return value > 0
@@ -56,7 +56,7 @@ public class StatModifierSystem : IDisposable
 
     private void ApplyWaterModifierByCapacity()
     {
-        _parameters.WaterBalance.Mediator.AddModifier(new(0, ValueType.ChangeRate, value =>
+        _parameters.WaterBalance.Mediator.AddModifier(new(0, ModifiableValue.ChangeRate, value =>
         {
             float scale = CalculateCapacityScale(WeightRange.Critical, WeightRange.Ultimate, 1, 2);
             return value > 0

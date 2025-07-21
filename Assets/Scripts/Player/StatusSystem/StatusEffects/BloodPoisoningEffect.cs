@@ -18,9 +18,9 @@ public class BloodPoisoningEffect : StatusEffect
     private readonly List<UsageItemInfo> _currentReceipt = new();
     private TimeSpan _lastHealing = TimeSpan.Zero;
 
-    private StatModifier<ValueType> _statModifierHealth = null;
-    private StatModifier<ValueType> _statModifierStamina = null;
-    private StatModifier<ValueType> _statModifierHeat = null;
+    private StatModifier<ModifiableValue> _statModifierHealth = null;
+    private StatModifier<ModifiableValue> _statModifierStamina = null;
+    private StatModifier<ModifiableValue> _statModifierHeat = null;
 
 
     public override void Init(Player player)
@@ -90,17 +90,17 @@ public class BloodPoisoningEffect : StatusEffect
     {
         IsActive = true;
 
-        _statModifierHealth = new(0, ValueType.ChangeRate, value =>
+        _statModifierHealth = new(0, ModifiableValue.ChangeRate, value =>
         {
             return value - _player.Parameters.Health.BaseMax * 1;
         }, $"{GetType().Name}");
 
-        _statModifierStamina = new(0, ValueType.ChangeRate, value =>
+        _statModifierStamina = new(0, ModifiableValue.ChangeRate, value =>
         {
             return value - _player.Parameters.Stamina.BaseMax * 0.1f;
         }, $"{GetType().Name}");
 
-        _statModifierHeat = new(0, ValueType.ChangeRate, value =>
+        _statModifierHeat = new(0, ModifiableValue.ChangeRate, value =>
         {
             return value - _player.Parameters.Heat.BaseMax * 0.1f;
         }, $"{GetType().Name}");

@@ -13,8 +13,8 @@ public class SatiationEffect : StatusEffect
     [SerializeField, Min(0)] private float _addMaxCapacity = 0.1f; // Процент от базового максимального значения 
     [SerializeField, Min(0)] private float _addMaxStamina = 0.1f; // процент от базового максимального значения 
 
-    [NonSerialized] private StatModifier<ValueType> _statModifierCapacity = null;
-    [NonSerialized] private StatModifier<ValueType> _statModifierStamina = null;
+    [NonSerialized] private StatModifier<ModifiableValue> _statModifierCapacity = null;
+    [NonSerialized] private StatModifier<ModifiableValue> _statModifierStamina = null;
 
     public override void Init(Player player)
     {
@@ -49,12 +49,12 @@ public class SatiationEffect : StatusEffect
     {
         IsActive = true;
 
-        _statModifierCapacity = new(0, ValueType.Max, value =>
+        _statModifierCapacity = new(0, ModifiableValue.Max, value =>
         {
             return value + _player.Parameters.Capacity.BaseMax * _addMaxCapacity;
         }, $"{GetType().Name}");
 
-        _statModifierStamina = new(0, ValueType.Max, value =>
+        _statModifierStamina = new(0, ModifiableValue.Max, value =>
         {
             return value + _player.Parameters.Stamina.BaseMax * _addMaxStamina;
         }, $"{GetType().Name}");

@@ -76,7 +76,7 @@ public class PlayerParameters : ScriptableObject
         return _parameterMap[parameter];
     }
 
-    public void AddModifier(ParameterType parameter, StatModifier<ValueType> modifier)
+    public void AddModifier(ParameterType parameter, StatModifier<ModifiableValue> modifier)
     {
         if (_parameterMap.TryGetValue(parameter, out var param))
         {
