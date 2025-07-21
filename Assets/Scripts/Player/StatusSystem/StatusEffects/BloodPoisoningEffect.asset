@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32f5857b08724334fa31ac329f10fdf3, type: 3}
+  m_Name: BloodPoisoningEffect
+  m_EditorClassIdentifier: 
+  <Name>k__BackingField: Empty
+  <Description>k__BackingField: Empty
+  <Icon>k__BackingField: {fileID: 0}
+  _requiredCountHealing: 1
+  _minHour: 1
+  _maxHour: 4
+  _healingReceipts:
+  - items:
+    - {fileID: 11400000, guid: 0326110bc71dbb64dab23f8b663aa8ec, type: 2}
+    - {fileID: 11400000, guid: f7c11734fdef53343b0686d38cd89efb, type: 2}

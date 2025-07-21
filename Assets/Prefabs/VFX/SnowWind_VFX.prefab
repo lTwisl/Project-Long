@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 4531423073082014474}
   - component: {fileID: 2181187702412947234}
   m_Layer: 0
-  m_Name: Snowwind_VFX
+  m_Name: SnowWind_VFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

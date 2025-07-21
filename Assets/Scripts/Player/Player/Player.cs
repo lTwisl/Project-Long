@@ -1,34 +1,38 @@
+using ClothingSystems;
 using FirstPersonMovement;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
-using ClothingSystems;
 
 
 [SelectionBase]
 public class Player : MonoBehaviour
 {
+    // Systems
     public Inventory Inventory { get; private set; }
     public ClothingSystem ClothingSystem { get; private set; }
+
+    // Components
+    public InputReader Input { get; private set; }
+    public PlayerMovement PlayerMovement { get; private set; }
+    public StatusEffectsManeger StatusEffectsManeger { get; private set; }
 
     [Inject] private ClothingSystemConfig _clothingSystemConfig;
 
     [Inject] private World _world;
-    [Inject] private PlayerParameters _parameters;
+    [Inject] public PlayerParameters Parameters { get; private set; }
 
     // UI References
     [SerializeField] private Slider _slider;
     [SerializeField] private UI_WindowsController _uiWindowsController;
 
-    private PlayerMovement _playerMovement;
-    private InputReader _input;
+
 
     private void Awake()
     {
         InitializeComponents();
         InitializeSystems();
-
-        
     }
 
     private void OnEnable()
@@ -38,7 +42,7 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
-        GetComponent<PlayerParameterHandler>().Bind(Inventory, ClothingSystem, _playerMovement, _world);
+        GetComponent<PlayerParameterHandler>().Bind(Inventory, ClothingSystem, PlayerMovement, _world);
 
         SetVisibilityUiPlayer(false);
 
@@ -53,8 +57,9 @@ public class Player : MonoBehaviour
 
     private void InitializeComponents()
     {
-        _input = GetComponent<InputReader>();
-        _playerMovement = GetComponent<PlayerMovement>();
+        Input = GetComponent<InputReader>();
+        PlayerMovement = GetComponent<PlayerMovement>();
+        StatusEffectsManeger = GetComponent<StatusEffectsManeger>();
     }
 
     private void InitializeSystems()
@@ -66,8 +71,8 @@ public class Player : MonoBehaviour
     private void SubscribeToEvents()
     {
         GameTime.OnTimeChanged += HandleMinuteChange;
-        
-        _input.OnChangedVisibilityUiPlayer += SetVisibilityUiPlayer;
+
+        Input.OnChangedVisibilityUiPlayer += SetVisibilityUiPlayer;
         _world.OnEnterToxicityZone += HandleToxicityZoneEnter;
     }
 
@@ -75,7 +80,7 @@ public class Player : MonoBehaviour
     {
         GameTime.OnTimeChanged -= HandleMinuteChange;
 
-        _input.OnChangedVisibilityUiPlayer -= SetVisibilityUiPlayer;
+        Input.OnChangedVisibilityUiPlayer -= SetVisibilityUiPlayer;
         _world.OnEnterToxicityZone -= HandleToxicityZoneEnter;
     }
 
@@ -103,7 +108,7 @@ public class Player : MonoBehaviour
                 protection += zone.Toxicity * item.TotalToxicityProtection;
             }
 
-            _parameters.Toxicity.Current += zone.Toxicity - protection;
+            Parameters.Toxicity.Current += zone.Toxicity - protection;
         }
     }
 

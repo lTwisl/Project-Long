@@ -13,14 +13,14 @@ MonoBehaviour:
   m_Name: Player Parameters
   m_EditorClassIdentifier: 
   <Health>k__BackingField:
-    _current: 0
+    _current: 1
     <BaseMax>k__BackingField: 1
     <Max>k__BackingField: 1
     <BaseChangeRate>k__BackingField: 0
-    <ChangeRate>k__BackingField: -0.2
+    <ChangeRate>k__BackingField: 0
     RegenerationRate: 0.1
   <Stamina>k__BackingField:
-    _current: 0.42539507
+    _current: 1
     <BaseMax>k__BackingField: 1
     <Max>k__BackingField: 1
     <BaseChangeRate>k__BackingField: 0.25
@@ -32,13 +32,13 @@ MonoBehaviour:
     <JumpCost>k__BackingField: 0.05
     _reload: 0.5
   <Capacity>k__BackingField:
-    _current: 0
+    _current: 9.543607
     <BaseMax>k__BackingField: 60
-    <Max>k__BackingField: 45
+    <Max>k__BackingField: 60
     <BaseChangeRate>k__BackingField: 0
     <ChangeRate>k__BackingField: 0
   <FoodBalance>k__BackingField:
-    _current: 1916.201
+    _current: 3431.4812
     <BaseMax>k__BackingField: 3500
     <Max>k__BackingField: 3500
     <BaseChangeRate>k__BackingField: -10
@@ -48,7 +48,7 @@ MonoBehaviour:
     <WalkChangeRate>k__BackingField: -20
     <SprintChangeRate>k__BackingField: -40
   <WaterBalance>k__BackingField:
-    _current: 0
+    _current: 3499.234
     <BaseMax>k__BackingField: 3500
     <Max>k__BackingField: 3500
     <BaseChangeRate>k__BackingField: -40
@@ -58,7 +58,7 @@ MonoBehaviour:
     <WalkChangeRate>k__BackingField: -60
     <SprintChangeRate>k__BackingField: -100
   <Energy>k__BackingField:
-    _current: 0
+    _current: 1362.9622
     <BaseMax>k__BackingField: 1500
     <Max>k__BackingField: 1500
     <BaseChangeRate>k__BackingField: -20
@@ -68,15 +68,17 @@ MonoBehaviour:
     <WalkChangeRate>k__BackingField: -40
     <SprintChangeRate>k__BackingField: -60
   <Heat>k__BackingField:
-    _current: 629.8066
+    _current: 2499.9836
     <BaseMax>k__BackingField: 2500
     <Max>k__BackingField: 2500
-    <BaseChangeRate>k__BackingField: -15
-    <ChangeRate>k__BackingField: -15.151515
+    <BaseChangeRate>k__BackingField: 0
+    <ChangeRate>k__BackingField: -3.8494757e-16
     <DecreasedHealthRate>k__BackingField: -0.2
   <Toxicity>k__BackingField:
-    _current: 0.0039999983
+    _current: 0
     <BaseMax>k__BackingField: 10000
     <Max>k__BackingField: 10000
     <BaseChangeRate>k__BackingField: 0
     <ChangeRate>k__BackingField: 0
+    _levels: []
+    currentLevel: 2

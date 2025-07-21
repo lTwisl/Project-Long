@@ -1,13 +1,35 @@
-﻿using FiniteStateMachine;
-using UnityEngine.LightTransport;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 [System.Serializable]
 public class ToxicityParameter : PlayerParameter
 {
+    [System.Serializable]
+    struct LevelToxicity
+    {
+        public int level;
+        public int countPoints;
+        public ScriptableObject Mutations;
+    }
+
+    [SerializeField] List<LevelToxicity> _levels;
+    public int currentLevel;
+
     public override void Initialize()
     {
         base.Initialize();
         Current = 0;
+    }
+
+    public override void ChangeParameter(float deltaSeconds)
+    {
+        base.ChangeParameter(deltaSeconds);
+
+        /*if (Current < _levels[currentLevel].countPoints)
+            Current = _levels[currentLevel].countPoints;
+
+        if (currentLevel + 1 < _levels.Count && Current > _levels[currentLevel + 1].countPoints)
+            currentLevel++;*/
     }
 }
 

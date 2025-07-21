@@ -31,14 +31,14 @@ public class BasePlayerParameter : PlayerParameter
             }
             else
             {
-                TimeGeaterZero += TimeSpan.FromSeconds(deltaSeconds);
+                TimeGeaterZero += TimeSpan.FromMinutes(deltaSeconds);
             }
         }
         else
         {
             if (IsZero)
             {
-                TimeIsZero += TimeSpan.FromSeconds(deltaSeconds);
+                TimeIsZero += TimeSpan.FromMinutes(deltaSeconds);
             }
             else
             {
@@ -55,7 +55,7 @@ public class BasePlayerParameter : PlayerParameter
     {
         base.Initialize();
 
-        DecreasedHealthModifier = new(0, ValueType.ChangeRate, value => value += DecreasedHealthRate);
+        DecreasedHealthModifier = new(0, ValueType.ChangeRate, value => value += DecreasedHealthRate, $"DecreasedHealthModifier by {GetType().Name}");
 
         IsZero = false;
         TimeIsZero = TimeSpan.Zero;

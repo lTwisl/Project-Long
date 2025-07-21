@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using Zenject;
 
@@ -6,12 +7,19 @@ using Zenject;
 public abstract class UseStrategy : ScriptableObject
 {
     // Параметры игрока, изменяемые стратегией.
-    protected PlayerParameters PlayerParameters { get; private set; }
+    protected Player _player;
+    protected PlayerParameters PlayerParameters => _player.Parameters;
+
+    protected void OnUsageCompleted(in UsageItemInfo @is)
+    {
+        Debug.Log("OnUsageCompleted");
+    }
 
     [Inject]
-    private void Construct(PlayerParameters playerParameters)
+    private void Construct(Player player)
     {
-        PlayerParameters = playerParameters;
+        _player = player;
+        //_playerParameters = playerParameters;
     }
 
 

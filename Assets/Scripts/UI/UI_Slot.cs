@@ -39,7 +39,7 @@ public class UI_Slot : MonoBehaviour, IPointerDownHandler
 
     public void UpdateView()
     {
-        Debug.Log($"{Time.frameCount}: UpdateView");
+        //Debug.Log($"{Time.frameCount}: UpdateView");
 
         _icon.sprite = Slot.Item.Icon;
 

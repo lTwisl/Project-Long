@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 
 
 namespace StatsModifiers
@@ -13,12 +14,15 @@ namespace StatsModifiers
         public event Action<StatModifier<T>> OnDispose = delegate { };
 
         private float _duration = 0;
+        public readonly string Description;
 
-        public StatModifier(float duration, T condition, Func<float, float> operation)
+        public StatModifier(float duration, T condition, Func<float, float> operation, [CallerFilePath] string description = "")
         {
             _duration = duration;
             _condition = condition;
             _operation = operation;
+
+            Description = description;
         }
 
         public void Update(float deltaTime)

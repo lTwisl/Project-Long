@@ -11,6 +11,7 @@ public class UseOnSelfStrategy : UseStrategy
     [NonSerialized] private List<StatModifier<ValueType>> _statModifiers = new();
     [NonSerialized] private Dictionary<IPlayerParameter, bool> _parameterFlags = new();
 
+    float initCapasity = 0;
 
     // Начинает использование предмета на себе.
     public override void Execute(InventorySlot slot)
@@ -19,6 +20,8 @@ public class UseOnSelfStrategy : UseStrategy
             return;
 
         _usedSlot = slot;
+        initCapasity = slot.Capacity;
+
         InitializeModifiers(consumables);
     }
 
@@ -28,6 +31,8 @@ public class UseOnSelfStrategy : UseStrategy
     {
         if (_usedSlot == null || _usedSlot.Item.MeasuredAsInteger)
             return;
+
+        SetLastUsedItem();
 
         Clear();
     }
@@ -95,10 +100,23 @@ public class UseOnSelfStrategy : UseStrategy
         if (Mathf.CeilToInt(currentCapacity) != Mathf.CeilToInt(_usedSlot.Capacity))
         {
             _usedSlot.Capacity = Mathf.Ceil(_usedSlot.Capacity);
+            //Debug.Log($"Usage completed. Used capasity = {initCapasity - _usedSlot.Capacity}");
+            SetLastUsedItem();
             Clear();
         }
 
         return replenishment.Value;
+    }
+
+    private void SetLastUsedItem()
+    {
+        _player.StatusEffectsManeger.LastUsedItem = new()
+        {
+            item = _usedSlot.Item,
+            capacity = initCapasity - _usedSlot.Capacity,
+            condition = (float)_usedSlot.Condition,
+            timeUsed = GameTime.Time
+        };
     }
 
 
@@ -111,6 +129,8 @@ public class UseOnSelfStrategy : UseStrategy
 
             if (!_parameterFlags.Values.Contains(false))
             {
+                //Debug.Log($"Usage completed. Used capasity = {initCapasity - _usedSlot.Capacity}");
+                SetLastUsedItem();
                 Clear();
                 return replenishment.Value;
             }

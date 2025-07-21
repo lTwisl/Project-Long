@@ -36,9 +36,6 @@ MonoBehaviour:
     Tool: {fileID: 0}
     Items: []
   <ChargeRecipe>k__BackingField: {fileID: 0}
-  <StatusParameterImpacts>k__BackingField:
-  - ParameterType: 0
-    Value: 10
-  <HealsDisease>k__BackingField:
-  - {fileID: 0}
-  <GivesBonus>k__BackingField: []
+  <GivesParameters>k__BackingField: []
+  <GivesEffects>k__BackingField: []
+  <RemoveDisease>k__BackingField: []
